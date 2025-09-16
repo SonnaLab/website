@@ -18,7 +18,7 @@ export function Footer() {
   const services = [
     { label: 'Développement Web', href: '#web-dev' },
     { label: 'Applications Mobile', href: '#mobile-dev' },
-    { label: 'Conseil CTO', href: '#cto-consulting' },
+    { label: 'Tech Consulting', href: '#cto-consulting' },
     { label: 'UI/UX Design', href: '#design' },
     { label: 'E-commerce', href: '#ecommerce' },
     { label: 'Intelligence Artificielle', href: '#ai' }
@@ -70,8 +70,7 @@ export function Footer() {
               />
             </div>
             <p className="text-gray-300 leading-relaxed">
-              Le laboratoire d'idées qui transforme le digital. Votre partenaire de confiance pour 
-              l'innovation technologique, du conseil CTO aux applications révolutionnaires.
+              Laboratoire d’innovation digitale : SonnaLab accompagne votre transformation technologique, du conseil stratégique à la création d’applications sur mesure. Propulsez votre entreprise vers l’excellence et l’avenir.
             </p>
             
             {/* Contact Info */}

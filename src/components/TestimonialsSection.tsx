@@ -9,7 +9,7 @@ export function TestimonialsSection() {
       name: 'Marie Dubois', // CEO innovante dans la tech parisienne
       title: 'CEO, TechStart',
       location: 'Paris, France',
-      image: 'https://images.unsplash.com/photo-1494790108755-2616b9b2eca6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
+      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
       rating: 5,
       text: "SonnaLab a transformé notre vision en réalité. Leur expertise technique et leur approche innovante nous ont permis de lancer notre plateforme SaaS en un temps record. Une équipe exceptionnelle !",
       projectType: 'Plateforme SaaS'
