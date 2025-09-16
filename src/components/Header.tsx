@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from './ui/sheet';
-import { Menu, Phone, Mail, MapPin, Calendar, FileText } from 'lucide-react';
+import { Menu, Phone, Mail, MapPin, Calendar, FileText, Globe, Languages } from 'lucide-react';
 import sonnaLabLogo from '../assets/logo/bSonnaLab.png';
 
 export function Header() {
@@ -16,6 +16,7 @@ export function Header() {
     { name: 'À propos', href: '#about' },
     { name: 'Services', href: '#services' },
     { name: 'Projets', href: '#projects' },
+    { name: 'Recherche & Développement', href: '#research' },
     { name: 'Blog', href: '#blog' },
     { name: 'Contact', href: '#contact' },
   ];
@@ -46,8 +47,9 @@ export function Header() {
         }
         
         if (testimonialsSection) {
-          const testimonialsTop = testimonialsSection.offsetTop;
-          const testimonialsBottom = testimonialsTop + testimonialsSection.offsetHeight;
+          const testimonialsElement = testimonialsSection as HTMLElement;
+          const testimonialsTop = testimonialsElement.offsetTop;
+          const testimonialsBottom = testimonialsTop + testimonialsElement.offsetHeight;
           if (offset >= testimonialsTop - 100 && offset < testimonialsBottom + 100) {
             // Over testimonials - potentially dark background
             setIsDarkBackground(true);
@@ -104,31 +106,32 @@ export function Header() {
 
         {/* CTA Buttons */}
         <div className="hidden md:flex items-center space-x-3">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className={`transition-all duration-300 ${
-              scrolled 
-                ? 'border-gray-700 text-gray-700 hover:bg-gray-700 hover:text-white bg-white/50 backdrop-blur-sm' 
-                : isDarkBackground 
-                  ? 'border-white/70 text-white hover:bg-white/20 hover:text-white bg-white/10 backdrop-blur-sm drop-shadow-sm'
-                  : 'border-gray-700 text-gray-700 hover:bg-gray-700 hover:text-white bg-white/50 backdrop-blur-sm'
-            }`}
-          >
-            <FileText className="w-4 h-4 mr-2" />
-            Portfolio
-          </Button>
-          <Button 
-            size="sm" 
-            className={`transition-all duration-300 ${
-              scrolled || !isDarkBackground
+              <div className={`flex items-center h-10 px-3 rounded-lg border-none bg-transparent transition-all duration-300 cursor-pointer ${
+                scrolled ? 'text-black hover:bg-white/50' : 
+                isDarkBackground ? 'text-white hover:bg-white/20 drop-shadow-sm' : 'text-black hover:bg-white/50'
+              }`}>
+                <Languages className="h-8 w-5" />
+                <select 
+                  className="bg-transparent border-none outline-none cursor-pointer"
+                  defaultValue="FR"
+                >
+                    <option value="FR" className="text-black font-bold">FR</option>
+                    <option value="EN" className="text-black font-bold">EN</option>
+                    <option value="ES" className="text-black font-bold">ES</option>
+                    <option value="DE" className="text-black font-bold">DE</option>
+                </select>
+              </div>
+              <Button 
+              size="sm" 
+              className={`transition-all duration-300 ${
+                scrolled || !isDarkBackground
                 ? 'bg-black hover:bg-gray-800 text-white'
                 : 'bg-white/20 hover:bg-white/30 text-white border border-white/50 backdrop-blur-sm drop-shadow-sm'
-            }`}
-          >
-            <Calendar className="w-4 h-4 mr-2" />
-            Consultation
-          </Button>
+              }`}
+              >
+              <Calendar className="w-4 h-4 mr-2" />
+              Consultation
+              </Button>
         </div>
 
         {/* Mobile Menu */}
