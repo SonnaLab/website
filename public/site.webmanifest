@@ -1,0 +1,24 @@
+{
+  "name": "SonnaLab - Le laboratoire d'idées qui transforme le digital",
+  "short_name": "SonnaLab",
+  "description": "SonnaLab, le laboratoire d'idées qui transforme le digital. Votre partenaire de confiance pour l'innovation technologique, du conseil tech aux applications révolutionnaires.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/favicon/sonnalab.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/favicon/sonnalab.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ]
+}
