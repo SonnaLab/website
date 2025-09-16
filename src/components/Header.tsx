@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from './ui/sheet';
 import { Menu, Phone, Mail, MapPin, Calendar, FileText } from 'lucide-react';
-import sonnaLabLogo from 'figma:asset/b5deb02a005e239f158c5232b81aa2b3b131921f.png';
+import sonnaLabLogo from '../assets/logo/bSonnaLab.png';
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -81,7 +81,7 @@ export function Header() {
           <img 
             src={sonnaLabLogo} 
             alt="SonnaLab" 
-            className={`h-8 w-auto transition-all duration-300 ${
+            className={`h-10 w-auto transition-all duration-300 ${
               isDarkBackground && !scrolled ? 'brightness-0 invert' : ''
             }`}
           />

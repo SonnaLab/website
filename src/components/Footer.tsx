@@ -3,7 +3,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Separator } from './ui/separator';
 import { Phone, Mail, MapPin, Clock, Facebook, Twitter, Instagram, Linkedin, Send } from 'lucide-react';
-import sonnaLabLogo from 'figma:asset/b5deb02a005e239f158c5232b81aa2b3b131921f.png';
+import sonnaLabLogo from '../assets/logo/wSonnaLab.png';
 
 export function Footer() {
   const quickLinks = [
@@ -66,7 +66,7 @@ export function Footer() {
               <img 
                 src={sonnaLabLogo} 
                 alt="SonnaLab" 
-                className="h-8 w-auto brightness-0 invert"
+                className="h-12 w-auto"
               />
             </div>
             <p className="text-gray-300 leading-relaxed">

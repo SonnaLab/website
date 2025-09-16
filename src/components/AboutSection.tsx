@@ -18,7 +18,7 @@ export function AboutSection() {
         {/* Mission Statement */}
         <div className="text-center mb-16">
           <h2 className="text-3xl lg:text-4xl font-gilroy font-bold text-black mb-6">
-            À propos de SonnaLab
+            À propos de Nous
           </h2>
           <div className="max-w-4xl mx-auto">
             <p className="text-xl text-gray-700 leading-relaxed mb-8">

@@ -20,8 +20,8 @@ export default function App() {
         <HowItWorksSection />
         <AboutSection />
         <ResearchSection />
-        <TestimonialsSection />
         <SuccessSection />
+        <TestimonialsSection />
       </main>
       <Footer />
     </div>

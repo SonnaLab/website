@@ -7,7 +7,7 @@ export function SuccessSection() {
       icon: Star,
       value: '4.9/5',
       label: 'Note Moyenne',
-      description: 'Excellence reconnue',
+      description: 'Trustpilot & Google',
       color: 'text-yellow-500'
     },
     {
@@ -76,14 +76,6 @@ export function SuccessSection() {
                     {metric.description}
                   </p>
                 </div>
-
-                {metric.icon === Star && (
-                  <div className="flex justify-center mt-4 text-yellow-400">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-current" />
-                    ))}
-                  </div>
-                )}
               </div>
             );
           })}
