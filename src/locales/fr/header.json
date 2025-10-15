@@ -1,0 +1,10 @@
+{
+  "nav": {
+    "services": "Services",
+    "process": "Processus",
+    "about": "À propos",
+    "research": "R&D",
+    "contact": "Contact"
+  },
+  "cta": "Démarrer un projet"
+}

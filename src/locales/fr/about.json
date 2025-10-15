@@ -1,0 +1,43 @@
+{
+  "title": "À propos de Nous",
+  "subtitle": "Un laboratoire d'innovation au service de votre transformation digitale",
+  "mission": {
+    "title": "Notre Mission",
+    "description": "Transformer les idées en solutions technologiques concrètes et accompagner les entreprises dans leur transformation digitale avec expertise et innovation."
+  },
+  "values": {
+    "title": "Nos Valeurs",
+    "items": [
+      {
+        "title": "Innovation",
+        "description": "Nous restons à la pointe des technologies pour offrir les meilleures solutions"
+      },
+      {
+        "title": "Excellence",
+        "description": "Chaque projet est traité avec le plus haut niveau de qualité et d'attention"
+      },
+      {
+        "title": "Collaboration",
+        "description": "Nous travaillons main dans la main avec nos clients pour garantir leur succès"
+      }
+    ]
+  },
+  "stats": {
+    "projects": {
+      "value": "100+",
+      "label": "Projets réalisés"
+    },
+    "clients": {
+      "value": "50+",
+      "label": "Clients satisfaits"
+    },
+    "experience": {
+      "value": "5+",
+      "label": "Années d'expertise"
+    },
+    "satisfaction": {
+      "value": "98%",
+      "label": "Satisfaction client"
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "title": "Nos Services",
+  "subtitle": "Des solutions sur-mesure pour chaque besoin",
+  "categories": {
+    "web": {
+      "title": "Développement Web",
+      "description": "Sites vitrines, applications web, SaaS et plateformes sur-mesure",
+      "features": [
+        "React, Vue.js, Angular",
+        "Node.js, Python, PHP",
+        "Responsive & Progressive Web Apps",
+        "Optimisation SEO & Performance"
+      ]
+    },
+    "mobile": {
+      "title": "Applications Mobiles",
+      "description": "Applications iOS et Android natives et cross-platform",
+      "features": [
+        "React Native & Flutter",
+        "Swift & Kotlin",
+        "UX/UI Design mobile-first",
+        "Intégrations API & Backend"
+      ]
+    },
+    "ecommerce": {
+      "title": "E-commerce",
+      "description": "Boutiques en ligne performantes et évolutives",
+      "features": [
+        "Shopify, WooCommerce, Magento",
+        "Solutions sur-mesure",
+        "Paiement sécurisé",
+        "Analytics & CRM"
+      ]
+    },
+    "design": {
+      "title": "Design & UX",
+      "description": "Interfaces intuitives et expériences utilisateur mémorables",
+      "features": [
+        "UI/UX Design",
+        "Prototypage interactif",
+        "Design System",
+        "Brand Identity"
+      ]
+    },
+    "strategy": {
+      "title": "Stratégie Digitale",
+      "description": "Conseil et accompagnement dans votre transformation digitale",
+      "features": [
+        "Audit technique",
+        "Architecture logicielle",
+        "CTO as a Service",
+        "Formation & coaching"
+      ]
+    },
+    "custom": {
+      "title": "Solutions Sur-Mesure",
+      "description": "Développements spécifiques adaptés à vos besoins uniques",
+      "features": [
+        "IA & Machine Learning",
+        "Blockchain & Web3",
+        "IoT & Systèmes embarqués",
+        "Big Data & Analytics"
+      ]
+    }
+  }
+}

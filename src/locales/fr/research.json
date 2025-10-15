@@ -1,0 +1,31 @@
+{
+  "title": "Recherche & Innovation",
+  "subtitle": "Nous explorons les technologies de demain",
+  "areas": [
+    {
+      "title": "Intelligence Artificielle",
+      "description": "Machine Learning, NLP, Computer Vision pour automatiser et optimiser vos processus",
+      "technologies": ["TensorFlow", "PyTorch", "OpenAI", "Hugging Face"]
+    },
+    {
+      "title": "Blockchain & Web3",
+      "description": "Smart contracts, DApps, NFTs et solutions décentralisées",
+      "technologies": ["Ethereum", "Solidity", "IPFS", "Polygon"]
+    },
+    {
+      "title": "Cloud & DevOps",
+      "description": "Infrastructure scalable, CI/CD et automatisation",
+      "technologies": ["AWS", "Azure", "GCP", "Docker", "Kubernetes"]
+    },
+    {
+      "title": "Cybersécurité",
+      "description": "Protection des données, audit de sécurité et conformité",
+      "technologies": ["OWASP", "Pentest", "RGPD", "ISO 27001"]
+    },
+    {
+      "title": "Quantum Computing",
+      "description": "Exploration des algorithmes quantiques et applications futures",
+      "technologies": ["Qiskit", "Q#", "Cirq"]
+    }
+  ]
+}

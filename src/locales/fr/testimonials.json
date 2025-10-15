@@ -1,0 +1,30 @@
+{
+  "title": "Ce que disent nos clients",
+  "subtitle": "Témoignages authentiques de nos partenaires",
+  "items": [
+    {
+      "name": "Marie Dupont",
+      "role": "CEO, TechStart",
+      "company": "TechStart",
+      "avatar": "https://i.pravatar.cc/150?img=5",
+      "rating": 5,
+      "text": "SonnaLab a transformé notre vision en une application mobile exceptionnelle. Leur expertise technique et leur accompagnement ont été décisifs pour notre succès."
+    },
+    {
+      "name": "Jean Martin",
+      "role": "CTO, InnovCorp",
+      "company": "InnovCorp",
+      "avatar": "https://i.pravatar.cc/150?img=12",
+      "rating": 5,
+      "text": "Une équipe réactive, professionnelle et à l'écoute. Notre plateforme e-commerce a dépassé toutes nos attentes en termes de performance et d'UX."
+    },
+    {
+      "name": "Sophie Bernard",
+      "role": "Founder, GreenTech",
+      "company": "GreenTech",
+      "avatar": "https://i.pravatar.cc/150?img=9",
+      "rating": 5,
+      "text": "Collaboration exceptionnelle ! SonnaLab nous a accompagnés de A à Z avec professionnalisme. Le résultat dépasse nos attentes."
+    }
+  ]
+}

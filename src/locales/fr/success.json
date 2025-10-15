@@ -1,0 +1,26 @@
+{
+  "title": "Nos Succès",
+  "subtitle": "Des chiffres qui parlent d'eux-mêmes",
+  "metrics": {
+    "rating": {
+      "value": "4.9/5",
+      "label": "Note moyenne",
+      "description": "Basée sur 50+ avis clients"
+    },
+    "projects": {
+      "value": "100+",
+      "label": "Projets livrés",
+      "description": "En 5 ans d'activité"
+    },
+    "satisfaction": {
+      "value": "98%",
+      "label": "Satisfaction client",
+      "description": "Clients qui nous recommandent"
+    },
+    "growth": {
+      "value": "+150%",
+      "label": "Croissance annuelle",
+      "description": "ROI moyen de nos clients"
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "tagline": "Transformons ensemble vos idées en réalité digitale",
+  "sections": {
+    "company": {
+      "title": "Entreprise",
+      "links": {
+        "about": "À propos",
+        "services": "Services",
+        "research": "R&D",
+        "careers": "Carrières",
+        "contact": "Contact"
+      }
+    },
+    "services": {
+      "title": "Services",
+      "links": {
+        "web": "Développement Web",
+        "mobile": "Applications Mobiles",
+        "ecommerce": "E-commerce",
+        "design": "Design & UX",
+        "strategy": "Stratégie Digitale"
+      }
+    },
+    "resources": {
+      "title": "Ressources",
+      "links": {
+        "blog": "Blog",
+        "guides": "Guides",
+        "documentation": "Documentation",
+        "support": "Support",
+        "faq": "FAQ"
+      }
+    },
+    "legal": {
+      "title": "Légal",
+      "links": {
+        "privacy": "Confidentialité",
+        "terms": "CGU",
+        "cookies": "Cookies",
+        "legal": "Mentions légales"
+      }
+    }
+  },
+  "newsletter": {
+    "title": "Newsletter",
+    "description": "Restez informés de nos dernières innovations",
+    "placeholder": "Votre email",
+    "button": "S'abonner",
+    "success": "Merci pour votre inscription !",
+    "error": "Une erreur est survenue"
+  },
+  "contact": {
+    "title": "Contact",
+    "email": "hello@sonnalab.fr",
+    "phone": "+33 1 23 45 67 89",
+    "address": "Station F, Paris, France"
+  },
+  "social": {
+    "title": "Suivez-nous"
+  },
+  "copyright": "© 2024 SonnaLab. Tous droits réservés.",
+  "madeWith": "Fait avec ❤️ par SonnaLab Team"
+}

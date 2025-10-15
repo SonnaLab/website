@@ -1,0 +1,14 @@
+{
+  "language": {
+    "fr": "Français",
+    "en": "English"
+  },
+  "actions": {
+    "learnMore": "En savoir plus",
+    "contact": "Nous contacter",
+    "send": "Envoyer",
+    "subscribe": "S'abonner",
+    "close": "Fermer",
+    "search": "Rechercher"
+  }
+}
