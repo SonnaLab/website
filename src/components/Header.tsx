@@ -1,24 +1,27 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from './ui/sheet';
-import { Menu, Phone, Mail, MapPin, Calendar, FileText, Globe, Languages } from 'lucide-react';
+import { Menu, Phone, Mail, MapPin, Calendar, FileText } from 'lucide-react';
+import { LanguageSwitcher } from './utils/LanguageSwitcher';
 import sonnaLabLogo from '../assets/logo/bSonnaLab.png';
 
 export function Header() {
+  const { t } = useTranslation('header');
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isDarkBackground, setIsDarkBackground] = useState(false);
 
   const navigation = [
-    { name: 'Accueil', href: '#home' },
-    { name: 'À propos', href: '#about' },
-    { name: 'Services', href: '#services' },
-    { name: 'Projets', href: '#projects' },
-    { name: 'Recherche & Développement', href: '#research' },
-    { name: 'Blog', href: '#blog' },
-    { name: 'Contact', href: '#contact' },
+    { name: t('nav.home'), href: '#home' },
+    { name: t('nav.about'), href: '#about' },
+    { name: t('nav.services'), href: '#services' },
+    { name: t('nav.projects'), href: '#projects' },
+    { name: t('nav.research'), href: '#research' },
+    { name: t('nav.blog'), href: '#blog' },
+    { name: t('nav.contact'), href: '#contact' },
   ];
 
   useEffect(() => {
@@ -67,9 +70,7 @@ export function Header() {
   }, []);
 
   // Dynamic text colors based on background - now using only black/white
-  const textColor = isDarkBackground ? 'text-white drop-shadow-sm' : 'text-black';
   const textColorSecondary = isDarkBackground ? 'text-gray-100 drop-shadow-sm' : 'text-gray-700';
-  const logoColor = isDarkBackground ? 'text-white drop-shadow-sm' : 'text-black';
 
   return (
     <header className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-7xl rounded-full transition-all duration-300 ${
@@ -106,32 +107,18 @@ export function Header() {
 
         {/* CTA Buttons */}
         <div className="hidden md:flex items-center space-x-3">
-              <div className={`flex items-center h-10 px-3 rounded-lg border-none bg-transparent transition-all duration-300 cursor-pointer ${
-                scrolled ? 'text-black hover:bg-white/50' : 
-                isDarkBackground ? 'text-white hover:bg-white/20 drop-shadow-sm' : 'text-black hover:bg-white/50'
-              }`}>
-                <Languages className="h-8 w-5" />
-                <select 
-                  className="bg-transparent border-none outline-none cursor-pointer"
-                  defaultValue="FR"
-                >
-                    <option value="FR" className="text-black font-bold">FR</option>
-                    <option value="EN" className="text-black font-bold">EN</option>
-                    <option value="ES" className="text-black font-bold">ES</option>
-                    <option value="DE" className="text-black font-bold">DE</option>
-                </select>
-              </div>
-              <Button 
-              size="sm" 
-              className={`transition-all duration-300 ${
-                scrolled || !isDarkBackground
+          <LanguageSwitcher />
+          <Button 
+            size="sm" 
+            className={`transition-all duration-300 ${
+              scrolled || !isDarkBackground
                 ? 'bg-black hover:bg-gray-800 text-white'
                 : 'bg-white/20 hover:bg-white/30 text-white border border-white/50 backdrop-blur-sm drop-shadow-sm'
-              }`}
-              >
-              <Calendar className="w-4 h-4 mr-2" />
-              Consultation
-              </Button>
+            }`}
+          >
+            <Calendar className="w-4 h-4 mr-2" />
+            {t('cta.consultation')}
+          </Button>
         </div>
 
         {/* Mobile Menu */}
@@ -149,9 +136,9 @@ export function Header() {
             </Button>
           </SheetTrigger>
           <SheetContent side="right" className="w-80">
-            <SheetTitle className="sr-only">Menu de Navigation</SheetTitle>
+            <SheetTitle className="sr-only">{t('accessibility.menuTitle')}</SheetTitle>
             <SheetDescription className="sr-only">
-              Menu de navigation mobile pour le site SonnaLab
+              {t('accessibility.menuDescription')}
             </SheetDescription>
             <div className="flex flex-col space-y-6 mt-6">
               {navigation.map((item) => (
@@ -168,26 +155,30 @@ export function Header() {
               <div className="flex flex-col space-y-3 pt-6 border-t">
                 <Button variant="outline" className="border-gray-700 text-gray-700 hover:bg-gray-700 hover:text-white">
                   <FileText className="w-4 h-4 mr-2" />
-                  Portfolio
+                  {t('cta.portfolio')}
                 </Button>
                 <Button className="bg-black hover:bg-gray-800">
                   <Calendar className="w-4 h-4 mr-2" />
-                  Consultation
+                  {t('cta.consultation')}
                 </Button>
+              </div>
+
+              <div className="flex flex-col space-y-3 pt-6 border-t">
+                <LanguageSwitcher />
               </div>
 
               <div className="flex flex-col space-y-3 pt-6 border-t text-sm text-gray-600">
                 <div className="flex items-center space-x-2">
                   <Phone className="w-4 h-4" />
-                  <span>+33 (0)1 23 45 67 89</span>
+                  <span>{t('mobile.phone')}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mail className="w-4 h-4" />
-                  <span>hello@sonnalab.fr</span>
+                  <span>{t('mobile.email')}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <MapPin className="w-4 h-4" />
-                  <span>Paris, France</span>
+                  <span>{t('mobile.location')}</span>
                 </div>
               </div>
             </div>

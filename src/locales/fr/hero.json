@@ -1,0 +1,18 @@
+{
+  "title": "Le laboratoire d'idées qui transforme le digital",
+  "subtitle": "Nous créons des solutions technologiques innovantes pour propulser votre entreprise vers l'avenir",
+  "description": "De l'idée au déploiement, nous transformons vos ambitions en réalité digitale grâce à notre expertise en développement, design et stratégie.",
+  "cta": {
+    "primary": "Démarrer un projet",
+    "secondary": "Découvrir nos services"
+  },
+  "search": {
+    "placeholder": "Rechercher un projet, service...",
+    "button": "Rechercher"
+  },
+  "stats": {
+    "projects": "Projets réalisés",
+    "clients": "Clients satisfaits",
+    "expertise": "Années d'expertise"
+  }
+}

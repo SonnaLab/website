@@ -1,10 +1,25 @@
 {
   "nav": {
-    "services": "Services",
-    "process": "Processus",
+    "home": "Accueil",
     "about": "À propos",
-    "research": "R&D",
+    "services": "Services",
+    "projects": "Projets",
+    "research": "Recherche & Développement",
+    "blog": "Blog",
     "contact": "Contact"
   },
-  "cta": "Démarrer un projet"
+  "cta": {
+    "portfolio": "Portfolio",
+    "consultation": "Consultation"
+  },
+  "mobile": {
+    "phone": "+33 (0)1 23 45 67 89",
+    "email": "hello@sonnalab.fr",
+    "location": "Paris, France"
+  },
+  "accessibility": {
+    "menuTitle": "Menu de Navigation",
+    "menuDescription": "Menu de navigation mobile pour le site SonnaLab",
+    "languageSelect": "Changer la langue"
+  }
 }
