@@ -3,8 +3,11 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Search, Calendar, Zap, Users, Lightbulb } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { useTranslation } from 'react-i18next';
 
 export function HeroSection() {
+  const { t } = useTranslation('hero');
+
   return (
     <section id="home" className="relative pt-24 pb-20 lg:pt-32 lg:pb-32 bg-gradient-to-br from-gray-50 to-white">
       <div className="container mx-auto px-4">
@@ -13,12 +16,10 @@ export function HeroSection() {
           <div className="space-y-8">
             <div className="space-y-4">
               <h1 className="text-4xl lg:text-5xl font-bold leading-tight text-black">
-                Le laboratoire d'idées qui
-                <span className="text-gray-700"> transforme le digital</span>
+                {t('title')}
               </h1>
               <p className="text-xl text-gray-600 max-w-lg">
-                Nous concevons et développons des solutions digitales innovantes 
-                qui propulsent votre entreprise vers l'avenir.
+                {t('description')}
               </p>
             </div>
 
@@ -28,13 +29,13 @@ export function HeroSection() {
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <Input
-                    placeholder="Décrivez votre projet (e.g., Site web, App mobile, E-commerce)"
+                    placeholder={t('search.placeholder')}
                     className="pl-10 h-12 border-gray-200"
                   />
                 </div>
                 <Button size="lg" className="h-12 px-8 bg-black hover:bg-gray-800">
                   <Calendar className="w-5 h-5 mr-2" />
-                  Discutons-en
+                  {t('cta.primary')}
                 </Button>
               </div>
             </div>
@@ -43,15 +44,15 @@ export function HeroSection() {
             <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600">
               <div className="flex items-center gap-2">
                 <Zap className="w-5 h-5 text-gray-700" />
-                <span>Livraison Agile</span>
+                <span>{t('stats.projects')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Users className="w-5 h-5 text-gray-700" />
-                <span>50+ Clients Satisfaits</span>
+                <span>{t('stats.clients')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Lightbulb className="w-5 h-5 text-gray-700" />
-                <span>Innovation Continue</span>
+                <span>{t('stats.expertise')}</span>
               </div>
             </div>
           </div>
@@ -64,13 +65,13 @@ export function HeroSection() {
                 alt="Espace de travail digital moderne et innovant"
                 className="w-full h-96 object-cover rounded-xl"
               />
-              
+
               {/* Floating Stats Cards */}
               <div className="absolute -bottom-4 -left-4 bg-white p-4 rounded-xl shadow-lg border">
                 <div className="text-2xl font-bold text-black">150+</div>
                 <div className="text-sm text-gray-600">Projets Livrés</div>
               </div>
-              
+
               <div className="absolute -top-4 -right-4 bg-white p-4 rounded-xl shadow-lg border">
                 <div className="text-2xl font-bold text-gray-700">5 ans</div>
                 <div className="text-sm text-gray-600">d'Excellence</div>

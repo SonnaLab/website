@@ -1,3 +1,18 @@
 {
-    
+  "title": "The think tank that transforms digital technology",
+  "subtitle": "We create innovative technological solutions to propel your business into the future",
+  "description": "From concept to deployment, we transform your ambitions into digital reality thanks to our expertise in development, design and strategy.",
+  "cta": {
+    "primary": "Start a project",
+    "secondary": "Discover our services"
+  },
+  "search": {
+    "placeholder": "Search for a project, service...",
+    "button": "Search"
+  },
+  "stats": {
+    "projects": "Completed projects",
+    "clients": "Satisfied clients",
+    "expertise": "Years of expertise"
+  }
 }
