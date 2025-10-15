@@ -1,66 +1,52 @@
 {
   "title": "Nos Services",
-  "subtitle": "Des solutions sur-mesure pour chaque besoin",
-  "categories": {
-    "web": {
-      "title": "Développement Web",
-      "description": "Sites vitrines, applications web, SaaS et plateformes sur-mesure",
-      "features": [
-        "React, Vue.js, Angular",
-        "Node.js, Python, PHP",
-        "Responsive & Progressive Web Apps",
-        "Optimisation SEO & Performance"
-      ]
+  "subtitle": "De la conception à la mise en ligne, nous créons des solutions digitales sur-mesure qui répondent à vos objectifs business.",
+  "cta": {
+    "more": "En savoir plus",
+    "all": "Voir tous nos services"
+  },
+  "items": [
+    {
+      "icon": "globe",
+      "title": "Sites Web",
+      "description": "Sites vitrines, corporatifs et institutionnels modernes et performants",
+      "tests": ["Landing Page", "Site Vitrine", "Site Corporate", "Portfolio"],
+      "turnaround": "2-4 semaines"
     },
-    "mobile": {
+    {
+      "icon": "smartphone",
       "title": "Applications Mobiles",
-      "description": "Applications iOS et Android natives et cross-platform",
-      "features": [
-        "React Native & Flutter",
-        "Swift & Kotlin",
-        "UX/UI Design mobile-first",
-        "Intégrations API & Backend"
-      ]
+      "description": "Apps natives et cross-platform pour iOS et Android",
+      "tests": ["App Native", "React Native", "Flutter", "PWA"],
+      "turnaround": "6-12 semaines"
     },
-    "ecommerce": {
+    {
+      "icon": "shopping-cart",
       "title": "E-commerce",
-      "description": "Boutiques en ligne performantes et évolutives",
-      "features": [
-        "Shopify, WooCommerce, Magento",
-        "Solutions sur-mesure",
-        "Paiement sécurisé",
-        "Analytics & CRM"
-      ]
+      "description": "Solutions de vente en ligne complètes et optimisées",
+      "tests": ["Shopify", "WooCommerce", "Custom Shop", "Marketplace"],
+      "turnaround": "4-8 semaines"
     },
-    "design": {
-      "title": "Design & UX",
-      "description": "Interfaces intuitives et expériences utilisateur mémorables",
-      "features": [
-        "UI/UX Design",
-        "Prototypage interactif",
-        "Design System",
-        "Brand Identity"
-      ]
+    {
+      "icon": "palette",
+      "title": "Design UX/UI",
+      "description": "Conception d'interfaces utilisateur modernes et intuitives",
+      "tests": ["Wireframes", "Prototypes", "Design System", "User Testing"],
+      "turnaround": "1-3 semaines"
     },
-    "strategy": {
-      "title": "Stratégie Digitale",
+    {
+      "icon": "bar-chart-3",
+      "title": "Stratégie Digital",
       "description": "Conseil et accompagnement dans votre transformation digitale",
-      "features": [
-        "Audit technique",
-        "Architecture logicielle",
-        "CTO as a Service",
-        "Formation & coaching"
-      ]
+      "tests": ["Audit Digital", "Stratégie SEO", "Analytics", "Growth Hacking"],
+      "turnaround": "1-2 semaines"
     },
-    "custom": {
-      "title": "Solutions Sur-Mesure",
-      "description": "Développements spécifiques adaptés à vos besoins uniques",
-      "features": [
-        "IA & Machine Learning",
-        "Blockchain & Web3",
-        "IoT & Systèmes embarqués",
-        "Big Data & Analytics"
-      ]
+    {
+      "icon": "code",
+      "title": "Développement Sur-Mesure",
+      "description": "Solutions personnalisées adaptées à vos besoins spécifiques",
+      "tests": ["API", "SaaS", "CRM", "Intégrations"],
+      "turnaround": "4-16 semaines"
     }
-  }
+  ]
 }
