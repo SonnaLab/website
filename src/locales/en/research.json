@@ -1,3 +1,71 @@
 {
-    
+  "title": "Research & Development",
+  "subtitle": "Our innovation lab explores emerging technologies to create tomorrow’s solutions and push the boundaries of possibility.",
+  "areas": [
+    {
+      "title": "Artificial Intelligence",
+      "description": "Development of advanced AI algorithms to optimize business processes and automate complex tasks",
+      "technologies": ["Machine Learning", "Deep Learning", "NLP"],
+      "status": "In Progress",
+      "icon": "Brain",
+      "color": "text-blue-600"
+    },
+    {
+      "title": "Blockchain & Web3",
+      "description": "Exploring decentralized technologies for data security and transparent transactions",
+      "technologies": ["Ethereum", "Smart Contracts", "DeFi"],
+      "status": "Research",
+      "icon": "Blocks",
+      "color": "text-purple-600"
+    },
+    {
+      "title": "Cloud Computing",
+      "description": "Innovation in native cloud architectures, serverless and edge computing for optimal performance",
+      "technologies": ["Kubernetes", "Microservices", "Edge Computing"],
+      "status": "Development",
+      "icon": "Cloud",
+      "color": "text-cyan-600"
+    },
+    {
+      "title": "Cybersecurity",
+      "description": "Research in advanced cybersecurity and proactive protection of digital infrastructures",
+      "technologies": ["Zero Trust", "Cryptography", "Threat Detection"],
+      "status": "In Progress",
+      "icon": "Shield",
+      "color": "text-red-600"
+    },
+    {
+      "title": "Quantum Computing",
+      "description": "Exploring quantum algorithms to solve complex computational problems",
+      "technologies": ["Qubits", "Quantum Algorithms", "Post-Quantum Cryptography"],
+      "status": "Research",
+      "icon": "FlaskConical",
+      "color": "text-green-600"
+    },
+    {
+      "title": "IoT & Edge AI",
+      "description": "Developing smart IoT solutions with edge processing",
+      "technologies": ["Edge AI", "Sensors", "Real-time Analytics"],
+      "status": "Development",
+      "icon": "Rocket",
+      "color": "text-orange-600"
+    }
+  ],
+  "partners": [
+    {
+      "icon": "University",
+      "title": "Partner Universities",
+      "description": "Collaboration with leading universities"
+    },
+    {
+      "icon": "FlaskConical",
+      "title": "Innovation Labs",
+      "description": "Advanced research and development ecosystem"
+    },
+    {
+      "icon": "Rocket",
+      "title": "Tech Startups",
+      "description": "Partnerships with innovative startup ecosystems"
+    }
+  ]
 }
