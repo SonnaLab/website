@@ -1,3 +1,33 @@
 {
-    
+  "title": "Trusted by Many",
+  "description": "From startups to large enterprises, discover how SonnaLab turns ideas into concrete technological success.",
+  "items": [
+    {
+      "name": "Marie Dubois",
+      "title": "CEO, TechStart",
+      "location": "Paris, France",
+      "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80",
+      "rating": 5,
+      "text": "SonnaLab transformed our vision into reality. Their technical expertise and innovative approach enabled us to launch our SaaS platform in record time. An exceptional team!",
+      "projectType": "SaaS Platform"
+    },
+    {
+      "name": "Laurent Martin",
+      "title": "CTO, EcoTech",
+      "location": "Lyon, France",
+      "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80",
+      "rating": 5,
+      "text": "SonnaLab's technological advice saved us from costly mistakes. Their external CTO positioning gave us access to top-notch expertise. Results: +200% performance.",
+      "projectType": "CTO Consulting & Architecture"
+    },
+    {
+      "name": "Sophie Leroy",
+      "title": "Founder, EdTech Solutions",
+      "location": "Bordeaux, France",
+      "image": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80",
+      "rating": 5,
+      "text": "The mobile app developed by SonnaLab exceeded our expectations. With an intuitive interface, excellent performance and on-time delivery, they are a trusted partner!",
+      "projectType": "React Native Mobile App"
+    }
+  ]
 }

@@ -1,30 +1,33 @@
 {
-  "title": "Ce que disent nos clients",
-  "subtitle": "Témoignages authentiques de nos partenaires",
+  "title": "Ils Nous Font Confiance",
+  "description": "Des startups aux grandes entreprises, découvrez comment SonnaLab transforme les idées en succès technologiques concrets.",
   "items": [
     {
-      "name": "Marie Dupont",
-      "role": "CEO, TechStart",
-      "company": "TechStart",
-      "avatar": "https://i.pravatar.cc/150?img=5",
+      "name": "Marie Dubois",
+      "title": "CEO, TechStart",
+      "location": "Paris, France",
+      "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80",
       "rating": 5,
-      "text": "SonnaLab a transformé notre vision en une application mobile exceptionnelle. Leur expertise technique et leur accompagnement ont été décisifs pour notre succès."
+      "text": "SonnaLab a transformé notre vision en réalité. Leur expertise technique et leur approche innovante nous ont permis de lancer notre plateforme SaaS en un temps record. Une équipe exceptionnelle !",
+      "projectType": "Plateforme SaaS"
     },
     {
-      "name": "Jean Martin",
-      "role": "CTO, InnovCorp",
-      "company": "InnovCorp",
-      "avatar": "https://i.pravatar.cc/150?img=12",
+      "name": "Laurent Martin",
+      "title": "Directeur Technique, EcoTech",
+      "location": "Lyon, France",
+      "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80",
       "rating": 5,
-      "text": "Une équipe réactive, professionnelle et à l'écoute. Notre plateforme e-commerce a dépassé toutes nos attentes en termes de performance et d'UX."
+      "text": "Le conseil technologique de SonnaLab nous a évité des erreurs coûteuses. Leur positionnement CTO externe nous a donné accès à une expertise de haut niveau. Résultats : +200% de performance.",
+      "projectType": "Conseil CTO & Architecture"
     },
     {
-      "name": "Sophie Bernard",
-      "role": "Founder, GreenTech",
-      "company": "GreenTech",
-      "avatar": "https://i.pravatar.cc/150?img=9",
+      "name": "Sophie Leroy",
+      "title": "Fondatrice, EdTech Solutions",
+      "location": "Bordeaux, France",
+      "image": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80",
       "rating": 5,
-      "text": "Collaboration exceptionnelle ! SonnaLab nous a accompagnés de A à Z avec professionnalisme. Le résultat dépasse nos attentes."
+      "text": "L'application mobile développée par SonnaLab dépasse nos attentes. Interface intuitive, performances excellentes et livraison dans les délais. Un partenaire de confiance !",
+      "projectType": "Application Mobile React Native"
     }
   ]
 }
