@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from './ui/sheet';
 import { Menu, Phone, Mail, MapPin, Calendar, FileText } from 'lucide-react';
@@ -10,18 +11,20 @@ import sonnaLabLogo from '../assets/logo/bSonnaLab.png';
 
 export function Header() {
   const { t } = useTranslation('header');
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isDarkBackground, setIsDarkBackground] = useState(false);
 
   const navigation = [
-    { name: t('nav.home'), href: '#home' },
-    { name: t('nav.about'), href: '#about' },
-    { name: t('nav.services'), href: '#services' },
-    { name: t('nav.projects'), href: '#projects' },
-    { name: t('nav.research'), href: '#research' },
-    { name: t('nav.blog'), href: '#blog' },
-    { name: t('nav.contact'), href: '#contact' },
+    { name: t('nav.home'), href: '/', section: 'home' },
+    { name: t('nav.about'), href: '/', section: 'about' },
+    { name: t('nav.services'), href: '/', section: 'services' },
+    { name: t('nav.projects'), href: '/', section: 'projects' },
+    { name: t('nav.research'), href: '/', section: 'research' },
+    { name: t('nav.blog'), href: '/', section: 'blog' },
+    { name: t('nav.contact'), href: '/contact', section: null },
   ];
 
   useEffect(() => {
@@ -29,21 +32,17 @@ export function Header() {
       const offset = window.scrollY;
       setScrolled(offset > 50);
       
-      // Determine if we're over a dark background section
-      const heroHeight = window.innerHeight * 0.6; // Hero section height
+      const heroHeight = window.innerHeight * 0.6;
       
       if (offset < heroHeight) {
-        // Over hero section - light background
         setIsDarkBackground(false);
       } else {
-        // Check specific sections
         const footerSection = document.querySelector('footer');
         const testimonialsSection = document.querySelector('#testimonials');
         
         if (footerSection) {
           const footerTop = footerSection.offsetTop;
           if (offset >= footerTop - 100) {
-            // Over footer - dark background
             setIsDarkBackground(true);
             return;
           }
@@ -54,13 +53,11 @@ export function Header() {
           const testimonialsTop = testimonialsElement.offsetTop;
           const testimonialsBottom = testimonialsTop + testimonialsElement.offsetHeight;
           if (offset >= testimonialsTop - 100 && offset < testimonialsBottom + 100) {
-            // Over testimonials - potentially dark background
             setIsDarkBackground(true);
             return;
           }
         }
         
-        // Default to light background for other sections
         setIsDarkBackground(false);
       }
     };
@@ -69,7 +66,44 @@ export function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Dynamic text colors based on background - now using only black/white
+  const handleNavigationClick = (href: string, section: string | null) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    if (section) {
+      if (location.pathname === '/') {
+        const element = document.getElementById(section);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else {
+        navigate('/');
+        setTimeout(() => {
+          const element = document.getElementById(section);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+      }
+    } else {
+      navigate(href);
+    }
+    
+    setIsOpen(false);
+  };
+
+  const handleLogoClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (location.pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate('/');
+    }
+  };
+
+  const handleConsultationClick = () => {
+    navigate('/contact');
+  };
+
   const textColorSecondary = isDarkBackground ? 'text-gray-100 drop-shadow-sm' : 'text-gray-700';
 
   return (
@@ -79,49 +113,49 @@ export function Header() {
         : 'bg-white/10 backdrop-blur-sm'
     }`}>
       <div className="flex h-16 items-center justify-between px-6">
-        {/* Logo */}
         <div className="flex items-center space-x-3">
-          <img 
-            src={sonnaLabLogo} 
-            alt="SonnaLab" 
-            className={`h-10 w-auto transition-all duration-300 ${
-              isDarkBackground && !scrolled ? 'brightness-0 invert' : ''
-            }`}
-          />
+          <a href="/" onClick={handleLogoClick} className="cursor-pointer">
+            <img 
+              src={sonnaLabLogo} 
+              alt="SonnaLab" 
+              className={`h-10 w-auto transition-all duration-300 ${
+                isDarkBackground && !scrolled ? 'brightness-0 invert' : ''
+              }`}
+            />
+          </a>
         </div>
 
-        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
           {navigation.map((item) => (
             <a
               key={item.name}
-              href={item.href}
-              className={`text-sm font-medium transition-colors duration-300 hover:text-gray-400 ${
+              href={item.section ? `#${item.section}` : item.href}
+              onClick={handleNavigationClick(item.href, item.section)}
+              className={`text-sm font-medium transition-colors duration-300 hover:text-gray-400 cursor-pointer ${
                 scrolled ? 'text-gray-700 drop-shadow-none' : textColorSecondary
-              }`}
+              } ${location.pathname === item.href && !item.section ? 'underline underline-offset-4' : ''}`}
             >
               {item.name}
             </a>
           ))}
         </nav>
 
-        {/* CTA Buttons */}
         <div className="hidden md:flex items-center space-x-3">
           <LanguageSwitcher />
           <Button 
-            size="sm" 
-            className={`transition-all duration-300 ${
+            size="sm"
+            onClick={handleConsultationClick}
+            className={`transition-all duration-300 group ${
               scrolled || !isDarkBackground
                 ? 'bg-black hover:bg-gray-800 text-white'
                 : 'bg-white/20 hover:bg-white/30 text-white border border-white/50 backdrop-blur-sm drop-shadow-sm'
             }`}
           >
-            <Calendar className="w-4 h-4 mr-2" />
+            <Calendar className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
             {t('cta.consultation')}
           </Button>
         </div>
 
-        {/* Mobile Menu */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild className="md:hidden">
             <Button 
@@ -144,9 +178,11 @@ export function Header() {
               {navigation.map((item) => (
                 <a
                   key={item.name}
-                  href={item.href}
-                  className="text-lg font-medium text-gray-700 hover:text-gray-400 transition-colors"
-                  onClick={() => setIsOpen(false)}
+                  href={item.section ? `#${item.section}` : item.href}
+                  onClick={handleNavigationClick(item.href, item.section)}
+                  className={`text-lg font-medium text-gray-700 hover:text-gray-400 transition-colors cursor-pointer ${
+                    location.pathname === item.href && !item.section ? 'text-black font-bold' : ''
+                  }`}
                 >
                   {item.name}
                 </a>
@@ -157,7 +193,13 @@ export function Header() {
                   <FileText className="w-4 h-4 mr-2" />
                   {t('cta.portfolio')}
                 </Button>
-                <Button className="bg-black hover:bg-gray-800">
+                <Button 
+                  onClick={() => {
+                    setIsOpen(false);
+                    handleConsultationClick();
+                  }}
+                  className="bg-black hover:bg-gray-800"
+                >
                   <Calendar className="w-4 h-4 mr-2" />
                   {t('cta.consultation')}
                 </Button>

@@ -68,13 +68,15 @@ export function HeroSection() {
 
               {/* Floating Stats Cards */}
               <div className="absolute -bottom-4 -left-4 bg-white p-4 rounded-xl shadow-lg border">
-                <div className="text-2xl font-bold text-black">150+</div>
-                <div className="text-sm text-gray-600">Projets Livrés</div>
+                <div className="text-2xl font-bold text-black">20+</div>
+                <div className="text-sm text-gray-600">{t('stats.projects')}</div>
               </div>
 
               <div className="absolute -top-4 -right-4 bg-white p-4 rounded-xl shadow-lg border">
-                <div className="text-2xl font-bold text-gray-700">5 ans</div>
-                <div className="text-sm text-gray-600">d'Excellence</div>
+                <div className="text-2xl font-bold text-gray-700">
+                  +{new Date().getFullYear() - 2022 < 10 ? '03' : '10'}
+                </div>
+                <div className="text-sm text-gray-600">{t('stats.expertise')}</div>
               </div>
             </div>
           </div>
