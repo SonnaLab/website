@@ -1,0 +1,84 @@
+{
+  "hero": {
+    "header": "Let's Talk Business",
+    "title": "Let's Transform Your Vision Into Reality",
+    "subtitle": "Got a question? A project? Our team of experts is here to guide you through every step of your digital transformation."
+  },
+  "form": {
+    "name": {
+      "label": "Your Name",
+      "placeholder": "What should we call you?"
+    },
+    "email": {
+      "label": "Your Email",
+      "placeholder": "you@company.com"
+    },
+    "phone": {
+      "label": "Phone",
+      "placeholder": "+33 6 12 34 56 78"
+    },
+    "company": {
+      "label": "Company",
+      "placeholder": "Your company name"
+    },
+    "projectType": {
+      "label": "Project Type",
+      "placeholder": "Select your need",
+      "options": [
+        "Web Application",
+        "Mobile Application",
+        "E-commerce",
+        "CTO Consulting",
+        "AI & Innovation",
+        "Other"
+      ]
+    },
+    "budget": {
+      "label": "Estimated Budget",
+      "placeholder": "Select your budget",
+      "options": [
+        "< €10K",
+        "€10K - €25K",
+        "€25K - €50K",
+        "€50K - €100K",
+        "> €100K"
+      ]
+    },
+    "message": {
+      "label": "Tell Us About Your Project",
+      "placeholder": "Describe your goals, challenges, and how we can help you..."
+    },
+    "submit": "Start the Conversation",
+    "submitting": "Sending...",
+    "success": "Thank you! We'll get back to you within 24h 🚀",
+    "error": "An error occurred. Please try again or contact us directly."
+  },
+  "info": {
+    "email": {
+      "title": "Direct Email",
+      "value": "contact@sonnalab.com",
+      "description": "Response guaranteed within 24h"
+    },
+    "phone": {
+      "title": "Call Us",
+      "value": "+33 (0)7 53 31 56 03",
+      "description": "Mon-Fri, 9am-6pm"
+    },
+    "address": {
+      "title": "Our Offices",
+      "value": "Station F, Paris",
+      "description": "The world's largest startup campus"
+    },
+    "availability": {
+      "title": "Availability",
+      "schedule": "Mon - Fri: 9am - 6pm",
+      "response": "Response within 24h",
+      "emergency": "Emergency? Call us!"
+    }
+  },
+  "cta": {
+    "title": "Ready to Innovate?",
+    "description": "Join over 100 companies that trust us for their digital transformation.",
+    "button": "Book a Slot"
+  }
+}

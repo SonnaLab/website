@@ -14,6 +14,8 @@ import frTestimonials from '../locales/fr/testimonials.json';
 import frFooter from '../locales/fr/footer.json';
 import frCommon from '../locales/fr/common.json';
 
+import frContact from '../locales/fr/contact.json';
+
 // English
 import enHeader from '../locales/en/header.json';
 import enHero from '../locales/en/hero.json';
@@ -25,6 +27,8 @@ import enSuccess from '../locales/en/success.json';
 import enTestimonials from '../locales/en/testimonials.json';
 import enFooter from '../locales/en/footer.json';
 import enCommon from '../locales/en/common.json';
+
+import enContact from '../locales/en/contact.json';
 
 const resources = {
   fr: {
@@ -38,6 +42,7 @@ const resources = {
     testimonials: frTestimonials,
     footer: frFooter,
     common: frCommon,
+    contact: frContact,
   },
   en: {
     header: enHeader,
@@ -50,6 +55,7 @@ const resources = {
     testimonials: enTestimonials,
     footer: enFooter,
     common: enCommon,
+    contact: enContact,
   },
 };
 
