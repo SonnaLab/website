@@ -1,43 +1,52 @@
 {
-  "title": "À propos de Nous",
-  "subtitle": "Un laboratoire d'innovation au service de votre transformation digitale",
   "mission": {
-    "title": "Notre Mission",
-    "description": "Transformer les idées en solutions technologiques concrètes et accompagner les entreprises dans leur transformation digitale avec expertise et innovation."
+    "title": "À propos de Nous",
+    "description": "SonnaLab est le laboratoire d'idées qui transforme le digital. Nous accompagnons les entreprises dans leur transformation technologique en proposant des solutions innovantes, de la recherche et développement aux applications concrètes. Notre mission : être votre référence en conseil technologique."
   },
-  "values": {
-    "title": "Nos Valeurs",
-    "items": [
+  "features": {
+    "column1": [
       {
-        "title": "Innovation",
-        "description": "Nous restons à la pointe des technologies pour offrir les meilleures solutions"
+        "title": "Innovation Continue",
+        "description": "Recherche et développement sur l'écosystème tech, de l'IA aux matériaux de fabrication des puces."
       },
       {
-        "title": "Excellence",
-        "description": "Chaque projet est traité avec le plus haut niveau de qualité et d'attention"
+        "title": "Développement Sur Mesure",
+        "description": "Applications web et mobile, e-commerce, UI/UX design - toute l'expertise d'une agence moderne."
+      }
+    ],
+    "column2": [
+      {
+        "title": "Conseil Technologique",
+        "description": "Positionnement CTO pour vos projets tech avec une expertise reconnue et des solutions éprouvées."
       },
       {
-        "title": "Collaboration",
-        "description": "Nous travaillons main dans la main avec nos clients pour garantir leur succès"
+        "title": "Applications Lancées",
+        "description": "Lescopr, Lebocheur, Lecolt - nos solutions déjà adoptées et qui font leurs preuves sur le marché."
       }
     ]
   },
-  "stats": {
-    "projects": {
-      "value": "100+",
-      "label": "Projets réalisés"
+  "achievements": [
+    {
+      "label": "100+",
+      "description": "Projets Réalisés"
     },
-    "clients": {
-      "value": "50+",
-      "label": "Clients satisfaits"
+    {
+      "label": "50+",
+      "description": "Clients Satisfaits"
     },
-    "experience": {
-      "value": "5+",
-      "label": "Années d'expertise"
+    {
+      "label": "15+",
+      "description": "Technologies Maîtrisées"
     },
-    "satisfaction": {
-      "value": "98%",
-      "label": "Satisfaction client"
+    {
+      "label": "24/7",
+      "description": "Innovation Continue"
     }
+  ],
+  "cta": {
+    "title": "Prêt à Transformer Votre Vision en Réalité ?",
+    "description": "Rejoignez les entreprises qui font confiance à SonnaLab pour leur transformation digitale. De l'idée au déploiement, nous sommes votre partenaire technologique de référence.",
+    "primary": "Démarrer un Projet",
+    "secondary": "Découvrir Nos Solutions"
   }
 }

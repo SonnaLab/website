@@ -1,3 +1,52 @@
 {
-    
+  "mission": {
+    "title": "About Us",
+    "description": "SonnaLab is the think tank that transforms digital ideas into reality. We support companies in their technological transformation by offering innovative solutions, from R&D to concrete applications. Our mission: to be your trusted partner in tech consulting."
+  },
+  "features": {
+    "column1": [
+      {
+        "title": "Continuous Innovation",
+        "description": "Research and development in the tech ecosystem, from AI to chip manufacturing materials."
+      },
+      {
+        "title": "Tailor-Made Development",
+        "description": "Web and mobile applications, e-commerce, UI/UX design – the full expertise of a modern agency."
+      }
+    ],
+    "column2": [
+      {
+        "title": "Tech Consulting",
+        "description": "CTO positioning for your tech projects with recognized expertise and proven solutions."
+      },
+      {
+        "title": "Launched Applications",
+        "description": "AppOne, AppTwo, AppThree – our solutions adopted and proven in the market."
+      }
+    ]
+  },
+  "achievements": [
+    {
+      "label": "100+",
+      "description": "Projects Completed"
+    },
+    {
+      "label": "50+",
+      "description": "Satisfied Clients"
+    },
+    {
+      "label": "15+",
+      "description": "Technologies Mastered"
+    },
+    {
+      "label": "24/7",
+      "description": "Continuous Innovation"
+    }
+  ],
+  "cta": {
+    "title": "Ready to Transform Your Vision into Reality?",
+    "description": "Join the companies that trust SonnaLab for their digital transformation. From idea to deployment, we are your go-to tech partner.",
+    "primary": "Start a Project",
+    "secondary": "Discover Our Solutions"
+  }
 }
