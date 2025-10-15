@@ -22,5 +22,10 @@
       "description": "Nous déployons, testons et optimisons votre projet pour un lancement réussi.",
       "duration": "1-2 semaines"
     }
-  ]
+  ],
+    "cta": {
+        "ready": "Prêt à commencer ?!",
+        "discuss": "Discutons de votre projet et transformons vos idées en réalité.",
+        "contact": "Discutons-en"
+    }
 }

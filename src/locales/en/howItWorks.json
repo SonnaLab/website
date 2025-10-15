@@ -1,3 +1,31 @@
 {
-    
+  "title": "Our Process",
+  "subtitle": "A proven method for guaranteed results",
+  "steps": [
+    {
+      "title": "Discovery",
+      "description": "We analyze your needs, goals and market to define the best strategy.",
+      "duration": "1-2 weeks"
+    },
+    {
+      "title": "Design",
+      "description": "Our designers create interactive mockups validated with you at every step.",
+      "duration": "2-4 weeks"
+    },
+    {
+      "title": "Development",
+      "description": "Our team develops your solution with the best technologies and practices.",
+      "duration": "4-12 weeks"
+    },
+    {
+      "title": "Launch",
+      "description": "We deploy, test and optimize your project for a successful launch.",
+      "duration": "1-2 weeks"
+    }
+  ],
+    "cta": {
+        "ready": "Ready to get started ?!",
+        "discuss": "Let us discuss your project and turn your ideas into reality.",
+        "contact": "Let's Talk"
+    }
 }
