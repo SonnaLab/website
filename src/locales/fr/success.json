@@ -1,26 +1,52 @@
 {
   "title": "Nos Succès",
-  "subtitle": "Des chiffres qui parlent d'eux-mêmes",
-  "metrics": {
-    "rating": {
+  "description": "Des résultats concrets qui témoignent de notre expertise et de notre engagement envers l'excellence technologique.",
+  "metrics": [
+    {
+      "icon": "Star",
       "value": "4.9/5",
-      "label": "Note moyenne",
-      "description": "Basée sur 50+ avis clients"
+      "label": "Note Moyenne",
+      "description": "Trustpilot & Google"
     },
-    "projects": {
+    {
+      "icon": "Trophy",
       "value": "100+",
-      "label": "Projets livrés",
-      "description": "En 5 ans d'activité"
+      "label": "Projets Réalisés",
+      "description": "Solutions déployées"
     },
-    "satisfaction": {
+    {
+      "icon": "Target",
+      "value": "85+",
+      "label": "Solutions déployées",
+      "description": "En production"
+    },
+    {
+      "icon": "Users",
       "value": "98%",
-      "label": "Satisfaction client",
-      "description": "Clients qui nous recommandent"
+      "label": "Clients Satisfaits",
+      "description": "Taux de satisfaction"
     },
-    "growth": {
-      "value": "+150%",
-      "label": "Croissance annuelle",
-      "description": "ROI moyen de nos clients"
+    {
+      "icon": "ThumbsUp",
+      "value": "92%",
+      "label": "Nous recommandent",
+      "description": "Recommandation active"
     }
+  ],
+  "banner": {
+    "items": [
+      {
+        "value": "+5 ans d'expérience",
+        "caption": "Dans l'innovation tech"
+      },
+      {
+        "value": "3 applications phares",
+        "caption": "Lescopr, Lebocheur, Lecolt"
+      },
+      {
+        "value": "24/7 Support",
+        "caption": "Accompagnement continu"
+      }
+    ]
   }
 }

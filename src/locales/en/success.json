@@ -1,3 +1,52 @@
 {
-    
+  "title": "Our Success",
+  "description": "Concrete results that demonstrate our expertise and commitment to technological excellence.",
+  "metrics": [
+    {
+      "icon": "Star",
+      "value": "4.9/5",
+      "label": "Average Rating",
+      "description": "Trustpilot & Google"
+    },
+    {
+      "icon": "Trophy",
+      "value": "100+",
+      "label": "Projects Completed",
+      "description": "Deployed Solutions"
+    },
+    {
+      "icon": "Target",
+      "value": "85+",
+      "label": "Solutions Deployed",
+      "description": "In production"
+    },
+    {
+      "icon": "Users",
+      "value": "98%",
+      "label": "Satisfied Clients",
+      "description": "Satisfaction Rate"
+    },
+    {
+      "icon": "ThumbsUp",
+      "value": "92%",
+      "label": "Recommend Us",
+      "description": "Active Recommendations"
+    }
+  ],
+  "banner": {
+    "items": [
+      {
+        "value": "+5 years of experience",
+        "caption": "In tech innovation"
+      },
+      {
+        "value": "3 key applications",
+        "caption": "AppOne, AppTwo, AppThree"
+      },
+      {
+        "value": "24/7 Support",
+        "caption": "Continuous assistance"
+      }
+    ]
+  }
 }

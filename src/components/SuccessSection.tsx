@@ -1,61 +1,47 @@
 import React from 'react';
-import { Star, Trophy, Users, Target, ThumbsUp } from 'lucide-react';
+import { Star, Trophy, Target, Users, ThumbsUp } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export function SuccessSection() {
-  const successMetrics = [
-    {
-      icon: Star,
-      value: '4.9/5',
-      label: 'Note Moyenne',
-      description: 'Trustpilot & Google',
-      color: 'text-yellow-500'
-    },
-    {
-      icon: Trophy,
-      value: '100+',
-      label: 'Projets Réalisés',
-      description: 'Solutions déployées',
-      color: 'text-black'
-    },
-    {
-      icon: Target,
-      value: '85+',
-      label: 'Solutions déployées',
-      description: 'En production',
-      color: 'text-black'
-    },
-    {
-      icon: Users,
-      value: '98%',
-      label: 'Clients Satisfaits',
-      description: 'Taux de satisfaction',
-      color: 'text-black'
-    },
-    {
-      icon: ThumbsUp,
-      value: '92%',
-      label: 'Nous recommandent',
-      description: 'Recommandation active',
-      color: 'text-black'
-    }
-  ];
+  const { t } = useTranslation('success');
+
+  // Extraction des données depuis la traduction
+  const title = t('title');
+  const description = t('description');
+  const metrics = t('metrics', { returnObjects: true }) as Array<{
+    icon: string;
+    value: string;
+    label: string;
+    description: string;
+  }>;
+  const banner = t('banner', { returnObjects: true }) as { 
+    items: Array<{ value: string; caption: string }>
+  };
+
+  // Mapping pour associer les clés d'icônes aux composants de lucide-react
+  const iconMapping: { [key: string]: React.ElementType } = {
+    Star,
+    Trophy,
+    Target,
+    Users,
+    ThumbsUp
+  };
 
   return (
     <section id="success" className="py-20 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl lg:text-4xl font-gilroy font-bold text-black mb-4">
-            Nos Succès
+            {title}
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Des résultats concrets qui témoignent de notre expertise et de notre engagement 
-            envers l'excellence technologique.
+            {description}
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8">
-          {successMetrics.map((metric, index) => {
-            const IconComponent = metric.icon;
+          {metrics.map((metric, index) => {
+            const IconComponent = iconMapping[metric.icon] || Star;
             return (
               <div
                 key={index}
@@ -84,26 +70,14 @@ export function SuccessSection() {
         {/* Highlight banner */}
         <div className="mt-16 bg-black rounded-2xl p-8 text-center">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
-            <div>
-              <div className="text-2xl font-gilroy font-bold text-white mb-2">
-                +5 ans d'expérience
+            {banner.items.map((item, index) => (
+              <div key={index}>
+                <div className="text-2xl font-gilroy font-bold text-white mb-2">
+                  {item.value}
+                </div>
+                <p className="text-gray-300">{item.caption}</p>
               </div>
-              <p className="text-gray-300">Dans l'innovation tech</p>
-            </div>
-            
-            <div>
-              <div className="text-2xl font-gilroy font-bold text-white mb-2">
-                3 applications phares
-              </div>
-              <p className="text-gray-300">Lescopr, Lebocheur, Lecolt</p>
-            </div>
-            
-            <div>
-              <div className="text-2xl font-gilroy font-bold text-white mb-2">
-                24/7 Support
-              </div>
-              <p className="text-gray-300">Accompagnement continu</p>
-            </div>
+            ))}
           </div>
         </div>
       </div>
