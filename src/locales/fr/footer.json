@@ -1,63 +1,50 @@
 {
-  "tagline": "Transformons ensemble vos idées en réalité digitale",
-  "sections": {
-    "company": {
-      "title": "Entreprise",
-      "links": {
-        "about": "À propos",
-        "services": "Services",
-        "research": "R&D",
-        "careers": "Carrières",
-        "contact": "Contact"
-      }
-    },
-    "services": {
-      "title": "Services",
-      "links": {
-        "web": "Développement Web",
-        "mobile": "Applications Mobiles",
-        "ecommerce": "E-commerce",
-        "design": "Design & UX",
-        "strategy": "Stratégie Digitale"
-      }
-    },
-    "resources": {
-      "title": "Ressources",
-      "links": {
-        "blog": "Blog",
-        "guides": "Guides",
-        "documentation": "Documentation",
-        "support": "Support",
-        "faq": "FAQ"
-      }
-    },
-    "legal": {
-      "title": "Légal",
-      "links": {
-        "privacy": "Confidentialité",
-        "terms": "CGU",
-        "cookies": "Cookies",
-        "legal": "Mentions légales"
-      }
+  "newsletter": {
+    "title": "Restez à la Pointe de l'Innovation",
+    "description": "Recevez nos insights tech, tendances IA et analyses du marché directement dans votre boîte mail.",
+    "inputPlaceholder": "Votre adresse email",
+    "subscribe": "S'abonner"
+  },
+  "company": {
+    "description": "Laboratoire d’innovation digitale : SonnaLab accompagne votre transformation technologique, du conseil stratégique à la création d’applications sur mesure. Propulsez votre entreprise vers l’excellence et l’avenir.",
+    "address": {
+      "line1": "Station F, Paris",
+      "line2": "Paris, France"
     }
   },
-  "newsletter": {
-    "title": "Newsletter",
-    "description": "Restez informés de nos dernières innovations",
-    "placeholder": "Votre email",
-    "button": "S'abonner",
-    "success": "Merci pour votre inscription !",
-    "error": "Une erreur est survenue"
+  "sections": {
+    "about": "Qui sommes nous ?",
+    "services": "Que faisons nous ?",
+    "policies": "Comment le faisons nous ?"
   },
-  "contact": {
-    "title": "Contact",
-    "email": "hello@sonnalab.fr",
-    "phone": "+33 1 23 45 67 89",
-    "address": "Station F, Paris, France"
-  },
+  "quickLinks": [
+    { "label": "À propos", "href": "#about" },
+    { "label": "Nos Services", "href": "#services" },
+    { "label": "Portfolio", "href": "#portfolio" },
+    { "label": "Recherche & Développement", "href": "#research" },
+    { "label": "Blog Tech", "href": "#blog" },
+    { "label": "Contact", "href": "#contact" }
+  ],
+  "services": [
+    { "label": "Développement Web", "href": "#web-dev" },
+    { "label": "Applications Mobile", "href": "#mobile-dev" },
+    { "label": "Tech Consulting", "href": "#cto-consulting" },
+    { "label": "UI/UX Design", "href": "#design" },
+    { "label": "E-commerce", "href": "#ecommerce" },
+    { "label": "Intelligence Artificielle", "href": "#ai" }
+  ],
+  "policies": [
+    { "label": "Politique de Confidentialité", "href": "#privacy" },
+    { "label": "Conditions de Service", "href": "#terms" },
+    { "label": "Politique Qualité", "href": "#quality" },
+    { "label": "Mentions Légales", "href": "#legal" },
+    { "label": "Cookies", "href": "#cookies" }
+  ],
   "social": {
-    "title": "Suivez-nous"
+    "followUs": "Suivez-nous"
   },
-  "copyright": "© 2024 SonnaLab. Tous droits réservés.",
-  "madeWith": "Fait avec ❤️ par SonnaLab Team"
+  "bottom": {
+    "copyright": "© 2024 | SonnaLab. Tous droits réservés.",
+    "certifications": ["French Tech", "ISO 27001", "RGPD Conforme"]
+  }
 }

@@ -1,3 +1,50 @@
 {
-    
+  "newsletter": {
+    "title": "Stay Ahead in Innovation",
+    "description": "Receive our tech insights, AI trends and market analysis straight to your inbox.",
+    "inputPlaceholder": "Your email address",
+    "subscribe": "Subscribe"
+  },
+  "company": {
+    "description": "Digital innovation lab: SonnaLab drives your technological transformation, from strategic consulting to custom app development. Propel your business towards excellence and the future.",
+    "address": {
+      "line1": "Station F, Paris",
+      "line2": "Paris, France"
+    }
+  },
+  "sections": {
+    "about": "Who we are ?",
+    "services": "What we do ?",
+    "policies": "What about legal ?"
+  },
+  "quickLinks": [
+    { "label": "About", "href": "#about" },
+    { "label": "Our Services", "href": "#services" },
+    { "label": "Portfolio", "href": "#portfolio" },
+    { "label": "R&D", "href": "#research" },
+    { "label": "Tech Blog", "href": "#blog" },
+    { "label": "Contact", "href": "#contact" }
+  ],
+  "services": [
+    { "label": "Web Development", "href": "#web-dev" },
+    { "label": "Mobile Applications", "href": "#mobile-dev" },
+    { "label": "Tech Consulting", "href": "#cto-consulting" },
+    { "label": "UI/UX Design", "href": "#design" },
+    { "label": "E-commerce", "href": "#ecommerce" },
+    { "label": "Artificial Intelligence", "href": "#ai" }
+  ],
+  "policies": [
+    { "label": "Privacy Policy", "href": "#privacy" },
+    { "label": "Terms of Service", "href": "#terms" },
+    { "label": "Quality Policy", "href": "#quality" },
+    { "label": "Legal Notice", "href": "#legal" },
+    { "label": "Cookies", "href": "#cookies" }
+  ],
+  "social": {
+    "followUs": "Follow Us"
+  },
+  "bottom": {
+    "copyright": "© 2024 | SonnaLab. All rights reserved.",
+    "certifications": ["French Tech", "ISO 27001", "GDPR Compliant"]
+  }
 }
