@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+Allow: /en/
+Allow: /projects
+Allow: /en/projects
+Allow: /contact
+Allow: /en/contact
+
+# Sitemap
+Sitemap: https://sonnalab.com/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 10
+
+# Disallow admin/private sections (if any)
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*.json$

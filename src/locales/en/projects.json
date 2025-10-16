@@ -1,4 +1,10 @@
-{
+{  
+ 
+    "seo": {
+        "title": "Projects - Innovation & Technology",
+        "description": "Each application uses top-performing technologies to ensure reliability and scalability",
+        "keywords": "cutting-edge technology, user experience, fairness, transparency, SonnaLab"
+    },
     "hero": {
         "badge": "Our Flagship Apps",
         "title": "Innovation Serving Your Ambitions",

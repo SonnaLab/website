@@ -1,4 +1,9 @@
 {
+  "seo": {
+    "title": "Projets - Innovation & Technologie",
+    "description": "Chaque application utilise des technologies de pointe pour garantir fiabilité et évolutivité",
+    "keywords": "technologie de pointe, expérience utilisateur, équité, transparence, SonnaLab"
+  },
   "hero": {
     "badge": "Nos Applications Phares",
     "title": "L'Innovation au Service de Vos Ambitions",

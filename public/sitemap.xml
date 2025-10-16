@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <!-- Homepage FR -->
+  <url>
+    <loc>https://sonnalab.com/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sonnalab.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://sonnalab.com/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sonnalab.com/"/>
+    <lastmod>2025-01-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <!-- Homepage EN -->
+  <url>
+    <loc>https://sonnalab.com/en/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://sonnalab.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sonnalab.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sonnalab.com/"/>
+    <lastmod>2025-01-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Projects FR -->
+  <url>
+    <loc>https://sonnalab.com/projects</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sonnalab.com/en/projects"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://sonnalab.com/projects"/>
+    <lastmod>2025-01-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Projects EN -->
+  <url>
+    <loc>https://sonnalab.com/en/projects</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://sonnalab.com/projects"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sonnalab.com/en/projects"/>
+    <lastmod>2025-01-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Contact FR -->
+  <url>
+    <loc>https://sonnalab.com/contact</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sonnalab.com/en/contact"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://sonnalab.com/contact"/>
+    <lastmod>2025-01-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Contact EN -->
+  <url>
+    <loc>https://sonnalab.com/en/contact</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://sonnalab.com/contact"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sonnalab.com/en/contact"/>
+    <lastmod>2025-01-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+</urlset>

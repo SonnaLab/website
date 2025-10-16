@@ -24,6 +24,7 @@ import {
   Heart,
   ChevronRight
 } from 'lucide-react';
+import { SEO } from '../components/seo';
 
 export default function Projects() {
   const { t } = useTranslation('projects');
@@ -65,6 +66,14 @@ export default function Projects() {
   }>;
 
   return (
+    <>
+      <SEO
+        title={t('seo.title')}
+        description={t('seo.description')}
+        keywords={t('seo.keywords')}
+        url="/projects"
+        image="/images/projects-og.png"
+      />
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="relative py-20 bg-gray-50 overflow-hidden">
@@ -385,5 +394,6 @@ export default function Projects() {
         </div>
       </section>
     </div>
+    </>
   );
 }
