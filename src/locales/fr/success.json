@@ -4,7 +4,7 @@
   "metrics": [
     {
       "icon": "Star",
-      "value": "4.9/5",
+      "value": "4.6/5",
       "label": "Note Moyenne",
       "description": "Trustpilot & Google"
     },
@@ -16,7 +16,7 @@
     },
     {
       "icon": "Target",
-      "value": "85+",
+      "value": "+03",
       "label": "Solutions déployées",
       "description": "En production"
     },
@@ -36,7 +36,7 @@
   "banner": {
     "items": [
       {
-        "value": "+5 ans d'expérience",
+        "value": "+{{experience}} ans d'expérience",
         "caption": "Dans l'innovation tech"
       },
       {

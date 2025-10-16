@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 export function SuccessSection() {
   const { t } = useTranslation('success');
+  const experience = new Date().getFullYear() - 2022;
 
   // Extraction des données depuis la traduction
   const title = t('title');
@@ -73,7 +74,11 @@ export function SuccessSection() {
             {banner.items.map((item, index) => (
               <div key={index}>
                 <div className="text-2xl font-gilroy font-bold text-white mb-2">
-                  {item.value}
+                  {
+                    item.value.includes('{{experience}}')
+                      ? item.value.replace('{{experience}}', experience.toString())
+                      : item.value
+                  }
                 </div>
                 <p className="text-gray-300">{item.caption}</p>
               </div>

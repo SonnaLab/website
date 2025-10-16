@@ -44,7 +44,7 @@
     "followUs": "Suivez-nous"
   },
   "bottom": {
-    "copyright": "© 2024 | SonnaLab. Tous droits réservés.",
+    "copyright": "© {{year}} | SonnaLab. Tous droits réservés.",
     "certifications": ["French Tech", "ISO 27001", "RGPD Conforme"]
   }
 }

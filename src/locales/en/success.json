@@ -4,19 +4,19 @@
   "metrics": [
     {
       "icon": "Star",
-      "value": "4.9/5",
+      "value": "4.6/5",
       "label": "Average Rating",
       "description": "Trustpilot & Google"
     },
     {
       "icon": "Trophy",
-      "value": "100+",
+      "value": "20+",
       "label": "Projects Completed",
       "description": "Deployed Solutions"
     },
     {
       "icon": "Target",
-      "value": "85+",
+      "value": "3+",
       "label": "Solutions Deployed",
       "description": "In production"
     },
@@ -36,7 +36,7 @@
   "banner": {
     "items": [
       {
-        "value": "+5 years of experience",
+        "value": "+{{experience}} years of experience",
         "caption": "In tech innovation"
       },
       {

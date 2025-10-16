@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from './ui/sheet';
-import { Menu, Phone, Mail, MapPin, Calendar, FileText } from 'lucide-react';
+import { Menu, Phone, Mail, MapPin, Calendar, X } from 'lucide-react';
 import { LanguageSwitcher } from './utils/LanguageSwitcher';
 import sonnaLabLogo from '../assets/logo/bSonnaLab.png';
 
@@ -102,6 +102,7 @@ export function Header() {
 
   const handleConsultationClick = () => {
     navigate('/contact');
+    setIsOpen(false);
   };
 
   const textColorSecondary = isDarkBackground ? 'text-gray-100 drop-shadow-sm' : 'text-gray-700';
@@ -169,58 +170,101 @@ export function Header() {
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-80">
+          <SheetContent side="right" className="w-full sm:w-80 p-0" showClose={false}>
             <SheetTitle className="sr-only">{t('accessibility.menuTitle')}</SheetTitle>
             <SheetDescription className="sr-only">
               {t('accessibility.menuDescription')}
             </SheetDescription>
-            <div className="flex flex-col space-y-6 mt-6">
-              {navigation.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.section ? `#${item.section}` : item.href}
-                  onClick={handleNavigationClick(item.href, item.section)}
-                  className={`text-lg font-medium text-gray-700 hover:text-gray-400 transition-colors cursor-pointer ${
-                    location.pathname === item.href && !item.section ? 'text-black font-bold' : ''
-                  }`}
+            
+            {/* Mobile Sidebar Content */}
+            <div className="flex flex-col h-full">
+              {/* Header avec logo et close button */}
+              <div className="flex items-center justify-between p-6 border-b border-gray-100">
+                <img 
+                  src={sonnaLabLogo} 
+                  alt="SonnaLab" 
+                  className="h-8 w-auto"
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsOpen(false)}
+                  className="h-10 w-10 rounded-full hover:bg-gray-100"
                 >
-                  {item.name}
-                </a>
-              ))}
-              
-              <div className="flex flex-col space-y-3 pt-6 border-t">
-                <Button variant="outline" className="border-gray-700 text-gray-700 hover:bg-gray-700 hover:text-white">
-                  <FileText className="w-4 h-4 mr-2" />
-                  {t('cta.portfolio')}
+                  <X className="h-5 w-5" />
                 </Button>
+              </div>
+
+              {/* Navigation Links */}
+              <nav className="flex-1 overflow-y-auto px-6 py-8">
+                <div className="space-y-1">
+                  {navigation.map((item) => (
+                    <a
+                      key={item.name}
+                      href={item.section ? `#${item.section}` : item.href}
+                      onClick={handleNavigationClick(item.href, item.section)}
+                      className={`block px-4 py-3 rounded-xl text-base font-semibold transition-all cursor-pointer ${
+                        location.pathname === item.href && !item.section
+                          ? 'bg-black text-white'
+                          : 'text-gray-700 hover:bg-gray-50 hover:text-black'
+                      }`}
+                    >
+                      {item.name}
+                    </a>
+                  ))}
+                </div>
+              </nav>
+
+              {/* Bottom Section */}
+              <div className="border-t border-gray-100 p-6 space-y-6 bg-gray-50">
+                {/* Language Switcher */}
+                <div className="space-y-3">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-2">
+                    Langue
+                  </p>
+                  <LanguageSwitcher />
+                </div>
+
+                {/* CTA Button */}
                 <Button 
-                  onClick={() => {
-                    setIsOpen(false);
-                    handleConsultationClick();
-                  }}
-                  className="bg-black hover:bg-gray-800"
+                  onClick={handleConsultationClick}
+                  className="w-full bg-black hover:bg-gray-800 text-white h-12 text-base font-semibold"
                 >
-                  <Calendar className="w-4 h-4 mr-2" />
+                  <Calendar className="w-5 h-5 mr-2" />
                   {t('cta.consultation')}
                 </Button>
-              </div>
 
-              <div className="flex flex-col space-y-3 pt-6 border-t">
-                <LanguageSwitcher />
-              </div>
-
-              <div className="flex flex-col space-y-3 pt-6 border-t text-sm text-gray-600">
-                <div className="flex items-center space-x-2">
-                  <Phone className="w-4 h-4" />
-                  <span>{t('mobile.phone')}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Mail className="w-4 h-4" />
-                  <span>{t('mobile.email')}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <MapPin className="w-4 h-4" />
-                  <span>{t('mobile.location')}</span>
+                {/* Contact Info */}
+                <div className="space-y-3 pt-4 border-t border-gray-200">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-2">
+                    Contact
+                  </p>
+                  <div className="space-y-2.5">
+                    <a 
+                      href={`tel:${t('mobile.phone')}`}
+                      className="flex items-center gap-3 px-2 py-2 text-sm text-gray-600 hover:text-black transition-colors"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-black/5 flex items-center justify-center flex-shrink-0">
+                        <Phone className="w-4 h-4" />
+                      </div>
+                      <span className="font-medium">{t('mobile.phone')}</span>
+                    </a>
+                    <a 
+                      href={`mailto:${t('mobile.email')}`}
+                      className="flex items-center gap-3 px-2 py-2 text-sm text-gray-600 hover:text-black transition-colors"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-black/5 flex items-center justify-center flex-shrink-0">
+                        <Mail className="w-4 h-4" />
+                      </div>
+                      <span className="font-medium">{t('mobile.email')}</span>
+                    </a>
+                    <div className="flex items-center gap-3 px-2 py-2 text-sm text-gray-600">
+                      <div className="w-8 h-8 rounded-lg bg-black/5 flex items-center justify-center flex-shrink-0">
+                        <MapPin className="w-4 h-4" />
+                      </div>
+                      <span className="font-medium">{t('mobile.location')}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
