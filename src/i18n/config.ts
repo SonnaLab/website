@@ -15,6 +15,7 @@ import frFooter from '../locales/fr/footer.json';
 import frCommon from '../locales/fr/common.json';
 
 import frContact from '../locales/fr/contact.json';
+import frProjects from '../locales/fr/projects.json';
 
 // English
 import enHeader from '../locales/en/header.json';
@@ -29,6 +30,7 @@ import enFooter from '../locales/en/footer.json';
 import enCommon from '../locales/en/common.json';
 
 import enContact from '../locales/en/contact.json';
+import enProjects from '../locales/en/projects.json';
 
 const resources = {
   fr: {
@@ -43,6 +45,7 @@ const resources = {
     footer: frFooter,
     common: frCommon,
     contact: frContact,
+    projects: frProjects,
   },
   en: {
     header: enHeader,
@@ -56,6 +59,7 @@ const resources = {
     footer: enFooter,
     common: enCommon,
     contact: enContact,
+    projects: enProjects,
   },
 };
 

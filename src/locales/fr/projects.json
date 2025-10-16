@@ -1,0 +1,145 @@
+{
+  "hero": {
+    "badge": "Nos Applications Phares",
+    "title": "L'Innovation au Service de Vos Ambitions",
+    "subtitle": "Découvrez notre écosystème d'applications pensées pour transformer vos défis en opportunités"
+  },
+  "stats": {
+    "users": {
+      "value": "1K+",
+      "label": "Utilisateurs Actifs"
+    },
+    "projects": {
+      "value": "+03",
+      "label": "Applications Déployées"
+    },
+    "satisfaction": {
+      "value": "94%",
+      "label": "Satisfaction Client"
+    },
+    "uptime": {
+      "value": "99.9%",
+      "label": "Disponibilité"
+    }
+  },
+  "lescopr": {
+    "badge": "Supervision Applicative",
+    "title": "Lescopr",
+    "tagline": "L'Observateur Intelligent de Votre Infrastructure",
+    "description": "Lescopr est la plateforme de monitoring pensée pour les équipes modernes. Anticipez les bugs avant qu'ils n'impactent vos utilisateurs avec des analyses en temps réel et une intégration rapide à tous vos environnements.",
+    "features": {
+      "title": "Fonctionnalités Clés",
+      "list": [
+        "Logs intelligents et contextuels",
+        "Tableaux de bord dynamiques",
+        "Analyse prédictive intégrée",
+        "Support multi-stack (Node, PHP, Django, Laravel)",
+        "Intégrations Slack, Jira, Teams, Discord",
+        "Mode sombre/clair adaptatif"
+      ]
+    },
+    "tech": {
+      "title": "Technologies",
+      "stack": ["React", "Node.js", "PostgreSQL", "Python", "Redis", "WebSocket"]
+    },
+    "highlights": [
+      "Interface claire et moderne",
+      "Installation simplifiée",
+      "Widgets de monitoring prêts à l'emploi",
+      "Mises à jour continues"
+    ],
+    "cta": {
+      "visit": "Découvrir Lescopr",
+      "demo": "Démarrer un Essai Gratuit"
+    }
+  },
+  "lebocheur": {
+    "badge": "Plateforme Éducative",
+    "title": "Lebocheur",
+    "tagline": "Révisez Moins, Apprenez Plus",
+    "description": "Lebocheur révolutionne la manière dont vous révisez. Accédez instantanément à des milliers d'épreuves et corrigés détaillés, du primaire à l'université. Une interface épurée pour une concentration maximale.",
+    "features": {
+      "title": "Fonctionnalités Clés",
+      "list": [
+        "Bibliothèque de 10K+ épreuves et corrigés",
+        "Corrigés détaillés et méthodologiques",
+        "Interface sans distraction",
+        "Système de favoris et sauvegarde",
+        "Contenu adapté à chaque niveau",
+        "Communauté d'entraide active"
+      ]
+    },
+    "tech": {
+      "title": "Technologies",
+      "stack": ["React Native", "Django", "PostgreSQL", "AWS", "Elasticsearch"]
+    },
+    "highlights": [
+      "1K+ utilisateurs actifs",
+      "86% d'avis positifs",
+      "Mise à jour régulière des contenus",
+      "Disponible sur iOS et Android"
+    ],
+    "cta": {
+      "visit": "Découvrir Lebocheur",
+      "demo": "Télécharger l'Application"
+    }
+  },
+  "lecolt": {
+    "badge": "Économie Créative",
+    "title": "Lecolt",
+    "tagline": "L'Art à l'État Brut",
+    "description": "Lecolt redéfinit l'économie artistique. Une plateforme équitable qui connecte artistes, fans et organisateurs, garantissant une rémunération juste et un revenu minimum à chaque créateur grâce à un modèle solidaire unique.",
+    "features": {
+      "title": "Fonctionnalités À Venir",
+      "list": [
+        "Contenu vidéo court exclusif aux artistes",
+        "Système de booking simplifié",
+        "Pot commun solidaire avec revenu garanti",
+        "Réseau interdisciplinaire (musique, danse, arts visuels)",
+        "Économie circulaire et équitable",
+        "Communauté sélective et authentique"
+      ]
+    },
+    "tech": {
+      "title": "Technologies Prévues",
+      "stack": ["React Native", "Node.js", "MongoDB", "Stripe", "AI/ML", "WebRTC"]
+    },
+    "highlights": [
+      "Modèle solidaire innovant",
+      "Rémunération équitable garantie",
+      "Expérience authentique sans intermédiaire",
+      "Focus sur la qualité plutôt que la quantité"
+    ],
+    "cta": {
+      "visit": "Visiter Lecolt",
+      "demo": "Rejoindre la Liste d'Attente",
+      "notify": "Rejoindre la Liste d'Attente",
+      "learn": "En Savoir Plus"
+    },
+    "launch": "Lancement prévu : Printemps 2026"
+  },
+  "ecosystem": {
+    "title": "Un Écosystème Cohérent",
+    "subtitle": "Trois applications, une vision : transformer les défis en solutions durables",
+    "items": [
+      {
+        "title": "Technologie de Pointe",
+        "description": "Chaque application utilise les technologies les plus performantes pour garantir fiabilité et scalabilité"
+      },
+      {
+        "title": "Expérience Utilisateur",
+        "description": "Des interfaces pensées pour être intuitives, élégantes et sans friction"
+      },
+      {
+        "title": "Équité & Transparence",
+        "description": "Nos modèles économiques favorisent l'équité et la transparence pour tous les utilisateurs"
+      }
+    ]
+  },
+  "cta": {
+    "title": "Prêt à Rejoindre l'Aventure ?",
+    "description": "Étudiants, artistes ou entrepreneurs : nos solutions s’adaptent à vos besoins.",
+    "button": "Planifier une Démo",
+    "contact": "Nous Contacter"
+  }
+}

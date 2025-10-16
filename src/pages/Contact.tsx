@@ -63,10 +63,10 @@ export default function Contact() {
   const budgetOptions = t('form.budget.options', { returnObjects: true }) as string[];
 
   return (
-    <section className="relative py-20 bg-gradient-to-br from-gray-50 to-white overflow-hidden">
+  <section className="relative py-20 bg-gradient-to-br from-gray-50 to-white overflow-hidden">
       <div className="absolute inset-0 bg-grid-gray-100/50 [mask-image:linear-gradient(0deg,transparent,black)]" />
       
-    <div className="container mx-auto relative px-4" style={{ marginTop: '10rem' }}>
+    <div className="container mx-auto relative px-4">
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-black/5 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
             <Sparkles className="w-4 h-4 text-black" />
