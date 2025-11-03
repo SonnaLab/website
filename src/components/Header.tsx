@@ -7,10 +7,12 @@ import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from './ui/sheet';
 import { Menu, Phone, Mail, MapPin, Calendar, X } from 'lucide-react';
 import { LanguageSwitcher } from './utils/LanguageSwitcher';
+import { useNavigation } from '../hooks/useNavigation';
 import sonnaLabLogo from '../assets/logo/bSonnaLab.png';
 
 export function Header() {
   const { t } = useTranslation('header');
+  const { handleNavigationClick } = useNavigation();
   const navigate = useNavigate();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
@@ -65,31 +67,6 @@ export function Header() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const handleNavigationClick = (href: string, section: string | null) => (e: React.MouseEvent) => {
-    e.preventDefault();
-    
-    if (section) {
-      if (location.pathname === '/') {
-        const element = document.getElementById(section);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
-      } else {
-        navigate('/');
-        setTimeout(() => {
-          const element = document.getElementById(section);
-          if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-          }
-        }, 100);
-      }
-    } else {
-      navigate(href);
-    }
-    
-    setIsOpen(false);
-  };
 
   const handleLogoClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -244,7 +221,7 @@ export function Header() {
                       href={`tel:${t('mobile.phone')}`}
                       className="flex items-center gap-3 px-2 py-2 text-sm text-gray-600 hover:text-black transition-colors"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-black/5 flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-black/5 flex items-center justify-center shrink-0">
                         <Phone className="w-4 h-4" />
                       </div>
                       <span className="font-medium">{t('mobile.phone')}</span>
@@ -253,13 +230,13 @@ export function Header() {
                       href={`mailto:${t('mobile.email')}`}
                       className="flex items-center gap-3 px-2 py-2 text-sm text-gray-600 hover:text-black transition-colors"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-black/5 flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-black/5 flex items-center justify-center shrink-0">
                         <Mail className="w-4 h-4" />
                       </div>
                       <span className="font-medium">{t('mobile.email')}</span>
                     </a>
                     <div className="flex items-center gap-3 px-2 py-2 text-sm text-gray-600">
-                      <div className="w-8 h-8 rounded-lg bg-black/5 flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-black/5 flex items-center justify-center shrink-0">
                         <MapPin className="w-4 h-4" />
                       </div>
                       <span className="font-medium">{t('mobile.location')}</span>

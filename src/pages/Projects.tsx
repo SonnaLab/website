@@ -206,7 +206,7 @@ export default function Projects() {
                       <div className="grid sm:grid-cols-2 gap-3">
                         {highlights.map((highlight, idx) => (
                           <div key={idx} className="flex items-center gap-2">
-                            <Zap className="w-5 h-5 text-black flex-shrink-0" />
+                            <Zap className="w-5 h-5 text-black shrink-0" />
                             <span className="text-sm font-medium text-gray-800">{highlight}</span>
                           </div>
                         ))}
@@ -222,7 +222,7 @@ export default function Projects() {
                       <div className="grid gap-3">
                         {features.map((feature, idx) => (
                           <div key={idx} className="flex items-start gap-3 group">
-                            <div className="w-6 h-6 rounded-full bg-black flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
+                            <div className="w-6 h-6 rounded-full bg-black flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
                               <Check className="w-4 h-4 text-white" />
                             </div>
                             <span className="text-gray-800 font-medium">{feature}</span>
@@ -311,7 +311,7 @@ export default function Projects() {
                       </div>
                       
                       {/* Screenshot/Content */}
-                      <div className="aspect-[16/10] rounded-xl overflow-hidden">
+                      <div className="aspect-16/10 rounded-xl overflow-hidden">
                         <img 
                           src={`/projects/${project.id}.png`}
                           alt={t(`${project.id}.title`)}

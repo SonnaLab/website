@@ -18,27 +18,27 @@
     "policies": "What about legal ?"
   },
   "quickLinks": [
-    { "label": "About", "href": "#about" },
-    { "label": "Our Services", "href": "#services" },
-    { "label": "Portfolio", "href": "#portfolio" },
-    { "label": "R&D", "href": "#research" },
-    { "label": "Tech Blog", "href": "#blog" },
-    { "label": "Contact", "href": "#contact" }
+    { "label": "About", "href": "/", "section": "about" },
+    { "label": "Our Services", "href": "/", "section": "services" },
+    { "label": "Portfolio", "href": "/", "section": "portfolio" },
+    { "label": "R&D", "href": "/", "section": "research" },
+    { "label": "Tech Blog", "href": "/", "section": "blog" },
+    { "label": "Contact", "href": "/contact" }
   ],
   "services": [
-    { "label": "Web Development", "href": "#web-dev" },
-    { "label": "Mobile Applications", "href": "#mobile-dev" },
-    { "label": "Tech Consulting", "href": "#cto-consulting" },
-    { "label": "UI/UX Design", "href": "#design" },
-    { "label": "E-commerce", "href": "#ecommerce" },
-    { "label": "Artificial Intelligence", "href": "#ai" }
+    { "label": "Web Development", "href": "/", "section": "web-dev" },
+    { "label": "Mobile Applications", "href": "/", "section": "mobile-dev" },
+    { "label": "Tech Consulting", "href": "/", "section": "cto-consulting" },
+    { "label": "UI/UX Design", "href": "/", "section": "design" },
+    { "label": "E-commerce", "href": "/", "section": "ecommerce" },
+    { "label": "Artificial Intelligence", "href": "/", "section": "ai" }
   ],
   "policies": [
-    { "label": "Privacy Policy", "href": "#privacy" },
-    { "label": "Terms of Service", "href": "#terms" },
-    { "label": "Quality Policy", "href": "#quality" },
-    { "label": "Legal Notice", "href": "#legal" },
-    { "label": "Cookies", "href": "#cookies" }
+    { "label": "Privacy Policy", "href": "/", "section": "privacy" },
+    { "label": "Terms of Service", "href": "/", "section": "terms" },
+    { "label": "Quality Policy", "href": "/", "section": "quality" },
+    { "label": "Legal Notice", "href": "/", "section": "legal" },
+    { "label": "Cookies", "href": "/", "section": "cookies" }
   ],
   "social": {
     "followUs": "Follow Us"

@@ -46,9 +46,9 @@ export function AboutSection() {
                 {features.column1.map((item, index) => (
                   <div key={index} className="flex items-start space-x-3">
                     {index === 0 ? (
-                      <Lightbulb className="w-6 h-6 text-black mt-1 flex-shrink-0" />
+                      <Lightbulb className="w-6 h-6 text-black mt-1 shrink-0" />
                     ) : (
-                      <Code className="w-6 h-6 text-black mt-1 flex-shrink-0" />
+                      <Code className="w-6 h-6 text-black mt-1 shrink-0" />
                     )}
                     <div>
                       <h4 className="font-gilroy font-semibold text-black mb-1">
@@ -63,9 +63,9 @@ export function AboutSection() {
                 {features.column2.map((item, index) => (
                   <div key={index} className="flex items-start space-x-3">
                     {index === 0 ? (
-                      <Brain className="w-6 h-6 text-black mt-1 flex-shrink-0" />
+                      <Brain className="w-6 h-6 text-black mt-1 shrink-0" />
                     ) : (
-                      <Rocket className="w-6 h-6 text-black mt-1 flex-shrink-0" />
+                      <Rocket className="w-6 h-6 text-black mt-1 shrink-0" />
                     )}
                     <div>
                       <h4 className="font-gilroy font-semibold text-black mb-1">

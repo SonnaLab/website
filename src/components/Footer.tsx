@@ -5,9 +5,11 @@ import { Separator } from './ui/separator';
 import { Phone, Mail, MapPin, Clock, Facebook, Twitter, Instagram, Linkedin, Send } from 'lucide-react';
 import sonnaLabLogo from '../assets/logo/wSonnaLab.png';
 import { useTranslation } from 'react-i18next';
+import { useNavigation } from '../hooks/useNavigation';
 
 export function Footer() {
   const { t } = useTranslation('footer');
+  const { handleNavigationClick } = useNavigation();
   const currentYear = new Date().getFullYear();
 
   // Extraction des données depuis la traduction
@@ -22,8 +24,8 @@ export function Footer() {
     address: { line1: string; line2: string };
   };
   const sections = t('sections', { returnObjects: true }) as Array<{ about: string; services: string; policies: string }>[0];
-  const quickLinks = t('quickLinks', { returnObjects: true }) as Array<{ label: string; href: string }>;
-  const services = t('services', { returnObjects: true }) as Array<{ label: string; href: string }>;
+  const quickLinks = t('quickLinks', { returnObjects: true }) as Array<{ label: string; href: string; section?: string }>;
+  const services = t('services', { returnObjects: true }) as Array<{ label: string; href: string; section?: string }>;
   const policies = t('policies', { returnObjects: true }) as Array<{ label: string; href: string }>;
   const social = t('social', { returnObjects: true }) as { followUs: string };
   const bottom = t('bottom', { returnObjects: true }) as { 
@@ -90,8 +92,12 @@ export function Footer() {
               {quickLinks.map((link, index) => (
                 <li key={index}>
                   <a
-                    href={link.href}
-                    className="text-gray-300 hover:text-white transition-colors"
+                    href={link.section ? `/#${link.section}` : link.href}
+                    onClick={handleNavigationClick(
+                      link.section ? '/' : link.href, 
+                      link.section || null
+                    )}
+                    className="text-gray-300 hover:text-white transition-colors cursor-pointer"
                   >
                     {link.label}
                   </a>
@@ -107,8 +113,12 @@ export function Footer() {
               {services.map((service, index) => (
                 <li key={index}>
                   <a
-                    href={service.href}
-                    className="text-gray-300 hover:text-white transition-colors"
+                    href={service.section ? `/#${service.section}` : service.href}
+                    onClick={handleNavigationClick(
+                      service.section ? '/' : service.href,
+                      service.section || null
+                    )}
+                    className="text-gray-300 hover:text-white transition-colors cursor-pointer"
                   >
                     {service.label}
                   </a>

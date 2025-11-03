@@ -66,7 +66,7 @@
     },
     "phone": {
       "title": "Call Us",
-      "value": "+33 (0)7 53 31 56 03",
+      "value": "+33 xx xx xx xx xx",
       "description": "Mon-Fri, 9am-6pm"
     },
     "address": {
@@ -78,12 +78,47 @@
       "title": "Availability",
       "schedule": "Mon - Fri: 9am - 6pm",
       "response": "Response within 24h",
-      "emergency": "Emergency? Call us!"
+      "emergency": "Emergency? Leave us a message!"
     }
   },
   "cta": {
     "title": "Ready to Innovate?",
     "description": "Join over 100 companies that trust us for their digital transformation.",
     "button": "Book a Slot"
+  },
+  "validation": {
+    "name": {
+      "required": "Name is required",
+      "min": "Name must be at least {{count}} characters",
+      "max": "Name cannot exceed {{count}} characters",
+      "regex": "Name must only contain letters"
+    },
+    "email": {
+      "required": "Email is required",
+      "invalid": "Invalid email address",
+      "max": "Email is too long"
+    },
+    "phone": {
+      "required": "Phone number is required",
+      "invalid": "Invalid phone number",
+      "min": "Phone number is too short",
+      "max": "Phone number is too long"
+    },
+    "company": {
+      "required": "Company name is required",
+      "min": "Company name must be at least {{count}} characters",
+      "max": "Company name cannot exceed {{count}} characters"
+    },
+    "projectType": {
+      "required": "Please select a project type"
+    },
+    "budget": {
+      "required": "Please select a budget"
+    },
+    "message": {
+      "required": "Message is required",
+      "min": "Message must be at least {{count}} characters",
+      "max": "Message cannot exceed {{count}} characters"
+    }
   }
 }

@@ -6,7 +6,7 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Card, CardContent } from '../components/ui/card';
 import { Mail, Phone, MapPin, Send, MessageCircle, Sparkles, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
-import { contactSchema, ContactFormInputs } from '../schemas/contactSchema';
+import { createContactSchema, ContactFormInputs } from '../schemas/contactSchema';
 import { apiService } from '../services/api';
 import { SEO } from '../components/seo';
 
@@ -16,6 +16,8 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+
+  const contactSchema = createContactSchema(t);
 
   const {
     register,
@@ -73,8 +75,8 @@ export default function Contact() {
         url="/contact"
         image="/images/contact-og.png"
       />
-      <section className="relative py-20 bg-gradient-to-br from-gray-50 to-white overflow-hidden">
-        <div className="absolute inset-0 bg-grid-gray-100/50 [mask-image:linear-gradient(0deg,transparent,black)]" />
+      <section className="relative py-20 bg-linear-to-br from-gray-50 to-white overflow-hidden">
+        <div className="absolute inset-0 bg-grid-gray-100/50 mask-[linear-gradient(0deg,transparent,black)]" />
 
         <div className="container mx-auto relative px-4">
           <div className="text-center mb-16">
@@ -96,14 +98,14 @@ export default function Contact() {
             <CardContent className="p-8">
               {submitStatus === 'success' && (
                 <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
                   <p className="text-green-800 text-sm">{t('form.success')}</p>
                 </div>
               )}
 
               {submitStatus === 'error' && (
                 <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                  <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
                   <p className="text-red-800 text-sm">{errorMessage}</p>
                 </div>
               )}
@@ -122,7 +124,7 @@ export default function Contact() {
                       disabled={isSubmitting}
                     />
                     {errors.name && (
-                      <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+                      <p className="mt-1 text-sm text-red-600 text-error">{errors.name.message}</p>
                     )}
                   </div>
                   
@@ -139,7 +141,7 @@ export default function Contact() {
                       disabled={isSubmitting}
                     />
                     {errors.email && (
-                      <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                      <p className="mt-1 text-sm text-red-600 text-error">{errors.email.message}</p>
                     )}
                   </div>
                 </div>
@@ -158,7 +160,7 @@ export default function Contact() {
                       disabled={isSubmitting}
                     />
                     {errors.phone && (
-                      <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>
+                      <p className="mt-1 text-sm text-red-600 text-error">{errors.phone.message}</p>
                     )}
                   </div>
                   
@@ -174,7 +176,7 @@ export default function Contact() {
                       disabled={isSubmitting}
                     />
                     {errors.company && (
-                      <p className="mt-1 text-sm text-red-600">{errors.company.message}</p>
+                      <p className="mt-1 text-sm text-red-600 text-error">{errors.company.message}</p>
                     )}
                   </div>
                 </div>
@@ -200,7 +202,7 @@ export default function Contact() {
                       ))}
                     </select>
                     {errors.projectType && (
-                      <p className="mt-1 text-sm text-red-600">{errors.projectType.message}</p>
+                      <p className="mt-1 text-sm text-red-600 text-error">{errors.projectType.message}</p>
                     )}
                   </div>
                   
@@ -224,7 +226,7 @@ export default function Contact() {
                       ))}
                     </select>
                     {errors.budget && (
-                      <p className="mt-1 text-sm text-red-600">{errors.budget.message}</p>
+                      <p className="mt-1 text-sm text-red-600 text-error">{errors.budget.message}</p>
                     )}
                   </div>
                 </div>
@@ -244,7 +246,7 @@ export default function Contact() {
                     disabled={isSubmitting}
                   />
                   {errors.message && (
-                    <p className="mt-1 text-sm text-red-600">{errors.message.message}</p>
+                    <p className="mt-1 text-sm text-red-600 text-error">{errors.message.message}</p>
                   )}
                 </div>
                 
@@ -274,7 +276,7 @@ export default function Contact() {
             <Card className="border-0 shadow-lg hover:shadow-xl transition-all">
               <CardContent className="p-6">
                 <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center shrink-0">
                     <Mail className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -289,7 +291,7 @@ export default function Contact() {
             <Card className="border-0 shadow-lg hover:shadow-xl transition-all">
               <CardContent className="p-6">
                 <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center shrink-0">
                     <Phone className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -304,7 +306,7 @@ export default function Contact() {
             <Card className="border-0 shadow-lg hover:shadow-xl transition-all">
               <CardContent className="p-6">
                 <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center shrink-0">
                     <MapPin className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -319,7 +321,7 @@ export default function Contact() {
             <Card className="border-0 shadow-lg bg-black text-white">
               <CardContent className="p-6">
                 <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shrink-0">
                     <MessageCircle className="w-6 h-6 text-black" />
                   </div>
                   <div>

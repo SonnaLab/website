@@ -18,27 +18,27 @@
     "policies": "Comment le faisons nous ?"
   },
   "quickLinks": [
-    { "label": "À propos", "href": "#about" },
-    { "label": "Nos Services", "href": "#services" },
-    { "label": "Portfolio", "href": "#portfolio" },
-    { "label": "Recherche & Développement", "href": "#research" },
-    { "label": "Blog Tech", "href": "#blog" },
-    { "label": "Contact", "href": "#contact" }
+    { "label": "À propos", "href": "/", "section": "about" },
+    { "label": "Nos Services", "href": "/", "section": "services" },
+    { "label": "Portfolio", "href": "/", "section": "portfolio" },
+    { "label": "Recherche & Développement", "href": "/", "section": "research" },
+    { "label": "Blog Tech", "href": "/", "section": "blog" },
+    { "label": "Contact", "href": "/contact" }
   ],
   "services": [
-    { "label": "Développement Web", "href": "#web-dev" },
-    { "label": "Applications Mobile", "href": "#mobile-dev" },
-    { "label": "Tech Consulting", "href": "#cto-consulting" },
-    { "label": "UI/UX Design", "href": "#design" },
-    { "label": "E-commerce", "href": "#ecommerce" },
-    { "label": "Intelligence Artificielle", "href": "#ai" }
+    { "label": "Développement Web", "href": "/", "section": "web-dev" },
+    { "label": "Applications Mobile", "href": "/", "section": "mobile-dev" },
+    { "label": "Tech Consulting", "href": "/", "section": "cto-consulting" },
+    { "label": "UI/UX Design", "href": "/", "section": "design" },
+    { "label": "E-commerce", "href": "/", "section": "ecommerce" },
+    { "label": "Intelligence Artificielle", "href": "/", "section": "ai" }
   ],
   "policies": [
-    { "label": "Politique de Confidentialité", "href": "#privacy" },
-    { "label": "Conditions de Service", "href": "#terms" },
-    { "label": "Politique Qualité", "href": "#quality" },
-    { "label": "Mentions Légales", "href": "#legal" },
-    { "label": "Cookies", "href": "#cookies" }
+    { "label": "Politique de Confidentialité", "href": "/", "section": "privacy" },
+    { "label": "Conditions de Service", "href": "/", "section": "terms" },
+    { "label": "Politique Qualité", "href": "/", "section": "quality" },
+    { "label": "Mentions Légales", "href": "/", "section": "legal" },
+    { "label": "Cookies", "href": "/", "section": "cookies" }
   ],
   "social": {
     "followUs": "Suivez-nous"

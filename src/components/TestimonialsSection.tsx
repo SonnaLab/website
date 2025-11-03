@@ -37,7 +37,7 @@ export function TestimonialsSection() {
             <Card key={index} className="border border-gray-200 bg-white shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
               <CardContent className="p-8 flex flex-col h-full">
                 <div className="flex items-start space-x-4 mb-6">
-                  <div className="relative flex-shrink-0">
+                  <div className="relative shrink-0">
                     <ImageWithFallback
                       src={testimonial.image}
                       alt={testimonial.name}

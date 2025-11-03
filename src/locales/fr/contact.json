@@ -66,7 +66,7 @@
     },
     "phone": {
       "title": "Appelez-nous",
-      "value": "+33 (0)7 53 31 56 03",
+      "value": "+33 xx xx xx xx xx",
       "description": "Lun-Ven, 9h-18h"
     },
     "address": {
@@ -78,12 +78,47 @@
       "title": "Disponibilité",
       "schedule": "Lun - Ven: 9h - 18h",
       "response": "Réponse sous 24h",
-      "emergency": "Urgence ? Appelez-nous !"
+      "emergency": "Urgence ? laisse-nous un message !"
     }
   },
   "cta": {
     "title": "Prêt à Innover ?",
     "description": "Rejoignez plus de 100 entreprises qui nous font confiance pour leur transformation digitale.",
     "button": "Réserver un Créneau"
+  },
+  "validation": {
+    "name": {
+      "required": "Le nom est requis",
+      "min": "Le nom doit contenir au moins {{count}} caractères",
+      "max": "Le nom ne peut pas dépasser {{count}} caractères",
+      "regex": "Le nom ne doit contenir que des lettres"
+    },
+    "email": {
+      "required": "L'email est requis",
+      "invalid": "Adresse email invalide",
+      "max": "L'email est trop long"
+    },
+    "phone": {
+      "required": "Le téléphone est requis",
+      "invalid": "Numéro de téléphone invalide",
+      "min": "Le numéro de téléphone est trop court",
+      "max": "Le numéro de téléphone est trop long"
+    },
+    "company": {
+      "required": "Le nom de l'entreprise est requis",
+      "min": "Le nom de l'entreprise doit contenir au moins {{count}} caractères",
+      "max": "Le nom de l'entreprise ne peut pas dépasser {{count}} caractères"
+    },
+    "projectType": {
+      "required": "Veuillez sélectionner un type de projet"
+    },
+    "budget": {
+      "required": "Veuillez sélectionner un budget"
+    },
+    "message": {
+      "required": "Le message est requis",
+      "min": "Le message doit contenir au moins {{count}} caractères",
+      "max": "Le message ne peut pas dépasser {{count}} caractères"
+    }
   }
 }
