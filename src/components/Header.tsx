@@ -25,7 +25,7 @@ export function Header() {
     { name: t('nav.services'), href: '/', section: 'services' },
     { name: t('nav.research'), href: '/', section: 'research' },
     { name: t('nav.projects'), href: '/projects', section: null },
-    { name: t('nav.blog'), href: '/', section: 'blog' },
+    { name: t('nav.blog'), href: '/blog', section: null },
     { name: t('nav.contact'), href: '/contact', section: null },
   ];
 

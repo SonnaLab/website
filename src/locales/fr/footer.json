@@ -22,7 +22,7 @@
     { "label": "Nos Services", "href": "/", "section": "services" },
     { "label": "Portfolio", "href": "/", "section": "portfolio" },
     { "label": "Recherche & Développement", "href": "/", "section": "research" },
-    { "label": "Blog Tech", "href": "/", "section": "blog" },
+    { "label": "Blog Tech", "href": "/blog" },
     { "label": "Contact", "href": "/contact" }
   ],
   "services": [

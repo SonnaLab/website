@@ -1,0 +1,56 @@
+{
+  "seo": {
+    "title": "SonnaLab | Blog - Digital Innovation & AI",
+    "description": "Discover our articles on artificial intelligence, web development and digital transformation. Practical guides and case studies.",
+    "keywords": "technology blog, AI, web development, digital transformation, innovation"
+  },
+  "hero": {
+    "badge": "Insights & Trends",
+    "title": "Stay updated with the latest technological trends",
+    "subtitle": "Articles, tutorials and case studies to support your digital transformation",
+    "description": ""
+  },
+  "categories": {
+    "all": "All articles",
+    "innovation": "Innovation",
+    "coding": "Technologies",
+    "ia": "Artificial Intelligence",
+    "case-studies": "Case Studies",
+    "ecology": "Ecology",
+    "tips": "Tips & Tricks"
+  },
+  "search": {
+    "loading": "Loading...",
+    "placeholder": "Search articles...",
+    "results": "{{count}} article(s) found",
+    "noResults": "No articles found"
+  },
+  "article": {
+    "readTime": "{{time}} min read",
+    "publishedOn": "Published on",
+    "updatedOn": "Updated on",
+    "tableOfContents": "Table of contents",
+    "share": "Share this article",
+    "relatedPosts": "Related articles",
+    "readMore": "Read more"
+  },
+  "cta": {
+    "title": "Need personalized guidance?",
+    "description": "Our experts are here to turn your challenges into opportunities.",
+    "button": "Schedule a call"
+  },
+  "pagination": {
+    "previous": "Previous article",
+    "next": "Next article"
+  },
+  "errors": {
+    "loadPosts": "Error loading articles. Please try again later.",
+    "articleDoesntExist": "Article not found.",
+    "notFound": "We're sorry, the article you are looking for does not exist or has been moved.",
+    "goBack": "Go back to the blog"
+  },
+  "breadcrumb": {
+    "home": "Home",
+    "blog": "Blog"
+  }
+}

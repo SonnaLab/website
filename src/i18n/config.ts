@@ -18,6 +18,7 @@ import frContact from '../locales/fr/contact.json';
 import frProjects from '../locales/fr/projects.json';
 import frHome from '../locales/fr/home.json'
 import frSEO from '../locales/fr/seo.json'
+import frBlog from '../locales/fr/blog.json'
 
 // English
 import enHeader from '../locales/en/header.json';
@@ -35,6 +36,7 @@ import enContact from '../locales/en/contact.json';
 import enProjects from '../locales/en/projects.json';
 import enHome from '../locales/en/home.json'
 import enSEO from '../locales/en/seo.json'
+import enBlog from '../locales/en/blog.json'
 
 const resources = {
   fr: {
@@ -52,6 +54,7 @@ const resources = {
     projects: frProjects,
     home: frHome,
     seo: frSEO,
+    blog: frBlog,
   },
   en: {
     header: enHeader,
@@ -68,6 +71,7 @@ const resources = {
     projects: enProjects,
     home: enHome,
     seo: enSEO,
+    blog: enBlog,
   },
 };
 

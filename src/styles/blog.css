@@ -1,0 +1,279 @@
+/* ================================
+   BLOG POST 3-COLUMN LAYOUT
+   ================================ */
+
+/* Grid principal 3 colonnes */
+.blog-post-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr 280px;
+  gap: 3rem;
+  align-items: start;
+}
+
+/* Left Sidebar - Table of Contents */
+.blog-toc-sidebar {
+  display: none;
+}
+
+/* Main Content - Center */
+.blog-main-content {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Right Sidebar - Social Share */
+.blog-social-sidebar {
+  display: none;
+}
+
+/* ✅ Sticky behavior CORRIGÉ pour les sidebars */
+.sticky-sidebar {
+  position: sticky;
+  top: 5.5rem; /* 88px - Juste sous le header */
+  max-height: calc(100vh - 7rem);
+  overflow-y: auto;
+  transition: top 0.3s ease;
+}
+
+/* Scrollbar custom pour sticky sidebars */
+.sticky-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sticky-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sticky-sidebar::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.sticky-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* ================================
+   RESPONSIVE BREAKPOINTS
+   ================================ */
+
+/* Tablette large (1024px+) : 2 colonnes (TOC + Content) */
+@media (min-width: 1024px) {
+  .blog-post-grid {
+    grid-template-columns: 260px 1fr;
+    gap: 2.5rem;
+  }
+
+  .blog-toc-sidebar {
+    display: block;
+  }
+
+  .blog-social-sidebar {
+    display: none;
+  }
+}
+
+/* Desktop (1280px+) : 3 colonnes complètes */
+@media (min-width: 1280px) {
+  .blog-post-grid {
+    grid-template-columns: 280px 1fr 280px;
+    gap: 3rem;
+  }
+
+  .blog-social-sidebar {
+    display: block;
+  }
+}
+
+/* Large Desktop (1536px+) : Espacement optimisé */
+@media (min-width: 1536px) {
+  .blog-post-grid {
+    grid-template-columns: 300px 1fr 300px;
+    gap: 4rem;
+  }
+}
+
+/* Mobile : 1 colonne (Content uniquement) */
+@media (max-width: 1023px) {
+  .blog-post-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .blog-toc-sidebar,
+  .blog-social-sidebar {
+    display: none;
+  }
+
+  /* TOC mobile : en haut du contenu */
+  .mobile-toc {
+    display: block;
+    margin-bottom: 2rem;
+  }
+
+  .sticky-sidebar {
+    position: static;
+    max-height: none;
+  }
+}
+
+/* ================================
+   PROSE CONTENT STYLES
+   ================================ */
+.prose {
+  color: #1f2937;
+  line-height: 1.75;
+}
+
+.prose h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+  color: #111827;
+  scroll-margin-top: 6rem;
+}
+
+.prose h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
+  color: #111827;
+  scroll-margin-top: 6rem;
+}
+
+.prose h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: #1f2937;
+  scroll-margin-top: 6rem;
+}
+
+.prose p {
+  margin-bottom: 1.5rem;
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: #374151;
+}
+
+.prose ul, .prose ol {
+  margin-bottom: 1.5rem;
+  margin-left: 1.5rem;
+  line-height: 1.75;
+}
+
+.prose li {
+  line-height: 1.75;
+  margin-bottom: 0.5rem;
+}
+
+.prose strong {
+  font-weight: 700;
+  color: #111827;
+}
+
+.prose a {
+  color: #000000;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.prose a:hover {
+  color: #374151;
+}
+
+.prose blockquote {
+  border-left: 4px solid #000000;
+  padding-left: 1.5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-style: italic;
+  color: #374151;
+  margin: 1.5rem 0;
+  background-color: #f9fafb;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.prose code {
+  background-color: #f3f4f6;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-family: 'Monaco', 'Courier New', monospace;
+  color: #dc2626;
+}
+
+.prose pre {
+  margin-bottom: 1.5rem;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.prose img {
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  margin: 2rem 0;
+  width: 100%;
+}
+
+.prose table {
+  width: 100%;
+  margin: 1.5rem 0;
+  border-collapse: collapse;
+}
+
+.prose thead {
+  background-color: #f9fafb;
+}
+
+.prose th {
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+}
+
+.prose td {
+  color: #374151;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* ================================
+   UTILITIES
+   ================================ */
+
+/* Smooth scroll pour ancres */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+}
+
+/* Container custom pour blog */
+.blog-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+  .blog-container {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .blog-container {
+    padding: 0 2rem;
+  }
+}

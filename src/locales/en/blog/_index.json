@@ -1,0 +1,63 @@
+[
+  {
+    "id": "1-en",
+    "slug": "generative-ai-gdpr-compliance-guide-2025",
+    "lang": "en",
+    "title": "Generative AI & GDPR: The Complete Compliance Guide for 2025",
+    "excerpt": "ChatGPT, Claude, and LLMs create new legal challenges. Practical guide to use generative AI while respecting GDPR and protecting customer data in the EU.",
+    "author": "SonnaLab",
+    "publishedAt": "2025-01-15T09:00:00Z",
+    "updatedAt": "2025-01-20T14:30:00Z",
+    "coverImage": "/images/blog/en/ai-gdpr-2025.png",
+    "category": "innovation",
+    "tags": ["Generative AI", "GDPR", "Compliance", "ChatGPT", "Mistral AI", "Security"],
+    "readTime": 12,
+    "relatedPostId": "1-fr",
+    "contentFile": "ai-gdpr-2025.md",
+    "seo": {
+      "title": "Generative AI & GDPR 2025: Complete Compliance Guide",
+      "description": "ChatGPT, Claude, Mistral: how to use generative AI while respecting GDPR? 7 best practices + client case for compliance. AI Act 2025 included.",
+      "keywords": "generative ai gdpr, chatgpt gdpr, ai compliance, mistral ai, llm gdpr, ai act 2025, personal data ai, gdpr ai"
+    }
+  },
+  {
+    "id": "2-en",
+    "slug": "react-19-server-components-game-changer",
+    "lang": "en",
+    "title": "React 19 & Server Components: Why It's a Game-Changer",
+    "excerpt": "React 19 brings Server Components to production. 3x performance, perfect SEO, zero-config SSR. Deep dive into why this changes everything for web development.",
+    "author": "SonnaLab",
+    "publishedAt": "2025-01-28T10:00:00Z",
+    "coverImage": "/images/blog/en/react-19-rsc.png",
+    "category": "coding",
+    "tags": ["React", "Server Components", "Performance", "SEO", "Web Dev"],
+    "readTime": 14,
+    "relatedPostId": "2-fr",
+    "contentFile": "react-19-rsc.md",
+    "seo": {
+      "title": "React 19 Server Components: Complete Guide 2025",
+      "description": "React 19 revolutionizes web dev with Server Components. 3x performance, perfect SEO. Migration guide + client case +72% conversion.",
+      "keywords": "react 19, server components, react performance, seo react, server side rendering, rsc"
+    }
+  },
+  {
+    "id": "3-en",
+    "slug": "ai-chatbot-reduced-customer-support-costs-60-percent",
+    "lang": "en",
+    "title": "How AI Reduced Customer Support Costs by 60% (Real Case Study)",
+    "excerpt": "Real case study: AI chatbot + voicebot transformed support for 3 SMBs. Response time divided by 10, satisfaction +40%. Complete methodology inside.",
+    "author": "SonnaLab",
+    "publishedAt": "2025-02-05T08:00:00Z",
+    "coverImage": "/images/blog/en/ai-customer-service-case.png",
+    "category": "case-studies",
+    "tags": ["AI Chatbot", "Customer Service", "GPT-4", "ROI", "Automation"],
+    "readTime": 17,
+    "relatedPostId": "3-fr",
+    "contentFile": "ai-customer-service.md",
+    "seo": {
+      "title": "AI Chatbot: -60% Customer Support Costs | Case Study 2025",
+      "description": "3 SMBs saved $280k/year with an AI chatbot. Complete methodology, tech stack, detailed ROI. GPT-4 + Voicebot + RAG.",
+      "keywords": "ai chatbot, customer service ai, gpt-4 enterprise, support automation, voicebot, rag langchain, chatbot roi, customer support costs"
+    }
+  }
+]

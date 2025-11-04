@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
+import { ArticleStructuredDataProps } from '../../types/seo';
 
 export function OrganizationStructuredData() {
   const { i18n } = useTranslation();
@@ -93,6 +94,50 @@ export function BreadcrumbStructuredData({ items }: { items: Array<{ name: strin
     <Helmet>
       <script type="application/ld+json">
         {JSON.stringify(structuredData)}
+      </script>
+    </Helmet>
+  );
+}
+
+export function ArticleStructuredData({
+  title,
+  description,
+  image,
+  datePublished,
+  dateModified,
+  author
+}: ArticleStructuredDataProps) {
+  const articleSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: title,
+    description: description,
+    image: image.startsWith('http') ? image : `https://sonnalab.com${image}`,
+    datePublished: datePublished,
+    dateModified: dateModified,
+    author: {
+      '@type': 'Person',
+      name: author,
+      url: 'https://sonnalab.com/about'
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'SonnaLab',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://sonnalab.com/logo.png'
+      }
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://sonnalab.com/blog/${title.toLowerCase().replace(/\s+/g, '-')}`
+    }
+  };
+
+  return (
+    <Helmet>
+      <script type="application/ld+json">
+        {JSON.stringify(articleSchema)}
       </script>
     </Helmet>
   );

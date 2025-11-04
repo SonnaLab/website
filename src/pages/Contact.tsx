@@ -81,8 +81,8 @@ export default function Contact() {
         <div className="container mx-auto relative px-4">
           <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-black/5 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
-            <Sparkles className="w-4 h-4 text-black" />
-            <span className="text-sm font-medium text-black">{t('hero.header')}</span>
+            <Sparkles className="w-6 h-6 text-black" />
+            <span className="text-md font-medium text-black">{t('hero.header')}</span>
           </div>
           <h1 className="text-4xl lg:text-6xl font-bold text-black mb-6">
             {t('hero.title')}

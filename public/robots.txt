@@ -5,6 +5,10 @@ Allow: /projects
 Allow: /en/projects
 Allow: /contact
 Allow: /en/contact
+Allow: /blog
+Allow: /en/blog
+Allow: /blog/*
+Allow: /en/blog/*
 
 # Sitemap
 Sitemap: https://sonnalab.com/sitemap.xml
@@ -12,7 +16,12 @@ Sitemap: https://sonnalab.com/sitemap.xml
 # Crawl-delay
 Crawl-delay: 10
 
-# Disallow admin/private sections (if any)
+# Disallow admin/private sections
 Disallow: /admin/
 Disallow: /api/
 Disallow: /*.json$
+Disallow: /locales/
+Disallow: /src/
+
+# Allow specific JSON files
+Allow: /site.webmanifest

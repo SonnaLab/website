@@ -1,0 +1,63 @@
+[
+  {
+    "id": "1-fr",
+    "slug": "ia-generative-rgpd-conformite-2025",
+    "lang": "fr",
+    "title": "IA Générative et RGPD : Comment rester conforme en 2025",
+    "excerpt": "L'explosion de ChatGPT et des LLM pose de nouveaux défis juridiques. Guide pratique pour utiliser l'IA générative en respectant le RGPD et protéger vos données clients.",
+    "author": "SonnaLab",
+    "publishedAt": "2025-01-15T09:00:00Z",
+    "updatedAt": "2025-01-20T14:30:00Z",
+    "coverImage": "/images/blog/fr/ai-gdpr-2025.png",
+    "category": "innovation",
+    "tags": ["IA Générative", "RGPD", "Conformité", "ChatGPT", "Mistral AI", "Sécurité"],
+    "readTime": 12,
+    "relatedPostId": "1-en",
+    "contentFile": "ia-rgpd-2025.md",
+    "seo": {
+      "title": "IA Générative et RGPD 2025 : Guide de Conformité Complet",
+      "description": "ChatGPT, Claude, Mistral : comment utiliser l'IA générative en respectant le RGPD ? 7 bonnes pratiques + cas client pour rester conforme. AI Act 2025 inclus.",
+      "keywords": "ia générative rgpd, chatgpt rgpd, conformité ia, mistral ai, llm rgpd, ai act 2025, données personnelles ia, cnil ia"
+    }
+  },
+  {
+    "id": "2-fr",
+    "slug": "next-js-15-nouveautes-react-server-components",
+    "lang": "fr",
+    "title": "Next.js 15 : Les React Server Components révolutionnent le développement web",
+    "excerpt": "Next.js 15 sort en janvier 2025 avec un changement de paradigme majeur : les Server Components par défaut. Performance multipliée par 3, SEO boosté.",
+    "author": "SonnaLab",
+    "publishedAt": "2025-01-28T10:00:00Z",
+    "coverImage": "/images/blog/fr/nextjs-15-rsc.png",
+    "category": "coding",
+    "tags": ["Next.js", "React", "Server Components", "Performance", "SEO", "Turbopack"],
+    "readTime": 15,
+    "relatedPostId": "2-en",
+    "contentFile": "nextjs-15-rsc.md",
+    "seo": {
+      "title": "Next.js 15 et React Server Components : Guide Complet 2025",
+      "description": "Next.js 15 révolutionne le web avec les Server Components. Performance x3, SEO parfait, Turbopack stable. Guide migration + cas client +72% conversion.",
+      "keywords": "next.js 15, react server components, turbopack, performance web, seo nextjs, partial prerendering, server actions"
+    }
+  },
+  {
+    "id": "3-fr",
+    "slug": "comment-ia-reduit-couts-service-client-60-pourcent",
+    "lang": "fr",
+    "title": "Comment l'IA a réduit de 60% les coûts de service client de nos clients",
+    "excerpt": "Étude de cas réelle : chatbot IA + voicebot ont transformé le support client de 3 PME françaises. Temps de réponse divisé par 10, satisfaction +40%.",
+    "author": "SonnaLab",
+    "publishedAt": "2025-02-05T08:00:00Z",
+    "coverImage": "/images/blog/fr/ai-customer-service-case.png",
+    "category": "case-studies",
+    "tags": ["IA Conversationnelle", "Chatbot", "Service Client", "GPT-4", "ROI", "Automatisation"],
+    "readTime": 18,
+    "relatedPostId": "3-en",
+    "contentFile": "ia-service-client.md",
+    "seo": {
+      "title": "Chatbot IA : -60% de Coûts Service Client | Étude de Cas 2025",
+      "description": "3 PME françaises ont économisé 260k€/an avec un chatbot IA. Méthodologie complète, stack technique, ROI détaillé. GPT-4 + Voicebot + RAG.",
+      "keywords": "chatbot ia, service client ia, gpt-4 entreprise, automatisation support, voicebot, rag langchain, roi chatbot, cout service client"
+    }
+  }
+]

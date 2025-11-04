@@ -1,0 +1,56 @@
+{
+  "seo": {
+    "title": "Blog | SonnaLab - Innovation Digitale & IA",
+    "description": "Découvrez nos articles sur l'intelligence artificielle, le développement web et la transformation digitale. Guides pratiques et études de cas.",
+    "keywords": "blog technologie, IA, développement web, transformation digitale, innovation"
+  },
+  "hero": {
+    "badge": "Aperçus & Tendances",
+    "title": "Restez informé des dernières tendances technologiques",
+    "subtitle": "Articles, tutoriels et études de cas pour vous accompagner dans votre transformation numérique",
+    "description": ""
+  },
+  "categories": {
+    "all": "Tous les articles",
+    "innovation": "Innovation",
+    "coding": "Technologies",
+    "ia": "Intelligence Artificielle",
+    "case-studies": "Études de Cas",
+    "ecology": "Écologie",
+    "tips": "Astuces & Conseils"
+  },
+  "search": {
+    "loading": "Chargement...",
+    "placeholder": "Rechercher un article...",
+    "results": "{{count}} article(s) trouvé(s)",
+    "noResults": "Aucun article trouvé"
+  },
+  "article": {
+    "readTime": "{{time}} min de lecture",
+    "publishedOn": "Publié le",
+    "updatedOn": "Mis à jour le",
+    "tableOfContents": "Table des matières",
+    "share": "Partager cet article",
+    "relatedPosts": "Articles similaires",
+    "readMore": "Lire l'article"
+  },
+  "cta": {
+    "title": "Besoin d'un accompagnement personnalisé ?",
+    "description": "Nos experts sont là pour transformer vos défis en opportunités.",
+    "button": "Prendre rendez-vous"
+  },
+  "pagination": {
+    "previous": "Article précédent",
+    "next": "Article suivant"
+  },
+  "blogErrors": {
+    "loadPosts": "Erreur lors du chargement des articles. Veuillez réessayer plus tard.",
+    "articleDoesntExist": "Article non trouvé.",
+    "notFound": "Désolé, l'article que vous recherchez n'existe pas ou a été supprimé.",
+    "goBack": "Retour au blog"
+  },
+  "breadcrumb": {
+    "home": "Accueil",
+    "blog": "Blog"
+  }
+}
