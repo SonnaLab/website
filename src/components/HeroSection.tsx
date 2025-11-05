@@ -4,9 +4,12 @@ import { Input } from './ui/input';
 import { Search, Calendar, Zap, Users, Lightbulb } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { useTranslation } from 'react-i18next';
+import { useModal } from './providers/ModalProvider';
+
 
 export function HeroSection() {
   const { t } = useTranslation('hero');
+  const { openConsultationModal } = useModal();
 
   return (
     <section id="home" className="relative pt-24 pb-20 lg:pt-32 lg:pb-32 bg-gradient-to-br from-gray-50 to-white">
@@ -33,7 +36,7 @@ export function HeroSection() {
                     className="pl-10 h-12 border-gray-200"
                   />
                 </div>
-                <Button size="lg" className="h-12 px-8 bg-black hover:bg-gray-800">
+                <Button size="lg" className="h-12 px-8 bg-black hover:bg-gray-800" onClick={openConsultationModal}>
                   <Calendar className="w-5 h-5 mr-2" />
                   {t('cta.primary')}
                 </Button>

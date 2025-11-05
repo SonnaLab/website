@@ -9,6 +9,8 @@ import { Menu, Phone, Mail, MapPin, Calendar, X } from 'lucide-react';
 import { LanguageSwitcher } from './utils/LanguageSwitcher';
 import { useNavigation } from '../hooks/useNavigation';
 import sonnaLabLogo from '../assets/logo/bSonnaLab.png';
+import { useModal } from './providers/ModalProvider';
+import { on } from 'events';
 
 export function Header() {
   const { t } = useTranslation('header');
@@ -18,6 +20,7 @@ export function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isDarkBackground, setIsDarkBackground] = useState(false);
+  const { openConsultationModal } = useModal();
 
   const navigation = [
     { name: t('nav.home'), href: '/', section: 'home' },
@@ -122,7 +125,7 @@ export function Header() {
           <LanguageSwitcher />
           <Button 
             size="sm"
-            onClick={handleConsultationClick}
+            onClick={openConsultationModal}
             className={`transition-all duration-300 group ${
               scrolled || !isDarkBackground
                 ? 'bg-black hover:bg-gray-800 text-white'
@@ -204,7 +207,7 @@ export function Header() {
 
                 {/* CTA Button */}
                 <Button 
-                  onClick={handleConsultationClick}
+                  onClick={openConsultationModal}
                   className="w-full bg-black hover:bg-gray-800 text-white h-12 text-base font-semibold"
                 >
                   <Calendar className="w-5 h-5 mr-2" />

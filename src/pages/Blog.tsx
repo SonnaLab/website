@@ -7,6 +7,7 @@ import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
 import { getBlogPostsByLang } from '../data/blogLoader';
 import { motion } from 'framer-motion';
+import { useModal } from '../components/providers/ModalProvider';
 
 export default function Blog() {
   const { t, i18n } = useTranslation('blog');
@@ -14,6 +15,7 @@ export default function Blog() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const blogPosts = getBlogPostsByLang(lang);
+  const { openConsultationModal } = useModal();
 
   const categories = [
     { id: 'all', label: t('categories.all') },
@@ -176,11 +178,9 @@ export default function Blog() {
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             {t('cta.description')}
           </p>
-          <Link to="/contact">
-            <Button size="lg" className="bg-black text-white hover:bg-gray-800">
+          <Button size="lg" className="bg-black text-white hover:bg-gray-800" onClick={openConsultationModal}>
               {t('cta.button')}
             </Button>
-          </Link>
         </div>
       </section>
     </>

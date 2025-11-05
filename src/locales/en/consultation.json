@@ -1,0 +1,102 @@
+{
+  "step": {
+    "type": "Project Type",
+    "details": "Details",
+    "contact": "Contact",
+    "confirmation": "Confirmation"
+  },
+  "projectType": {
+    "title": "What type of project do you want to launch?",
+    "subtitle": "Select the project type that best fits your needs",
+    "web": "Web Application",
+    "webDesc": "Website, PWA, SaaS, E-commerce",
+    "mobile": "Mobile Application",
+    "mobileDesc": "iOS, Android, React Native",
+    "consulting": "Consulting",
+    "consultingDesc": "Audit, technical advice",
+    "ai": "Artificial Intelligence",
+    "aiDesc": "Chatbots, ML, automation",
+    "other": "Other project",
+    "otherDesc": "Custom project"
+  },
+  "details": {
+    "title": "Tell us about your project",
+    "subtitle": "The more you tell us, the better we can help you",
+    "descriptionLabel": "Project description",
+    "descriptionPlaceholder": "Describe your project, your goals, your specific needs...",
+    "descriptionRequired": "*",
+    "charactersCount": "{{count}} / 500 characters",
+    "budgetLabel": "Estimated budget",
+    "timelineLabel": "Desired timeline",
+    "budget": {
+      "small": "< €10K",
+      "smallDesc": "Small project",
+      "medium": "€10K - €50K",
+      "mediumDesc": "Medium project",
+      "large": "€50K - €150K",
+      "largeDesc": "Large project",
+      "enterprise": "> €150K",
+      "enterpriseDesc": "Enterprise"
+    },
+    "timeline": {
+      "urgent": "< 1 month",
+      "urgentDesc": "Urgent",
+      "1-3months": "1-3 months",
+      "1-3monthsDesc": "Short term",
+      "3-6months": "3-6 months",
+      "3-6monthsDesc": "Medium term",
+      "6months+": "> 6 months",
+      "6months+Desc": "Long term"
+    }
+  },
+  "contact": {
+    "title": "Your contact information",
+    "subtitle": "So we can get back to you quickly",
+    "firstName": "First name",
+    "firstNamePlaceholder": "John",
+    "lastName": "Last name",
+    "lastNamePlaceholder": "Doe",
+    "email": "Email",
+    "emailPlaceholder": "john.doe@example.com",
+    "phone": "Phone",
+    "phonePlaceholder": "+1 555 123 4567",
+    "company": "Company",
+    "companyPlaceholder": "Your company name",
+    "role": "Role",
+    "rolePlaceholder": "CEO, CTO, Product Manager...",
+    "required": "*"
+  },
+  "confirmation": {
+    "title": "Review your information",
+    "subtitle": "Make sure everything is correct before submitting your request",
+    "projectTypeLabel": "Project type",
+    "descriptionLabel": "Description",
+    "budgetLabel": "Budget",
+    "timelineLabel": "Timeline",
+    "contactLabel": "Your contact information",
+    "successTitle": "Request sent successfully!",
+    "successDesc": "We have received your request and will contact you shortly.",
+    "emailSent": "📧 A confirmation email has been sent to",
+    "sending": "Sending..."
+  },
+  "cta": {
+    "next": "Next",
+    "prev": "Previous",
+    "send": "Send my request",
+    "sending": "Sending...",
+    "close": "Close"
+  },
+  "accessibility": {
+    "modalTitle": "New project request - Step {{step}} of {{total}}",
+    "modalTitleSuccess": "Request sent successfully",
+    "modalDescription": "Fill out the multi-step form to start your project with us.",
+    "modalDescriptionSuccess": "Your request has been sent successfully. We will contact you soon.",
+    "closeButton": "Close modal"
+  },
+  "errors": {
+    "serverError": "Error {{status}}: {{message}}",
+    "networkError": "Unable to contact the server. Check your connection.",
+    "genericError": "An error occurred while sending.",
+    "unexpectedError": "An unexpected error occurred."
+  }
+}

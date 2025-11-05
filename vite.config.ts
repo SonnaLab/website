@@ -53,9 +53,28 @@
     build: {
       target: 'esnext',
       outDir: 'build',
+      rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'radix-ui': [
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-visually-hidden',
+          ],
+          'animation': ['framer-motion'],
+        },
+      },
+    },
     },
     server: {
       port: 3000,
       open: true,
+      proxy: {
+      '/api': {
+        target: 'https://api.sonnalab.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
     },
   });

@@ -25,10 +25,12 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { SEO } from '../components/seo';
+import { useModal } from '../components/providers/ModalProvider';
 
 export default function Projects() {
   const { t } = useTranslation('projects');
   const navigate = useNavigate();
+  const { openConsultationModal } = useModal();
   const [activeProject, setActiveProject] = useState<string>('lescopr');
 
   const stats = [
@@ -376,14 +378,14 @@ export default function Projects() {
               <Button
                 size="lg"
                 className="bg-white text-black hover:bg-gray-100 hover:scale-105 transition-all shadow-xl text-lg px-8 py-6"
-                onClick={() => navigate('/contact')}
+                onClick={() => openConsultationModal()}
               >
                 <Calendar className="w-6 h-6 mr-2" />
                 {t('cta.button')}
               </Button>
             <Button
                 size="lg"
-                className="bg-black text-white hover:bg-white hover:text-black hover:border-black hover:scale-105 transition-all text-lg px-8 py-6"
+                className="bg-black text-white hover:bg-black-600 hover:text-white hover:border-black hover:scale-105 transition-all text-lg px-8 py-6"
                 onClick={() => navigate('/contact')}
             >
                 <ChevronRight className="w-6 h-6 mr-2" />

@@ -207,7 +207,13 @@
 html {
   font-size: var(--font-size);
   font-family: 'Raleway', sans-serif;
+  --scrollbar-width: 0px;
 }
+
+html:has(body:not(:has([data-state='open']))) {
+  --scrollbar-width: calc(100vw - 100%);
+}
+
 
 /* Use Raleway with higher font weights for bold text */
 .font-gilroy {
@@ -228,4 +234,33 @@ h1, h2, h3, h4, h5, h6 {
 .font-semibold {
   font-family: 'Raleway', sans-serif;  
   font-weight: 700;
+}
+
+/* Fix : Masquer la scrollbar quand le modal est ouvert */
+body:has([data-state="open"]) {
+  overflow: hidden;
+  padding-right: var(--scrollbar-width, 0px);
+}
+
+/* Smooth scrollbar dans le contenu du modal */
+.modal-scrollable {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.modal-scrollable::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-scrollable::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal-scrollable::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.modal-scrollable::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.3);
 }

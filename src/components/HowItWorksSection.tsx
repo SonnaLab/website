@@ -2,9 +2,11 @@ import React from 'react';
 import { Card, CardContent } from './ui/card';
 import { MessageCircle, PenTool, Code, Rocket } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useModal } from './providers/ModalProvider';
 
 export function HowItWorksSection() {
   const { t } = useTranslation('howItWorks');
+  const { openConsultationModal } = useModal();
 
   // Extraction des données depuis la traduction
   const title = t('title');
@@ -79,7 +81,7 @@ export function HowItWorksSection() {
                 {t('cta.discuss')}
               </p>
             </div>
-            <button className="bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-800 transition-colors font-medium">
+            <button className="bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-800 transition-colors font-medium" onClick={openConsultationModal}>
               {t('cta.contact')}
             </button>
           </div>

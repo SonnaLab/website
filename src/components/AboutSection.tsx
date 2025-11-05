@@ -2,9 +2,11 @@ import React from 'react';
 import { Card, CardContent } from './ui/card';
 import { Lightbulb, Code, Brain, Rocket } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useModal } from './providers/ModalProvider';
 
 export function AboutSection() {
   const { t } = useTranslation('about');
+  const { openConsultationModal } = useModal();
 
   // Extraction des textes depuis la traduction
   const mission = t('mission', { returnObjects: true }) as {
@@ -112,7 +114,7 @@ export function AboutSection() {
               {cta.description}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-8 py-3 bg-white text-black font-gilroy font-semibold rounded-lg hover:bg-gray-100 transition-colors">
+              <button className="px-8 py-3 bg-white text-black font-gilroy font-semibold rounded-lg hover:bg-gray-100 transition-colors" onClick={openConsultationModal}>
                 {cta.primary}
               </button>
               <button className="px-8 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white/10 transition-colors">

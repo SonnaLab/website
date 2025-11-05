@@ -1,0 +1,102 @@
+{
+  "step": {
+    "type": "Type de projet",
+    "details": "Détails",
+    "contact": "Contact",
+    "confirmation": "Confirmation"
+  },
+  "projectType": {
+    "title": "Quel type de projet souhaitez-vous lancer ?",
+    "subtitle": "Sélectionnez le type de projet qui correspond le mieux à vos besoins",
+    "web": "Application Web",
+    "webDesc": "Site web, PWA, SaaS, E-commerce",
+    "mobile": "Application Mobile",
+    "mobileDesc": "iOS, Android, React Native",
+    "consulting": "Consulting",
+    "consultingDesc": "Audit, conseils techniques",
+    "ai": "Intelligence Artificielle",
+    "aiDesc": "Chatbots, ML, automatisation",
+    "other": "Autre projet",
+    "otherDesc": "Projet sur mesure"
+  },
+  "details": {
+    "title": "Parlez-nous de votre projet",
+    "subtitle": "Plus vous nous en direz, mieux nous pourrons vous aider",
+    "descriptionLabel": "Description du projet",
+    "descriptionPlaceholder": "Décrivez votre projet, vos objectifs, vos besoins spécifiques...",
+    "descriptionRequired": "*",
+    "charactersCount": "{{count}} / 500 caractères",
+    "budgetLabel": "Budget estimé",
+    "timelineLabel": "Délai souhaité",
+    "budget": {
+      "small": "< 10K €",
+      "smallDesc": "Petit projet",
+      "medium": "10K - 50K €",
+      "mediumDesc": "Projet moyen",
+      "large": "50K - 150K €",
+      "largeDesc": "Grand projet",
+      "enterprise": "> 150K €",
+      "enterpriseDesc": "Entreprise"
+    },
+    "timeline": {
+      "urgent": "< 1 mois",
+      "urgentDesc": "Urgent",
+      "1-3months": "1-3 mois",
+      "1-3monthsDesc": "Court terme",
+      "3-6months": "3-6 mois",
+      "3-6monthsDesc": "Moyen terme",
+      "6months+": "> 6 mois",
+      "6months+Desc": "Long terme"
+    }
+  },
+  "contact": {
+    "title": "Vos coordonnées",
+    "subtitle": "Pour que nous puissions vous recontacter rapidement",
+    "firstName": "Prénom",
+    "firstNamePlaceholder": "Jean",
+    "lastName": "Nom",
+    "lastNamePlaceholder": "Dupont",
+    "email": "Email",
+    "emailPlaceholder": "jean.dupont@example.com",
+    "phone": "Téléphone",
+    "phonePlaceholder": "+33 6 12 34 56 78",
+    "company": "Entreprise",
+    "companyPlaceholder": "Nom de votre entreprise",
+    "role": "Fonction",
+    "rolePlaceholder": "CEO, CTO, Product Manager...",
+    "required": "*"
+  },
+  "confirmation": {
+    "title": "Vérifiez vos informations",
+    "subtitle": "Assurez-vous que tout est correct avant d'envoyer votre demande",
+    "projectTypeLabel": "Type de projet",
+    "descriptionLabel": "Description",
+    "budgetLabel": "Budget",
+    "timelineLabel": "Délai",
+    "contactLabel": "Vos coordonnées",
+    "successTitle": "Demande envoyée avec succès !",
+    "successDesc": "Nous avons bien reçu votre demande et nous vous contacterons dans les plus brefs délais.",
+    "emailSent": "📧 Un email de confirmation vous a été envoyé à",
+    "sending": "Envoi en cours..."
+  },
+  "cta": {
+    "next": "Suivant",
+    "prev": "Précédent",
+    "send": "Envoyer ma demande",
+    "sending": "Envoi en cours...",
+    "close": "Fermer"
+  },
+  "accessibility": {
+    "modalTitle": "Nouvelle demande de projet - Étape {{step}} sur {{total}}",
+    "modalTitleSuccess": "Demande envoyée avec succès",
+    "modalDescription": "Remplissez le formulaire multi-étapes pour démarrer votre projet avec nous.",
+    "modalDescriptionSuccess": "Votre demande a été envoyée avec succès. Nous vous contacterons bientôt.",
+    "closeButton": "Fermer le modal"
+  },
+  "errors": {
+    "serverError": "Erreur {{status}}: {{message}}",
+    "networkError": "Impossible de contacter le serveur. Vérifiez votre connexion.",
+    "genericError": "Une erreur est survenue lors de l'envoi.",
+    "unexpectedError": "Une erreur inattendue est survenue."
+  }
+}
