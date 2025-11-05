@@ -1,20 +1,13 @@
-import { getBlogPosts } from '../../data/blogLoader';
-import type { BlogPost } from '../../types/blog';
+import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const BASE_URL = 'https://sonnalab.com';
 
-interface SitemapUrl {
-  loc: string;
-  lastmod: string;
-  changefreq: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
-  priority: number;
-  alternates?: {
-    lang: string;
-    href: string;
-  }[];
-}
-
-const staticPages: SitemapUrl[] = [
+const staticPages = [
   {
     loc: `${BASE_URL}/`,
     lastmod: new Date().toISOString().split('T')[0],
@@ -97,42 +90,66 @@ const staticPages: SitemapUrl[] = [
   },
 ];
 
-function getBlogPostAlternateUrl(post: BlogPost, relatedPosts: BlogPost[]): string | undefined {
-  if (!post.relatedPostId) return undefined;
-  const related = relatedPosts.find(p => p.id === post.relatedPostId);
-  if (!related) return undefined;
+function getBlogPosts() {
+  const blogUrls = [];
   
-  const langPrefix = related.lang === 'en' ? '/en' : '';
-  return `${BASE_URL}${langPrefix}/blog/${related.slug}`;
-}
-
-export async function generateSitemap(): Promise<string> {
-  const blogPosts = await getBlogPosts();
+  // French blog posts
+  const frIndexPath = join(__dirname, '../src/locales/fr/blog/_index.json');
+  const frIndex = JSON.parse(readFileSync(frIndexPath, 'utf-8'));
   
-  const blogUrls: SitemapUrl[] = blogPosts.map(post => {
-    const langPrefix = post.lang === 'en' ? '/en' : '';
-    const loc = `${BASE_URL}${langPrefix}/blog/${post.slug}`;
-    const alternateUrl = getBlogPostAlternateUrl(post, blogPosts);
+  // English blog posts
+  const enIndexPath = join(__dirname, '../src/locales/en/blog/_index.json');
+  const enIndex = JSON.parse(readFileSync(enIndexPath, 'utf-8'));
+  
+  // Create a map for relatedPostId lookup
+  const postMap = new Map();
+  frIndex.forEach(post => postMap.set(post.id, { ...post, lang: 'fr' }));
+  enIndex.forEach(post => postMap.set(post.id, { ...post, lang: 'en' }));
+  
+  // French posts
+  for (const post of frIndex) {
+    const relatedPost = post.relatedPostId ? postMap.get(post.relatedPostId) : null;
+    const alternateUrl = relatedPost ? `${BASE_URL}/en/blog/${relatedPost.slug}` : null;
     
-    return {
-      loc,
+    blogUrls.push({
+      loc: `${BASE_URL}/blog/${post.slug}`,
       lastmod: post.updatedAt || post.publishedAt,
-      changefreq: 'monthly' as const,
+      changefreq: 'monthly',
       priority: 0.8,
       alternates: alternateUrl ? [
-        { lang: post.lang === 'fr' ? 'en' : 'fr', href: alternateUrl },
-        { lang: post.lang, href: loc },
-      ] : undefined,
-    };
-  });
+        { lang: 'en', href: alternateUrl },
+        { lang: 'fr', href: `${BASE_URL}/blog/${post.slug}` },
+      ] : null,
+    });
+  }
+  
+  // English posts
+  for (const post of enIndex) {
+    const relatedPost = post.relatedPostId ? postMap.get(post.relatedPostId) : null;
+    const alternateUrl = relatedPost ? `${BASE_URL}/blog/${relatedPost.slug}` : null;
+    
+    blogUrls.push({
+      loc: `${BASE_URL}/en/blog/${post.slug}`,
+      lastmod: post.updatedAt || post.publishedAt,
+      changefreq: 'monthly',
+      priority: 0.8,
+      alternates: alternateUrl ? [
+        { lang: 'fr', href: alternateUrl },
+        { lang: 'en', href: `${BASE_URL}/en/blog/${post.slug}` },
+      ] : null,
+    });
+  }
+  
+  return blogUrls;
+}
 
-  const allUrls = [...staticPages, ...blogUrls];
-
+function generateSitemap() {
+  const allUrls = [...staticPages, ...getBlogPosts()];
+  
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
-${allUrls.map(url => `  
-  <url>
+${allUrls.map(url => `  <url>
     <loc>${url.loc}</loc>${url.alternates ? `
 ${url.alternates.map(alt => `    <xhtml:link rel="alternate" hreflang="${alt.lang}" href="${alt.href}"/>`).join('\n')}${url.alternates.find(a => a.lang === 'fr') ? `
     <xhtml:link rel="alternate" hreflang="x-default" href="${url.alternates.find(a => a.lang === 'fr')?.href}"/>` : ''}` : ''}
@@ -140,15 +157,9 @@ ${url.alternates.map(alt => `    <xhtml:link rel="alternate" hreflang="${alt.lan
     <changefreq>${url.changefreq}</changefreq>
     <priority>${url.priority}</priority>
   </url>`).join('\n')}
-
 </urlset>`;
 
-  return xml;
+  console.log(xml);
 }
 
-// Script Node.js pour générer le sitemap
-if (import.meta.url === `file://${process.argv[1]}`) {
-  generateSitemap().then(xml => {
-    console.log(xml);
-  });
-}
+generateSitemap();

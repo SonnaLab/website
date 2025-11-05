@@ -65,7 +65,6 @@ export async function getBlogPost(slug: string, lang: 'fr' | 'en'): Promise<Blog
       content: typeof content === 'string' ? content : String(content)
     };
 
-    // Mettre en cache
     contentCache.set(cacheKey, fullPost);
     return fullPost;
   } catch (error) {
@@ -79,6 +78,12 @@ export function getBlogPostsByCategory(category: string, lang: 'fr' | 'en'): Omi
   return Array.from(metadataCache.values())
     .filter(p => p.lang === lang && p.category === category)
     .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+}
+
+export function getBlogPosts(): Promise<BlogPost[]> {
+  initializeMetadata();
+  const loadPromises = Array.from(metadataCache.values()).map(meta => getBlogPost(meta.slug, meta.lang));
+  return Promise.all(loadPromises).then(posts => posts.filter((p): p is BlogPost => p !== undefined));
 }
 
 export function clearBlogCache() {
