@@ -5,11 +5,11 @@ export type Budget = 'small' | 'medium' | 'large' | 'enterprise';
 export type Timeline = 'urgent' | '1-3months' | '3-6months' | '6months+';
 
 export interface ProjectDetails {
-  type: ProjectType;
+  type?: ProjectType;
   description: string;
-  budget: Budget;
-  timeline: Timeline;
-  features: string[];
+  budget?: Budget;
+  timeline?: Timeline;
+  features?: string[];
 }
 
 export interface ContactInfo {

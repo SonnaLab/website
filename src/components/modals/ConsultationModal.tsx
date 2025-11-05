@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from '../ui/dia
 import { Button } from '../ui/button';
 import { X, ArrowLeft, ArrowRight, Send } from 'lucide-react';
 import { useModal } from '../providers/ModalProvider';
-import { useConsultationModal } from './hooks/useConsultationModal';
+import { useConsultationModal } from '../../hooks/useConsultationModal';
 import { StepIndicator } from './steps/StepIndicator';
 import { ProjectTypeStep } from './steps/ProjectTypeStep';
 import { ProjectDetailsStep } from './steps/ProjectDetailsStep';
@@ -19,7 +19,7 @@ const TOTAL_STEPS = 4;
 
 export function ConsultationModal() {
   const { t } = useTranslation('consultation');
-  const { isConsultationModalOpen, closeConsultationModal } = useModal();
+  const { isConsultationModalOpen, closeConsultationModal, preselectedProjectType } = useModal();
   const {
     currentStep,
     formData,
@@ -121,70 +121,32 @@ export function ConsultationModal() {
     }
   };
 
-  const renderStep = () => {
-    const variants = {
-      enter: (direction: number) => ({
-        x: direction > 0 ? 300 : -300,
-        opacity: 0,
-      }),
-      center: {
-        x: 0,
-        opacity: 1,
-      },
-      exit: (direction: number) => ({
-        x: direction < 0 ? 300 : -300,
-        opacity: 0,
-      }),
-    };
-
-    const stepComponents = {
-      1: (
-        <ProjectTypeStep
-          selectedType={formData.projectDetails?.type!}
-          onSelect={(type) => updateProjectDetails({ type })}
-        />
-      ),
-      2: (
-        <ProjectDetailsStep
-          projectDetails={formData.projectDetails!}
-          onChange={updateProjectDetails}
-        />
-      ),
-      3: (
-        <ContactInfoStep
-          contactInfo={formData.contactInfo!}
-          onChange={updateContactInfo}
-        />
-      ),
-      4: (
-        <ConfirmationStep
-          formData={formData}
-          isSubmitting={isSubmitting}
-          isSuccess={isSuccess}
-        />
-      ),
-    };
-
-    return (
-        <div className="relative overflow-y-auto overflow-x-hidden max-h-[calc(90vh-200px)] px-6 py-8">
-          <div className="relative overflow-hidden min-h-[460px]">
-            <AnimatePresence mode="wait" custom={currentStep}>
-              <motion.div
-                key={currentStep}
-                custom={currentStep}
-                variants={variants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ duration: 0.35, ease: 'easeInOut' }}
-                className="w-full"
-              >
-                {stepComponents[currentStep as keyof typeof stepComponents]}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </div>
-    );
+  const stepComponents = {
+    1: (
+      <ProjectTypeStep
+        selectedType={formData.projectDetails?.type!}
+        onSelect={(type) => updateProjectDetails({ type })}
+      />
+    ),
+    2: (
+      <ProjectDetailsStep
+        projectDetails={formData.projectDetails!}
+        onChange={updateProjectDetails}
+      />
+    ),
+    3: (
+      <ContactInfoStep
+        contactInfo={formData.contactInfo!}
+        onChange={updateContactInfo}
+      />
+    ),
+    4: (
+      <ConfirmationStep
+        formData={formData}
+        isSubmitting={isSubmitting}
+        isSuccess={isSuccess}
+      />
+    ),
   };
 
   return (
@@ -210,12 +172,25 @@ export function ConsultationModal() {
         {!isSuccess && <StepIndicator currentStep={currentStep} totalSteps={TOTAL_STEPS} />}
 
         {/* Content */}
-        <div className="overflow-y-auto max-h-[calc(90vh-200px)] px-6 py-8">
-          {renderStep()}
+        <div className="relative overflow-y-auto overflow-x-hidden max-h-[calc(92vh-220px)] px-8 py-10">
+          <div className="relative overflow-hidden min-h-[460px]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentStep}
+                initial={{ x: 300, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: -300, opacity: 0 }}
+                transition={{ duration: 0.35, ease: 'easeInOut' }}
+                className="w-full"
+              >
+                {stepComponents[currentStep as keyof typeof stepComponents]}
+              </motion.div>
+            </AnimatePresence>
+          </div>
 
-          {/* Error Message */}
+          {/* Error */}
           {error && (
-            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-xl">
               <p className="text-sm text-red-600">{error}</p>
             </div>
           )}

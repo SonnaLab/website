@@ -5,35 +5,35 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 interface ProjectTypeStepProps {
-  selectedType: ProjectType;
+  selectedType?: ProjectType;
   onSelect: (type: ProjectType) => void;
 }
 
-const projectTypes = [
-  {
-    type: 'web' as ProjectType,
-    icon: Globe,
-  },
-  {
-    type: 'mobile' as ProjectType,
-    icon: Smartphone,
-  },
-  {
-    type: 'consulting' as ProjectType,
-    icon: MessageCircle,
-  },
-  {
-    type: 'ai' as ProjectType,
-    icon: Sparkles,
-  },
-  {
-    type: 'other' as ProjectType,
-    icon: MoreHorizontal,
-  },
-];
 
 export function ProjectTypeStep({ selectedType, onSelect }: ProjectTypeStepProps) {
   const { t } = useTranslation('consultation');
+  const projectTypes = [
+    {
+      type: 'web' as ProjectType,
+      icon: Globe,
+    },
+    {
+      type: 'mobile' as ProjectType,
+      icon: Smartphone,
+    },
+    {
+      type: 'consulting' as ProjectType,
+      icon: MessageCircle,
+    },
+    {
+      type: 'ai' as ProjectType,
+      icon: Sparkles,
+    },
+    {
+      type: 'other' as ProjectType,
+      icon: MoreHorizontal,
+    },
+  ];
 
   return (
     <div className="space-y-8 p-8 max-w-3xl mx-auto">

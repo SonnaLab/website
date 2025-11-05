@@ -1,18 +1,38 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
+import { ProjectType } from '../../types/consultation';
 
 interface ModalContextType {
   isConsultationModalOpen: boolean;
-  openConsultationModal: () => void;
+  openConsultationModal: (preselectedType?: ProjectType) => void;
   closeConsultationModal: () => void;
+  preselectedProjectType: ProjectType | null;
+  shouldSkipStep1: boolean;
 }
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
 
-export function ModalProvider({ children }: { children: ReactNode }) {
+export function ModalProvider({ children }: { children: React.ReactNode }) {
   const [isConsultationModalOpen, setIsConsultationModalOpen] = useState(false);
+  const [preselectedProjectType, setPreselectedProjectType] = useState<ProjectType | null>(null);
+  const [shouldSkipStep1, setShouldSkipStep1] = useState(false);
 
-  const openConsultationModal = () => setIsConsultationModalOpen(true);
-  const closeConsultationModal = () => setIsConsultationModalOpen(false);
+  const openConsultationModal = useCallback((preselectedType?: ProjectType) => {
+    if (preselectedType) {
+      setPreselectedProjectType(preselectedType);
+      setShouldSkipStep1(true);
+    } else {
+      setShouldSkipStep1(false);
+    }
+    setIsConsultationModalOpen(true);
+  }, []);
+
+  const closeConsultationModal = useCallback(() => {
+    setIsConsultationModalOpen(false);
+    setTimeout(() => {
+      setPreselectedProjectType(null);
+      setShouldSkipStep1(false);
+    }, 300);
+  }, []);
 
   return (
     <ModalContext.Provider
@@ -20,6 +40,8 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         isConsultationModalOpen,
         openConsultationModal,
         closeConsultationModal,
+        preselectedProjectType,
+        shouldSkipStep1,
       }}
     >
       {children}

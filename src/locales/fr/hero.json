@@ -4,11 +4,36 @@
   "description": "De l'idée au déploiement, nous transformons vos ambitions en réalité digitale grâce à notre expertise en développement, design et stratégie.",
   "cta": {
     "primary": "Démarrer un projet",
-    "secondary": "Découvrir nos services"
+    "secondary": "Découvrir nos services",
+    "search": "Rechercher"
   },
   "search": {
-    "placeholder": "Rechercher un projet, service...",
+    "placeholder": "Rechercher un service web, mobile, chatbot...",
+    "noResults": "Aucun service trouvé pour",
+    "tryOther": "Essayez avec d'autres mots-clés ou démarrez un projet personnalisé",
     "button": "Rechercher"
+  },
+  "services": {
+    "web": {
+      "title": "Application Web",
+      "description": "Sites web, PWA, SaaS & E-commerce"
+    },
+    "mobile": {
+      "title": "Application Mobile",
+      "description": "iOS, Android & React Native"
+    },
+    "ai": {
+      "title": "Intelligence Artificielle",
+      "description": "Chatbots, ML & Automatisation"
+    },
+    "consulting": {
+      "title": "Consulting & Audit",
+      "description": "Expertise technique & Stratégie digitale"
+    },
+    "other": {
+      "title": "Autres Services",
+      "description": "DevOps, Cloud & Maintenance"
+    }
   },
   "stats": {
     "projects": "Projets réalisés",
