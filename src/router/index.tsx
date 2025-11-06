@@ -1,4 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
+import { AnalyticsProvider } from '../components/providers/AnalyticsProvider';
 import { Layout } from '../components/Layout';
 import Home from '../pages/Home';
 import Contact from '../pages/Contact';
@@ -12,51 +13,61 @@ import LegalNotice from '../pages/legal/LegalNotice';
 import CookiesPolicy from '../pages/legal/CookiesPolicy';
 import IntellectualProperty from '../pages/legal/IntellectualProperty';
 
+function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <AnalyticsProvider>
+      <Layout>
+        {children}
+      </Layout>
+    </AnalyticsProvider>
+  );
+}
+
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <Layout><Home /></Layout>,
+    element: <RootLayout><Home /></RootLayout>,
   },
   {
     path: '/contact',
-    element: <Layout><Contact /></Layout>,
+    element: <RootLayout><Contact /></RootLayout>,
   },
   {
     path: '/projects',
-    element: <Layout><Projects /></Layout>,
+    element: <RootLayout><Projects /></RootLayout>,
   },
   {
     path: '/blog',
-    element: <Layout><Blog /></Layout>,
+    element: <RootLayout><Blog /></RootLayout>,
   },
   {
     path: '/blog/:slug',
-    element: <Layout><BlogPost /></Layout>,
+    element: <RootLayout><BlogPost /></RootLayout>,
   },
 
   // Legals
   {
     path: '/legal/privacy',
-    element: <Layout><PrivacyPolicy /></Layout>,
+    element: <RootLayout><PrivacyPolicy /></RootLayout>,
   },
   {
     path: '/legal/terms',
-    element: <Layout><TermsOfService /></Layout>,
+    element: <RootLayout><TermsOfService /></RootLayout>,
   },
   {
     path: '/legal/quality',
-    element: <Layout><QualityPolicy /></Layout>,
+    element: <RootLayout><QualityPolicy /></RootLayout>,
   },
   {
     path: '/legal/notice',
-    element: <Layout><LegalNotice /></Layout>,
+    element: <RootLayout><LegalNotice /></RootLayout>,
   },
   {
     path: '/legal/cookies',
-    element: <Layout><CookiesPolicy /></Layout>,
+    element: <RootLayout><CookiesPolicy /></RootLayout>,
   },
   {
     path: '/legal/intellectual-property',
-    element: <Layout><IntellectualProperty /></Layout>,
+    element: <RootLayout><IntellectualProperty /></RootLayout>,
   },
 ]);

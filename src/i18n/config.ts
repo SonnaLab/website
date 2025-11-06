@@ -21,6 +21,8 @@ import frSEO from '../locales/fr/seo.json'
 import frBlog from '../locales/fr/blog.json'
 import frConsultation from '../locales/fr/consultation.json'
 import frLegal from '../locales/fr/legal.json'
+import frCookies from '../locales/fr/cookies.json'
+import frNotFound from '../pages/404';
 
 // English
 import enHeader from '../locales/en/header.json';
@@ -41,6 +43,8 @@ import enSEO from '../locales/en/seo.json'
 import enBlog from '../locales/en/blog.json'
 import enConsultation from '../locales/en/consultation.json'
 import enLegal from '../locales/en/legal.json'
+import enCookies from '../locales/en/cookies.json'
+import enNotFound from '../pages/404';
 
 const resources = {
   fr: {
@@ -61,6 +65,8 @@ const resources = {
     blog: frBlog,
     consultation: frConsultation,
     legal: frLegal,
+    cookies: frCookies,
+    notFound: frNotFound,
   },
   en: {
     header: enHeader,
@@ -80,6 +86,8 @@ const resources = {
     blog: enBlog,
     consultation: enConsultation,
     legal: enLegal,
+    cookies: enCookies,
+    notFound: enNotFound,
   },
 };
 

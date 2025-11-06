@@ -12,6 +12,7 @@ import { RelatedArticles } from '../components/blog/RelatedArticles';
 import { getBlogPost, getBlogPostsByCategory } from '../data/blogLoader';
 import { BlogPost as BlogPostType } from '../types/blog';
 import { Button } from '../components/ui/button';
+import { useBlogTracking } from '../hooks/useAnalytics';
 
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
@@ -83,7 +84,7 @@ export default function BlogPost() {
   }
 
   const currentUrl = `https://sonnalab.com${lang === 'en' ? '/en' : ''}/blog/${post.slug}`;
-
+  useBlogTracking(slug!, 'tech');
   return (
     <>
       <BlogSEO post={post} />

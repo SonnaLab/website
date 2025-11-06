@@ -9,6 +9,8 @@ import { Mail, Phone, MapPin, Send, MessageCircle, Sparkles, AlertCircle, CheckC
 import { createContactSchema, ContactFormInputs } from '../schemas/contactSchema';
 import { apiService } from '../services/api';
 import { SEO } from '../components/seo';
+import { useFormTracking } from '../hooks/useAnalytics';
+import { analytics } from '../services/analytics/AnalyticsService';
 
 
 export default function Contact() {
@@ -36,6 +38,7 @@ export default function Contact() {
       message: '',
     },
   });
+  const { trackStart, trackSubmit, trackError } = useFormTracking('contact_form');
 
   const onSubmit: SubmitHandler<ContactFormInputs> = async (data) => {
     setIsSubmitting(true);
@@ -44,6 +47,8 @@ export default function Contact() {
 
     try {
       await apiService.submitContactForm(data);
+      trackSubmit(true, { projectType: data.projectType });
+      analytics.trackConsultationRequest(data.projectType);
       setSubmitStatus('success');
       reset();
       
@@ -53,6 +58,8 @@ export default function Contact() {
 
     } catch (error: any) {
       console.error('Erreur lors de l\'envoi:', error);
+      trackSubmit(false);
+      trackError([error.response?.data?.message || 'submission_failed']);
       setSubmitStatus('error');
       setErrorMessage(
         error.response?.data?.message || 
@@ -110,7 +117,7 @@ export default function Contact() {
                 </div>
               )}
 
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" onFocus={trackStart}>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="name" className="block mb-2 font-medium text-gray-700">

@@ -10,7 +10,7 @@ import { LanguageSwitcher } from './utils/LanguageSwitcher';
 import { useNavigation } from '../hooks/useNavigation';
 import sonnaLabLogo from '../assets/logo/bSonnaLab.png';
 import { useModal } from './providers/ModalProvider';
-import { on } from 'events';
+import { useLanguageTracking } from '../hooks/useAnalytics';
 
 export function Header() {
   const { t } = useTranslation('header');
@@ -21,6 +21,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [isDarkBackground, setIsDarkBackground] = useState(false);
   const { openConsultationModal } = useModal();
+  const { trackLanguageChange } = useLanguageTracking();
 
   const navigation = [
     { name: t('nav.home'), href: '/', section: 'home' },

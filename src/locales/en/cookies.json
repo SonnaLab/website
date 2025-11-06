@@ -1,0 +1,53 @@
+{
+  "banner": {
+    "title": "🍪 We use cookies",
+    "description": "To improve your experience, we use essential cookies and, with your consent, analytics cookies to understand how you use our site. Your data is processed in compliance with GDPR.",
+    "customize": "Customize",
+    "reject": "Reject all",
+    "acceptAll": "Accept all"
+  },
+  "settings": {
+    "title": "Cookie preferences",
+    "description": "Manage your cookie preferences. You can change these settings at any time.",
+    "alwaysActive": "Always active",
+    "categories": {
+      "essential": {
+        "title": "Essential cookies",
+        "description": "These cookies are necessary for the website to function. They enable basic functionalities like secure navigation and access to protected areas. The website cannot function properly without these cookies.",
+        "examples": [
+          "User session",
+          "Language preferences",
+          "CSRF security",
+          "Cookie consent"
+        ]
+      },
+      "analytics": {
+        "title": "Analytics cookies",
+        "description": "These cookies help us understand how visitors interact with the website by collecting and reporting information anonymously. We use this data to continuously improve the user experience.",
+        "examples": [
+          "Pages visited",
+          "Reading time",
+          "Bounce rate",
+          "User journey",
+          "Site performance"
+        ]
+      },
+      "marketing": {
+        "title": "Marketing cookies",
+        "description": "These cookies are used to track visitors across websites. The intention is to display ads that are relevant and engaging for the individual user and therefore more valuable for publishers and third-party advertisers.",
+        "examples": [
+          "Targeted advertising",
+          "Retargeting",
+          "Social networks",
+          "Email campaigns"
+        ]
+      }
+    },
+    "cancel": "Cancel",
+    "save": "Save my preferences"
+  },
+  "widget": {
+    "title": "Cookie settings",
+    "manage": "Manage cookies"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "banner": {
+    "title": "🍪 Nous utilisons des cookies",
+    "description": "Pour améliorer votre expérience, nous utilisons des cookies essentiels et, avec votre consentement, des cookies analytiques pour comprendre comment vous utilisez notre site. Vos données sont traitées en conformité avec le RGPD.",
+    "customize": "Personnaliser",
+    "reject": "Refuser tout",
+    "acceptAll": "Tout accepter"
+  },
+  "settings": {
+    "title": "Préférences de cookies",
+    "description": "Gérez vos préférences de cookies. Vous pouvez modifier ces paramètres à tout moment.",
+    "alwaysActive": "Toujours actif",
+    "categories": {
+      "essential": {
+        "title": "Cookies essentiels",
+        "description": "Ces cookies sont nécessaires au fonctionnement du site. Ils permettent des fonctionnalités de base comme la navigation sécurisée et l'accès aux zones protégées. Le site ne peut pas fonctionner correctement sans ces cookies.",
+        "examples": [
+          "Session utilisateur",
+          "Préférences linguistiques",
+          "Sécurité CSRF",
+          "Consentement cookies"
+        ]
+      },
+      "analytics": {
+        "title": "Cookies analytiques",
+        "description": "Ces cookies nous aident à comprendre comment les visiteurs interagissent avec le site en collectant et en rapportant des informations de manière anonyme. Nous utilisons ces données pour améliorer continuellement l'expérience utilisateur.",
+        "examples": [
+          "Pages visitées",
+          "Temps de lecture",
+          "Taux de rebond",
+          "Parcours utilisateur",
+          "Performance du site"
+        ]
+      },
+      "marketing": {
+        "title": "Cookies marketing",
+        "description": "Ces cookies sont utilisés pour suivre les visiteurs sur les sites web. L'intention est d'afficher des publicités qui sont pertinentes et engageantes pour l'utilisateur individuel et donc plus précieuses pour les éditeurs et les annonceurs tiers.",
+        "examples": [
+          "Publicités ciblées",
+          "Retargeting",
+          "Réseaux sociaux",
+          "Campagnes email"
+        ]
+      }
+    },
+    "cancel": "Annuler",
+    "save": "Enregistrer mes préférences"
+  },
+  "widget": {
+    "title": "Paramètres de cookies",
+    "manage": "Gérer les cookies"
+  }
+}
