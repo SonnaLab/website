@@ -179,7 +179,7 @@ export function HeroSection() {
           <div className="relative">
             <div className="relative rounded-2xl overflow-hidden bg-gradient-to-tr from-gray-100 to-gray-50 p-8">
               <ImageWithFallback
-                src="/images/fromIdeaToInovation.png"
+                src="/images/fromIdeaToInovation-progressive.jpg"
                 alt="De l'idée à l'innovation - Espace de travail digital moderne"
                 className="w-full h-96 object-cover rounded-xl"
               />

@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { ConsultationFormData, ModalStep, ProjectDetails, ContactInfo } from '../types/consultation';
+import { ConsultationFormData, ModalStep } from '../types/consultation';
 import { useModal } from '../components/providers/ModalProvider';
 
 const initialFormData: Partial<ConsultationFormData> = {
@@ -21,7 +21,7 @@ const initialFormData: Partial<ConsultationFormData> = {
 };
 
 export function useConsultationModal() {
-  const { preselectedProjectType, shouldSkipStep1 } = useModal();
+  const { preselectedProjectType, shouldSkipStep1, isConsultationModalOpen } = useModal();
   const [currentStep, setCurrentStep] = useState<ModalStep>(1);
   const [formData, setFormData] = useState<Partial<ConsultationFormData>>(initialFormData);
 
@@ -38,13 +38,16 @@ export function useConsultationModal() {
   }, [preselectedProjectType]);
 
   useEffect(() => {
-    if (shouldSkipStep1 && preselectedProjectType) {
-      setCurrentStep(2);
-    } else {
-      setCurrentStep(1);
+    if (isConsultationModalOpen) {
+      if (shouldSkipStep1 && preselectedProjectType) {
+        setCurrentStep(2);
+      } else {
+        console.log('🏁 Démarrage normal au Step 1');
+        setCurrentStep(1);
+      }
     }
-  }, [shouldSkipStep1, preselectedProjectType]);
-  
+  }, [isConsultationModalOpen]);
+
   const updateProjectDetails = useCallback((details: Partial<ConsultationFormData['projectDetails']>) => {
     setFormData(prev => ({
       ...prev,

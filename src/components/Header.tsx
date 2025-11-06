@@ -81,8 +81,7 @@ export function Header() {
   };
 
   const handleConsultationClick = () => {
-    navigate('/contact');
-    setIsOpen(false);
+    openConsultationModal();
   };
 
   const textColorSecondary = isDarkBackground ? 'text-gray-100 drop-shadow-sm' : 'text-gray-700';
@@ -125,7 +124,7 @@ export function Header() {
           <LanguageSwitcher />
           <Button 
             size="sm"
-            onClick={openConsultationModal}
+            onClick={handleConsultationClick}
             className={`transition-all duration-300 group ${
               scrolled || !isDarkBackground
                 ? 'bg-black hover:bg-gray-800 text-white'
@@ -207,7 +206,7 @@ export function Header() {
 
                 {/* CTA Button */}
                 <Button 
-                  onClick={openConsultationModal}
+                  onClick={handleConsultationClick}
                   className="w-full bg-black hover:bg-gray-800 text-white h-12 text-base font-semibold"
                 >
                   <Calendar className="w-5 h-5 mr-2" />
