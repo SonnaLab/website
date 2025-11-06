@@ -181,7 +181,8 @@ export function HeroSection() {
               <ImageWithFallback
                 src="/images/fromIdeaToInovation-progressive.jpg"
                 alt="De l'idée à l'innovation - Espace de travail digital moderne"
-                className="w-full h-96 object-cover rounded-xl"
+                className={`w-full h-96 object-cover rounded-xl opacity-0 transition-opacity duration-700 ease-out`}
+                onLoad={(e) => (e.currentTarget.style.opacity = '1')}
               />
 
               {/* Floating Stats Cards */}
