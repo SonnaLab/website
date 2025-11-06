@@ -3,48 +3,67 @@
     "title": "Stay Ahead in Innovation",
     "description": "Receive our tech insights, AI trends and market analysis straight to your inbox.",
     "inputPlaceholder": "Your email address",
-    "subscribe": "Subscribe"
+    "subscribe": "Subscribe",
+    "success": "Thank you for subscribing!"
   },
   "company": {
     "description": "Digital innovation lab: SonnaLab drives your technological transformation, from strategic consulting to custom app development. Propel your business towards excellence and the future.",
     "address": {
       "line1": "Station F, Paris",
       "line2": "Paris, France"
+    },
+    "contact": {
+      "email": "contact@sonnalab.com",
+      "phone": "+33 xx xx xx xx xx"
     }
   },
   "sections": {
-    "about": "Who we are ?",
-    "services": "What we do ?",
-    "policies": "What about legal ?"
+    "about": {
+      "title": "Who we are?",
+      "links": [
+        { "label": "About", "href": "/#about" },
+        { "label": "Our Services", "href": "/#services" },
+        { "label": "Portfolio", "href": "/#projects" },
+        { "label": "Tech Blog", "href": "/blog" },
+        { "label": "Contact", "href": "/contact" }
+      ]
+    },
+    "services": {
+      "title": "What we do?",
+      "links": [
+        { "label": "Web Development", "href": "/#services" },
+        { "label": "Mobile Applications", "href": "/#services" },
+        { "label": "Tech Consulting", "href": "/#services" },
+        { "label": "UI/UX Design", "href": "/#services" },
+        { "label": "E-commerce", "href": "/#services" },
+        { "label": "Artificial Intelligence", "href": "/#services" }
+      ]
+    },
+    "legal": {
+      "title": "Legal Information",
+      "links": [
+        { "label": "Privacy Policy", "href": "/legal/privacy" },
+        { "label": "Terms of Service", "href": "/legal/terms" },
+        { "label": "Quality Policy", "href": "/legal/quality" },
+        { "label": "Legal Notice", "href": "/legal/notice" },
+        { "label": "Cookies", "href": "/legal/cookies" },
+        { "label": "Intellectual Property", "href": "/legal/intellectual-property" }
+      ]
+    }
   },
-  "quickLinks": [
-    { "label": "About", "href": "/", "section": "about" },
-    { "label": "Our Services", "href": "/", "section": "services" },
-    { "label": "Portfolio", "href": "/", "section": "portfolio" },
-    { "label": "R&D", "href": "/", "section": "research" },
-    { "label": "Tech Blog", "href": "/blog" },
-    { "label": "Contact", "href": "/contact" }
-  ],
-  "services": [
-    { "label": "Web Development", "href": "/", "section": "web-dev" },
-    { "label": "Mobile Applications", "href": "/", "section": "mobile-dev" },
-    { "label": "Tech Consulting", "href": "/", "section": "cto-consulting" },
-    { "label": "UI/UX Design", "href": "/", "section": "design" },
-    { "label": "E-commerce", "href": "/", "section": "ecommerce" },
-    { "label": "Artificial Intelligence", "href": "/", "section": "ai" }
-  ],
-  "policies": [
-    { "label": "Privacy Policy", "href": "/", "section": "privacy" },
-    { "label": "Terms of Service", "href": "/", "section": "terms" },
-    { "label": "Quality Policy", "href": "/", "section": "quality" },
-    { "label": "Legal Notice", "href": "/", "section": "legal" },
-    { "label": "Cookies", "href": "/", "section": "cookies" }
-  ],
   "social": {
-    "followUs": "Follow Us"
+    "title": "Follow Us",
+    "description": "Join our community",
+    "links": {
+      "linkedin": "https://linkedin.com/company/sonnalab",
+      "twitter": "https://twitter.com/sonnalab",
+      "github": "https://github.com/sonnalab",
+      "instagram": "https://instagram.com/sonnalab"
+    }
   },
   "bottom": {
-    "copyright": "© {{year}} | SonnaLab. All rights reserved.",
-    "certifications": ["French Tech", "ISO 27001", "GDPR Compliant"]
+    "copyright": "© {{year}} SonnaLab. All rights reserved.",
+    "certifications": ["French Tech", "ISO 27001", "GDPR Compliant"],
+    "madeWith": "#fromIdeaToInnovation"
   }
 }

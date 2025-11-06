@@ -20,6 +20,7 @@ import frHome from '../locales/fr/home.json'
 import frSEO from '../locales/fr/seo.json'
 import frBlog from '../locales/fr/blog.json'
 import frConsultation from '../locales/fr/consultation.json'
+import frLegal from '../locales/fr/legal.json'
 
 // English
 import enHeader from '../locales/en/header.json';
@@ -39,6 +40,7 @@ import enHome from '../locales/en/home.json'
 import enSEO from '../locales/en/seo.json'
 import enBlog from '../locales/en/blog.json'
 import enConsultation from '../locales/en/consultation.json'
+import enLegal from '../locales/en/legal.json'
 
 const resources = {
   fr: {
@@ -58,6 +60,7 @@ const resources = {
     seo: frSEO,
     blog: frBlog,
     consultation: frConsultation,
+    legal: frLegal,
   },
   en: {
     header: enHeader,
@@ -76,6 +79,7 @@ const resources = {
     seo: enSEO,
     blog: enBlog,
     consultation: enConsultation,
+    legal: enLegal,
   },
 };
 

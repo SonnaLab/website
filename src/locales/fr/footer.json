@@ -3,48 +3,67 @@
     "title": "Restez à la Pointe de l'Innovation",
     "description": "Recevez nos insights tech, tendances IA et analyses du marché directement dans votre boîte mail.",
     "inputPlaceholder": "Votre adresse email",
-    "subscribe": "S'abonner"
+    "subscribe": "S'abonner",
+    "success": "Merci pour votre inscription !"
   },
   "company": {
-    "description": "Laboratoire d’innovation digitale : SonnaLab accompagne votre transformation technologique, du conseil stratégique à la création d’applications sur mesure. Propulsez votre entreprise vers l’excellence et l’avenir.",
+    "description": "Laboratoire d'innovation digitale : SonnaLab accompagne votre transformation technologique, du conseil stratégique à la création d'applications sur mesure. Propulsez votre entreprise vers l'excellence et l'avenir.",
     "address": {
       "line1": "Station F, Paris",
       "line2": "Paris, France"
+    },
+    "contact": {
+      "email": "contact@sonnalab.com",
+      "phone": "+33 xx xx xx xx xx"
     }
   },
   "sections": {
-    "about": "Qui sommes nous ?",
-    "services": "Que faisons nous ?",
-    "policies": "Comment le faisons nous ?"
+    "about": {
+      "title": "Qui sommes-nous ?",
+      "links": [
+        { "label": "À propos", "href": "/#about" },
+        { "label": "Nos Services", "href": "/#services" },
+        { "label": "Portfolio", "href": "/#projects" },
+        { "label": "Blog Tech", "href": "/blog" },
+        { "label": "Contact", "href": "/contact" }
+      ]
+    },
+    "services": {
+      "title": "Que faisons-nous ?",
+      "links": [
+        { "label": "Développement Web", "href": "/#services" },
+        { "label": "Applications Mobile", "href": "/#services" },
+        { "label": "Tech Consulting", "href": "/#services" },
+        { "label": "UI/UX Design", "href": "/#services" },
+        { "label": "E-commerce", "href": "/#services" },
+        { "label": "Intelligence Artificielle", "href": "/#services" }
+      ]
+    },
+    "legal": {
+      "title": "Informations Légales",
+      "links": [
+        { "label": "Politique de Confidentialité", "href": "/legal/privacy" },
+        { "label": "Conditions de Service", "href": "/legal/terms" },
+        { "label": "Politique Qualité", "href": "/legal/quality" },
+        { "label": "Mentions Légales", "href": "/legal/notice" },
+        { "label": "Cookies", "href": "/legal/cookies" },
+        { "label": "Propriété Intellectuelle", "href": "/legal/intellectual-property" }
+      ]
+    }
   },
-  "quickLinks": [
-    { "label": "À propos", "href": "/", "section": "about" },
-    { "label": "Nos Services", "href": "/", "section": "services" },
-    { "label": "Portfolio", "href": "/", "section": "portfolio" },
-    { "label": "Recherche & Développement", "href": "/", "section": "research" },
-    { "label": "Blog Tech", "href": "/blog" },
-    { "label": "Contact", "href": "/contact" }
-  ],
-  "services": [
-    { "label": "Développement Web", "href": "/", "section": "web-dev" },
-    { "label": "Applications Mobile", "href": "/", "section": "mobile-dev" },
-    { "label": "Tech Consulting", "href": "/", "section": "cto-consulting" },
-    { "label": "UI/UX Design", "href": "/", "section": "design" },
-    { "label": "E-commerce", "href": "/", "section": "ecommerce" },
-    { "label": "Intelligence Artificielle", "href": "/", "section": "ai" }
-  ],
-  "policies": [
-    { "label": "Politique de Confidentialité", "href": "/", "section": "privacy" },
-    { "label": "Conditions de Service", "href": "/", "section": "terms" },
-    { "label": "Politique Qualité", "href": "/", "section": "quality" },
-    { "label": "Mentions Légales", "href": "/", "section": "legal" },
-    { "label": "Cookies", "href": "/", "section": "cookies" }
-  ],
   "social": {
-    "followUs": "Suivez-nous"
+    "title": "Suivez-nous",
+    "description": "Rejoignez notre communauté",
+    "links": {
+      "linkedin": "https://linkedin.com/company/sonnalab",
+      "twitter": "https://twitter.com/sonnalab",
+      "github": "https://github.com/sonnalab",
+      "instagram": "https://instagram.com/sonnalab"
+    }
   },
   "bottom": {
-    "copyright": "© {{year}} | SonnaLab. Tous droits réservés.",
-    "certifications": ["French Tech", "ISO 27001", "RGPD Conforme"]
+    "copyright": "© {{year}} SonnaLab. Tous droits réservés.",
+    "certifications": ["French Tech", "ISO 27001", "RGPD Conforme"],
+    "madeWith": "#fromIdeaToInnovation"
   }
 }
