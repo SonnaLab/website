@@ -25,6 +25,9 @@ export default function BlogPost() {
   const [loading, setLoading] = useState(true);
   const [tableOfContents, setTableOfContents] = useState<Array<{ id: string; text: string; level: number }>>([]);
 
+  // ✅ Hook appelé AVANT toute condition
+  useBlogTracking(slug || '', post?.category);
+
   useEffect(() => {
     async function loadPost() {
       if (!slug) return;
@@ -84,7 +87,7 @@ export default function BlogPost() {
   }
 
   const currentUrl = `https://sonnalab.com${lang === 'en' ? '/en' : ''}/blog/${post.slug}`;
-  useBlogTracking(slug!, 'tech');
+
   return (
     <>
       <BlogSEO post={post} />

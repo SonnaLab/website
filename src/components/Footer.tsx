@@ -78,7 +78,7 @@ export function Footer() {
     if (!email) return;
 
     // Simulation d'un appel API
-    console.log('Newsletter subscription:', email);
+    //console.log('Newsletter subscription:', email);
     
     // Afficher le succès
     setIsSubscribed(true);

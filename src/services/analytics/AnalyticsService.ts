@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { apiService } from '../api';
 import type { 
   AnalyticsEvent, 
   AnalyticsEventType, 
@@ -7,7 +8,6 @@ import type {
 } from '../../types/analytics';
 
 const COOKIE_VERSION = '1.0.0';
-const API_URL = import.meta.env.VITE_API_URL || 'https://api.sonnalab.com';
 const BATCH_SIZE = 10;
 const BATCH_INTERVAL = 5000; // 5 seconds
 
@@ -46,7 +46,11 @@ class AnalyticsService {
     };
     localStorage.setItem('cookie_consent', JSON.stringify(this.preferences));
     
-    // Si analytics activé, init tracking
+    if (preferences.analytics && !this.userId) {
+      this.userId = this.createUserId();
+    }
+    
+    this.sendConsentToBackend(preferences);    
     if (preferences.analytics) {
       this.initializeTracking();
     }
@@ -60,6 +64,22 @@ class AnalyticsService {
     return this.preferences?.[category] === true;
   }
 
+  private async sendConsentToBackend(preferences: CookiePreferences): Promise<void> {
+    try {
+      await apiService.sendCookieConsent({
+        sessionId: this.sessionId,
+        userId: this.userId,
+        preferences: preferences,
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        screenResolution: `${window.screen.width}x${window.screen.height}`,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        deviceType: this.getDeviceType(),
+      });
+    } catch (error) {
+      console.error('Failed to send consent to backend:', error);
+    }
+  }
   // ==================== Session Management ====================
 
   private getOrCreateSession(): string {
@@ -72,12 +92,15 @@ class AnalyticsService {
   }
 
   private getUserId(): string | null {
-    // Uniquement si consentement analytics
     if (!this.hasConsent('analytics')) return null;
     
     const existing = localStorage.getItem('analytics_user_id');
     if (existing) return existing;
     
+    return null; // Sera créé après consentement
+  }
+
+  private createUserId(): string {
     const newUserId = uuidv4();
     localStorage.setItem('analytics_user_id', newUserId);
     return newUserId;
@@ -88,6 +111,37 @@ class AnalyticsService {
     if (width < 768) return 'mobile';
     if (width < 1024) return 'tablet';
     return 'desktop';
+  }
+
+    private getBrowserInfo() {
+    const ua = navigator.userAgent;
+    let browserName = 'Unknown';
+    let browserVersion = 'Unknown';
+    let os = 'Unknown';
+
+    // Détecter le navigateur
+    if (ua.indexOf('Firefox') > -1) {
+      browserName = 'Firefox';
+      browserVersion = ua.match(/Firefox\/(\d+\.\d+)/)?.[1] || '';
+    } else if (ua.indexOf('Chrome') > -1) {
+      browserName = 'Chrome';
+      browserVersion = ua.match(/Chrome\/(\d+\.\d+)/)?.[1] || '';
+    } else if (ua.indexOf('Safari') > -1) {
+      browserName = 'Safari';
+      browserVersion = ua.match(/Version\/(\d+\.\d+)/)?.[1] || '';
+    } else if (ua.indexOf('Edge') > -1) {
+      browserName = 'Edge';
+      browserVersion = ua.match(/Edge\/(\d+\.\d+)/)?.[1] || '';
+    }
+
+    // Détecter l'OS
+    if (ua.indexOf('Win') > -1) os = 'Windows';
+    else if (ua.indexOf('Mac') > -1) os = 'MacOS';
+    else if (ua.indexOf('Linux') > -1) os = 'Linux';
+    else if (ua.indexOf('Android') > -1) os = 'Android';
+    else if (ua.indexOf('iOS') > -1) os = 'iOS';
+
+    return { browserName, browserVersion, os };
   }
 
   // ==================== Event Tracking ====================
@@ -101,6 +155,8 @@ class AnalyticsService {
       return;
     }
 
+    const browserInfo = this.getBrowserInfo();
+
     const event: AnalyticsEvent = {
       id: uuidv4(),
       type,
@@ -110,11 +166,26 @@ class AnalyticsService {
       page: window.location.pathname,
       metadata,
       
-      // Context
       language: navigator.language,
       referrer: document.referrer,
       userAgent: navigator.userAgent,
       screenResolution: `${window.screen.width}x${window.screen.height}`,
+      
+      browserName: browserInfo.browserName,
+      browserVersion: browserInfo.browserVersion,
+      os: browserInfo.os,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      deviceType: this.getDeviceType(),
+      
+      // Sera enrichi par le backend
+      ip: undefined,
+      country: undefined,
+      countryCode: undefined,
+      region: undefined,
+      city: undefined,
+      postalCode: undefined,
+      latitude: undefined,
+      longitude: undefined,
     };
 
     this.eventQueue.push(event);
@@ -215,10 +286,15 @@ class AnalyticsService {
 
     try {
       if (this.isOnline) {
-        // Tentative API
-        await this.sendToAPI(eventsToSend);
+        await apiService.sendAnalyticsEvents(eventsToSend, {
+          id: this.sessionId,
+          userId: this.userId || undefined,
+          startTime: this.sessionStartTime,
+          deviceType: this.getDeviceType(),
+          consentedAnalytics: this.hasConsent('analytics'),
+          consentedMarketing: this.hasConsent('marketing'),
+        });
       } else {
-        // Fallback JSON
         this.saveToLocalStorage(eventsToSend);
       }
     } catch (error) {
@@ -226,28 +302,7 @@ class AnalyticsService {
       this.saveToLocalStorage(eventsToSend);
     }
   }
-
-  private async sendToAPI(events: AnalyticsEvent[]): Promise<void> {
-    const response = await fetch(`${API_URL}/analytics/events`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        events,
-        session: {
-          id: this.sessionId,
-          startTime: this.sessionStartTime,
-          deviceType: this.getDeviceType()
-        }
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
-    }
-  }
-
+  
   private saveToLocalStorage(events: AnalyticsEvent[]): void {
     try {
       const existing = localStorage.getItem('analytics_fallback');
@@ -346,7 +401,14 @@ class AnalyticsService {
 
     try {
       const events = JSON.parse(fallbackData);
-      await this.sendToAPI(events);
+      await apiService.sendAnalyticsEvents(events, {
+        id: this.sessionId,
+        startTime: this.sessionStartTime,
+        userId: this.userId || undefined,
+        consentedAnalytics: this.hasConsent('analytics'),
+        consentedMarketing: this.hasConsent('marketing'),
+        deviceType: this.getDeviceType()
+      });
       localStorage.removeItem('analytics_fallback');
       console.log('✅ Synced fallback analytics data');
     } catch (error) {
@@ -381,6 +443,9 @@ class AnalyticsService {
       startTime: this.sessionStartTime,
       endTime: Date.now(),
       duration: Date.now() - this.sessionStartTime,
+      userId: this.userId || undefined,
+      consentedAnalytics: this.hasConsent('analytics'),
+      consentedMarketing: this.hasConsent('marketing'),
       pageCount: this.eventQueue.filter(e => e.type === 'page_view').length,
       events: this.eventQueue,
       deviceType: this.getDeviceType()

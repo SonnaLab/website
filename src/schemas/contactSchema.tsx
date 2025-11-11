@@ -1,8 +1,16 @@
 import { z } from 'zod';
+import { isValidPhoneNumber } from 'libphonenumber-js';
 
 export const createContactSchema = (t: (key: string, options?: any) => string) =>
   z.object({
-    name: z
+    first_name: z
+      .string()
+      .min(1, t('contact:validation.name.required'))
+      .min(2, t('contact:validation.name.min', { count: 2 }))
+      .max(100, t('contact:validation.name.max', { count: 100 }))
+      .regex(/^[a-zA-ZÀ-ÿ\s'-]+$/, t('contact:validation.name.regex')),
+
+    last_name: z
       .string()
       .min(1, t('contact:validation.name.required'))
       .min(2, t('contact:validation.name.min', { count: 2 }))
@@ -18,12 +26,10 @@ export const createContactSchema = (t: (key: string, options?: any) => string) =
     phone: z
       .string()
       .min(1, t('contact:validation.phone.required'))
-      .regex(
-        /^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/,
+      .refine(
+        (value) => isValidPhoneNumber(value),
         t('contact:validation.phone.invalid')
-      )
-      .min(10, t('contact:validation.phone.min', { count: 10 }))
-      .max(20, t('contact:validation.phone.max', { count: 20 })),
+      ),
 
     company: z
       .string()
@@ -31,7 +37,11 @@ export const createContactSchema = (t: (key: string, options?: any) => string) =
       .min(2, t('contact:validation.company.min', { count: 2 }))
       .max(200, t('contact:validation.company.max', { count: 200 })),
 
-    projectType: z
+    role: z
+      .string()
+      .min(1, t('contact:validation.role.required')),
+
+    project_type: z
       .string()
       .min(1, t('contact:validation.projectType.required')),
 

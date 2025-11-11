@@ -39,18 +39,44 @@ export interface AnalyticsEvent {
   userAgent: string;
   screenResolution: string;
   
-  // Location (anonymized)
+  browserName?: string;
+  browserVersion?: string;
+  os?: string;
+  timezone?: string;
+  deviceType?: 'mobile' | 'tablet' | 'desktop';
+  
+  // Location
+  ip?: string;
   country?: string;
+  countryCode?: string;
+  region?: string;
   city?: string;
+  postalCode?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface AnalyticsSession {
   id: string;
+  userId?: string;
   startTime: number;
   endTime?: number;
   duration?: number;
   pageCount: number;
   events: AnalyticsEvent[];
+  deviceType: 'mobile' | 'tablet' | 'desktop';
+  consentedAnalytics: boolean;
+  consentedMarketing: boolean;
+}
+
+export interface ConsentPayload {
+  sessionId: string;
+  userId: string | null;
+  preferences: CookiePreferences;
+  userAgent: string;
+  language: string;
+  screenResolution: string;
+  timezone: string;
   deviceType: 'mobile' | 'tablet' | 'desktop';
 }
 

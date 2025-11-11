@@ -69,12 +69,5 @@
     server: {
       port: 3000,
       open: true,
-      proxy: {
-      '/api': {
-        target: 'https://api.sonnalab.com',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-      },
-    },
     },
   });

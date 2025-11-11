@@ -10,12 +10,16 @@
     "subtitle": "Got a question? A project? Our team of experts is here to guide you through every step of your digital transformation."
   },
   "form": {
-    "name": {
-      "label": "Your Name",
+    "first_name": {
+      "label": "First Name",
       "placeholder": "What should we call you?"
     },
+    "last_name": {
+      "label": "Last Name",
+      "placeholder": "What is your family name?"
+    },
     "email": {
-      "label": "Your Email",
+      "label": "Email",
       "placeholder": "you@company.com"
     },
     "phone": {
@@ -26,7 +30,11 @@
       "label": "Company",
       "placeholder": "Your company name"
     },
-    "projectType": {
+    "role": {
+      "label": "Your Role",
+      "placeholder": "CTO, CEO, Product Manager..."
+    },
+    "project_type": {
       "label": "Project Type",
       "placeholder": "Select your need",
       "options": [

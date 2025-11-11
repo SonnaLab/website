@@ -10,8 +10,7 @@ import { ProjectDetailsStep } from './steps/ProjectDetailsStep';
 import { ContactInfoStep } from './steps/ContactInfoStep';
 import { ConfirmationStep } from './steps/ConfirmationStep';
 import { motion, AnimatePresence } from 'framer-motion';
-import axios from 'axios';
-import { getApiUrl, API_CONFIG } from '../../config/api';
+import { apiService } from '../../services/api';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { useTranslation } from 'react-i18next';
 
@@ -83,36 +82,18 @@ export function ConsultationModal() {
         role: formData.contactInfo?.role || null,
       };
 
-      const response = await axios.post(
-        getApiUrl(API_CONFIG.ENDPOINTS.NEW_PROJECT),
-        payload,
-        {
-          timeout: API_CONFIG.TIMEOUT,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      if (response.status === 200 || response.status === 201) {
-        setIsSuccess(true);
-      } else {
-        throw new Error(t('errors.genericError'));
-      }
-    } catch (err) {
+      await apiService.submitNewProject(payload);
+      setIsSuccess(true);
+    } catch (err: any) {
       console.error('Error submitting consultation:', err);
       
-      if (axios.isAxiosError(err)) {
-        if (err.response) {
-          setError(t('errors.serverError', { 
-            status: err.response.status, 
-            message: err.response.data?.message || t('errors.genericError')
-          }));
-        } else if (err.request) {
-          setError(t('errors.networkError'));
-        } else {
-          setError(t('errors.genericError'));
-        }
+      if (err.response) {
+        setError(t('errors.serverError', { 
+          status: err.response.status, 
+          message: err.response.data?.message || t('errors.genericError')
+        }));
+      } else if (err.request) {
+        setError(t('errors.networkError'));
       } else {
         setError(t('errors.unexpectedError'));
       }

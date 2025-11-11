@@ -42,7 +42,6 @@ export function useConsultationModal() {
       if (shouldSkipStep1 && preselectedProjectType) {
         setCurrentStep(2);
       } else {
-        console.log('🏁 Démarrage normal au Step 1');
         setCurrentStep(1);
       }
     }
