@@ -178,7 +178,7 @@ export default function Blog() {
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             {t('cta.description')}
           </p>
-          <Button size="lg" className="bg-black text-white hover:bg-gray-800" onClick={openConsultationModal}>
+          <Button size="lg" className="bg-black text-white hover:bg-gray-800" onClick={() => openConsultationModal()}>
               {t('cta.button')}
             </Button>
         </div>

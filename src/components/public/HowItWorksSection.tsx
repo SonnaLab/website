@@ -81,7 +81,7 @@ export function HowItWorksSection() {
                 {t('cta.discuss')}
               </p>
             </div>
-            <button className="bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-800 transition-colors font-medium" onClick={openConsultationModal}>
+            <button className="bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-800 transition-colors font-medium" onClick={() => openConsultationModal()}>
               {t('cta.contact')}
             </button>
           </div>
