@@ -5,6 +5,7 @@ import { ModalProvider } from './components/providers/ModalProvider';
 import { ConsultationModal } from './components/modals/ConsultationModal';
 import { CookieConsent } from './components/CookieConsent';
 import { CookieWidget } from './components/CookieWidget';
+import { Toaster } from './components/ui/sonner';
 
 import { router } from "./router";
 import "./index.css";
@@ -19,6 +20,7 @@ createRoot(document.getElementById("root")!).render(
       <ConsultationModal />
       <CookieConsent />
       <CookieWidget />
+      <Toaster richColors closeButton position="top-right" />
     </ModalProvider>
   </HelmetProvider>
 );

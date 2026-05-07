@@ -22,6 +22,9 @@ import frBlog from '../locales/fr/blog.json'
 import frConsultation from '../locales/fr/consultation.json'
 import frLegal from '../locales/fr/legal.json'
 import frCookies from '../locales/fr/cookies.json'
+import frAuth from '../locales/fr/auth.json'
+import frMember from '../locales/fr/member.json'
+import frAdmin from '../locales/fr/admin.json'
 import frNotFound from '../pages/404';
 
 // English
@@ -44,6 +47,9 @@ import enBlog from '../locales/en/blog.json'
 import enConsultation from '../locales/en/consultation.json'
 import enLegal from '../locales/en/legal.json'
 import enCookies from '../locales/en/cookies.json'
+import enAuth from '../locales/en/auth.json'
+import enMember from '../locales/en/member.json'
+import enAdmin from '../locales/en/admin.json'
 import enNotFound from '../pages/404';
 
 const resources = {
@@ -66,6 +72,9 @@ const resources = {
     consultation: frConsultation,
     legal: frLegal,
     cookies: frCookies,
+    auth: frAuth,
+    member: frMember,
+    admin: frAdmin,
     notFound: frNotFound,
   },
   en: {
@@ -87,6 +96,9 @@ const resources = {
     consultation: enConsultation,
     legal: enLegal,
     cookies: enCookies,
+    auth: enAuth,
+    member: enMember,
+    admin: enAdmin,
     notFound: enNotFound,
   },
 };
