@@ -1,0 +1,57 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "appointments": "Appointments",
+    "projects": "Projects",
+    "billing": "Billing",
+    "account": "My account",
+    "signOut": "Sign out",
+    "backToSite": "Back to site"
+  },
+  "dashboard": {
+    "title": "Welcome {{name}}",
+    "subtitle": "Here is an overview of your space.",
+    "appointments": "Appointments",
+    "projects": "Projects",
+    "invoices": "Invoices",
+    "quotes": "Quotes"
+  },
+  "appointments": {
+    "title": "My appointments",
+    "newButton": "New appointment",
+    "empty": "No appointment yet.",
+    "scheduledAt": "Date",
+    "kind": "Type",
+    "status": "Status",
+    "duration": "Duration",
+    "location": "Location",
+    "actions": "Actions",
+    "cancel": "Cancel",
+    "confirmCancel": "Cancel this appointment?"
+  },
+  "projects": {
+    "title": "My projects",
+    "empty": "No project yet.",
+    "status": "Status",
+    "progress": "Progress",
+    "milestones": "Milestones",
+    "updates": "Updates",
+    "noUpdates": "No updates."
+  },
+  "billing": {
+    "title": "Billing",
+    "quotes": "Quotes",
+    "invoices": "Invoices",
+    "number": "Number",
+    "status": "Status",
+    "total": "Total",
+    "issuedOn": "Issued on",
+    "dueOn": "Due on",
+    "accept": "Accept",
+    "reject": "Reject",
+    "view": "View",
+    "download": "PDF",
+    "noQuotes": "No quotes.",
+    "noInvoices": "No invoices."
+  }
+}

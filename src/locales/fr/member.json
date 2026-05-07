@@ -1,0 +1,57 @@
+{
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "appointments": "Rendez-vous",
+    "projects": "Projets",
+    "billing": "Facturation",
+    "account": "Mon compte",
+    "signOut": "Déconnexion",
+    "backToSite": "Retour au site"
+  },
+  "dashboard": {
+    "title": "Bienvenue {{name}}",
+    "subtitle": "Voici un aperçu de votre espace.",
+    "appointments": "Rendez-vous",
+    "projects": "Projets",
+    "invoices": "Factures",
+    "quotes": "Devis"
+  },
+  "appointments": {
+    "title": "Mes rendez-vous",
+    "newButton": "Nouveau rendez-vous",
+    "empty": "Aucun rendez-vous pour le moment.",
+    "scheduledAt": "Date",
+    "kind": "Type",
+    "status": "Statut",
+    "duration": "Durée",
+    "location": "Lieu",
+    "actions": "Actions",
+    "cancel": "Annuler",
+    "confirmCancel": "Annuler ce rendez-vous ?"
+  },
+  "projects": {
+    "title": "Mes projets",
+    "empty": "Aucun projet pour le moment.",
+    "status": "Statut",
+    "progress": "Progression",
+    "milestones": "Jalons",
+    "updates": "Mises à jour",
+    "noUpdates": "Aucune mise à jour."
+  },
+  "billing": {
+    "title": "Facturation",
+    "quotes": "Devis",
+    "invoices": "Factures",
+    "number": "Numéro",
+    "status": "Statut",
+    "total": "Total",
+    "issuedOn": "Émis le",
+    "dueOn": "Échéance",
+    "accept": "Accepter",
+    "reject": "Refuser",
+    "view": "Voir",
+    "download": "PDF",
+    "noQuotes": "Aucun devis.",
+    "noInvoices": "Aucune facture."
+  }
+}
