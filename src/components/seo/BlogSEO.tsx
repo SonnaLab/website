@@ -1,6 +1,6 @@
 import { SEO } from './SEO';
 import { ArticleStructuredData } from './StructuredData';
-import { BlogPost } from '../../types/blog';
+import { BlogPost } from '@/types/blog';
 
 interface BlogSEOProps {
   post: BlogPost;

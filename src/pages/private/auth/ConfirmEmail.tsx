@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, XCircle } from 'lucide-react';
+import { CheckCircle2Icon, XCircleIcon } from '@icons';
 
-import { AuthLayout } from '../../components/auth/AuthLayout';
-import { apiService } from '../../services/api';
-import { Button } from '../../components/ui/button';
+import { AuthLayout } from '@/components/private/auth/AuthLayout';
+import { apiService } from '@/services/api';
+import { Button } from '@/components/ui/button';
 
 type Status = 'verifying' | 'success' | 'error';
 
@@ -32,7 +32,7 @@ export default function ConfirmEmailPage() {
       {status === 'success' && (
         <div className="space-y-4">
           <div className="flex items-center gap-2 text-foreground">
-            <CheckCircle2 className="size-5 text-medical-green" />
+            <CheckCircle2Icon className="size-5 text-medical-green" />
             <span className="font-medium">{t('confirmEmail.successTitle')}</span>
           </div>
           <p className="text-sm text-muted-foreground">{t('confirmEmail.successMessage')}</p>
@@ -42,7 +42,7 @@ export default function ConfirmEmailPage() {
       {status === 'error' && (
         <div className="space-y-4">
           <div className="flex items-center gap-2 text-foreground">
-            <XCircle className="size-5 text-destructive" />
+            <XCircleIcon className="size-5 text-destructive" />
             <span className="font-medium">{t('confirmEmail.errorTitle')}</span>
           </div>
           <p className="text-sm text-muted-foreground">{t('confirmEmail.errorMessage')}</p>

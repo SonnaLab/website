@@ -3,8 +3,8 @@ import { RouterProvider } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import { ModalProvider } from './components/providers/ModalProvider';
 import { ConsultationModal } from './components/modals/ConsultationModal';
-import { CookieConsent } from './components/CookieConsent';
-import { CookieWidget } from './components/CookieWidget';
+import { CookieConsent } from '@/components/public/CookieConsent';
+import { CookieWidget } from '@/components/public/CookieWidget';
 import { Toaster } from './components/ui/sonner';
 
 import { router } from "./router";

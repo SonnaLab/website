@@ -1,10 +1,10 @@
-import { HeroSection } from '../components/HeroSection';
-import { ServicesSection } from '../components/ServicesSection';
-import { HowItWorksSection } from '../components/HowItWorksSection';
-import { AboutSection } from '../components/AboutSection';
-import { SuccessSection } from '../components/SuccessSection';
-import ResearchSection from '../components/ResearchSection';
-import { SEO, OrganizationStructuredData, WebsiteStructuredData } from '../components/seo';
+import { HeroSection } from '@/components/public/HeroSection';
+import { ServicesSection } from '@/components/public/ServicesSection';
+import { HowItWorksSection } from '@/components/public/HowItWorksSection';
+import { AboutSection } from '@/components/public/AboutSection';
+import { SuccessSection } from '@/components/public/SuccessSection';
+import ResearchSection from '@/components/public/ResearchSection';
+import { SEO, OrganizationStructuredData, WebsiteStructuredData } from '@/components/seo';
 import { useTranslation } from 'react-i18next';
 
 export default function Home() {

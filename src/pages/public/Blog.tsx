@@ -2,12 +2,12 @@ import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Search, Clock, Calendar, ArrowRight, NewspaperIcon } from 'lucide-react';
-import { SEO } from '../components/seo';
-import { Input } from '../components/ui/input';
-import { Button } from '../components/ui/button';
-import { getBlogPostsByLang } from '../data/blogLoader';
+import { SEO } from '@/components/seo';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { getBlogPostsByLang } from '@/data/blogLoader';
 import { motion } from 'framer-motion';
-import { useModal } from '../components/providers/ModalProvider';
+import { useModal } from '@/components/providers/ModalProvider';
 
 export default function Blog() {
   const { t, i18n } = useTranslation('blog');

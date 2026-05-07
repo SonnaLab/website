@@ -1,13 +1,13 @@
 import React, { useRef, useEffect } from 'react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Search, Calendar, Zap, Users, Lightbulb, X } from 'lucide-react';
-import { ImageWithFallback } from './figma/ImageWithFallback';
+import { ImageWithFallback } from '@/components/figma/ImageWithFallback';
 import { useTranslation } from 'react-i18next';
-import { useModal } from './providers/ModalProvider';
-import { useServiceSearch } from '../hooks/useServiceSearch';
+import { useModal } from '@/components/providers/ModalProvider';
+import { useServiceSearch } from '@/hooks/useServiceSearch';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ProjectType } from '../types/consultation';
+import { ProjectType } from '@/types/consultation';
 
 export function HeroSection() {
   const { t } = useTranslation('hero');

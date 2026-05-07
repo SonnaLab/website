@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Calendar, FolderKanban, Receipt, FileText } from 'lucide-react';
+import { CalendarIcon, FolderKanbanIcon, ReceiptIcon, FileTextIcon } from '@icons';
 
-import { useAuth } from '../../components/providers/AuthProvider';
-import { apiService } from '../../services/api';
-import { Card } from '../../components/ui/card';
+import { useAuth } from '@/components/providers/AuthProvider';
+import { apiService } from '@/services/api';
+import { Card } from '@/components/ui/card';
 
 interface Counters {
   appointments: number;
@@ -41,10 +41,10 @@ export default function MemberDashboard() {
   }, []);
 
   const cards = [
-    { to: '/member/appointments', label: t('dashboard.appointments'), value: counts.appointments, icon: Calendar     },
-    { to: '/member/projects',     label: t('dashboard.projects'),     value: counts.projects,     icon: FolderKanban },
-    { to: '/member/billing',      label: t('dashboard.quotes'),       value: counts.quotes,       icon: FileText     },
-    { to: '/member/billing',      label: t('dashboard.invoices'),     value: counts.invoices,     icon: Receipt      },
+    { to: '/member/appointments', label: t('dashboard.appointments'), value: counts.appointments, icon: CalendarIcon     },
+    { to: '/member/projects',     label: t('dashboard.projects'),     value: counts.projects,     icon: FolderKanbanIcon },
+    { to: '/member/billing',      label: t('dashboard.quotes'),       value: counts.quotes,       icon: FileTextIcon     },
+    { to: '/member/billing',      label: t('dashboard.invoices'),     value: counts.invoices,     icon: ReceiptIcon      },
   ];
 
   return (

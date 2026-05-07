@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCwIcon } from '@icons';
 
-import { apiService } from '../../services/api';
-import { Card } from '../../components/ui/card';
-import { Badge } from '../../components/ui/badge';
-import { Button } from '../../components/ui/button';
+import { apiService } from '@/services/api';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 interface InfraResponse {
   app:        { version: string; env: string; ruby: string; rails: string; uptime_seconds: number };
@@ -44,7 +44,7 @@ export default function AdminInfrastructure() {
           <p className="mt-1 text-muted-foreground text-sm">{t('infrastructure.subtitle')}</p>
         </div>
         <Button variant="outline" size="sm" onClick={reload} disabled={loading}>
-          <RefreshCw className={`size-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCwIcon className={`size-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
           {t('infrastructure.refresh')}
         </Button>
       </header>

@@ -5,7 +5,7 @@ import type {
   AnalyticsEventType, 
   AnalyticsSession,
   CookiePreferences 
-} from '../../types/analytics';
+} from '@/types/analytics';
 
 const COOKIE_VERSION = '1.0.0';
 const BATCH_SIZE = 10;

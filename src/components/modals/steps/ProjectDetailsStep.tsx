@@ -1,6 +1,6 @@
 import React from 'react';
-import { Textarea } from '../../ui/textarea';
-import { ProjectDetails, Budget, Timeline } from '../../../types/consultation';
+import { Textarea } from '@/components/ui/textarea';
+import { ProjectDetails, Budget, Timeline } from '@/types/consultation';
 import { EuroIcon, Clock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 

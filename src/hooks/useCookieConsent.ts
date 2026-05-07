@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { analytics } from '../services/analytics/AnalyticsService';
-import type { CookiePreferences } from '../types/analytics';
+import { analytics } from '@/services/analytics/AnalyticsService';
+import type { CookiePreferences } from '@/types/analytics';
 
 export function useCookieConsent() {
   const [preferences, setPreferences] = useState<CookiePreferences | null>(null);

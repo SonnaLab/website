@@ -3,14 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Button } from './ui/button';
-import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from './ui/sheet';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Menu, Phone, Mail, MapPin, Calendar, X } from 'lucide-react';
-import { LanguageSwitcher } from './utils/LanguageSwitcher';
-import { useNavigation } from '../hooks/useNavigation';
-import sonnaLabLogo from '../assets/logo/bSonnaLab.png';
-import { useModal } from './providers/ModalProvider';
-import { useLanguageTracking } from '../hooks/useAnalytics';
+import { LanguageSwitcher } from '@/components/utils/LanguageSwitcher';
+import { useNavigation } from '@/hooks/useNavigation';
+import sonnaLabLogo from '@/assets/logo/bSonnaLab.png';
+import { useModal } from '@/components/providers/ModalProvider';
+import { useLanguageTracking } from '@/hooks/useAnalytics';
 
 export function Header() {
   const { t } = useTranslation('header');

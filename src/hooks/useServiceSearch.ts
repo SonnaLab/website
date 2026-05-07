@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Globe, Smartphone, Bot, Lightbulb, Tally1Icon, Sparkles } from 'lucide-react';
-import { ProjectType } from '../types/consultation';
+import { ProjectType } from '@/types/consultation';
 
 export interface ServiceSuggestion {
   id: ProjectType;

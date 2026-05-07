@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Cookie, Settings } from 'lucide-react';
-import { Button } from './ui/button';
+import { Button } from '@/components/ui/button';
 
 export function CookieWidget() {
   const { t } = useTranslation('cookies');

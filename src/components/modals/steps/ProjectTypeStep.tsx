@@ -1,6 +1,6 @@
 import React from 'react';
 import { Globe, Smartphone, MessageCircle, Sparkles, MoreHorizontal } from 'lucide-react';
-import { ProjectType } from '../../../types/consultation';
+import { ProjectType } from '@/types/consultation';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 

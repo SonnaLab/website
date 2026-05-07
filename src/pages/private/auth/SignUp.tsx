@@ -5,12 +5,12 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { AxiosError } from 'axios';
 
-import { AuthLayout } from '../../components/auth/AuthLayout';
-import { useAuth } from '../../components/providers/AuthProvider';
-import { createSignUpSchema, SignUpInputs } from '../../schemas/authSchema';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
+import { AuthLayout } from '@/components/private/auth/AuthLayout';
+import { useAuth } from '@/components/providers/AuthProvider';
+import { createSignUpSchema, SignUpInputs } from '@/schemas/authSchema';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function SignUpPage() {
   const { t, i18n } = useTranslation('auth');

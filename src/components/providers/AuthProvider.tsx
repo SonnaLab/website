@@ -7,7 +7,7 @@ import {
   clearStoredAuth,
   getStoredAccessToken,
   getStoredUser,
-} from '../../services/api';
+} from '@/services/api';
 
 interface AuthContextValue {
   user: AuthUser | null;

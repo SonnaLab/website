@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { LegalPageLayout } from '../../components/legal/LegalPageLayout';
-import { LegalSection } from '../../components/legal/LegalSection';
+import { LegalPageLayout } from '@/components/public/legal/LegalPageLayout';
+import { LegalSection } from '@/components/public/legal/LegalSection';
 import { Building2, User, Server, Palette, Mail, Phone, MapPin } from 'lucide-react';
 
 export default function LegalNotice() {

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card, CardContent } from './ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Star, Quote } from 'lucide-react';
-import { ImageWithFallback } from './figma/ImageWithFallback';
+import { ImageWithFallback } from '@/components/figma/ImageWithFallback';
 import { useTranslation } from 'react-i18next';
 
 export function TestimonialsSection() {

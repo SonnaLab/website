@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from '../ui/dialog';
-import { Button } from '../ui/button';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { X, ArrowLeft, ArrowRight, Send } from 'lucide-react';
-import { useModal } from '../providers/ModalProvider';
-import { useConsultationModal } from '../../hooks/useConsultationModal';
+import { useModal } from '@/components/providers/ModalProvider';
+import { useConsultationModal } from '@/hooks/useConsultationModal';
 import { StepIndicator } from './steps/StepIndicator';
 import { ProjectTypeStep } from './steps/ProjectTypeStep';
 import { ProjectDetailsStep } from './steps/ProjectDetailsStep';
 import { ContactInfoStep } from './steps/ContactInfoStep';
 import { ConfirmationStep } from './steps/ConfirmationStep';
 import { motion, AnimatePresence } from 'framer-motion';
-import { apiService } from '../../services/api';
+import { apiService } from '@/services/api';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { useTranslation } from 'react-i18next';
 

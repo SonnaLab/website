@@ -2,17 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { PhoneInput } from '../components/ui/phone-input';
-import { Card, CardContent } from '../components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { PhoneInput } from '@/components/ui/phone-input';
+import { Card, CardContent } from '@/components/ui/card';
 import { Mail, Phone, MapPin, Send, MessageCircle, Sparkles, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
-import { createContactSchema, ContactFormInputs } from '../schemas/contactSchema';
-import { apiService } from '../services/api';
-import { SEO } from '../components/seo';
-import { useFormTracking } from '../hooks/useAnalytics';
-import { analytics } from '../services/analytics/AnalyticsService';
-import { getCachedUserCountry } from '../services/geolocation';
+import { createContactSchema, ContactFormInputs } from '@/schemas/contactSchema';
+import { apiService } from '@/services/api';
+import { SEO } from '@/components/seo';
+import { useFormTracking } from '@/hooks/useAnalytics';
+import { analytics } from '@/services/analytics/AnalyticsService';
+import { getCachedUserCountry } from '@/services/geolocation';
 import { CountryCode } from 'libphonenumber-js';
 
 export default function Contact() {

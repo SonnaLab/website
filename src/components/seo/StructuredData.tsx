@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { ArticleStructuredDataProps } from '../../types/seo';
+import { ArticleStructuredDataProps } from '@/types/seo';
 
 export function OrganizationStructuredData() {
   const { i18n } = useTranslation();

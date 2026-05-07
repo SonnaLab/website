@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { analytics } from '../../services/analytics/AnalyticsService';
+import { analytics } from '@/services/analytics/AnalyticsService';
 
 interface AnalyticsProviderProps {
   children: React.ReactNode;

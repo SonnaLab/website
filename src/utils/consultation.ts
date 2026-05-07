@@ -1,4 +1,4 @@
-import { ConsultationFormData, ProjectType, Budget, Timeline } from '../types/consultation';
+import { ConsultationFormData, ProjectType, Budget, Timeline } from '@/types/consultation';
 
 export function validateEmail(email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

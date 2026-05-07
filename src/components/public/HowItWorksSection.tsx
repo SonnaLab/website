@@ -1,8 +1,8 @@
 import React from 'react';
-import { Card, CardContent } from './ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { MessageCircle, PenTool, Code, Rocket } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useModal } from './providers/ModalProvider';
+import { useModal } from '@/components/providers/ModalProvider';
 
 export function HowItWorksSection() {
   const { t } = useTranslation('howItWorks');

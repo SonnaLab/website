@@ -1,5 +1,5 @@
-import { Input } from '../../ui/input';
-import { ContactInfo } from '../../../types/consultation';
+import { Input } from '@/components/ui/input';
+import { ContactInfo } from '@/types/consultation';
 import { User, Mail, Phone, Building, Briefcase } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 

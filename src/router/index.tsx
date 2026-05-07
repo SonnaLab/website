@@ -1,40 +1,40 @@
 import { createBrowserRouter, Outlet } from 'react-router-dom';
-import { AnalyticsProvider } from '../components/providers/AnalyticsProvider';
-import { AuthProvider } from '../components/providers/AuthProvider';
-import { Layout } from '../components/Layout';
-import { ProtectedRoute } from '../components/auth/ProtectedRoute';
-import { MemberLayout } from '../components/member/MemberLayout';
+import { AnalyticsProvider } from '@/components/providers/AnalyticsProvider';
+import { AuthProvider } from '@/components/providers/AuthProvider';
+import { Layout } from '@/components/public/Layout';
+import { ProtectedRoute } from '@/components/private/auth/ProtectedRoute';
+import { MemberLayout } from '@/components/private/member/MemberLayout';
 
-import Home from '../pages/Home';
-import Contact from '../pages/Contact';
-import Projects from '../pages/Projects';
-import Blog from '../pages/Blog';
-import BlogPost from '../pages/BlogPost';
-import PrivacyPolicy from '../pages/legal/PrivacyPolicy';
-import TermsOfService from '../pages/legal/TermsOfService';
-import QualityPolicy from '../pages/legal/QualityPolicy';
-import LegalNotice from '../pages/legal/LegalNotice';
-import CookiesPolicy from '../pages/legal/CookiesPolicy';
-import IntellectualProperty from '../pages/legal/IntellectualProperty';
+import Home from '@/pages/public/Home';
+import Contact from '@/pages/public/Contact';
+import Projects from '@/pages/public/Projects';
+import Blog from '@/pages/public/Blog';
+import BlogPost from '@/pages/public/BlogPost';
+import PrivacyPolicy from '@/pages/public/legal/PrivacyPolicy';
+import TermsOfService from '@/pages/public/legal/TermsOfService';
+import QualityPolicy from '@/pages/public/legal/QualityPolicy';
+import LegalNotice from '@/pages/public/legal/LegalNotice';
+import CookiesPolicy from '@/pages/public/legal/CookiesPolicy';
+import IntellectualProperty from '@/pages/public/legal/IntellectualProperty';
 
 // Auth
-import SignInPage from '../pages/auth/SignIn';
-import SignUpPage from '../pages/auth/SignUp';
-import ForgotPasswordPage from '../pages/auth/ForgotPassword';
-import ResetPasswordPage from '../pages/auth/ResetPassword';
-import ConfirmEmailPage from '../pages/auth/ConfirmEmail';
+import SignInPage from '@/pages/private/auth/SignIn';
+import SignUpPage from '@/pages/private/auth/SignUp';
+import ForgotPasswordPage from '@/pages/private/auth/ForgotPassword';
+import ResetPasswordPage from '@/pages/private/auth/ResetPassword';
+import ConfirmEmailPage from '@/pages/private/auth/ConfirmEmail';
 
 // Member
-import MemberDashboard from '../pages/member/Dashboard';
-import MemberAppointments from '../pages/member/Appointments';
-import { ProjectsList as MemberProjectsList, ProjectDetail as MemberProjectDetail } from '../pages/member/Projects';
-import MemberBilling from '../pages/member/Billing';
+import MemberDashboard from '@/pages/private/member/Dashboard';
+import MemberAppointments from '@/pages/private/member/Appointments';
+import { ProjectsList as MemberProjectsList, ProjectDetail as MemberProjectDetail } from '@/pages/private/member/Projects';
+import MemberBilling from '@/pages/private/member/Billing';
 
 // Admin
-import AdminInfrastructure from '../pages/admin/Infrastructure';
-import AdminTracking from '../pages/admin/Tracking';
-import AdminOuou from '../pages/admin/Ouou';
-import AdminSeo from '../pages/admin/Seo';
+import AdminInfrastructure from '@/pages/private/admin/Infrastructure';
+import AdminTracking from '@/pages/private/admin/Tracking';
+import AdminOuou from '@/pages/private/admin/Ouou';
+import AdminSeo from '@/pages/private/admin/Seo';
 
 function RootShell() {
   return (

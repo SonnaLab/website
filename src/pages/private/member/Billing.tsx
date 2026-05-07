@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
-import { apiService } from '../../services/api';
-import { Card } from '../../components/ui/card';
-import { Badge } from '../../components/ui/badge';
-import { Button } from '../../components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/table';
+import { apiService } from '@/services/api';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 interface Money { cents: number; currency: string }
 interface Quote   { id: string; number: string; status: string; total: Money; issued_on?: string; valid_until?: string }

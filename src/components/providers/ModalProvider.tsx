@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { ProjectType } from '../../types/consultation';
+import { ProjectType } from '@/types/consultation';
 
 interface ModalContextType {
   isConsultationModalOpen: boolean;

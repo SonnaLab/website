@@ -1,6 +1,6 @@
-import { BlogPost } from '../types/blog';
-import frBlogIndex from '../locales/fr/blog/_index.json';
-import enBlogIndex from '../locales/en/blog/_index.json';
+import { BlogPost } from '@/types/blog';
+import frBlogIndex from '@/locales/fr/blog/_index.json';
+import enBlogIndex from '@/locales/en/blog/_index.json';
 
 const frMarkdownFiles = import.meta.glob<string>('../locales/fr/blog/*.md', { 
   query: '?raw',

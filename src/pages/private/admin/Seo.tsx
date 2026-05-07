@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, RefreshCw, Trash2 } from 'lucide-react';
+import { PlusIcon, RefreshCwIcon, Trash2Icon } from '@icons';
 import { toast } from 'sonner';
 
-import { apiService } from '../../services/api';
-import { Card } from '../../components/ui/card';
-import { Badge } from '../../components/ui/badge';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
-import { Textarea } from '../../components/ui/textarea';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/table';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../../components/ui/dialog';
+import { apiService } from '@/services/api';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 interface SeoPage {
   id: string; path: string; locale: string; title?: string;
@@ -96,10 +96,10 @@ function PagesTab() {
                     </TableCell>
                     <TableCell className="text-right space-x-1">
                       <Button size="sm" variant="ghost" onClick={() => audit(p.id)}>
-                        <RefreshCw className="size-3.5 mr-1" />{t('seo.audit')}
+                        <RefreshCwIcon className="size-3.5 mr-1" />{t('seo.audit')}
                       </Button>
                       <Button size="sm" variant="ghost" onClick={() => remove(p.id)}>
-                        <Trash2 className="size-3.5" />
+                        <Trash2Icon className="size-3.5" />
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -133,7 +133,7 @@ function CreatePageDialog({ onCreated }: { onCreated: () => void }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild><Button><Plus className="size-4 mr-2" />{t('seo.newPage')}</Button></DialogTrigger>
+      <DialogTrigger asChild><Button><PlusIcon className="size-4 mr-2" />{t('seo.newPage')}</Button></DialogTrigger>
       <DialogContent>
         <DialogHeader><DialogTitle>{t('seo.newPage')}</DialogTitle></DialogHeader>
         <div className="space-y-4">
@@ -220,7 +220,7 @@ function CreateKeywordDialog({ onCreated }: { onCreated: () => void }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild><Button><Plus className="size-4 mr-2" />{t('seo.newKeyword')}</Button></DialogTrigger>
+      <DialogTrigger asChild><Button><PlusIcon className="size-4 mr-2" />{t('seo.newKeyword')}</Button></DialogTrigger>
       <DialogContent>
         <DialogHeader><DialogTitle>{t('seo.newKeyword')}</DialogTitle></DialogHeader>
         <div className="space-y-4">

@@ -1,17 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Send, Plus, Archive } from 'lucide-react';
+import { SendIcon, PlusIcon, ArchiveIcon } from '@icons';
 import { toast } from 'sonner';
 
-import { apiService } from '../../services/api';
-import { Card } from '../../components/ui/card';
-import { Button } from '../../components/ui/button';
-import { Badge } from '../../components/ui/badge';
-import { Input } from '../../components/ui/input';
-import { Textarea } from '../../components/ui/textarea';
-import { Progress } from '../../components/ui/progress';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../../components/ui/dialog';
-import { Label } from '../../components/ui/label';
+import { apiService } from '@/services/api';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Progress } from '@/components/ui/progress';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 
 interface Conversation {
   id: string; title?: string; provider: string; model: string; status: string;
@@ -152,7 +152,7 @@ export default function AdminOuou() {
                 </div>
                 {active.status === 'active' && (
                   <Button size="sm" variant="ghost" onClick={() => archive(active.id)}>
-                    <Archive className="size-4 mr-1" /> {t('ouou.archive')}
+                    <ArchiveIcon className="size-4 mr-1" /> {t('ouou.archive')}
                   </Button>
                 )}
               </div>
@@ -179,7 +179,7 @@ export default function AdminOuou() {
                   onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }}
                 />
                 <Button onClick={send} disabled={sending || !prompt.trim() || quota?.exhausted}>
-                  <Send className="size-4" />
+                  <SendIcon className="size-4" />
                 </Button>
               </div>
             </>
@@ -228,7 +228,7 @@ function CreateConversationDialog({ open, setOpen, models, onCreated }: CreatePr
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button><Plus className="size-4 mr-2" />{t('ouou.newConversation')}</Button>
+        <Button><PlusIcon className="size-4 mr-2" />{t('ouou.newConversation')}</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader><DialogTitle>{t('ouou.newConversation')}</DialogTitle></DialogHeader>

@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
-import { ContactFormInputs } from '../schemas/contactSchema';
-import type { AnalyticsEvent, ConsentPayload } from '../types/analytics';
+import { ContactFormInputs } from '@/schemas/contactSchema';
+import type { AnalyticsEvent, ConsentPayload } from '@/types/analytics';
 
 const API_BASE_URL = import.meta.env.PROD 
   ? import.meta.env.VITE_API_BASE_PROD_URL || 'https://api.sonnalab.com'

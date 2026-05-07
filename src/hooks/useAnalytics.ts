@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { analytics } from '../services/analytics/AnalyticsService';
+import { analytics } from '@/services/analytics/AnalyticsService';
 
 /**
  * Hook pour tracker automatiquement les pages vues

@@ -2,17 +2,17 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { Clock, Calendar, ArrowLeft, Tag } from 'lucide-react';
-import { BlogSEO } from '../components/seo/BlogSEO';
-import { MarkdownRenderer } from '../components/blog/MarkdownRenderer';
-import { ReadingProgressBar } from '../components/blog/ReadingProgressBar';
-import { SocialShareSidebar } from '../components/blog/SocialShareSidebar';
-import { TableOfContents } from '../components/blog/TableOfContents';
-import { AuthorBio } from '../components/blog/AuthorBio';
-import { RelatedArticles } from '../components/blog/RelatedArticles';
-import { getBlogPost, getBlogPostsByCategory } from '../data/blogLoader';
-import { BlogPost as BlogPostType } from '../types/blog';
-import { Button } from '../components/ui/button';
-import { useBlogTracking } from '../hooks/useAnalytics';
+import { BlogSEO } from '@/components/seo/BlogSEO';
+import { MarkdownRenderer } from '@/components/public/blog/MarkdownRenderer';
+import { ReadingProgressBar } from '@/components/public/blog/ReadingProgressBar';
+import { SocialShareSidebar } from '@/components/public/blog/SocialShareSidebar';
+import { TableOfContents } from '@/components/public/blog/TableOfContents';
+import { AuthorBio } from '@/components/public/blog/AuthorBio';
+import { RelatedArticles } from '@/components/public/blog/RelatedArticles';
+import { getBlogPost, getBlogPostsByCategory } from '@/data/blogLoader';
+import { BlogPost as BlogPostType } from '@/types/blog';
+import { Button } from '@/components/ui/button';
+import { useBlogTracking } from '@/hooks/useAnalytics';
 
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();

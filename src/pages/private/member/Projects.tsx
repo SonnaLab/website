@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 
-import { apiService } from '../../services/api';
-import { Card } from '../../components/ui/card';
-import { Badge } from '../../components/ui/badge';
-import { Progress } from '../../components/ui/progress';
+import { apiService } from '@/services/api';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 
 interface Project {
   id: string;

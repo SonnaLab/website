@@ -1,4 +1,4 @@
-import { ConsultationFormData } from '../../../types/consultation';
+import { ConsultationFormData } from '@/types/consultation';
 import { Check, Mail, Phone, User, Building, Briefcase, DollarSign, Clock, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';

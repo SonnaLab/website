@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
-import { ConsultationFormData, ModalStep } from '../types/consultation';
-import { useModal } from '../components/providers/ModalProvider';
+import { ConsultationFormData, ModalStep } from '@/types/consultation';
+import { useModal } from '@/components/providers/ModalProvider';
 
 const initialFormData: Partial<ConsultationFormData> = {
   projectDetails: {

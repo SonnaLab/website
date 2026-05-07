@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from './ui/button';
+import { Button } from '@/components/ui/button';
 import { 
   Cookie, 
   Settings, 
@@ -11,8 +11,8 @@ import {
   X,
   Check
 } from 'lucide-react';
-import { analytics } from '../services/analytics/AnalyticsService';
-import type { CookiePreferences } from '../types/analytics';
+import { analytics } from '@/services/analytics/AnalyticsService';
+import type { CookiePreferences } from '@/types/analytics';
 import {
   Dialog,
   DialogContent,
@@ -20,7 +20,7 @@ import {
   DialogFooter,
   DialogTitle,
   DialogDescription
-} from './ui/dialog';
+} from '@/components/ui/dialog';
 
 export function CookieConsent() {
   const { t } = useTranslation('cookies');

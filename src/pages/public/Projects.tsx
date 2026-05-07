@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '../components/ui/button';
-import { Card, CardContent } from '../components/ui/card';
-import { Badge } from '../components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { 
   Sparkles, 
   Users, 
@@ -24,8 +24,8 @@ import {
   Heart,
   ChevronRight
 } from 'lucide-react';
-import { SEO } from '../components/seo';
-import { useModal } from '../components/providers/ModalProvider';
+import { SEO } from '@/components/seo';
+import { useModal } from '@/components/providers/ModalProvider';
 
 export default function Projects() {
   const { t } = useTranslation('projects');

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Check } from 'lucide-react';
-import { ModalStep } from '../../../types/consultation';
+import { ModalStep } from '@/types/consultation';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 

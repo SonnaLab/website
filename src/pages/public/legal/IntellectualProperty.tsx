@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { LegalPageLayout } from '../../components/legal/LegalPageLayout';
-import { LegalSection } from '../../components/legal/LegalSection';
+import { LegalPageLayout } from '@/components/public/legal/LegalPageLayout';
+import { LegalSection } from '@/components/public/legal/LegalSection';
 import { Shield, Mail, FileText, Code, LucideCopyright, AlertTriangle } from 'lucide-react';
 
 export default function IntellectualProperty() {
