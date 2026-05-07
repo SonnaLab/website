@@ -3,6 +3,7 @@
 @import url("./styles/blog.css");
 @import url("./styles/form.css");
 @import url("./styles/contact.css");
+@import url("./styles/auth.css");
 @layer properties {
   @supports (((-webkit-hyphens: none)) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color: rgb(from red r g b)))) {
     *, :before, :after, ::backdrop {

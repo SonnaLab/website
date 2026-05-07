@@ -27,7 +27,7 @@ export function LanguageSwitcher() {
                     size="sm" 
                     className="h-12 px-3 flex items-center gap-2"
                 >
-                    <Languages className="h-10 w-10" />
+                    <Languages className="h-15 w-15" />
                     <span className="text-sm font-medium uppercase">
                         {currentLanguage.label}
                     </span>

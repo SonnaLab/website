@@ -5,11 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from '@/components/ui/sheet';
-import { Menu, Phone, Mail, MapPin, Calendar, X } from 'lucide-react';
+import { Menu, Phone, Mail, MapPin, X, LockKeyhole } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/utils/LanguageSwitcher';
 import { useNavigation } from '@/hooks/useNavigation';
 import sonnaLabLogo from '@/assets/logo/bSonnaLab.png';
-import { useModal } from '@/components/providers/ModalProvider';
 import { useLanguageTracking } from '@/hooks/useAnalytics';
 
 export function Header() {
@@ -20,7 +19,6 @@ export function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isDarkBackground, setIsDarkBackground] = useState(false);
-  const { openConsultationModal } = useModal();
   const { trackLanguageChange } = useLanguageTracking();
 
   const navigation = [
@@ -81,10 +79,6 @@ export function Header() {
     }
   };
 
-  const handleConsultationClick = () => {
-    openConsultationModal();
-  };
-
   const textColorSecondary = isDarkBackground ? 'text-gray-100 drop-shadow-sm' : 'text-gray-700';
 
   return (
@@ -125,15 +119,14 @@ export function Header() {
           <LanguageSwitcher />
           <Button 
             size="sm"
-            onClick={handleConsultationClick}
-            className={`transition-all duration-300 group ${
+            asChild
+            className={`transition-all duration-300 ${
               scrolled || !isDarkBackground
                 ? 'bg-black hover:bg-gray-800 text-white'
                 : 'bg-white/20 hover:bg-white/30 text-white border border-white/50 backdrop-blur-sm drop-shadow-sm'
             }`}
           >
-            <Calendar className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
-            {t('cta.consultation')}
+            <Link to="/sign-in">{t('cta.signIn')}<LockKeyhole className="ml-2 h-7 w-7" /></Link>
           </Button>
         </div>
 
@@ -207,11 +200,10 @@ export function Header() {
 
                 {/* CTA Button */}
                 <Button 
-                  onClick={handleConsultationClick}
+                  asChild
                   className="w-full bg-black hover:bg-gray-800 text-white h-12 text-base font-semibold"
                 >
-                  <Calendar className="w-5 h-5 mr-2" />
-                  {t('cta.consultation')}
+                  <Link to="/sign-in" onClick={() => setIsOpen(false)}>{t('cta.signIn')}<LockKeyhole className="ml-2 h-5 w-5" /></Link>
                 </Button>
 
                 {/* Contact Info */}

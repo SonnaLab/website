@@ -4,13 +4,14 @@
     "about": "À propos",
     "services": "Services",
     "projects": "Projets",
-    "research": "Recherche & Développement",
+    "research": "R & D",
     "blog": "Blog",
     "contact": "Contact"
   },
   "cta": {
     "portfolio": "Portfolio",
-    "consultation": "Consultation"
+    "consultation": "Consultation",
+    "signIn": "Connexion"
   },
   "mobile": {
     "phone": "+33 (0)7 53 31 56 03",
