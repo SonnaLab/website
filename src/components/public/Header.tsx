@@ -82,7 +82,7 @@ export function Header() {
   const textColorSecondary = isDarkBackground ? 'text-gray-100 drop-shadow-sm' : 'text-gray-700';
 
   return (
-    <header className={`fixed top-0 left-0 z-50 w-full border-b border-black transition-all duration-300 ${
+    <header className={`fixed top-0 left-0 z-50 w-full border-b-2 border-black transition-all duration-300 ${
       scrolled
         ? 'bg-white/95 backdrop-blur-lg shadow-sm'
         : 'bg-white/80 backdrop-blur-sm'
