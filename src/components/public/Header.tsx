@@ -82,9 +82,9 @@ export function Header() {
   const textColorSecondary = isDarkBackground ? 'text-gray-100 drop-shadow-sm' : 'text-gray-700';
 
   return (
-    <header className={`sticky top-0 left-0 z-50 w-full transition-all duration-300 ${
+    <header className={`fixed top-0 left-0 z-50 w-full border-b border-black transition-all duration-300 ${
       scrolled
-        ? 'bg-white/90 backdrop-blur-lg shadow-sm border-b border-gray-100'
+        ? 'bg-white/95 backdrop-blur-lg shadow-sm'
         : 'bg-white/80 backdrop-blur-sm'
     }`}>
       <div className="flex h-16 items-center justify-between px-6 max-w-7xl mx-auto">
