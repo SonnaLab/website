@@ -1,0 +1,365 @@
+/* ================================================================
+   dashboard.css — SonnaLab — Interface privée authentifiée
+   Brand : #000000 · #ffffff
+   Fond neutre (#f8f9fa) — sidebar blanche — topbar noire (border)
+   Font  : Raleway
+   ================================================================ */
+
+/* ── Variables ── */
+:root {
+  --dash-sidebar-w:         240px;
+  --dash-topbar-h:          52px;
+
+  /* Couleurs structurelles */
+  --dash-bg:                #f8f9fa;
+  --dash-sidebar-bg:        #ffffff;
+  --dash-sidebar-border:    #e8eaed;
+  --dash-topbar-bg:         #ffffff;
+  --dash-topbar-border:     #000000;
+
+  /* Navigation */
+  --dash-nav-fg:            #555;
+  --dash-nav-hover-bg:      #f3f4f6;
+  --dash-nav-hover-fg:      #111;
+  --dash-nav-active-bg:     #000000;
+  --dash-nav-active-fg:     #ffffff;
+  --dash-nav-section-fg:    #9ca3af;
+  --dash-nav-radius:        6px;
+}
+
+/* ── Shell global ── */
+.dash-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--dash-bg);
+  font-family: 'Raleway', sans-serif;
+}
+
+/* ══════════════════════════════════════
+   TOP BAR
+   ══════════════════════════════════════ */
+.dash-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  height: var(--dash-topbar-h);
+  background: var(--dash-topbar-bg);
+  border-bottom: 2px solid var(--dash-topbar-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  gap: 12px;
+}
+
+.dash-topbar__left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dash-topbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #000;
+}
+
+.dash-topbar__logo {
+  height: 26px;
+  width: auto;
+}
+
+.dash-topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Hamburger — mobile uniquement */
+.dash-topbar__hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  color: #000;
+  border-radius: 6px;
+  transition: background 0.12s;
+}
+
+.dash-topbar__hamburger:hover {
+  background: #f3f4f6;
+}
+
+/* ══════════════════════════════════════
+   BODY (sidebar + main)
+   ══════════════════════════════════════ */
+.dash-body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+/* ══════════════════════════════════════
+   SIDEBAR
+   ══════════════════════════════════════ */
+.dash-sidebar {
+  width: var(--dash-sidebar-w);
+  flex-shrink: 0;
+  background: var(--dash-sidebar-bg);
+  border-right: 1px solid var(--dash-sidebar-border);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: var(--dash-topbar-h);
+  height: calc(100vh - var(--dash-topbar-h));
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.dash-sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Navigation centrale */
+.dash-sidebar__nav {
+  flex: 1;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dash-sidebar__section-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dash-nav-section-fg);
+  padding: 16px 10px 6px;
+}
+
+/* Footer : info utilisateur + actions */
+.dash-sidebar__footer {
+  padding: 10px 12px 14px;
+  border-top: 1px solid var(--dash-sidebar-border);
+}
+
+/* ══════════════════════════════════════
+   ITEMS DE NAVIGATION
+   ══════════════════════════════════════ */
+.dash-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--dash-nav-radius);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--dash-nav-fg);
+  text-decoration: none;
+  transition: background 0.12s, color 0.12s;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  font-family: inherit;
+}
+
+.dash-nav-link:hover {
+  background: var(--dash-nav-hover-bg);
+  color: var(--dash-nav-hover-fg);
+}
+
+.dash-nav-link.active {
+  background: var(--dash-nav-active-bg);
+  color: var(--dash-nav-active-fg);
+}
+
+.dash-nav-link.active:hover {
+  background: #222;
+  color: #fff;
+}
+
+.dash-nav-link svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.dash-nav-link.active svg {
+  opacity: 1;
+}
+
+/* ══════════════════════════════════════
+   BADGE UTILISATEUR (footer de sidebar)
+   ══════════════════════════════════════ */
+.dash-user-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 10px 8px;
+}
+
+.dash-user-badge__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #000;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+}
+
+.dash-user-badge__info {
+  min-width: 0;
+  flex: 1;
+}
+
+.dash-user-badge__name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dash-user-badge__role {
+  font-size: 11px;
+  color: #9ca3af;
+  text-transform: capitalize;
+}
+
+/* ══════════════════════════════════════
+   LIENS DE FOOTER (retour + déconnexion)
+   ══════════════════════════════════════ */
+.dash-footer-link {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: var(--dash-nav-radius);
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+  text-decoration: none;
+  background: none;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.12s, color 0.12s;
+  margin-top: 2px;
+}
+
+.dash-footer-link:hover {
+  background: var(--dash-nav-hover-bg);
+  color: #111;
+}
+
+.dash-footer-link--signout:hover {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.dash-footer-link svg {
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.dash-footer-link:hover svg {
+  opacity: 0.85;
+}
+
+/* ══════════════════════════════════════
+   BOUTONS DE LA TOPBAR
+   ══════════════════════════════════════ */
+.dash-btn-ghost {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #4b5563;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.12s, color 0.12s;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.dash-btn-ghost:hover {
+  background: #f3f4f6;
+  color: #111;
+}
+
+/* ══════════════════════════════════════
+   CONTENU PRINCIPAL
+   ══════════════════════════════════════ */
+.dash-main {
+  flex: 1;
+  padding: 32px;
+  overflow-x: hidden;
+  min-width: 0;
+}
+
+.dash-main__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ══════════════════════════════════════
+   OVERLAY MOBILE
+   ══════════════════════════════════════ */
+.dash-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 40;
+}
+
+.dash-overlay--visible {
+  display: block;
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE — mobile
+   ══════════════════════════════════════ */
+@media (max-width: 768px) {
+  .dash-topbar__hamburger {
+    display: flex;
+  }
+
+  .dash-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dash-sidebar--open {
+    transform: translateX(0);
+  }
+
+  .dash-main {
+    padding: 20px 16px;
+  }
+}

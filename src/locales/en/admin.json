@@ -1,9 +1,14 @@
 {
   "nav": {
+    "dashboard": "Dashboard",
     "infrastructure": "Infrastructure",
     "tracking": "Tracking",
     "ouou": "OUOU (AI)",
-    "seo": "SEO"
+    "seo": "SEO",
+    "news": "News",
+    "users": "Users",
+    "billing": "Billing",
+    "projects": "Projects"
   },
   "infrastructure": {
     "title": "Infrastructure",
@@ -90,5 +95,15 @@
     "delete": "Delete",
     "edit": "Edit",
     "create": "Create"
+  },
+  "news": {
+    "title": "News",
+    "subtitle": "Manage articles and publications.",
+    "empty": "No articles yet."
+  },
+  "users": {
+    "title": "Users",
+    "subtitle": "Manage accounts and roles.",
+    "empty": "No users to display."
   }
 }

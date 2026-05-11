@@ -210,3 +210,23 @@ export function GlobeIcon(p: IconProps) {
     </svg>
   );
 }
+
+export function NewsIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <path d="M4 3h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" />
+      <path d="M8 7h8M8 11h8M8 15h5" />
+    </svg>
+  );
+}
+
+export function UsersIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <circle cx="9" cy="7" r="4" />
+      <path d="M3 21a6 6 0 0 1 12 0" />
+      <circle cx="17" cy="9" r="3" />
+      <path d="M21 21a4 4 0 0 0-8 0" />
+    </svg>
+  );
+}

@@ -33,4 +33,6 @@ export {
   XIcon,
   UserIcon,
   GlobeIcon,
+  NewsIcon,
+  UsersIcon,
 } from './icons';

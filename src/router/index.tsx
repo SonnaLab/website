@@ -36,6 +36,8 @@ import AdminInfrastructure from '@/pages/private/admin/Infrastructure';
 import AdminTracking from '@/pages/private/admin/Tracking';
 import AdminOuou from '@/pages/private/admin/Ouou';
 import AdminSeo from '@/pages/private/admin/Seo';
+import AdminNews from '@/pages/private/admin/News';
+import AdminUsers from '@/pages/private/admin/Users';
 
 // Staff
 import StaffDashboard from '@/pages/private/staff/Dashboard';
@@ -117,6 +119,8 @@ export const router = createBrowserRouter([
           { path: 'tracking',       element: <AdminTracking /> },
           { path: 'ouou',           element: <AdminOuou /> },
           { path: 'seo',            element: <AdminSeo /> },
+          { path: 'news',           element: <AdminNews /> },
+          { path: 'users',          element: <AdminUsers /> },
         ],
       },
     ],
