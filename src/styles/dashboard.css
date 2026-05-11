@@ -368,9 +368,9 @@
    Dashboard shell v2 - Lescopr-inspired collapsed sidebar
    ================================================================ */
 :root {
-  --dash-sidebar-w: 240px;
-  --dash-sidebar-w-col: 56px;
-  --dash-topbar-h: 52px;
+  --dash-sidebar-w: 280px;
+  --dash-sidebar-w-col: 72px;
+  --dash-topbar-h: 64px;
   --dash-sidebar-transition: 180ms cubic-bezier(0.4, 0, 0.2, 1);
   --dash-bg: #f8f9fa;
   --dash-sidebar-bg: #ffffff;
@@ -411,17 +411,17 @@
 }
 
 .dash-topbar__favicon {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
 .dash-topbar__logo-full {
   display: none;
-  height: 26px;
+  height: 34px;
   width: auto;
-  max-width: 142px;
+  max-width: 178px;
   object-fit: contain;
 }
 
@@ -564,15 +564,17 @@
 }
 
 .dash-sidebar__nav {
-  padding: 10px 8px;
-  gap: 2px;
+  align-items: center;
+  padding: 14px 0;
+  gap: 6px;
 }
 
 .dash-nav-link {
   justify-content: center;
-  gap: 10px;
-  min-height: 38px;
-  padding: 9px 0;
+  gap: 12px;
+  width: 48px;
+  min-height: 48px;
+  padding: 0;
   color: var(--dash-nav-fg);
   overflow: hidden;
   white-space: nowrap;
@@ -580,7 +582,15 @@
 
 .dash-shell[data-sidebar-expanded="true"] .dash-nav-link {
   justify-content: flex-start;
-  padding: 9px 12px;
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 14px;
+}
+
+.dash-shell[data-sidebar-expanded="true"] .dash-sidebar__nav {
+  align-items: stretch;
+  padding: 14px 12px;
+  gap: 4px;
 }
 
 .dash-nav-link:hover {
@@ -595,6 +605,8 @@
 }
 
 .dash-nav-link svg {
+  width: 18px;
+  height: 18px;
   opacity: 1;
 }
 
@@ -615,7 +627,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 8px 10px;
+  width: 48px;
+  min-height: 36px;
+  margin: 0 auto 12px;
   padding: 8px;
   background: #f3f4f6;
   border: 0;
@@ -627,6 +641,11 @@
 .dash-sidebar__toggle:hover {
   background: #e8eaed;
   color: #111111;
+}
+
+.dash-shell[data-sidebar-expanded="true"] .dash-sidebar__toggle {
+  width: auto;
+  margin: 0 12px 12px;
 }
 
 @media (max-width: 768px) {
@@ -655,6 +674,7 @@
   .dash-nav-link,
   .dash-shell[data-sidebar-expanded="true"] .dash-nav-link {
     justify-content: flex-start;
+    width: 100%;
     padding: 9px 12px;
   }
 
