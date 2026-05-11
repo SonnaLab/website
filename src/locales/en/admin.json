@@ -10,6 +10,73 @@
     "billing": "Billing",
     "projects": "Projects"
   },
+  "dashboard": {
+    "title": "Welcome, =={{name}}==",
+    "fallbackName": "Admin",
+    "subtitle": "SonnaLab administration",
+    "latest": "Latest actions",
+    "hint": "A quick preview of operational spaces.",
+    "lastAction": "Latest action",
+    "viewMore": "View more",
+    "widgets": {
+      "infrastructure": {
+        "title": "Infrastructure",
+        "description": "Application health, services, and deployments.",
+        "status": "Stable",
+        "lastAction": "Checked service availability.",
+        "meta": "Uptime, latency, and dependencies to monitor."
+      },
+      "tracking": {
+        "title": "Tracking",
+        "description": "Sessions, events, and visitor journeys.",
+        "status": "Realtime",
+        "lastAction": "Reviewed the latest active sessions.",
+        "meta": "Quick view of pages, countries, and consent."
+      },
+      "news": {
+        "title": "News",
+        "description": "Articles, publications, and editorial content.",
+        "status": "Editorial",
+        "lastAction": "Prepared upcoming publications.",
+        "meta": "Drafts and published content to review."
+      },
+      "users": {
+        "title": "Users",
+        "description": "Accounts, roles, and private-space access.",
+        "status": "Access",
+        "lastAction": "Checked admin and staff roles.",
+        "meta": "Permissions and client profile management."
+      },
+      "billing": {
+        "title": "Billing",
+        "description": "Quotes, invoices, and administrative follow-up.",
+        "status": "Finance",
+        "lastAction": "Reviewed recent client documents.",
+        "meta": "Invoices, due dates, and quotes to process."
+      },
+      "projects": {
+        "title": "Projects",
+        "description": "Deliverables, milestones, and project updates.",
+        "status": "Delivery",
+        "lastAction": "Checked active projects.",
+        "meta": "Priorities, progress, and next steps."
+      },
+      "seo": {
+        "title": "SEO",
+        "description": "Pages, keywords, metadata, and audits.",
+        "status": "Audit",
+        "lastAction": "Analyzed indexable pages.",
+        "meta": "Scores, intent, and content opportunities."
+      },
+      "ouou": {
+        "title": "OUOU (AI)",
+        "description": "Conversations, models, and assistant quota.",
+        "status": "AI",
+        "lastAction": "Reviewed recent conversations.",
+        "meta": "Messages, models, and token usage."
+      }
+    }
+  },
   "infrastructure": {
     "title": "Infrastructure",
     "subtitle": "Real-time application health.",
