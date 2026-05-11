@@ -1,4 +1,4 @@
-import { createBrowserRouter, Outlet } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import { AnalyticsProvider } from '@/components/providers/AnalyticsProvider';
 import { AuthProvider } from '@/components/providers/AuthProvider';
 import { Layout } from '@/components/public/Layout';
@@ -31,10 +31,14 @@ import { ProjectsList as MemberProjectsList, ProjectDetail as MemberProjectDetai
 import MemberBilling from '@/pages/private/member/Billing';
 
 // Admin
+import AdminDashboard from '@/pages/private/admin/Dashboard';
 import AdminInfrastructure from '@/pages/private/admin/Infrastructure';
 import AdminTracking from '@/pages/private/admin/Tracking';
 import AdminOuou from '@/pages/private/admin/Ouou';
 import AdminSeo from '@/pages/private/admin/Seo';
+
+// Staff
+import StaffDashboard from '@/pages/private/staff/Dashboard';
 
 function RootShell() {
   return (
@@ -79,9 +83,9 @@ export const router = createBrowserRouter([
       { path: '/reset-password',  element: <ResetPasswordPage /> },
       { path: '/confirm-email',   element: <ConfirmEmailPage /> },
 
-      // ---- Member ----
+      // ---- Member (user) ----
       {
-        path: '/member',
+        path: '/dashboard',
         element: <ProtectedRoute><MemberLayout /></ProtectedRoute>,
         children: [
           { index: true,           element: <MemberDashboard /> },
@@ -92,12 +96,23 @@ export const router = createBrowserRouter([
         ],
       },
 
+      // ---- Staff ----
+      {
+        path: '/staff',
+        element: <ProtectedRoute roles={['staff', 'admin']}><MemberLayout /></ProtectedRoute>,
+        children: [
+          { index: true,       element: <Navigate to="/staff/dashboard" replace /> },
+          { path: 'dashboard', element: <StaffDashboard /> },
+        ],
+      },
+
       // ---- Admin (admin role only) ----
       {
         path: '/admin',
         element: <ProtectedRoute roles={['admin']}><MemberLayout /></ProtectedRoute>,
         children: [
-          { index: true,            element: <AdminInfrastructure /> },
+          { index: true,            element: <Navigate to="/admin/dashboard" replace /> },
+          { path: 'dashboard',      element: <AdminDashboard /> },
           { path: 'infrastructure', element: <AdminInfrastructure /> },
           { path: 'tracking',       element: <AdminTracking /> },
           { path: 'ouou',           element: <AdminOuou /> },

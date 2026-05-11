@@ -14,7 +14,7 @@ export function OrganizationStructuredData() {
     "description": i18n.language === 'fr'
       ? "Le laboratoire d'idées qui transforme le digital"
       : "The Ideas Lab Transforming Digital",
-    "foundingDate": "2028",
+    "foundingDate": "2025",
     "contactPoint": {
       "@type": "ContactPoint",
       "telephone": "+33-XXX-XXX-XXX",

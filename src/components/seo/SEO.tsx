@@ -25,15 +25,13 @@ export function SEO({
   modifiedTime
 }: SEOProps) {
   const { i18n } = useTranslation();
-  const currentLang = i18n.language;
-  const alternateLanguages = ['fr', 'en'].filter(lang => lang !== currentLang);
+  const currentLang = i18n.language?.slice(0, 2) || 'fr';
 
   const siteUrl = 'https://sonnalab.com';
   const fullUrl = url ? `${siteUrl}${url}` : siteUrl;
   const fullImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
 
-  // Titre par défaut
-  const defaultTitle = currentLang === 'fr' 
+  const defaultTitle = currentLang === 'fr'
     ? 'SonnaLab - Le laboratoire d\'idées qui transforme le digital'
     : 'SonnaLab - The Ideas Lab Transforming Digital';
 
@@ -41,50 +39,37 @@ export function SEO({
 
   return (
     <Helmet>
-      {/* Métadonnées de base */}
+      {/* Base */}
       <html lang={currentLang} />
       <title>{finalTitle}</title>
-      <meta name="description" content={description} />
-      {keywords && <meta name="keywords" content={keywords} />}
+      {description && <meta name="description" content={description} />}
+      {keywords    && <meta name="keywords"     content={keywords}    />}
       <meta name="author" content={author} />
-      
-      {/* Canonical URL */}
+
+      {/* Canonical */}
       <link rel="canonical" href={fullUrl} />
-      
-      {/* Alternate languages (hreflang) */}
-      {alternateLanguages.map(lang => (
-        <link
-          key={lang}
-          rel="alternate"
-          hrefLang={lang}
-          href={`${siteUrl}/${lang}${url || ''}`}
-        />
-      ))}
+
+      {/* hreflang — same URL serves both languages via client-side i18n */}
+      <link rel="alternate" hrefLang="fr"        href={fullUrl} />
+      <link rel="alternate" hrefLang="en"        href={fullUrl} />
       <link rel="alternate" hrefLang="x-default" href={fullUrl} />
 
-      {/* Open Graph (Facebook, LinkedIn) */}
-      <meta property="og:type" content={type} />
-      <meta property="og:title" content={finalTitle} />
-      <meta property="og:description" content={description} />
-      <meta property="og:image" content={fullImageUrl} />
-      <meta property="og:url" content={fullUrl} />
-      <meta property="og:site_name" content="SonnaLab" />
-      <meta property="og:locale" content={currentLang === 'fr' ? 'fr_FR' : 'en_US'} />
-      {alternateLanguages.map(lang => (
-        <meta
-          key={`og-${lang}`}
-          property="og:locale:alternate"
-          content={lang === 'fr' ? 'fr_FR' : 'en_US'}
-        />
-      ))}
+      {/* Open Graph */}
+      <meta property="og:type"         content={type}                                        />
+      <meta property="og:title"        content={finalTitle}                                  />
+      {description && <meta property="og:description" content={description} />}
+      <meta property="og:image"        content={fullImageUrl}                                />
+      <meta property="og:url"          content={fullUrl}                                     />
+      <meta property="og:site_name"    content="SonnaLab"                                   />
+      <meta property="og:locale"       content={currentLang === 'fr' ? 'fr_FR' : 'en_US'}   />
 
       {/* Twitter Card */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={finalTitle} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={fullImageUrl} />
-      <meta name="twitter:site" content="@SonnaLab" />
-      <meta name="twitter:creator" content="@SonnaLab" />
+      <meta name="twitter:card"    content="summary_large_image" />
+      <meta name="twitter:title"   content={finalTitle}          />
+      {description && <meta name="twitter:description" content={description} />}
+      <meta name="twitter:image"   content={fullImageUrl}        />
+      <meta name="twitter:site"    content="@SonnaLab"           />
+      <meta name="twitter:creator" content="@SonnaLab"           />
 
       {/* Article metadata */}
       {type === 'article' && publishedTime && (
@@ -97,21 +82,18 @@ export function SEO({
         <meta property="article:author" content={author} />
       )}
 
-      {/* Mobile App */}
-      <meta name="apple-mobile-web-app-capable" content="yes" />
-      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-      <meta name="apple-mobile-web-app-title" content="SonnaLab" />
+      {/* Mobile */}
+      <meta name="apple-mobile-web-app-capable"           content="yes"               />
+      <meta name="apple-mobile-web-app-status-bar-style"  content="black-translucent" />
+      <meta name="apple-mobile-web-app-title"             content="SonnaLab"          />
 
-      {/* Theme Color */}
-      <meta name="theme-color" content="#000000" />
+      {/* Theme */}
+      <meta name="theme-color"          content="#000000" />
       <meta name="msapplication-TileColor" content="#000000" />
 
       {/* Robots */}
-      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+      <meta name="robots"    content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
       <meta name="googlebot" content="index, follow" />
-
-      {/* Verification */}
-      <meta name="google-site-verification" content="your-verification-code" />
     </Helmet>
   );
 }

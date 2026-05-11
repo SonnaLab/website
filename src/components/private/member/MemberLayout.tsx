@@ -18,6 +18,7 @@ import {
 } from '@icons';
 
 import { useAuth } from '@/components/providers/AuthProvider';
+import { getDashboardPath } from '@/utils/auth';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -36,16 +37,19 @@ interface NavItem { to: string; label: string; icon: ReactNode; end?: boolean }
  * brand + language + user menu (sign-out, back to public site).
  */
 export function MemberLayout() {
-  const { t }                      = useTranslation('member');
-  const { t: tAdmin }              = useTranslation('admin');
-  const { i18n }                   = useTranslation();
-  const { user, isAdmin, signOut } = useAuth();
+  const { t }                               = useTranslation('member');
+  const { t: tAdmin }                       = useTranslation('admin');
+  const { i18n }                            = useTranslation();
+  const { user, isAdmin, isStaff, signOut } = useAuth();
 
   const memberNav: NavItem[] = [
-    { to: '/member',              end: true, label: t('nav.dashboard'),    icon: <LayoutDashboardIcon size={16} /> },
-    { to: '/member/appointments',            label: t('nav.appointments'), icon: <CalendarIcon         size={16} /> },
-    { to: '/member/projects',                label: t('nav.projects'),     icon: <FolderKanbanIcon     size={16} /> },
-    { to: '/member/billing',                 label: t('nav.billing'),      icon: <ReceiptIcon          size={16} /> },
+    { to: '/dashboard',              end: true, label: t('nav.dashboard'),    icon: <LayoutDashboardIcon size={16} /> },
+    { to: '/dashboard/appointments',            label: t('nav.appointments'), icon: <CalendarIcon         size={16} /> },
+    { to: '/dashboard/projects',                label: t('nav.projects'),     icon: <FolderKanbanIcon     size={16} /> },
+    { to: '/dashboard/billing',                 label: t('nav.billing'),      icon: <ReceiptIcon          size={16} /> },
+  ];
+  const staffNav: NavItem[] = [
+    { to: '/staff/dashboard', end: true, label: t('nav.dashboard'), icon: <LayoutDashboardIcon size={16} /> },
   ];
   const adminNav: NavItem[] = [
     { to: '/admin/infrastructure', label: tAdmin('nav.infrastructure'), icon: <ServerIcon    size={16} /> },
@@ -60,7 +64,7 @@ export function MemberLayout() {
     <div className="min-h-screen bg-secondary flex flex-col">
       {/* === Top navbar === */}
       <header className="sticky top-0 z-30 h-14 bg-card border-b border-border flex items-center justify-between px-4 sm:px-6">
-        <Link to="/member" className="text-base font-semibold text-foreground">
+        <Link to={getDashboardPath(user?.role)} className="text-base font-semibold text-foreground">
           SonnaLab
         </Link>
 
@@ -113,6 +117,14 @@ export function MemberLayout() {
         <aside className="hidden md:flex w-60 shrink-0 flex-col bg-card border-r border-border">
           <nav className="flex-1 overflow-y-auto px-3 py-5 space-y-1">
             {memberNav.map((item) => <SideLink key={item.to} item={item} />)}
+            {user?.role === 'staff' && (
+              <>
+                <div className="mt-6 mb-2 px-3 text-[11px] uppercase tracking-wider text-muted-foreground">
+                  Staff
+                </div>
+                {staffNav.map((item) => <SideLink key={item.to} item={item} />)}
+              </>
+            )}
             {isAdmin && (
               <>
                 <div className="mt-6 mb-2 px-3 text-[11px] uppercase tracking-wider text-muted-foreground">

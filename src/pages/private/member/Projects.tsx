@@ -84,7 +84,7 @@ export function ProjectDetail() {
   return (
     <div className="space-y-8">
       <header className="space-y-2">
-        <Link to="/member/projects" className="text-sm text-muted-foreground hover:text-foreground">← {t('projects.title')}</Link>
+        <Link to="/dashboard/projects" className="text-sm text-muted-foreground hover:text-foreground">← {t('projects.title')}</Link>
         <div className="flex items-center justify-between gap-3">
           <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">{project.name}</h1>
           <Badge variant="secondary" className="capitalize">{project.status}</Badge>

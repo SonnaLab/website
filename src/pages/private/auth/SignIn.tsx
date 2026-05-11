@@ -8,6 +8,7 @@ import { AxiosError } from 'axios';
 import { AuthLayout } from '@/components/private/auth/AuthLayout';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { createSignInSchema, SignInInputs } from '@/schemas/authSchema';
+import { getDashboardPath } from '@/utils/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,15 +18,15 @@ export default function SignInPage() {
   const { signIn } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const redirectTo = (location.state as { from?: string } | null)?.from || '/member';
+  const from = (location.state as { from?: string } | null)?.from;
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } =
     useForm<SignInInputs>({ resolver: zodResolver(createSignInSchema(t)) });
 
   const onSubmit = async (data: SignInInputs) => {
     try {
-      await signIn(data.email, data.password);
-      navigate(redirectTo, { replace: true });
+      const user = await signIn(data.email, data.password);
+      navigate(from || getDashboardPath(user.role), { replace: true });
     } catch (err) {
       const status = (err as AxiosError)?.response?.status;
       toast.error(status === 401 ? t('signIn.errorInvalid') : t('signIn.errorGeneric'));

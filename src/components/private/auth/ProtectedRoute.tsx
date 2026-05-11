@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/components/providers/AuthProvider';
 import type { AuthRole } from '@/services/api';
+import { getDashboardPath } from '@/utils/auth';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -28,7 +29,7 @@ export function ProtectedRoute({ children, roles, redirectTo = '/sign-in' }: Pro
   }
 
   if (roles && user && !roles.includes(user.role)) {
-    return <Navigate to="/member" replace />;
+    return <Navigate to={getDashboardPath(user.role)} replace />;
   }
 
   return <>{children}</>;

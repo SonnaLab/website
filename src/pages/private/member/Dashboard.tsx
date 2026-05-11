@@ -41,10 +41,10 @@ export default function MemberDashboard() {
   }, []);
 
   const cards = [
-    { to: '/member/appointments', label: t('dashboard.appointments'), value: counts.appointments, icon: CalendarIcon     },
-    { to: '/member/projects',     label: t('dashboard.projects'),     value: counts.projects,     icon: FolderKanbanIcon },
-    { to: '/member/billing',      label: t('dashboard.quotes'),       value: counts.quotes,       icon: FileTextIcon     },
-    { to: '/member/billing',      label: t('dashboard.invoices'),     value: counts.invoices,     icon: ReceiptIcon      },
+    { to: '/dashboard/appointments', label: t('dashboard.appointments'), value: counts.appointments, icon: CalendarIcon     },
+    { to: '/dashboard/projects',     label: t('dashboard.projects'),     value: counts.projects,     icon: FolderKanbanIcon },
+    { to: '/dashboard/billing',      label: t('dashboard.quotes'),       value: counts.quotes,       icon: FileTextIcon     },
+    { to: '/dashboard/billing',      label: t('dashboard.invoices'),     value: counts.invoices,     icon: ReceiptIcon      },
   ];
 
   return (
