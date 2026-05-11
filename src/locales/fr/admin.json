@@ -15,65 +15,40 @@
     "fallbackName": "Admin",
     "subtitle": "Administration SonnaLab",
     "latest": "Dernières actions",
-    "hint": "Aperçu rapide des espaces opérationnels.",
-    "lastAction": "Dernière action",
+    "lastAction": "Dernières actions",
     "viewMore": "Voir plus",
     "widgets": {
       "infrastructure": {
         "title": "Infrastructure",
-        "description": "Santé applicative, services et déploiements.",
-        "status": "Stable",
-        "lastAction": "Vérification de la disponibilité des services.",
-        "meta": "Uptime, latence et dépendances à surveiller."
+        "empty": "Aucune activité infrastructure."
       },
       "tracking": {
         "title": "Tracking",
-        "description": "Sessions, événements et parcours visiteurs.",
-        "status": "Temps réel",
-        "lastAction": "Lecture des dernières sessions actives.",
-        "meta": "Vue rapide des pages, pays et consentements."
+        "empty": "Aucune session récente."
       },
       "news": {
         "title": "News",
-        "description": "Articles, publications et contenus éditoriaux.",
-        "status": "Édition",
-        "lastAction": "Préparation des prochaines publications.",
-        "meta": "Brouillons et contenus publiés à vérifier."
+        "empty": "Aucun article récent."
       },
       "users": {
         "title": "Utilisateurs",
-        "description": "Comptes, rôles et accès à l'espace privé.",
-        "status": "Accès",
-        "lastAction": "Contrôle des rôles administrateurs et staff.",
-        "meta": "Gestion des permissions et profils clients."
+        "empty": "Aucun utilisateur récent."
       },
       "billing": {
         "title": "Facturation",
-        "description": "Devis, factures et suivi administratif.",
-        "status": "Finance",
-        "lastAction": "Revue des derniers documents client.",
-        "meta": "Factures, échéances et devis à traiter."
+        "empty": "Aucun document récent."
       },
       "projects": {
         "title": "Projets",
-        "description": "Suivi des livrables, jalons et mises à jour.",
-        "status": "Delivery",
-        "lastAction": "Consultation des projets en cours.",
-        "meta": "Priorités, avancement et prochaines étapes."
+        "empty": "Aucun projet récent."
       },
       "seo": {
         "title": "SEO",
-        "description": "Pages, mots-clés, métadonnées et audits.",
-        "status": "Audit",
-        "lastAction": "Analyse des pages indexables.",
-        "meta": "Scores, intentions et opportunités de contenu."
+        "empty": "Aucune page récente."
       },
       "ouou": {
         "title": "OUOU (IA)",
-        "description": "Conversations, modèles et quota assistant.",
-        "status": "IA",
-        "lastAction": "Suivi des conversations récentes.",
-        "meta": "Messages, modèles et consommation de tokens."
+        "empty": "Aucune conversation récente."
       }
     }
   },

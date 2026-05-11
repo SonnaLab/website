@@ -17,10 +17,27 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { HighlightText } from '@/components/utils/HighlightText';
 
 interface AdminWidget {
-  key: string;
+  key: WidgetKey;
   to: string;
   icon: ComponentType<IconProps>;
 }
+
+interface LatestItem {
+  label: string;
+  status: string;
+}
+
+type WidgetKey =
+  | 'infrastructure'
+  | 'tracking'
+  | 'news'
+  | 'users'
+  | 'billing'
+  | 'projects'
+  | 'seo'
+  | 'ouou';
+
+const latestItemsByWidget: Partial<Record<WidgetKey, LatestItem[]>> = {};
 
 const adminWidgetRows: AdminWidget[][] = [
   [
@@ -56,7 +73,6 @@ export default function AdminDashboard() {
       <section className="admin-dashboard__section" aria-label={t('dashboard.latest')}>
         <div className="admin-dashboard__section-head">
           <p className="admin-dashboard__eyebrow">{t('dashboard.latest')}</p>
-          <p className="admin-dashboard__hint">{t('dashboard.hint')}</p>
         </div>
 
         <div className="admin-dashboard__widget-stack">
@@ -65,34 +81,50 @@ export default function AdminDashboard() {
               key={`admin-widget-row-${rowIndex}`}
               className={`admin-dashboard__widget-row admin-dashboard__widget-row--${row.length}`}
             >
-              {row.map(({ key, to, icon: Icon }) => (
-                <article key={key} className="admin-action-widget">
-                  <div className="admin-action-widget__top">
-                    <span className="admin-action-widget__icon" aria-hidden="true">
-                      <Icon size={20} />
-                    </span>
-                    <span className="admin-action-widget__status">
-                      {t(`dashboard.widgets.${key}.status`)}
-                    </span>
-                  </div>
+              {row.map(({ key, to, icon: Icon }) => {
+                const latestItems = latestItemsByWidget[key] ?? [];
 
-                  <div className="admin-action-widget__body">
-                    <h2>{t(`dashboard.widgets.${key}.title`)}</h2>
-                    <p>{t(`dashboard.widgets.${key}.description`)}</p>
-                  </div>
+                return (
+                  <article key={key} className="admin-action-widget">
+                    <div className="admin-action-widget__top">
+                      <div className="admin-action-widget__identity">
+                        <span className="admin-action-widget__icon" aria-hidden="true">
+                          <Icon size={20} />
+                        </span>
+                        <h2>{t(`dashboard.widgets.${key}.title`)}</h2>
+                      </div>
 
-                  <div className="admin-action-widget__preview">
-                    <span>{t('dashboard.lastAction')}</span>
-                    <p>{t(`dashboard.widgets.${key}.lastAction`)}</p>
-                    <small>{t(`dashboard.widgets.${key}.meta`)}</small>
-                  </div>
+                      <Link className="admin-action-widget__link" to={to}>
+                        {t('dashboard.viewMore')}
+                        <ArrowUpRightIcon size={15} />
+                      </Link>
+                    </div>
 
-                  <Link className="admin-action-widget__link" to={to}>
-                    {t('dashboard.viewMore')}
-                    <ArrowUpRightIcon size={15} />
-                  </Link>
-                </article>
-              ))}
+                    <div className="admin-action-widget__preview">
+                      <span className="admin-action-widget__preview-title">{t('dashboard.lastAction')}</span>
+
+                      {latestItems.length > 0 ? (
+                        <ul className="admin-action-widget__activity-list">
+                          {latestItems.map(item => (
+                            <li key={`${key}-${item.label}`}>
+                              <span className="admin-action-widget__activity-label">
+                                {item.label}
+                              </span>
+                              <span className="admin-action-widget__activity-status">
+                                {item.status}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="admin-action-widget__empty">
+                          {t(`dashboard.widgets.${key}.empty`)}
+                        </p>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           ))}
         </div>

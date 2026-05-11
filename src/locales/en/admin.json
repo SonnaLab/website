@@ -15,65 +15,40 @@
     "fallbackName": "Admin",
     "subtitle": "SonnaLab administration",
     "latest": "Latest actions",
-    "hint": "A quick preview of operational spaces.",
-    "lastAction": "Latest action",
+    "lastAction": "Latest actions",
     "viewMore": "View more",
     "widgets": {
       "infrastructure": {
         "title": "Infrastructure",
-        "description": "Application health, services, and deployments.",
-        "status": "Stable",
-        "lastAction": "Checked service availability.",
-        "meta": "Uptime, latency, and dependencies to monitor."
+        "empty": "No infrastructure activity."
       },
       "tracking": {
         "title": "Tracking",
-        "description": "Sessions, events, and visitor journeys.",
-        "status": "Realtime",
-        "lastAction": "Reviewed the latest active sessions.",
-        "meta": "Quick view of pages, countries, and consent."
+        "empty": "No recent sessions."
       },
       "news": {
         "title": "News",
-        "description": "Articles, publications, and editorial content.",
-        "status": "Editorial",
-        "lastAction": "Prepared upcoming publications.",
-        "meta": "Drafts and published content to review."
+        "empty": "No recent articles."
       },
       "users": {
         "title": "Users",
-        "description": "Accounts, roles, and private-space access.",
-        "status": "Access",
-        "lastAction": "Checked admin and staff roles.",
-        "meta": "Permissions and client profile management."
+        "empty": "No recent users."
       },
       "billing": {
         "title": "Billing",
-        "description": "Quotes, invoices, and administrative follow-up.",
-        "status": "Finance",
-        "lastAction": "Reviewed recent client documents.",
-        "meta": "Invoices, due dates, and quotes to process."
+        "empty": "No recent documents."
       },
       "projects": {
         "title": "Projects",
-        "description": "Deliverables, milestones, and project updates.",
-        "status": "Delivery",
-        "lastAction": "Checked active projects.",
-        "meta": "Priorities, progress, and next steps."
+        "empty": "No recent projects."
       },
       "seo": {
         "title": "SEO",
-        "description": "Pages, keywords, metadata, and audits.",
-        "status": "Audit",
-        "lastAction": "Analyzed indexable pages.",
-        "meta": "Scores, intent, and content opportunities."
+        "empty": "No recent pages."
       },
       "ouou": {
         "title": "OUOU (AI)",
-        "description": "Conversations, models, and assistant quota.",
-        "status": "AI",
-        "lastAction": "Reviewed recent conversations.",
-        "meta": "Messages, models, and token usage."
+        "empty": "No recent conversations."
       }
     }
   },
