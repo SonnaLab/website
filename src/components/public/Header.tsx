@@ -82,20 +82,18 @@ export function Header() {
   const textColorSecondary = isDarkBackground ? 'text-gray-100 drop-shadow-sm' : 'text-gray-700';
 
   return (
-    <header className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-7xl rounded-full transition-all duration-300 ${
-      scrolled 
-        ? 'bg-white/20 backdrop-blur-lg shadow-2xl border border-white/30' 
-        : 'bg-white/10 backdrop-blur-sm'
+    <header className={`sticky top-0 left-0 z-50 w-full transition-all duration-300 ${
+      scrolled
+        ? 'bg-white/90 backdrop-blur-lg shadow-sm border-b border-gray-100'
+        : 'bg-white/80 backdrop-blur-sm'
     }`}>
-      <div className="flex h-16 items-center justify-between px-6">
+      <div className="flex h-16 items-center justify-between px-6 max-w-7xl mx-auto">
         <div className="flex items-center space-x-3">
           <a href="/" onClick={handleLogoClick} className="cursor-pointer">
             <img 
               src={sonnaLabLogo} 
               alt="SonnaLab" 
-              className={`h-10 w-auto transition-all duration-300 ${
-                isDarkBackground && !scrolled ? 'brightness-0 invert' : ''
-              }`}
+              className="h-10 w-auto"
             />
           </a>
         </div>
@@ -106,9 +104,8 @@ export function Header() {
               key={item.name}
               href={item.section ? `#${item.section}` : item.href}
               onClick={handleNavigationClick(item.href, item.section)}
-              className={`text-sm font-medium transition-colors duration-300 hover:text-gray-400 cursor-pointer ${
-                scrolled ? 'text-gray-700 drop-shadow-none' : textColorSecondary
-              } ${location.pathname === item.href && !item.section ? 'underline underline-offset-4' : ''}`}
+              className={`text-sm font-medium transition-colors duration-300 hover:text-gray-400 cursor-pointer text-gray-700
+                ${location.pathname === item.href && !item.section ? 'underline underline-offset-4' : ''}`}
             >
               {item.name}
             </a>
@@ -120,11 +117,7 @@ export function Header() {
           <Button 
             size="sm"
             asChild
-            className={`transition-all duration-300 ${
-              scrolled || !isDarkBackground
-                ? 'bg-black hover:bg-gray-800 text-white'
-                : 'bg-white/20 hover:bg-white/30 text-white border border-white/50 backdrop-blur-sm drop-shadow-sm'
-            }`}
+            className="bg-black hover:bg-gray-800 text-white transition-all duration-300"
           >
             <Link to="/sign-in">{t('cta.signIn')}<LockKeyhole className="ml-2 h-7 w-7" /></Link>
           </Button>
@@ -135,10 +128,7 @@ export function Header() {
             <Button 
               variant="ghost" 
               size="icon"
-              className={`transition-colors duration-300 ${
-                scrolled ? 'text-black hover:bg-white/50' : 
-                isDarkBackground ? 'text-white hover:bg-white/20 drop-shadow-sm' : 'text-black hover:bg-white/50'
-              }`}
+              className="text-black hover:bg-gray-100 transition-colors duration-300"
             >
               <Menu className="h-5 w-5" />
             </Button>
