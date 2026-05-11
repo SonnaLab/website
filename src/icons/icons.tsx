@@ -230,3 +230,19 @@ export function UsersIcon(p: IconProps) {
     </svg>
   );
 }
+
+export function ChevronLeftIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <path d="M15 18l-6-6 6-6" />
+    </svg>
+  );
+}
+
+export function ChevronRightIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <path d="M9 18l6-6-6-6" />
+    </svg>
+  );
+}

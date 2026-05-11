@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -16,27 +16,37 @@ import {
   XIcon,
   NewsIcon,
   UsersIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
 } from '@icons';
 
 import { useAuth } from '@/components/providers/AuthProvider';
 import { getDashboardPath } from '@/utils/auth';
-import sonnaLabLogo from '@/assets/logo/bSonnaLab.png';
 
 interface NavItem { to: string; label: string; icon: React.ReactNode; end?: boolean }
 
-/**
- * Authenticated shell — sidebar + topbar, native CSS only (no Tailwind).
- * Sidebar items are exclusive per role:
- *   user/staff → member nav
- *   admin      → admin nav
- */
 export function MemberLayout() {
-  const { t }       = useTranslation('member');
-  const { t: tA }   = useTranslation('admin');
-  const { i18n }    = useTranslation();
+  const { t }    = useTranslation('member');
+  const { t: tA } = useTranslation('admin');
+  const { i18n } = useTranslation();
   const { user, isAdmin, signOut } = useAuth();
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [collapsed, setCollapsed]       = useState(false);
+  const [sidebarOpen, setSidebarOpen]   = useState(false);
+  const [avatarOpen, setAvatarOpen]     = useState(false);
+  const avatarRef                       = useRef<HTMLDivElement>(null);
+
+  // Close avatar dropdown on outside click
+  useEffect(() => {
+    function onOutside(e: MouseEvent) {
+      if (avatarRef.current && !avatarRef.current.contains(e.target as Node)) {
+        setAvatarOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', onOutside);
+    return () => document.removeEventListener('mousedown', onOutside);
+  }, []);
+
   const closeSidebar = () => setSidebarOpen(false);
 
   const memberNav: NavItem[] = [
@@ -70,11 +80,12 @@ export function MemberLayout() {
     : user?.email ?? '';
 
   return (
-    <div className="dash-shell">
+    <div className="dash-shell" data-collapsed={collapsed ? 'true' : 'false'}>
 
       {/* ── Top bar ── */}
       <header className="dash-topbar">
         <div className="dash-topbar__left">
+          {/* Mobile hamburger */}
           <button
             className="dash-topbar__hamburger"
             onClick={() => setSidebarOpen(o => !o)}
@@ -82,20 +93,64 @@ export function MemberLayout() {
           >
             {sidebarOpen ? <XIcon size={20} /> : <MenuIcon size={20} />}
           </button>
+
+          {/* Brand — lines up with sidebar width */}
           <Link to={getDashboardPath(user?.role)} className="dash-topbar__brand">
-            <img src={sonnaLabLogo} alt="SonnaLab" className="dash-topbar__logo" />
+            <img
+              src="/favicon/favicon-32x32.png"
+              alt="SonnaLab"
+              className="dash-topbar__favicon"
+            />
+            <span className="dash-topbar__brand-name">SonnaLab</span>
           </Link>
         </div>
 
-        <div className="dash-topbar__actions">
+        <div className="dash-topbar__right">
+          {/* Language toggle */}
           <button
-            className="dash-btn-ghost"
+            className="dash-btn-lang"
             onClick={() => i18n.changeLanguage(nextLang)}
-            title={nextLang === 'fr' ? 'Passer en français' : 'Switch to English'}
           >
-            <GlobeIcon size={14} />
+            <GlobeIcon size={13} />
             <span>{currentLang}</span>
           </button>
+
+          {/* Avatar + dropdown */}
+          <div className="dash-avatar-wrap" ref={avatarRef}>
+            <button
+              className="dash-avatar-btn"
+              onClick={() => setAvatarOpen(o => !o)}
+              aria-label="Compte"
+            >
+              {initials}
+            </button>
+
+            {avatarOpen && (
+              <div className="dash-avatar-dropdown">
+                <div className="dash-avatar-info">
+                  <span className="dash-avatar-info__name">{displayName}</span>
+                  <span className="dash-avatar-info__role">{user?.role}</span>
+                </div>
+
+                <Link
+                  to="/"
+                  className="dash-avatar-menu-item"
+                  onClick={() => setAvatarOpen(false)}
+                >
+                  <ArrowLeftIcon size={14} />
+                  {t('nav.backToSite')}
+                </Link>
+
+                <button
+                  className="dash-avatar-menu-item dash-avatar-menu-item--danger"
+                  onClick={() => { setAvatarOpen(false); signOut(); }}
+                >
+                  <LogOutIcon size={14} />
+                  {t('nav.signOut')}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
@@ -104,10 +159,7 @@ export function MemberLayout() {
 
         {/* Mobile overlay */}
         {sidebarOpen && (
-          <div
-            className="dash-overlay dash-overlay--visible"
-            onClick={closeSidebar}
-          />
+          <div className="dash-overlay dash-overlay--visible" onClick={closeSidebar} />
         )}
 
         {/* ── Sidebar ── */}
@@ -119,36 +171,25 @@ export function MemberLayout() {
                 to={item.to}
                 end={item.end}
                 onClick={closeSidebar}
+                title={collapsed ? item.label : undefined}
                 className={({ isActive }) =>
                   'dash-nav-link' + (isActive ? ' active' : '')
                 }
               >
                 {item.icon}
-                <span>{item.label}</span>
+                <span className="dash-nav-label">{item.label}</span>
               </NavLink>
             ))}
           </nav>
 
-          {/* User info + actions */}
-          <footer className="dash-sidebar__footer">
-            <div className="dash-user-badge">
-              <div className="dash-user-badge__avatar">{initials}</div>
-              <div className="dash-user-badge__info">
-                <div className="dash-user-badge__name">{displayName}</div>
-                <div className="dash-user-badge__role">{user?.role}</div>
-              </div>
-            </div>
-
-            <Link to="/" className="dash-footer-link" onClick={closeSidebar}>
-              <ArrowLeftIcon size={15} />
-              <span>{t('nav.backToSite')}</span>
-            </Link>
-
-            <button onClick={signOut} className="dash-footer-link dash-footer-link--signout">
-              <LogOutIcon size={15} />
-              <span>{t('nav.signOut')}</span>
-            </button>
-          </footer>
+          {/* Collapse toggle */}
+          <button
+            className="dash-sidebar__toggle"
+            onClick={() => setCollapsed(c => !c)}
+            title={collapsed ? 'Déplier la sidebar' : 'Réduire la sidebar'}
+          >
+            {collapsed ? <ChevronRightIcon size={15} /> : <ChevronLeftIcon size={15} />}
+          </button>
         </aside>
 
         {/* ── Main content ── */}
@@ -157,9 +198,7 @@ export function MemberLayout() {
             <Outlet />
           </div>
         </main>
-
       </div>
     </div>
   );
 }
-

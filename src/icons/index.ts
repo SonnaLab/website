@@ -35,4 +35,6 @@ export {
   GlobeIcon,
   NewsIcon,
   UsersIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
 } from './icons';
