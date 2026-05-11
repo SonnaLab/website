@@ -149,15 +149,6 @@ export function MemberLayout() {
                   <span className="dash-avatar-info__role">{user?.role}</span>
                 </div>
 
-                <Link
-                  to="/"
-                  className="dash-avatar-menu-item"
-                  onClick={() => setAvatarOpen(false)}
-                >
-                  <ArrowLeftIcon size={14} />
-                  {t('nav.backToSite')}
-                </Link>
-
                 <button
                   className="dash-avatar-menu-item dash-avatar-menu-item--danger"
                   onClick={() => { setAvatarOpen(false); signOut(); }}
@@ -203,14 +194,17 @@ export function MemberLayout() {
             ))}
           </nav>
 
-          {/* Collapse toggle */}
-          <button
-            className="dash-sidebar__toggle"
-            onClick={() => setCollapsed(c => !c)}
-            title={collapsed ? 'Déplier la sidebar' : 'Réduire la sidebar'}
-          >
-            {collapsed ? <ChevronRightIcon size={15} /> : <ChevronLeftIcon size={15} />}
-          </button>
+          <div className="dash-sidebar__footer">
+            <Link
+              to="/"
+              className="dash-footer-link"
+              onClick={closeSidebar}
+              title={sidebarExpanded ? undefined : t('nav.backToSite')}
+            >
+              <ArrowLeftIcon size={16} />
+              <span className="dash-nav-label">{t('nav.backToSite')}</span>
+            </Link>
+          </div>
         </aside>
 
         {/* ── Main content ── */}

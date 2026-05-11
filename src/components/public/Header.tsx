@@ -5,11 +5,13 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from '@/components/ui/sheet';
-import { Menu, Phone, Mail, MapPin, X, LockKeyhole } from 'lucide-react';
+import { Menu, Phone, Mail, MapPin, X, LockKeyhole, LayoutDashboard } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/utils/LanguageSwitcher';
 import { useNavigation } from '@/hooks/useNavigation';
 import sonnaLabLogo from '@/assets/logo/bSonnaLab.png';
 import { useLanguageTracking } from '@/hooks/useAnalytics';
+import { useAuth } from '@/components/providers/AuthProvider';
+import { getDashboardPath } from '@/utils/auth';
 
 export function Header() {
   const { t } = useTranslation('header');
@@ -20,6 +22,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [isDarkBackground, setIsDarkBackground] = useState(false);
   const { trackLanguageChange } = useLanguageTracking();
+  const { user, isAuthenticated } = useAuth();
 
   const navigation = [
     { name: t('nav.home'), href: '/', section: 'home' },
@@ -80,6 +83,9 @@ export function Header() {
   };
 
   const textColorSecondary = isDarkBackground ? 'text-gray-100 drop-shadow-sm' : 'text-gray-700';
+  const ctaHref = isAuthenticated ? getDashboardPath(user?.role) : '/sign-in';
+  const ctaLabel = isAuthenticated ? t('cta.dashboard') : t('cta.signIn');
+  const CtaIcon = isAuthenticated ? LayoutDashboard : LockKeyhole;
 
   return (
     <header className={`fixed top-0 left-0 z-50 w-full border-b-2 border-black transition-all duration-300 ${
@@ -119,7 +125,7 @@ export function Header() {
             asChild
             className="bg-black hover:bg-gray-800 text-white transition-all duration-300"
           >
-            <Link to="/sign-in">{t('cta.signIn')}<LockKeyhole className="ml-2 h-7 w-7" /></Link>
+            <Link to={ctaHref}>{ctaLabel}<CtaIcon className="ml-2 h-7 w-7" /></Link>
           </Button>
         </div>
 
@@ -193,7 +199,7 @@ export function Header() {
                   asChild
                   className="w-full bg-black hover:bg-gray-800 text-white h-12 text-base font-semibold"
                 >
-                  <Link to="/sign-in" onClick={() => setIsOpen(false)}>{t('cta.signIn')}<LockKeyhole className="ml-2 h-5 w-5" /></Link>
+                  <Link to={ctaHref} onClick={() => setIsOpen(false)}>{ctaLabel}<CtaIcon className="ml-2 h-5 w-5" /></Link>
                 </Button>
 
                 {/* Contact Info */}

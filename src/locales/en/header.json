@@ -11,7 +11,8 @@
   "cta": {
     "portfolio": "Portfolio",
     "consultation": "Consultation",
-    "signIn": "Sign in"
+    "signIn": "Sign in",
+    "dashboard": "Dashboard"
   },
   "mobile": {
     "phone": "+33 (0)7 53 31 56 03",

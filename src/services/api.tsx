@@ -32,7 +32,17 @@ export function getStoredRefreshToken(): string | null {
 }
 export function getStoredUser(): AuthUser | null {
   const raw = localStorage.getItem(AUTH_STORAGE_KEYS.user);
-  return raw ? (JSON.parse(raw) as AuthUser) : null;
+  if (!raw || raw === 'undefined' || raw === 'null') {
+    localStorage.removeItem(AUTH_STORAGE_KEYS.user);
+    return null;
+  }
+
+  try {
+    return JSON.parse(raw) as AuthUser;
+  } catch {
+    localStorage.removeItem(AUTH_STORAGE_KEYS.user);
+    return null;
+  }
 }
 export function persistAuth(payload: { access_token: string; refresh_token: string; user: AuthUser }) {
   localStorage.setItem(AUTH_STORAGE_KEYS.access,  payload.access_token);
