@@ -1,8 +1,7 @@
 import { svgProps, type IconProps } from './_base';
 
-/* All SVG paths below are hand-authored from generic geometric primitives
- * (rectangles, circles, polylines). They are intentionally simple so the set
- * stays small and dependency-free. Each icon renders inside a 24x24 box. */
+/* SVG child nodes mirror Lucide icon nodes. They are rendered inline to keep
+ * the local @icons API stable across the app. */
 
 export function LayoutDashboardIcon(p: IconProps) {
   return (
@@ -18,8 +17,10 @@ export function LayoutDashboardIcon(p: IconProps) {
 export function CalendarIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
-      <rect x="3" y="5" width="18" height="16" rx="2" />
-      <path d="M16 3v4M8 3v4M3 10h18" />
+      <path d="M8 2v4" />
+      <path d="M16 2v4" />
+      <rect width="18" height="18" x="3" y="4" rx="2" />
+      <path d="M3 10h18" />
     </svg>
   );
 }
@@ -27,8 +28,10 @@ export function CalendarIcon(p: IconProps) {
 export function FolderKanbanIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
-      <path d="M4 4h5l2 3h9a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z" />
-      <path d="M9 11v5M13 11v3M17 11v6" />
+      <path d="M21 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2" />
+      <path d="M10 7v4" />
+      <path d="M14 7v9" />
+      <path d="M6 7v2" />
     </svg>
   );
 }
@@ -36,8 +39,10 @@ export function FolderKanbanIcon(p: IconProps) {
 export function ReceiptIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
-      <path d="M5 3v18l2-1.5L9 21l2-1.5L13 21l2-1.5L17 21l2-1.5V3" />
-      <path d="M8 8h8M8 12h8M8 16h5" />
+      <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z" />
+      <path d="M14 8H8" />
+      <path d="M16 12H8" />
+      <path d="M13 16H8" />
     </svg>
   );
 }
@@ -45,9 +50,11 @@ export function ReceiptIcon(p: IconProps) {
 export function FileTextIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
-      <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z" />
-      <path d="M14 3v6h6" />
-      <path d="M8 13h8M8 17h6" />
+      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+      <path d="M10 9H8" />
+      <path d="M16 13H8" />
+      <path d="M16 17H8" />
     </svg>
   );
 }
@@ -56,8 +63,8 @@ export function LogOutIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-      <path d="M16 17l5-5-5-5" />
-      <path d="M21 12H9" />
+      <polyline points="16 17 21 12 16 7" />
+      <line x1="21" x2="9" y1="12" y2="12" />
     </svg>
   );
 }
@@ -65,8 +72,8 @@ export function LogOutIcon(p: IconProps) {
 export function ArrowLeftIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
+      <path d="m12 19-7-7 7-7" />
       <path d="M19 12H5" />
-      <path d="M12 19l-7-7 7-7" />
     </svg>
   );
 }
@@ -74,9 +81,10 @@ export function ArrowLeftIcon(p: IconProps) {
 export function ServerIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
-      <rect x="3" y="3"  width="18" height="8" rx="2" />
-      <rect x="3" y="13" width="18" height="8" rx="2" />
-      <path d="M7 7h.01M7 17h.01" />
+      <rect width="20" height="8" x="2" y="2" rx="2" ry="2" />
+      <rect width="20" height="8" x="2" y="14" rx="2" ry="2" />
+      <line x1="6" x2="6.01" y1="6" y2="6" />
+      <line x1="6" x2="6.01" y1="18" y2="18" />
     </svg>
   );
 }
@@ -85,7 +93,7 @@ export function LineChartIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
       <path d="M3 3v18h18" />
-      <path d="M7 15l4-4 3 3 5-6" />
+      <path d="m19 9-5 5-4-4-3 3" />
     </svg>
   );
 }
@@ -93,11 +101,12 @@ export function LineChartIcon(p: IconProps) {
 export function BotIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
-      <rect x="4" y="7" width="16" height="12" rx="2" />
-      <path d="M12 3v4" />
-      <circle cx="9"  cy="13" r="1" />
-      <circle cx="15" cy="13" r="1" />
-      <path d="M9 17h6" />
+      <path d="M12 8V4H8" />
+      <rect width="16" height="12" x="4" y="8" rx="2" />
+      <path d="M2 14h2" />
+      <path d="M20 14h2" />
+      <path d="M15 13v2" />
+      <path d="M9 13v2" />
     </svg>
   );
 }
@@ -105,8 +114,8 @@ export function BotIcon(p: IconProps) {
 export function SearchIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
-      <circle cx="11" cy="11" r="7" />
-      <path d="M21 21l-4.3-4.3" />
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.3-4.3" />
     </svg>
   );
 }
@@ -114,8 +123,10 @@ export function SearchIcon(p: IconProps) {
 export function RefreshCwIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
-      <path d="M21 12a9 9 0 1 1-3-6.7L21 8" />
+      <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
       <path d="M21 3v5h-5" />
+      <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+      <path d="M3 21v-5h5" />
     </svg>
   );
 }
@@ -123,8 +134,8 @@ export function RefreshCwIcon(p: IconProps) {
 export function SendIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
-      <path d="M22 2 11 13" />
-      <path d="M22 2 15 22l-4-9-9-4Z" />
+      <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" />
+      <path d="m21.854 2.147-10.94 10.939" />
     </svg>
   );
 }
@@ -132,7 +143,8 @@ export function SendIcon(p: IconProps) {
 export function PlusIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
-      <path d="M12 5v14M5 12h14" />
+      <path d="M5 12h14" />
+      <path d="M12 5v14" />
     </svg>
   );
 }
@@ -140,8 +152,8 @@ export function PlusIcon(p: IconProps) {
 export function ArchiveIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
-      <rect x="3" y="3" width="18" height="5" rx="1" />
-      <path d="M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8" />
+      <rect width="20" height="5" x="2" y="3" rx="1" />
+      <path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8" />
       <path d="M10 12h4" />
     </svg>
   );
@@ -151,9 +163,10 @@ export function Trash2Icon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
       <path d="M3 6h18" />
-      <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2" />
-      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-      <path d="M10 11v6M14 11v6" />
+      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+      <line x1="10" x2="10" y1="11" y2="17" />
+      <line x1="14" x2="14" y1="11" y2="17" />
     </svg>
   );
 }
@@ -161,8 +174,8 @@ export function Trash2Icon(p: IconProps) {
 export function CheckCircle2Icon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M8 12l3 3 5-6" />
+      <circle cx="12" cy="12" r="10" />
+      <path d="m9 12 2 2 4-4" />
     </svg>
   );
 }
@@ -170,8 +183,9 @@ export function CheckCircle2Icon(p: IconProps) {
 export function XCircleIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M9 9l6 6M15 9l-6 6" />
+      <circle cx="12" cy="12" r="10" />
+      <path d="m15 9-6 6" />
+      <path d="m9 9 6 6" />
     </svg>
   );
 }
@@ -179,7 +193,9 @@ export function XCircleIcon(p: IconProps) {
 export function MenuIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
-      <path d="M4 6h16M4 12h16M4 18h16" />
+      <line x1="4" x2="20" y1="12" y2="12" />
+      <line x1="4" x2="20" y1="6" y2="6" />
+      <line x1="4" x2="20" y1="18" y2="18" />
     </svg>
   );
 }
@@ -187,7 +203,8 @@ export function MenuIcon(p: IconProps) {
 export function XIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
-      <path d="M18 6 6 18M6 6l12 12" />
+      <path d="M18 6 6 18" />
+      <path d="m6 6 12 12" />
     </svg>
   );
 }
@@ -195,8 +212,8 @@ export function XIcon(p: IconProps) {
 export function UserIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
-      <circle cx="12" cy="8" r="4" />
-      <path d="M4 21a8 8 0 0 1 16 0" />
+      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
     </svg>
   );
 }
@@ -204,9 +221,9 @@ export function UserIcon(p: IconProps) {
 export function GlobeIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M3 12h18" />
-      <path d="M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" />
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+      <path d="M2 12h20" />
     </svg>
   );
 }
@@ -214,8 +231,10 @@ export function GlobeIcon(p: IconProps) {
 export function NewsIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
-      <path d="M4 3h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" />
-      <path d="M8 7h8M8 11h8M8 15h5" />
+      <path d="M15 18h-5" />
+      <path d="M18 14h-8" />
+      <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-9a2 2 0 0 1 2-2h2" />
+      <rect width="8" height="4" x="10" y="6" rx="1" />
     </svg>
   );
 }
@@ -223,10 +242,10 @@ export function NewsIcon(p: IconProps) {
 export function UsersIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
       <circle cx="9" cy="7" r="4" />
-      <path d="M3 21a6 6 0 0 1 12 0" />
-      <circle cx="17" cy="9" r="3" />
-      <path d="M21 21a4 4 0 0 0-8 0" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
     </svg>
   );
 }
@@ -234,7 +253,7 @@ export function UsersIcon(p: IconProps) {
 export function ChevronLeftIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
-      <path d="M15 18l-6-6 6-6" />
+      <path d="m15 18-6-6 6-6" />
     </svg>
   );
 }
@@ -242,7 +261,7 @@ export function ChevronLeftIcon(p: IconProps) {
 export function ChevronRightIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>
-      <path d="M9 18l6-6-6-6" />
+      <path d="m9 18 6-6-6-6" />
     </svg>
   );
 }
