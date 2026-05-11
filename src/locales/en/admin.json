@@ -141,7 +141,96 @@
   "news": {
     "title": "News",
     "subtitle": "Manage articles and publications.",
-    "empty": "No articles yet."
+    "empty": "No articles yet.",
+    "tabs": {
+      "overview": "Overview",
+      "articles": "Articles",
+      "prompts": "Prompts",
+      "calendar": "Calendar",
+      "strategy": "Strategy"
+    },
+    "overview": {
+      "objectives": "Weekly objectives",
+      "noObjectives": "No objectives this week.",
+      "addObjective": "Add",
+      "newObjectivePlaceholder": "New objective…",
+      "recentArticles": "Recent articles",
+      "noRecent": "No recent articles.",
+      "stats": {
+        "published": "Published",
+        "drafts": "Drafts",
+        "thisWeek": "This week",
+        "total": "Total"
+      }
+    },
+    "articles": {
+      "new": "New article",
+      "empty": "No articles yet.",
+      "searchPlaceholder": "Search an article…",
+      "title": "Title",
+      "status": "Status",
+      "locale": "Locale",
+      "author": "Author",
+      "date": "Date",
+      "actions": "Actions",
+      "publish": "Publish",
+      "unpublish": "Unpublish",
+      "confirmDelete": "Delete this article?",
+      "statuses": {
+        "draft": "Draft",
+        "published": "Published",
+        "archived": "Archived"
+      },
+      "form": {
+        "title": "Title",
+        "titlePlaceholder": "Article title",
+        "excerpt": "Excerpt",
+        "excerptPlaceholder": "Short summary of the article…",
+        "locale": "Locale",
+        "status": "Status",
+        "category": "Category",
+        "categoryPlaceholder": "e.g. AI, Design…",
+        "tags": "Tags (comma-separated)",
+        "tagsPlaceholder": "react, typescript, AI…"
+      }
+    },
+    "prompts": {
+      "new": "New prompt",
+      "empty": "No prompts yet.",
+      "title": "Title",
+      "category": "Category",
+      "content": "Content",
+      "date": "Date",
+      "actions": "Actions",
+      "confirmDelete": "Delete this prompt?",
+      "form": {
+        "title": "Title",
+        "titlePlaceholder": "Prompt title",
+        "content": "Content",
+        "contentPlaceholder": "Write a blog post about the following topic…",
+        "category": "Category",
+        "categoryPlaceholder": "e.g. SEO, Writing…"
+      }
+    },
+    "calendar": {
+      "empty": "No scheduled publications.",
+      "month": "Month",
+      "today": "Today",
+      "scheduled": "scheduled"
+    },
+    "strategy": {
+      "empty": "No strategy defined yet.",
+      "goals": "Content goals",
+      "keywords": "Target keywords",
+      "themes": "Editorial themes",
+      "frequency": "Publishing frequency",
+      "save": "Save",
+      "saved": "Strategy saved.",
+      "goalsPlaceholder": "Increase visibility, attract leads…",
+      "keywordsPlaceholder": "AI, lab, digital…",
+      "themesPlaceholder": "Tech, Innovation, Design, Generative AI…",
+      "frequencyPlaceholder": "2 articles / week"
+    }
   },
   "users": {
     "title": "Users",

@@ -141,7 +141,96 @@
   "news": {
     "title": "News",
     "subtitle": "Gestion des articles et publications.",
-    "empty": "Aucun article pour l'instant."
+    "empty": "Aucun article pour l'instant.",
+    "tabs": {
+      "overview": "Vue d'ensemble",
+      "articles": "Articles",
+      "prompts": "Prompts",
+      "calendar": "Calendrier",
+      "strategy": "Stratégie"
+    },
+    "overview": {
+      "objectives": "Objectifs de la semaine",
+      "noObjectives": "Aucun objectif cette semaine.",
+      "addObjective": "Ajouter",
+      "newObjectivePlaceholder": "Nouvel objectif…",
+      "recentArticles": "Articles récents",
+      "noRecent": "Aucun article récent.",
+      "stats": {
+        "published": "Publiés",
+        "drafts": "Brouillons",
+        "thisWeek": "Cette semaine",
+        "total": "Total"
+      }
+    },
+    "articles": {
+      "new": "Nouvel article",
+      "empty": "Aucun article pour l'instant.",
+      "searchPlaceholder": "Rechercher un article…",
+      "title": "Titre",
+      "status": "Statut",
+      "locale": "Langue",
+      "author": "Auteur",
+      "date": "Date",
+      "actions": "Actions",
+      "publish": "Publier",
+      "unpublish": "Dépublier",
+      "confirmDelete": "Supprimer cet article ?",
+      "statuses": {
+        "draft": "Brouillon",
+        "published": "Publié",
+        "archived": "Archivé"
+      },
+      "form": {
+        "title": "Titre",
+        "titlePlaceholder": "Titre de l'article",
+        "excerpt": "Résumé",
+        "excerptPlaceholder": "Résumé de l'article…",
+        "locale": "Langue",
+        "status": "Statut",
+        "category": "Catégorie",
+        "categoryPlaceholder": "ex: IA, Design…",
+        "tags": "Tags (séparés par virgule)",
+        "tagsPlaceholder": "react, typescript, IA…"
+      }
+    },
+    "prompts": {
+      "new": "Nouveau prompt",
+      "empty": "Aucun prompt pour l'instant.",
+      "title": "Titre",
+      "category": "Catégorie",
+      "content": "Contenu",
+      "date": "Date",
+      "actions": "Actions",
+      "confirmDelete": "Supprimer ce prompt ?",
+      "form": {
+        "title": "Titre",
+        "titlePlaceholder": "Titre du prompt",
+        "content": "Contenu",
+        "contentPlaceholder": "Écris un article de blog sur le sujet suivant…",
+        "category": "Catégorie",
+        "categoryPlaceholder": "ex: SEO, Rédaction…"
+      }
+    },
+    "calendar": {
+      "empty": "Aucune publication planifiée.",
+      "month": "Mois",
+      "today": "Aujourd'hui",
+      "scheduled": "planifié(s)"
+    },
+    "strategy": {
+      "empty": "Aucune stratégie définie.",
+      "goals": "Objectifs de contenu",
+      "keywords": "Mots-clés cibles",
+      "themes": "Thèmes éditoriaux",
+      "frequency": "Fréquence de publication",
+      "save": "Sauvegarder",
+      "saved": "Stratégie sauvegardée.",
+      "goalsPlaceholder": "Augmenter la visibilité, attirer des prospects…",
+      "keywordsPlaceholder": "IA, laboratoire, digital…",
+      "themesPlaceholder": "Tech, Innovation, Design, IA générative…",
+      "frequencyPlaceholder": "2 articles / semaine"
+    }
   },
   "users": {
     "title": "Utilisateurs",

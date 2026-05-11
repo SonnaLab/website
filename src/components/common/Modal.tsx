@@ -1,0 +1,52 @@
+import { useEffect, useRef, type ReactNode } from 'react';
+import { XIcon } from '@icons';
+
+interface ModalProps {
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  children: ReactNode;
+  footer?: ReactNode;
+  size?: 'sm' | 'md' | 'lg';
+}
+
+export function Modal({ open, onClose, title, children, footer, size = 'md' }: ModalProps) {
+  const overlayRef = useRef<HTMLDivElement>(null);
+
+  /* Close on Escape */
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [open, onClose]);
+
+  /* Lock body scroll */
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
+  if (!open) return null;
+
+  return (
+    <div
+      ref={overlayRef}
+      className="adm-modal-overlay"
+      onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
+    >
+      <div className={`adm-modal adm-modal--${size}`} role="dialog" aria-modal="true">
+        <div className="adm-modal__header">
+          <h2 className="adm-modal__title">{title}</h2>
+          <button type="button" className="adm-modal__close" onClick={onClose} aria-label="Fermer">
+            <XIcon size={18} />
+          </button>
+        </div>
+
+        <div className="adm-modal__body">{children}</div>
+
+        {footer && <div className="adm-modal__footer">{footer}</div>}
+      </div>
+    </div>
+  );
+}

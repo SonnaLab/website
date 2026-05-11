@@ -24,6 +24,60 @@ export interface AuthUser {
   confirmed_at?: string | null;
 }
 
+// ==================== News types ====================
+
+export type ArticleStatus = 'draft' | 'published' | 'archived';
+
+export interface Article {
+  id: string;
+  title: string;
+  slug: string;
+  status: ArticleStatus;
+  locale: string;
+  author?: string;
+  published_at?: string | null;
+  created_at: string;
+  updated_at: string;
+  excerpt?: string;
+  tags?: string[];
+  category?: string;
+}
+
+export interface NewsPrompt {
+  id: string;
+  title: string;
+  content: string;
+  category?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface WeeklyObjective {
+  id: string;
+  label: string;
+  done: boolean;
+  week?: string;
+  created_at: string;
+}
+
+export interface NewsStrategy {
+  id?: string;
+  goals?: string;
+  keywords?: string;
+  themes?: string;
+  frequency?: string;
+  updated_at?: string;
+}
+
+export interface CalendarEntry {
+  id: string;
+  title: string;
+  date: string;
+  status: ArticleStatus;
+  locale?: string;
+  article_id?: string;
+}
+
 export function getStoredAccessToken(): string | null {
   return localStorage.getItem(AUTH_STORAGE_KEYS.access);
 }
@@ -280,6 +334,35 @@ class ApiService {
     return (await this.client.get('/api/v1/admin/seo/keywords', { params })).data;
   }
   async adminSeoCreateKeyword(payload: any) { return (await this.client.post('/api/v1/admin/seo/keywords', { keyword: payload })).data; }
+
+  // ==================== Admin: News ====================
+
+  async adminNewsArticles(params?: { status?: string; locale?: string; page?: number; per_page?: number; q?: string }) {
+    return (await this.client.get('/api/v1/admin/news/articles', { params })).data;
+  }
+  async adminNewsArticle(id: string) { return (await this.client.get(`/api/v1/admin/news/articles/${id}`)).data; }
+  async adminNewsCreateArticle(payload: Partial<Article>) { return (await this.client.post('/api/v1/admin/news/articles', { article: payload })).data; }
+  async adminNewsUpdateArticle(id: string, payload: Partial<Article>) { return (await this.client.patch(`/api/v1/admin/news/articles/${id}`, { article: payload })).data; }
+  async adminNewsDeleteArticle(id: string) { return (await this.client.delete(`/api/v1/admin/news/articles/${id}`)).data; }
+  async adminNewsPublishArticle(id: string) { return (await this.client.post(`/api/v1/admin/news/articles/${id}/publish`)).data; }
+  async adminNewsUnpublishArticle(id: string) { return (await this.client.post(`/api/v1/admin/news/articles/${id}/unpublish`)).data; }
+
+  async adminNewsPrompts(params?: { category?: string }) { return (await this.client.get('/api/v1/admin/news/prompts', { params })).data; }
+  async adminNewsCreatePrompt(payload: Partial<NewsPrompt>) { return (await this.client.post('/api/v1/admin/news/prompts', { prompt: payload })).data; }
+  async adminNewsUpdatePrompt(id: string, payload: Partial<NewsPrompt>) { return (await this.client.patch(`/api/v1/admin/news/prompts/${id}`, { prompt: payload })).data; }
+  async adminNewsDeletePrompt(id: string) { return (await this.client.delete(`/api/v1/admin/news/prompts/${id}`)).data; }
+
+  async adminNewsCalendar(params?: { year?: number; month?: number }) { return (await this.client.get('/api/v1/admin/news/calendar', { params })).data; }
+
+  async adminNewsStrategy() { return (await this.client.get('/api/v1/admin/news/strategy')).data; }
+  async adminNewsSaveStrategy(payload: Partial<NewsStrategy>) { return (await this.client.patch('/api/v1/admin/news/strategy', { strategy: payload })).data; }
+
+  async adminNewsObjectives() { return (await this.client.get('/api/v1/admin/news/objectives')).data; }
+  async adminNewsCreateObjective(payload: Partial<WeeklyObjective>) { return (await this.client.post('/api/v1/admin/news/objectives', { objective: payload })).data; }
+  async adminNewsUpdateObjective(id: string, payload: Partial<WeeklyObjective>) { return (await this.client.patch(`/api/v1/admin/news/objectives/${id}`, { objective: payload })).data; }
+  async adminNewsDeleteObjective(id: string) { return (await this.client.delete(`/api/v1/admin/news/objectives/${id}`)).data; }
+
+  async adminNewsStats() { return (await this.client.get('/api/v1/admin/news/stats')).data; }
 
   // ==================== Contact ====================
   
