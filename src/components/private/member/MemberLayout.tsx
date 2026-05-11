@@ -22,6 +22,7 @@ import {
 
 import { useAuth } from '@/components/providers/AuthProvider';
 import { getDashboardPath } from '@/utils/auth';
+import sonnaLabLogo from '@/assets/logo/bSonnaLab.png';
 
 interface NavItem { to: string; label: string; icon: React.ReactNode; end?: boolean }
 
@@ -31,7 +32,8 @@ export function MemberLayout() {
   const { i18n } = useTranslation();
   const { user, isAdmin, signOut } = useAuth();
 
-  const [collapsed, setCollapsed]       = useState(false);
+  const [collapsed, setCollapsed]       = useState(true);
+  const [sidebarHover, setSidebarHover] = useState(false);
   const [sidebarOpen, setSidebarOpen]   = useState(false);
   const [avatarOpen, setAvatarOpen]     = useState(false);
   const avatarRef                       = useRef<HTMLDivElement>(null);
@@ -79,8 +81,14 @@ export function MemberLayout() {
     ? `${user.first_name} ${user.last_name || ''}`.trim()
     : user?.email ?? '';
 
+  const sidebarExpanded = !collapsed || sidebarHover || sidebarOpen;
+
   return (
-    <div className="dash-shell" data-collapsed={collapsed ? 'true' : 'false'}>
+    <div
+      className="dash-shell"
+      data-collapsed={collapsed ? 'true' : 'false'}
+      data-sidebar-expanded={sidebarExpanded ? 'true' : 'false'}
+    >
 
       {/* ── Top bar ── */}
       <header className="dash-topbar">
@@ -95,13 +103,22 @@ export function MemberLayout() {
           </button>
 
           {/* Brand — lines up with sidebar width */}
-          <Link to={getDashboardPath(user?.role)} className="dash-topbar__brand">
+          <Link
+            to={getDashboardPath(user?.role)}
+            className="dash-topbar__brand"
+            onMouseEnter={() => setSidebarHover(true)}
+            onMouseLeave={() => setSidebarHover(false)}
+          >
             <img
               src="/favicon/favicon-32x32.png"
               alt="SonnaLab"
               className="dash-topbar__favicon"
             />
-            <span className="dash-topbar__brand-name">SonnaLab</span>
+            <img
+              src={sonnaLabLogo}
+              alt="SonnaLab"
+              className="dash-topbar__logo-full"
+            />
           </Link>
         </div>
 
@@ -163,7 +180,11 @@ export function MemberLayout() {
         )}
 
         {/* ── Sidebar ── */}
-        <aside className={`dash-sidebar${sidebarOpen ? ' dash-sidebar--open' : ''}`}>
+        <aside
+          className={`dash-sidebar${sidebarOpen ? ' dash-sidebar--open' : ''}`}
+          onMouseEnter={() => setSidebarHover(true)}
+          onMouseLeave={() => setSidebarHover(false)}
+        >
           <nav className="dash-sidebar__nav">
             {navItems.map(item => (
               <NavLink
@@ -171,7 +192,7 @@ export function MemberLayout() {
                 to={item.to}
                 end={item.end}
                 onClick={closeSidebar}
-                title={collapsed ? item.label : undefined}
+                title={sidebarExpanded ? undefined : item.label}
                 className={({ isActive }) =>
                   'dash-nav-link' + (isActive ? ' active' : '')
                 }
