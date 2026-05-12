@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { ContactFormInputs } from '@/schemas/contactSchema';
 import type { AnalyticsEvent, ConsentPayload } from '@/types/analytics';
+import type { BlogPost } from '@/types/blog';
 
 const API_BASE_URL = import.meta.env.PROD 
   ? import.meta.env.VITE_API_BASE_PROD_URL || 'https://api.sonnalab.com'
@@ -171,6 +172,21 @@ export interface StrategicObjective {
   is_active: boolean;
   valid_from: string;
   valid_until?: string | null;
+}
+
+export interface BlogCategorySummary {
+  id: string;
+  label: string;
+  count: number;
+}
+
+export interface BlogPostsResponse {
+  posts: Omit<BlogPost, 'content'>[];
+  categories: BlogCategorySummary[];
+  total: number;
+  page: number;
+  per_page: number;
+  total_pages: number;
 }
 
 export function getStoredAccessToken(): string | null {
@@ -540,7 +556,7 @@ class ApiService {
 
   // ==================== Blog ====================
   
-  async getBlogPosts(params?: { category?: string; limit?: number; offset?: number }) {
+  async getBlogPosts(params?: { category?: string; locale?: string; q?: string; page?: number; per_page?: number; limit?: number; offset?: number }): Promise<BlogPostsResponse> {
     try {
       const response = await this.client.get('/api/v1/blog/posts', { params });
       return response.data;
@@ -549,9 +565,9 @@ class ApiService {
     }
   }
 
-  async getBlogPost(slug: string) {
+  async getBlogPost(slug: string, params?: { locale?: string }): Promise<{ post: BlogPost }> {
     try {
-      const response = await this.client.get(`/api/v1/blog/posts/${slug}`);
+      const response = await this.client.get(`/api/v1/blog/posts/${slug}`, { params });
       return response.data;
     } catch (error) {
       throw error;

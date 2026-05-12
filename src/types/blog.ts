@@ -1,11 +1,11 @@
 export interface BlogPost {
   id: string;
   slug: string;
-  lang: 'fr' | 'en';
+  lang: string;
   title: string;   
   excerpt: string; 
   content: string; 
-  contentFile: string;
+  contentFile?: string;
   author: string;
   publishedAt: string;
   updatedAt?: string;

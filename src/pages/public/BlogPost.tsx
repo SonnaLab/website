@@ -9,15 +9,15 @@ import { SocialShareSidebar } from '@/components/public/blog/SocialShareSidebar'
 import { TableOfContents } from '@/components/public/blog/TableOfContents';
 import { AuthorBio } from '@/components/public/blog/AuthorBio';
 import { RelatedArticles } from '@/components/public/blog/RelatedArticles';
-import { getBlogPost, getBlogPostsByCategory } from '@/data/blogLoader';
 import { BlogPost as BlogPostType } from '@/types/blog';
 import { Button } from '@/components/ui/button';
 import { useBlogTracking } from '@/hooks/useAnalytics';
+import { apiService } from '@/services/api';
 
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
   const { t, i18n } = useTranslation('blog');
-  const lang = i18n.language as 'fr' | 'en';
+  const lang = i18n.language.startsWith('en') ? 'en' : 'fr';
   const navigate = useNavigate();
   
   const [post, setPost] = useState<BlogPostType | null>(null);
@@ -33,15 +33,24 @@ export default function BlogPost() {
       if (!slug) return;
       
       setLoading(true);      
-      const fetchedPost = await getBlogPost(slug, lang);
-      
-      if (fetchedPost) {
-        setPost(fetchedPost);        
-        const related = getBlogPostsByCategory(fetchedPost.category, lang);
-        setRelatedPosts(related.filter(p => p.id !== fetchedPost.id).slice(0, 3));
+      try {
+        const response = await apiService.getBlogPost(slug);
+        const fetchedPost = response.post;
+
+        if (fetchedPost) {
+          setPost(fetchedPost);
+          const relatedResponse = await apiService.getBlogPosts({ category: fetchedPost.category, limit: 4 });
+          setRelatedPosts((relatedResponse.posts ?? []).filter(p => p.id !== fetchedPost.id).slice(0, 3));
+        } else {
+          setPost(null);
+          setRelatedPosts([]);
+        }
+      } catch {
+        setPost(null);
+        setRelatedPosts([]);
+      } finally {
+        setLoading(false);
       }
-      
-      setLoading(false);
     }
     
     loadPost();

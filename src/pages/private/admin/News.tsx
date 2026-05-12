@@ -53,6 +53,24 @@ function fmtDate(iso?: string | null, locale = 'fr') {
   return new Intl.DateTimeFormat(locale, { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(iso));
 }
 
+interface NewsStatsSummary {
+  published?: number;
+  drafts?: number;
+  this_week?: number;
+  total?: number;
+}
+
+function normalizeNewsStats(payload: any): NewsStatsSummary {
+  const stats = payload?.stats ?? payload ?? {};
+
+  return {
+    published: stats.published ?? stats.published_articles,
+    drafts: stats.drafts ?? stats.draft_articles,
+    this_week: stats.this_week,
+    total: stats.total ?? stats.total_articles,
+  };
+}
+
 // ─────────────────────────────────────────────
 // Page root
 // ─────────────────────────────────────────────
@@ -70,6 +88,8 @@ export default function AdminNews() {
         </div>
         <p className="admin-news__header-sub">{t('news.subtitle')}</p>
       </header>
+
+      <AdminNewsKpis />
 
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
@@ -90,6 +110,43 @@ export default function AdminNews() {
   );
 }
 
+function AdminNewsKpis() {
+  const { t } = useTranslation('admin');
+  const [stats, setStats] = useState<NewsStatsSummary | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    apiService.adminNewsStats()
+      .then(response => {
+        if (mounted) setStats(normalizeNewsStats(response));
+      })
+      .catch(() => {
+        if (mounted) setStats(null);
+      });
+
+    return () => { mounted = false; };
+  }, []);
+
+  const items = [
+    { label: t('news.overview.stats.published'), value: stats?.published ?? '—' },
+    { label: t('news.overview.stats.drafts'), value: stats?.drafts ?? '—' },
+    { label: t('news.overview.stats.thisWeek'), value: stats?.this_week ?? '—' },
+    { label: t('news.overview.stats.total'), value: stats?.total ?? '—' },
+  ];
+
+  return (
+    <div className="admin-news-overview__stats">
+      {items.map(({ label, value }) => (
+        <div key={label} className="admin-news-overview__stat-card">
+          <span className="admin-news-overview__stat-value">{value}</span>
+          <span className="admin-news-overview__stat-label">{label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // ─────────────────────────────────────────────
 // Tab: Overview
 // ─────────────────────────────────────────────
@@ -98,21 +155,18 @@ function OverviewTab() {
   const { t, i18n } = useTranslation('admin');
   const [objectives, setObjectives] = useState<WeeklyObjective[]>([]);
   const [articles, setArticles]     = useState<Article[]>([]);
-  const [stats, setStats]           = useState<{ published?: number; drafts?: number; this_week?: number; total?: number } | null>(null);
   const [loading, setLoading]       = useState(true);
   const [newLabel, setNewLabel]     = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   const reload = async () => {
     try {
-      const [objRes, artRes, stRes] = await Promise.allSettled([
+      const [objRes, artRes] = await Promise.allSettled([
         apiService.adminNewsObjectives(),
         apiService.adminNewsArticles({ per_page: 5 }),
-        apiService.adminNewsStats(),
       ]);
       if (objRes.status === 'fulfilled') setObjectives(objRes.value.objectives ?? []);
       if (artRes.status === 'fulfilled') setArticles(artRes.value.articles ?? []);
-      if (stRes.status === 'fulfilled')  setStats(stRes.value);
     } finally {
       setLoading(false);
     }
@@ -148,23 +202,6 @@ function OverviewTab() {
 
   return (
     <div className="admin-news-overview">
-      {/* Stats row */}
-      {stats && (
-        <div className="admin-news-overview__stats">
-          {[
-            { label: t('news.overview.stats.published'), value: stats.published ?? '—' },
-            { label: t('news.overview.stats.drafts'),    value: stats.drafts ?? '—' },
-            { label: t('news.overview.stats.thisWeek'),  value: stats.this_week ?? '—' },
-            { label: t('news.overview.stats.total'),     value: stats.total ?? '—' },
-          ].map(({ label, value }) => (
-            <div key={label} className="admin-news-overview__stat-card">
-              <span className="admin-news-overview__stat-value">{value}</span>
-              <span className="admin-news-overview__stat-label">{label}</span>
-            </div>
-          ))}
-        </div>
-      )}
-
       <div className="admin-news-overview__cols">
         {/* Weekly objectives */}
         <div className="admin-news-overview__block">

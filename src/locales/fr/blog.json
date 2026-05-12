@@ -41,7 +41,9 @@
   },
   "pagination": {
     "previous": "Article précédent",
-    "next": "Article suivant"
+    "next": "Article suivant",
+    "previousPage": "Précédent",
+    "nextPage": "Suivant"
   },
   "blogErrors": {
     "loadPosts": "Erreur lors du chargement des articles. Veuillez réessayer plus tard.",
