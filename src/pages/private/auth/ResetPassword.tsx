@@ -12,6 +12,7 @@ import { createResetPasswordSchema, ResetPasswordInputs } from '@/schemas/authSc
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { EyeIcon, EyeOffIcon } from '@icons';
 
 export default function ResetPasswordPage() {
   const { t } = useTranslation('auth');
@@ -20,6 +21,8 @@ export default function ResetPasswordPage() {
   const token = searchParams.get('token') || '';
 
   const [tokenInvalid, setTokenInvalid] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm]   = useState(false);
 
   useEffect(() => { if (!token) setTokenInvalid(true); }, [token]);
 
@@ -50,12 +53,22 @@ export default function ResetPasswordPage() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
           <div className="space-y-2">
             <Label htmlFor="password">{t('resetPassword.password')}</Label>
-            <Input id="password" type="password" autoComplete="new-password" {...register('password')} />
+            <div className="relative">
+              <Input id="password" type={showPassword ? 'text' : 'password'} autoComplete="new-password" className="pr-9" {...register('password')} />
+              <button type="button" tabIndex={-1} onClick={() => setShowPassword(v => !v)} className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground" aria-label={showPassword ? 'Masquer' : 'Afficher'}>
+                {showPassword ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
+              </button>
+            </div>
             {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
           </div>
           <div className="space-y-2">
             <Label htmlFor="password_confirm">{t('resetPassword.passwordConfirm')}</Label>
-            <Input id="password_confirm" type="password" autoComplete="new-password" {...register('password_confirm')} />
+            <div className="relative">
+              <Input id="password_confirm" type={showConfirm ? 'text' : 'password'} autoComplete="new-password" className="pr-9" {...register('password_confirm')} />
+              <button type="button" tabIndex={-1} onClick={() => setShowConfirm(v => !v)} className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground" aria-label={showConfirm ? 'Masquer' : 'Afficher'}>
+                {showConfirm ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
+              </button>
+            </div>
             {errors.password_confirm && <p className="text-xs text-destructive">{errors.password_confirm.message}</p>}
           </div>
           <Button type="submit" className="w-full" disabled={isSubmitting}>

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,10 +13,12 @@ import { getDashboardPath } from '@/utils/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { EyeIcon, EyeOffIcon } from '@icons';
 
 export default function SignInPage() {
   const { t } = useTranslation('auth');
   const { signIn } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as { from?: string } | null)?.from;
@@ -60,7 +63,12 @@ export default function SignInPage() {
               {t('signIn.forgot')}
             </Link>
           </div>
-          <Input id="password" type="password" autoComplete="current-password" {...register('password')} />
+          <div className="relative">
+            <Input id="password" type={showPassword ? 'text' : 'password'} autoComplete="current-password" className="pr-9" {...register('password')} />
+            <button type="button" tabIndex={-1} onClick={() => setShowPassword(v => !v)} className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground" aria-label={showPassword ? 'Masquer' : 'Afficher'}>
+              {showPassword ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
+            </button>
+          </div>
           {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
         </div>
 

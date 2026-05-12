@@ -41,6 +41,7 @@ export {
   ChevronRightIcon,
   TargetIcon,
   EyeIcon,
+  EyeOffIcon,
   PenLineIcon,
   ClipboardListIcon,
   CalendarDaysIcon,
