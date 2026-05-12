@@ -610,22 +610,157 @@ const DAYS_EN = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 const MONTHS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-const CLUSTER_COLORS = ['#6366f1', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#3b82f6'];
-function clusterColor(cluster?: string | null): string {
-  if (!cluster) return '#9ca3af';
-  let h = 0;
-  for (let i = 0; i < cluster.length; i++) h = (h * 31 + cluster.charCodeAt(i)) & 0xffffffff;
-  return CLUSTER_COLORS[Math.abs(h) % CLUSTER_COLORS.length];
-}
-
 function aiStatusVariant(status: string): string {
   switch (status) {
-    case 'approved': case 'generated': case 'published': return 'success';
-    case 'planned':  return 'info';
+    case 'published': return 'published';
+    case 'generated': case 'pushed': return 'generated';
+    case 'in_generation': return 'generating';
+    case 'approved': return 'success';
+    case 'planned':  return 'planned';
     case 'draft':    return 'warning';
     case 'failed':   return 'danger';
     default:         return 'default';
   }
+}
+
+type GenerationState = 'idle' | 'generating' | 'generated' | 'published' | 'error';
+type ReviewDecision = 'applied' | 'ignored';
+
+interface CalendarReviewRecommendation {
+  id: string;
+  title: string;
+  detail: string;
+  status: 'ready' | 'ok' | 'review';
+  canApply: boolean;
+}
+
+interface CalendarSyncReview {
+  score: number;
+  summary: string;
+  weekStart: string;
+  totalItems: number;
+  targetItems: number;
+  volumeGap: number;
+  localeCount: number;
+  targetLocaleCount: number;
+  missingLocales: string[];
+  objectiveCoverage: number;
+  overloadedDays: string[];
+  missingObjectives: string[];
+  recommendations: CalendarReviewRecommendation[];
+}
+
+function normalizeCalendarText(value?: string | null): string {
+  return (value ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+function itemMatchesObjective(item: AICalendarItem, objective: StrategicObjective): boolean {
+  const haystack = normalizeCalendarText([
+    item.keyword,
+    item.topic_cluster,
+    item.article_format,
+    item.content_angle,
+    item.suggested_title,
+    item.rationale,
+  ].filter(Boolean).join(' '));
+  if (!haystack) return false;
+  const targets = [...(objective.target_topics ?? []), ...(objective.target_keywords ?? [])]
+    .map(normalizeCalendarText)
+    .filter(Boolean);
+
+  return targets.some(target => haystack.includes(target) || target.includes(haystack));
+}
+
+function weeklyTargetFromObjectives(objectives: StrategicObjective[]): number {
+  const monthlyTarget = objectives.reduce((sum, objective) => {
+    const target = objective.success_metrics?.articles_per_month_target;
+    return sum + (typeof target === 'number' ? target : 0);
+  }, 0);
+
+  return Math.max(1, Math.min(100, Math.round(monthlyTarget / 4)));
+}
+
+function buildCalendarSyncReview(items: AICalendarItem[], objectives: StrategicObjective[], weekStart: Date): CalendarSyncReview {
+  const activeObjectives = objectives.filter(o => o.is_active);
+  const matchedObjectives = activeObjectives.filter(objective => items.some(item => itemMatchesObjective(item, objective)));
+  const locales = new Set(items.map(item => item.locale).filter(Boolean));
+  const expectedLocales = new Set(activeObjectives.flatMap(objective => objective.target_locales ?? []));
+  const missingLocales = [...expectedLocales].filter(locale => !locales.has(locale)).sort();
+  const targetItems = weeklyTargetFromObjectives(activeObjectives);
+  const volumeGap = Math.max(0, targetItems - items.length);
+  const days = items.reduce<Record<string, number>>((acc, item) => {
+    acc[item.scheduled_for] = (acc[item.scheduled_for] ?? 0) + 1;
+    return acc;
+  }, {});
+  const dailyCapacity = Math.max(8, Math.ceil(targetItems / 5) + 1);
+  const overloadedDays = Object.entries(days).filter(([, count]) => count > dailyCapacity).map(([day]) => day);
+
+  const objectiveCoverage = activeObjectives.length ? matchedObjectives.length / activeObjectives.length : 0;
+  const localeCoverage = expectedLocales.size ? locales.size / expectedLocales.size : 1;
+  const volumeScore = Math.min(items.length / targetItems, 1);
+  const balanceScore = overloadedDays.length === 0 ? 1 : 0.65;
+  const score = Math.round((objectiveCoverage * 0.45 + localeCoverage * 0.25 + volumeScore * 0.2 + balanceScore * 0.1) * 100);
+
+  const missingObjectives = activeObjectives
+    .filter(objective => !matchedObjectives.includes(objective))
+    .sort((a, b) => b.priority - a.priority)
+    .slice(0, 4)
+    .map(objective => objective.title);
+
+  const recommendations: CalendarReviewRecommendation[] = [
+    {
+      id: 'increase-volume',
+      title: volumeGap > 0 ? `Ajouter ${volumeGap} publications à la semaine` : 'Volume hebdomadaire aligné',
+      detail: volumeGap > 0
+        ? `Objectif stratégique actuel : ${targetItems} articles/semaine. Agenda actuel : ${items.length}.`
+        : `Agenda actuel : ${items.length}/${targetItems} articles.` ,
+      status: volumeGap > 0 ? 'ready' : 'ok',
+      canApply: volumeGap > 0,
+    },
+    {
+      id: 'rebalance-locales',
+      title: missingLocales.length > 0 ? `Rééquilibrer les locales manquantes (${missingLocales.map(l => l.toUpperCase()).join(', ')})` : 'Locales couvertes',
+      detail: missingLocales.length > 0
+        ? 'La régénération répartira les opportunités sur les langues ciblées par les objectifs.'
+        : 'La couverture linguistique est cohérente avec la stratégie Europe.',
+      status: missingLocales.length > 0 ? 'ready' : 'ok',
+      canApply: missingLocales.length > 0,
+    },
+    {
+      id: 'cover-objectives',
+      title: missingObjectives.length > 0 ? 'Renforcer les objectifs prioritaires absents' : 'Objectifs prioritaires couverts',
+      detail: missingObjectives.length > 0
+        ? `${missingObjectives.length} objectifs prioritaires ne sont pas représentés dans cette semaine.`
+        : 'Les objectifs prioritaires sont correctement représentés.',
+      status: missingObjectives.length > 0 ? 'ready' : 'ok',
+      canApply: missingObjectives.length > 0,
+    },
+    {
+      id: 'spread-week',
+      title: overloadedDays.length > 0 ? 'Lisser les journées trop chargées' : 'Répartition hebdomadaire lisible',
+      detail: overloadedDays.length > 0
+        ? `Jours à alléger : ${overloadedDays.map(day => fmtDate(day, 'fr')).join(', ')}.`
+        : 'La répartition hebdomadaire reste lisible.',
+      status: overloadedDays.length > 0 ? 'review' : 'ok',
+      canApply: overloadedDays.length > 0,
+    },
+  ];
+
+  return {
+    score,
+    summary: score >= 80 ? 'Agenda bien aligné' : score >= 60 ? 'Agenda partiellement aligné' : 'Agenda à rééquilibrer',
+    weekStart: toISODate(weekStart),
+    totalItems: items.length,
+    targetItems,
+    volumeGap,
+    localeCount: locales.size,
+    targetLocaleCount: expectedLocales.size,
+    missingLocales,
+    objectiveCoverage: Math.round(objectiveCoverage * 100),
+    overloadedDays,
+    missingObjectives,
+    recommendations,
+  };
 }
 
 function getMonday(d: Date): Date {
@@ -644,6 +779,11 @@ function toISODate(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
+function parseISODateLocal(iso: string): Date {
+  const [year, month, day] = iso.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
 function CalendarTab() {
   const { t, i18n } = useTranslation('admin');
   const today = new Date();
@@ -656,6 +796,17 @@ function CalendarTab() {
   const [aiItems, setAiItems]       = useState<AICalendarItem[]>([]);
   const [entries, setEntries]       = useState<CalendarEntry[]>([]);
   const [loading, setLoading]       = useState(true);
+  const [selectedAIItem, setSelectedAIItem] = useState<AICalendarItem | null>(null);
+  const [generationState, setGenerationState] = useState<GenerationState>('idle');
+  const [generatedArticle, setGeneratedArticle] = useState<Article | null>(null);
+  const [generationError, setGenerationError] = useState<string | null>(null);
+  const [syncOpen, setSyncOpen] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const [syncReview, setSyncReview] = useState<CalendarSyncReview | null>(null);
+  const [syncObjectives, setSyncObjectives] = useState<StrategicObjective[]>([]);
+  const [reviewDecisions, setReviewDecisions] = useState<Record<string, ReviewDecision>>({});
+  const [applyingReview, setApplyingReview] = useState<string | null>(null);
+  const [syncError, setSyncError] = useState<string | null>(null);
 
   const isFr = i18n.language.startsWith('fr');
   const DAYS = isFr ? DAYS_FR : DAYS_EN;
@@ -710,6 +861,102 @@ function CalendarTab() {
     setMonth(today.getMonth());
   };
 
+  const openAIItem = (item: AICalendarItem) => {
+    setSelectedAIItem(item);
+    setGenerationState(item.status === 'published' ? 'published' : item.status === 'generated' ? 'generated' : 'idle');
+    setGeneratedArticle(null);
+    setGenerationError(null);
+  };
+
+  const updateAIItemStatus = (itemId: number, status: string) => {
+    setAiItems(items => items.map(item => item.id === itemId ? { ...item, status } : item));
+    setSelectedAIItem(item => item && item.id === itemId ? { ...item, status } : item);
+  };
+
+  const generateSelectedArticle = async () => {
+    if (!selectedAIItem || generationState === 'generating') return;
+    setGenerationState('generating');
+    setGenerationError(null);
+    try {
+      const response = await apiService.adminNewsAIGenerateArticle(selectedAIItem);
+      const eventStatus = response.event_status === 'published' ? 'published' : 'generated';
+      setGeneratedArticle(response.article ?? null);
+      updateAIItemStatus(selectedAIItem.id, eventStatus);
+      setGenerationState(eventStatus);
+      toast.success(eventStatus === 'published' ? 'Article publié.' : 'Article généré.');
+    } catch (error: any) {
+      const message = error?.response?.data?.error || error?.message || 'Génération impossible.';
+      setGenerationError(message);
+      setGenerationState('error');
+      toast.error(message);
+    }
+  };
+
+  const runSyncReview = async () => {
+    setSyncOpen(true);
+    setSyncing(true);
+    setSyncReview(null);
+    setReviewDecisions({});
+    setApplyingReview(null);
+    setSyncError(null);
+    try {
+      const minimumAnimation = new Promise(resolve => window.setTimeout(resolve, 900));
+      const reviewWeekStart = viewMode === 'daily'
+        ? getMonday(selectedDay)
+        : viewMode === 'monthly'
+          ? getMonday(new Date(year, month, 1))
+          : weekStart;
+      const reviewWeekStartISO = toISODate(reviewWeekStart);
+      const calendarRequest = apiService.adminNewsAICalendar({ view: 'weekly', week_start: reviewWeekStartISO });
+      const [calendar, objectives] = await Promise.all([
+        calendarRequest,
+        apiService.adminNewsAIStrategicObjectives(),
+        minimumAnimation,
+      ]).then(([calendarData, objectiveData]) => [calendarData, objectiveData]);
+
+      const objectiveList = objectives.objectives ?? [];
+      const currentItems = calendar.items ?? [];
+      if (viewMode === 'weekly' && reviewWeekStartISO === toISODate(weekStart)) {
+        setAiItems(currentItems);
+      }
+      setSyncObjectives(objectiveList);
+      setSyncReview(buildCalendarSyncReview(currentItems, objectiveList, reviewWeekStart));
+    } catch (error: any) {
+      setSyncError(error?.response?.data?.error || error?.message || 'Review impossible.');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  const ignoreReviewRecommendation = (id: string) => {
+    setReviewDecisions(decisions => ({ ...decisions, [id]: 'ignored' }));
+  };
+
+  const applyReviewRecommendation = async (recommendation: CalendarReviewRecommendation) => {
+    if (!syncReview || applyingReview || !recommendation.canApply) return;
+    setApplyingReview(recommendation.id);
+    setSyncError(null);
+    try {
+      const response = await apiService.adminNewsAIApplyCalendarReview({
+        week_start: syncReview.weekStart,
+        max_items_per_client: syncReview.targetItems,
+      });
+      const refreshedItems = response.items ?? [];
+      if (viewMode === 'weekly' && syncReview.weekStart === toISODate(weekStart)) {
+        setAiItems(refreshedItems);
+      }
+      setSyncReview(buildCalendarSyncReview(refreshedItems, syncObjectives, parseISODateLocal(syncReview.weekStart)));
+      setReviewDecisions(decisions => ({ ...decisions, [recommendation.id]: 'applied' }));
+      toast.success('Review appliquée à l’agenda.');
+    } catch (error: any) {
+      const message = error?.response?.data?.error || error?.message || 'Application impossible.';
+      setSyncError(message);
+      toast.error(message);
+    } finally {
+      setApplyingReview(null);
+    }
+  };
+
   // ── Period label ────────────────────────────
   const periodLabel = () => {
     if (viewMode === 'daily') {
@@ -743,15 +990,19 @@ function CalendarTab() {
               </div>
               <div className="admin-news-calendar__week-col-body">
                 {dayItems.map(item => (
-                  <div key={item.id} className="admin-news-calendar__ai-item">
-                    <span className="admin-news-calendar__ai-item-keyword">{item.keyword}</span>
-                    {item.topic_cluster && (
-                      <span className="admin-news-calendar__ai-item-cluster" style={{ background: clusterColor(item.topic_cluster) }}>
-                        {item.topic_cluster}
-                      </span>
-                    )}
+                  <button
+                    key={item.id}
+                    type="button"
+                    className={`admin-news-calendar__ai-item admin-news-calendar__ai-item--${aiStatusVariant(item.status)}`}
+                    onClick={() => openAIItem(item)}
+                  >
+                    <span className="admin-news-calendar__ai-item-topline">
+                      <span className="admin-news-calendar__ai-item-keyword">{item.keyword}</span>
+                      <span className="admin-news-calendar__locale-badge">{item.locale?.toUpperCase() || 'FR'}</span>
+                    </span>
+                    {item.topic_cluster && <span className="admin-news-calendar__ai-item-cluster">{item.topic_cluster}</span>}
                     <span className={`admin-news-calendar__status admin-news-calendar__status--${aiStatusVariant(item.status)}`}>{item.status}</span>
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
@@ -795,9 +1046,16 @@ function CalendarTab() {
                 <span key={e.id} className={`admin-news-calendar__event admin-news-calendar__event--${e.status}`} title={e.title}>{e.title}</span>
               ))}
               {dayAI.map(it => (
-                <span key={`ai-${it.id}`} className="admin-news-calendar__ai-chip" style={{ borderLeft: `3px solid ${clusterColor(it.topic_cluster)}` }} title={it.keyword}>
-                  {it.keyword}
-                </span>
+                <button
+                  key={`ai-${it.id}`}
+                  type="button"
+                  className={`admin-news-calendar__ai-chip admin-news-calendar__ai-chip--${aiStatusVariant(it.status)}`}
+                  title={it.keyword}
+                  onClick={() => openAIItem(it)}
+                >
+                  <span className="admin-news-calendar__locale-badge">{it.locale?.toUpperCase() || 'FR'}</span>
+                  <span>{it.keyword}</span>
+                </button>
               ))}
             </div>
           );
@@ -813,16 +1071,27 @@ function CalendarTab() {
         <p className="adm-empty-state-text">{t('news.calendar.empty')}</p>
       )}
       {aiItems.map(item => (
-        <div key={item.id} className="admin-news-calendar__daily-item">
+        <div
+          key={item.id}
+          className={`admin-news-calendar__daily-item admin-news-calendar__daily-item--${aiStatusVariant(item.status)}`}
+          role="button"
+          tabIndex={0}
+          onClick={() => openAIItem(item)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              openAIItem(item);
+            }
+          }}
+        >
           <div className="admin-news-calendar__daily-item-header">
-            <span className="admin-news-calendar__daily-item-keyword">{item.keyword}</span>
+            <span className="admin-news-calendar__daily-item-keyword">
+              <span className="admin-news-calendar__locale-badge">{item.locale?.toUpperCase() || 'FR'}</span>
+              {item.keyword}
+            </span>
             <span className={`admin-news-calendar__status admin-news-calendar__status--${aiStatusVariant(item.status)}`}>{item.status}</span>
           </div>
-          {item.topic_cluster && (
-            <span className="admin-news-calendar__ai-item-cluster" style={{ background: clusterColor(item.topic_cluster) }}>
-              {item.topic_cluster}
-            </span>
-          )}
+          {item.topic_cluster && <span className="admin-news-calendar__ai-item-cluster">{item.topic_cluster}</span>}
           {item.suggested_title && <p className="admin-news-calendar__daily-item-title">{item.suggested_title}</p>}
           {item.content_angle && <p className="admin-news-calendar__daily-item-angle">{item.content_angle}</p>}
           {item.rationale && <p className="admin-news-calendar__daily-item-rationale">{item.rationale}</p>}
@@ -848,6 +1117,9 @@ function CalendarTab() {
           <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={goToday}>
             {t('news.calendar.today')}
           </button>
+          <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={runSyncReview}>
+            <RefreshCwIcon size={14} /> Review
+          </button>
         </div>
       </div>
 
@@ -857,6 +1129,172 @@ function CalendarTab() {
           {viewMode === 'monthly' && renderMonthly()}
           {viewMode === 'daily'   && renderDaily()}
         </>
+      )}
+
+      <Modal
+        open={!!selectedAIItem}
+        onClose={() => { if (generationState !== 'generating') setSelectedAIItem(null); }}
+        title={selectedAIItem?.suggested_title || selectedAIItem?.keyword || 'Détail calendrier'}
+        size="lg"
+        footer={selectedAIItem && (
+          <>
+            <button type="button" className="adm-btn adm-btn--ghost" onClick={() => setSelectedAIItem(null)} disabled={generationState === 'generating'}>
+              Fermer
+            </button>
+            <button type="button" className="adm-btn adm-btn--primary" onClick={generateSelectedArticle} disabled={generationState === 'generating'}>
+              {generationState === 'generating' && <RefreshCwIcon size={14} className="adm-spin" />}
+              {generationState === 'published' ? 'Article publié' : generationState === 'generated' ? 'Regénérer l’article' : 'Générer l’article'}
+            </button>
+          </>
+        )}
+      >
+        {selectedAIItem && (
+          <div className="admin-news-calendar-modal">
+            <div className="admin-news-calendar-modal__summary">
+              <div>
+                <span>Mot-clé</span>
+                <strong>{selectedAIItem.keyword}</strong>
+              </div>
+              <div>
+                <span>Locale</span>
+                <strong><span className="admin-news-calendar__locale-badge">{selectedAIItem.locale?.toUpperCase() || 'FR'}</span></strong>
+              </div>
+              <div>
+                <span>Date</span>
+                <strong>{fmtDate(selectedAIItem.scheduled_for, isFr ? 'fr' : 'en')}</strong>
+              </div>
+              <div>
+                <span>Statut</span>
+                <strong className={`admin-news-calendar__status admin-news-calendar__status--${aiStatusVariant(selectedAIItem.status)}`}>{selectedAIItem.status}</strong>
+              </div>
+            </div>
+
+            <div className="admin-news-calendar-modal__details">
+              {selectedAIItem.topic_cluster && <p><span>Marché / cluster</span>{selectedAIItem.topic_cluster}</p>}
+              {selectedAIItem.article_format && <p><span>Format</span>{selectedAIItem.article_format}</p>}
+              {selectedAIItem.content_angle && <p><span>Angle éditorial</span>{selectedAIItem.content_angle}</p>}
+              {selectedAIItem.rationale && <p><span>Raison stratégique</span>{selectedAIItem.rationale}</p>}
+            </div>
+
+            {generationState === 'generating' && (
+              <div className="admin-news-calendar-generation" role="status" aria-live="polite">
+                <div className="admin-news-calendar-generation__pulse">
+                  <span />
+                  <span />
+                  <span />
+                </div>
+                <div>
+                  <strong>Génération de l’article en cours</strong>
+                  <p>Brief éditorial, rédaction, optimisation SEO et push vers le blog.</p>
+                </div>
+              </div>
+            )}
+
+            {generationState === 'generated' && (
+              <div className="admin-news-calendar-generation admin-news-calendar-generation--generated">
+                <CheckIcon size={18} />
+                <div>
+                  <strong>Article généré</strong>
+                  <p>{generatedArticle?.title || 'Le brouillon est disponible dans les articles.'}</p>
+                </div>
+              </div>
+            )}
+
+            {generationState === 'published' && (
+              <div className="admin-news-calendar-generation admin-news-calendar-generation--published">
+                <CheckIcon size={18} />
+                <div>
+                  <strong>Article publié</strong>
+                  <p>{generatedArticle?.title || 'Le contenu est publié et prêt à être suivi.'}</p>
+                </div>
+              </div>
+            )}
+
+            {generationState === 'error' && generationError && (
+              <div className="admin-news-calendar-generation admin-news-calendar-generation--error">
+                <strong>Génération interrompue</strong>
+                <p>{generationError}</p>
+              </div>
+            )}
+          </div>
+        )}
+      </Modal>
+
+      {syncOpen && (
+        <div className="admin-news-calendar-sync" role="dialog" aria-modal="true">
+          <div className="admin-news-calendar-sync__panel">
+            <div className="admin-news-calendar-sync__header">
+              <span>Review d’agenda</span>
+              {!syncing && <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => setSyncOpen(false)}>Fermer</button>}
+            </div>
+
+            {syncing && (
+              <div className="admin-news-calendar-sync__loading" role="status" aria-live="polite">
+                <RefreshCwIcon size={24} className="adm-spin" />
+                <strong>Review en cours</strong>
+                <p>Analyse de l’alignement hebdomadaire avec les objectifs stratégiques.</p>
+              </div>
+            )}
+
+            {!syncing && syncReview && (
+              <div className="admin-news-calendar-sync__result">
+                <div className="admin-news-calendar-sync__score">
+                  <strong>{syncReview.score}%</strong>
+                  <span>{syncReview.summary}</span>
+                </div>
+                <div className="admin-news-calendar-sync__metrics">
+                  <span>{syncReview.totalItems}/{syncReview.targetItems} articles prévus</span>
+                  <span>{syncReview.localeCount}/{syncReview.targetLocaleCount} locales couvertes</span>
+                  <span>{syncReview.objectiveCoverage}% objectifs couverts</span>
+                </div>
+                {syncReview.volumeGap > 0 && (
+                  <div className="admin-news-calendar-sync__notice">
+                    L’agenda n’a pas encore appliqué la nouvelle cadence : il manque {syncReview.volumeGap} publications cette semaine.
+                  </div>
+                )}
+                {syncReview.missingObjectives.length > 0 && (
+                  <div className="admin-news-calendar-sync__block">
+                    <strong>Objectifs à renforcer</strong>
+                    {syncReview.missingObjectives.map(objective => <span key={objective}>{objective}</span>)}
+                  </div>
+                )}
+                <div className="admin-news-calendar-sync__recommendations">
+                  <strong>Décisions de review</strong>
+                  {syncReview.recommendations.map(recommendation => {
+                    const decision = reviewDecisions[recommendation.id];
+                    return (
+                      <div key={recommendation.id} className={`admin-news-calendar-sync__recommendation admin-news-calendar-sync__recommendation--${recommendation.status}`}>
+                        <div>
+                          <span>{decision === 'applied' ? 'Appliquée' : decision === 'ignored' ? 'Ignorée' : recommendation.status === 'ok' ? 'OK' : 'À décider'}</span>
+                          <strong>{recommendation.title}</strong>
+                          <p>{recommendation.detail}</p>
+                        </div>
+                        {recommendation.canApply && decision !== 'applied' && decision !== 'ignored' && (
+                          <div className="admin-news-calendar-sync__recommendation-actions">
+                            <button type="button" className="adm-btn adm-btn--primary adm-btn--sm" onClick={() => applyReviewRecommendation(recommendation)} disabled={!!applyingReview}>
+                              {applyingReview === recommendation.id && <RefreshCwIcon size={13} className="adm-spin" />}
+                              Appliquer
+                            </button>
+                            <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => ignoreReviewRecommendation(recommendation.id)} disabled={!!applyingReview}>
+                              Ignorer
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {!syncing && syncError && (
+              <div className="admin-news-calendar-generation admin-news-calendar-generation--error">
+                <strong>Review impossible</strong>
+                <p>{syncError}</p>
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

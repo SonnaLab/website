@@ -390,6 +390,8 @@ class ApiService {
 
   async adminNewsCalendar(params?: { year?: number; month?: number }) { return (await this.client.get('/api/v1/admin/news/calendar', { params })).data; }
   async adminNewsAICalendar(params?: { view?: 'weekly' | 'monthly' | 'daily'; week_start?: string; year?: number; month?: number; date?: string }) { return (await this.client.get('/api/v1/admin/news/ai-calendar', { params })).data; }
+  async adminNewsAIApplyCalendarReview(payload: { week_start: string; max_items_per_client: number }): Promise<{ generation: any; items: AICalendarItem[] }> { return (await this.client.post('/api/v1/admin/news/ai-calendar/apply-review', payload)).data; }
+  async adminNewsAIGenerateArticle(item: AICalendarItem): Promise<{ event_status: string; generation: any; article?: Article | null }> { return (await this.client.post('/api/v1/admin/news/ai-calendar/generate-article', { item })).data; }
   async adminNewsAIStrategicObjectives(): Promise<{ objectives: StrategicObjective[] }> { return (await this.client.get('/api/v1/admin/news/ai-strategic-objectives')).data; }
 
   async adminNewsStrategy() { return (await this.client.get('/api/v1/admin/news/strategy')).data; }
