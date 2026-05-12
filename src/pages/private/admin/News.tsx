@@ -745,17 +745,33 @@ function ArticlesTab() {
 // ─────────────────────────────────────────────
 
 type StatusBadgeVariant = 'default' | 'success' | 'warning' | 'danger' | 'info' | 'muted';
+const PROMPTS_PER_PAGE = 10;
 
-function aiPromptStatusVariant(status?: string | null, pushStatus?: string | null): StatusBadgeVariant {
-  if (pushStatus === 'failed') return 'danger';
+function aiPromptStatusInfo(prompt: NewsAIPrompt): { labelKey: string; fallback: string; variant: StatusBadgeVariant; detailKey?: string } {
+  if (prompt.push_status === 'failed') {
+    return {
+      labelKey: 'news.prompts.pushFailed',
+      fallback: 'Push failed',
+      variant: 'danger',
+      detailKey: prompt.status === 'success' ? 'news.prompts.generatedOk' : undefined,
+    };
+  }
 
-  switch (status) {
-    case 'failed': return 'danger';
-    case 'running': return 'info';
-    case 'pending': return 'warning';
-    case 'rejected': return 'muted';
-    case 'success': return 'success';
-    default: return 'default';
+  if (prompt.status === 'success') {
+    return {
+      labelKey: prompt.push_status === 'success' ? 'news.prompts.pushSucceeded' : 'news.prompts.generated',
+      fallback: prompt.push_status === 'success' ? 'Push succeeded' : 'Generated',
+      variant: prompt.push_status === 'success' ? 'success' : 'warning',
+      detailKey: prompt.push_status === 'success' ? 'news.prompts.generatedOk' : 'news.prompts.pushPending',
+    };
+  }
+
+  switch (prompt.status) {
+    case 'failed': return { labelKey: 'news.prompts.statuses.failed', fallback: 'Failed', variant: 'danger' };
+    case 'running': return { labelKey: 'news.prompts.statuses.running', fallback: 'Running', variant: 'info' };
+    case 'pending': return { labelKey: 'news.prompts.statuses.pending', fallback: 'Pending', variant: 'warning' };
+    case 'rejected': return { labelKey: 'news.prompts.statuses.rejected', fallback: 'Rejected', variant: 'muted' };
+    default: return { labelKey: `news.prompts.statuses.${prompt.status}`, fallback: prompt.status || 'Unknown', variant: 'default' };
   }
 }
 
@@ -786,11 +802,12 @@ function PromptsTab() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedPrompt, setSelectedPrompt] = useState<NewsAIPrompt | null>(null);
   const [actionId, setActionId]   = useState<string | null>(null);
+  const [page, setPage]           = useState(1);
 
   const reload = () => {
     setLoading(true);
     return apiService.adminNewsAIPrompts({ limit: 200 })
-      .then(d => setPrompts(d.prompts ?? []))
+      .then(d => { setPrompts(d.prompts ?? []); setPage(1); })
       .catch(() => toast.error(t('common.error')))
       .finally(() => setLoading(false));
   };
@@ -840,10 +857,19 @@ function PromptsTab() {
   };
 
   const selectedReason = selectedPrompt ? promptReason(selectedPrompt, t('news.prompts.noReason')) : '';
+  const totalPages = Math.max(1, Math.ceil(prompts.length / PROMPTS_PER_PAGE));
+  const currentPage = Math.min(page, totalPages);
+  const pageStart = (currentPage - 1) * PROMPTS_PER_PAGE;
+  const pageEnd = Math.min(pageStart + PROMPTS_PER_PAGE, prompts.length);
+  const visiblePrompts = prompts.slice(pageStart, pageEnd);
+  const selectedStatusInfo = selectedPrompt ? aiPromptStatusInfo(selectedPrompt) : null;
 
   const selectedDetails = selectedPrompt ? [
     [t('news.prompts.client'), formatOptional(selectedPrompt.client_id)],
     [t('news.prompts.calendarId'), formatOptional(selectedPrompt.editorial_calendar_id)],
+    [t('news.prompts.generationStatus'), t(`news.prompts.statuses.${selectedPrompt.status}`, { defaultValue: selectedPrompt.status })],
+    [t('news.prompts.pushStatus'), t(`news.prompts.pushStatuses.${selectedPrompt.push_status || 'unknown'}`, { defaultValue: formatOptional(selectedPrompt.push_status) })],
+    [t('news.prompts.pushEndpoint'), formatOptional(selectedPrompt.push_endpoint)],
     [t('news.prompts.model'), formatOptional(selectedPrompt.model_used)],
     [t('news.prompts.provider'), formatOptional(selectedPrompt.provider)],
     [t('news.prompts.temperature'), formatOptional(selectedPrompt.temperature)],
@@ -875,66 +901,101 @@ function PromptsTab() {
             </DataTableRow>
           ) : prompts.length === 0 ? (
             <DataTableEmpty icon={<ClipboardListIcon size={28} />} label={t('news.prompts.empty')} />
-          ) : prompts.map(prompt => (
-            <DataTableRow key={prompt.id} onClick={() => openPreview(prompt)}>
-              <DataTableTd>
-                <div className="admin-news-prompts__name">
-                  <span className="admin-news-prompts__title">{prompt.title || prompt.keyword || `#${prompt.generation_id}`}</span>
-                  <span className="admin-news-prompts__meta">#{prompt.generation_id} · {formatOptional(prompt.keyword)}</span>
-                </div>
-              </DataTableTd>
-              <DataTableTd>
-                <StatusBadge
-                  label={t(`news.prompts.statuses.${prompt.status}`, { defaultValue: prompt.status })}
-                  variant={aiPromptStatusVariant(prompt.status, prompt.push_status)}
-                />
-                {prompt.push_status === 'failed' && <span className="admin-news-prompts__push">{t('news.prompts.pushFailed')}</span>}
-              </DataTableTd>
-              <DataTableTd>
-                <span className="admin-news-prompts__locale">{formatOptional(prompt.locale).toUpperCase()}</span>
-              </DataTableTd>
-              <DataTableTd>{formatOptional(prompt.article_format)}</DataTableTd>
-              <DataTableTd>
-                <span className="admin-news-prompts__reason">{promptReason(prompt, t('news.prompts.noReason'))}</span>
-              </DataTableTd>
-              <DataTableTd>{fmtDate(prompt.created_at, i18n.language)}</DataTableTd>
-              <DataTableTd>
-                <div className="adm-table__actions">
-                  <button
-                    type="button"
-                    className="adm-btn adm-btn--ghost adm-btn--xs"
-                    onClick={event => { event.stopPropagation(); restart(prompt.id); }}
-                    disabled={actionId === `restart-${prompt.id}`}
-                    aria-label={t('news.prompts.restart')}
-                    title={t('news.prompts.restart')}
-                  >
-                    <RefreshCwIcon size={13} className={actionId === `restart-${prompt.id}` ? 'adm-spin' : undefined} />
-                  </button>
-                  <button
-                    type="button"
-                    className="adm-btn adm-btn--ghost adm-btn--xs"
-                    onClick={event => { event.stopPropagation(); openPreview(prompt); }}
-                    aria-label={t('news.prompts.preview')}
-                    title={t('news.prompts.preview')}
-                  >
-                    <EyeIcon size={13} />
-                  </button>
-                  <button
-                    type="button"
-                    className="adm-btn adm-btn--ghost adm-btn--xs adm-btn--danger"
-                    onClick={event => { event.stopPropagation(); remove(prompt.id); }}
-                    disabled={actionId === `delete-${prompt.id}`}
-                    aria-label={t('common.delete')}
-                    title={t('common.delete')}
-                  >
-                    <Trash2Icon size={13} />
-                  </button>
-                </div>
-              </DataTableTd>
-            </DataTableRow>
-          ))}
+          ) : visiblePrompts.map(prompt => {
+            const statusInfo = aiPromptStatusInfo(prompt);
+
+            return (
+              <DataTableRow key={prompt.id} onClick={() => openPreview(prompt)}>
+                <DataTableTd>
+                  <div className="admin-news-prompts__name">
+                    <span className="admin-news-prompts__title">{prompt.title || prompt.keyword || `#${prompt.generation_id}`}</span>
+                    <span className="admin-news-prompts__meta">#{prompt.generation_id} · {formatOptional(prompt.keyword)}</span>
+                  </div>
+                </DataTableTd>
+                <DataTableTd>
+                  <div className="admin-news-prompts__status">
+                    <StatusBadge
+                      label={t(statusInfo.labelKey, { defaultValue: statusInfo.fallback })}
+                      variant={statusInfo.variant}
+                    />
+                    {statusInfo.detailKey && <span className="admin-news-prompts__status-detail">{t(statusInfo.detailKey)}</span>}
+                  </div>
+                </DataTableTd>
+                <DataTableTd>
+                  <span className="admin-news-prompts__locale">{formatOptional(prompt.locale).toUpperCase()}</span>
+                </DataTableTd>
+                <DataTableTd>{formatOptional(prompt.article_format)}</DataTableTd>
+                <DataTableTd>
+                  <span className="admin-news-prompts__reason">{promptReason(prompt, t('news.prompts.noReason'))}</span>
+                </DataTableTd>
+                <DataTableTd>{fmtDate(prompt.created_at, i18n.language)}</DataTableTd>
+                <DataTableTd>
+                  <div className="adm-table__actions">
+                    <button
+                      type="button"
+                      className="adm-btn adm-btn--ghost adm-btn--xs"
+                      onClick={event => { event.stopPropagation(); restart(prompt.id); }}
+                      disabled={actionId === `restart-${prompt.id}`}
+                      aria-label={t('news.prompts.restart')}
+                      title={t('news.prompts.restart')}
+                    >
+                      <RefreshCwIcon size={13} className={actionId === `restart-${prompt.id}` ? 'adm-spin' : undefined} />
+                    </button>
+                    <button
+                      type="button"
+                      className="adm-btn adm-btn--ghost adm-btn--xs"
+                      onClick={event => { event.stopPropagation(); openPreview(prompt); }}
+                      aria-label={t('news.prompts.preview')}
+                      title={t('news.prompts.preview')}
+                    >
+                      <EyeIcon size={13} />
+                    </button>
+                    <button
+                      type="button"
+                      className="adm-btn adm-btn--ghost adm-btn--xs adm-btn--danger"
+                      onClick={event => { event.stopPropagation(); remove(prompt.id); }}
+                      disabled={actionId === `delete-${prompt.id}`}
+                      aria-label={t('common.delete')}
+                      title={t('common.delete')}
+                    >
+                      <Trash2Icon size={13} />
+                    </button>
+                  </div>
+                </DataTableTd>
+              </DataTableRow>
+            );
+          })}
         </DataTableBody>
       </DataTable>
+
+      {!loading && prompts.length > 0 && (
+        <div className="admin-news-prompts__pagination" aria-label={t('news.prompts.pagination')}>
+          <span>{t('news.prompts.paginationSummary', { from: pageStart + 1, to: pageEnd, total: prompts.length })}</span>
+          <div className="admin-news-prompts__pagination-actions">
+            <button
+              type="button"
+              className="adm-btn adm-btn--ghost adm-btn--xs"
+              onClick={() => setPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage <= 1}
+              aria-label={t('news.prompts.previousPage')}
+              title={t('news.prompts.previousPage')}
+            >
+              &lt;
+            </button>
+            <strong>{t('news.prompts.pageIndicator', { page: currentPage, total: totalPages })}</strong>
+            <button
+              type="button"
+              className="adm-btn adm-btn--ghost adm-btn--xs"
+              onClick={() => setPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage >= totalPages}
+              aria-label={t('news.prompts.nextPage')}
+              title={t('news.prompts.nextPage')}
+            >
+              &gt;
+            </button>
+          </div>
+        </div>
+      )}
 
       <Modal
         open={modalOpen}
@@ -976,10 +1037,15 @@ function PromptsTab() {
                 <h3>{selectedPrompt.title || selectedPrompt.keyword || t('news.prompts.noPrompt')}</h3>
                 <p>{formatOptional(selectedPrompt.keyword)} · {formatOptional(selectedPrompt.locale).toUpperCase()} · {formatOptional(selectedPrompt.article_format)}</p>
               </div>
-              <StatusBadge
-                label={t(`news.prompts.statuses.${selectedPrompt.status}`, { defaultValue: selectedPrompt.status })}
-                variant={aiPromptStatusVariant(selectedPrompt.status, selectedPrompt.push_status)}
-              />
+              {selectedStatusInfo && (
+                <div className="admin-news-prompts__status">
+                  <StatusBadge
+                    label={t(selectedStatusInfo.labelKey, { defaultValue: selectedStatusInfo.fallback })}
+                    variant={selectedStatusInfo.variant}
+                  />
+                  {selectedStatusInfo.detailKey && <span className="admin-news-prompts__status-detail">{t(selectedStatusInfo.detailKey)}</span>}
+                </div>
+              )}
             </div>
 
             <div className="admin-news-prompts__reason-box">

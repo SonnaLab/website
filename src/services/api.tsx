@@ -76,6 +76,7 @@ export interface NewsAIPrompt {
   article_format?: string | null;
   status: string;
   push_status?: string | null;
+  push_endpoint?: string | null;
   reason?: string | null;
   error_message?: string | null;
   push_error_message?: string | null;

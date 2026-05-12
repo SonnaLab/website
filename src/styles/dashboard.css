@@ -1887,6 +1887,21 @@
   font-weight: 700;
 }
 
+.admin-news-prompts__status {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  min-width: 92px;
+}
+
+.admin-news-prompts__status-detail {
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
 .admin-news-prompts__locale {
   display: inline-flex;
   align-items: center;
@@ -2011,6 +2026,30 @@
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 11.5px;
   line-height: 1.55;
+}
+
+.admin-news-prompts__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 2px;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.admin-news-prompts__pagination-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-news-prompts__pagination-actions strong {
+  min-width: 56px;
+  text-align: center;
+  color: #111111;
+  font-size: 12px;
 }
 
 /* ── Calendar tab ── */

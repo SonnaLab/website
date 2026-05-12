@@ -221,8 +221,15 @@
       "noReason": "Nessun dettaglio disponibile.",
       "noPrompt": "Prompt non disponibile.",
       "pushFailed": "Push non riuscito",
+      "pushSucceeded": "Push riuscito",
+      "generated": "Articolo generato",
+      "generatedOk": "IA generata",
+      "pushPending": "Push in attesa",
       "client": "Client",
       "calendarId": "Calendario",
+      "generationStatus": "Generazione",
+      "pushStatus": "Push",
+      "pushEndpoint": "Endpoint push",
       "model": "Modello",
       "provider": "Provider",
       "temperature": "Temperatura",
@@ -236,12 +243,24 @@
       "seoRules": "Regole SEO",
       "payload": "Payload",
       "pushResponse": "Risposta push",
+      "pagination": "Paginazione prompt",
+      "paginationSummary": "{{from}}-{{to}} di {{total}}",
+      "previousPage": "Pagina precedente",
+      "nextPage": "Pagina successiva",
+      "pageIndicator": "{{page}} / {{total}}",
       "statuses": {
         "pending": "In attesa",
         "running": "In corso",
         "failed": "Non riuscito",
         "rejected": "Rifiutato",
-        "success": "Successo"
+        "success": "IA generata"
+      },
+      "pushStatuses": {
+        "pending": "In attesa",
+        "running": "In corso",
+        "failed": "Non riuscito",
+        "success": "Riuscito",
+        "unknown": "—"
       }
     },
     "calendar": {
