@@ -1,0 +1,17 @@
+{
+  "language": {
+    "fr": "Französisch",
+    "en": "Englisch",
+    "es": "Spanisch",
+    "it": "Italienisch",
+    "de": "Deutsch"
+  },
+  "actions": {
+    "learnMore": "Mehr erfahren",
+    "contact": "Kontaktieren Sie uns",
+    "send": "Senden",
+    "subscribe": "Abonnieren",
+    "close": "Schließen",
+    "search": "Suchen"
+  }
+}

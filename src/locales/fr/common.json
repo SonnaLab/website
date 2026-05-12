@@ -1,7 +1,10 @@
 {
   "language": {
     "fr": "Français",
-    "en": "English"
+    "en": "English",
+    "es": "Español",
+    "it": "Italiano",
+    "de": "Deutsch"
   },
   "actions": {
     "learnMore": "En savoir plus",

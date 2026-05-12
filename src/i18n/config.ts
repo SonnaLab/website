@@ -52,6 +52,24 @@ import enMember from '@/locales/en/member.json'
 import enAdmin from '@/locales/en/admin.json'
 import enNotFound from '@/pages/public/404';
 
+// Spanish
+import esHeader from '@/locales/es/header.json';
+import esCommon from '@/locales/es/common.json';
+import esAuth from '@/locales/es/auth.json';
+import esAdmin from '@/locales/es/admin.json';
+
+// Italian
+import itHeader from '@/locales/it/header.json';
+import itCommon from '@/locales/it/common.json';
+import itAuth from '@/locales/it/auth.json';
+import itAdmin from '@/locales/it/admin.json';
+
+// German
+import deHeader from '@/locales/de/header.json';
+import deCommon from '@/locales/de/common.json';
+import deAuth from '@/locales/de/auth.json';
+import deAdmin from '@/locales/de/admin.json';
+
 const resources = {
   fr: {
     header: frHeader,
@@ -100,6 +118,24 @@ const resources = {
     member: enMember,
     admin: enAdmin,
     notFound: enNotFound,
+  },
+  es: {
+    header: esHeader,
+    common: esCommon,
+    auth: esAuth,
+    admin: esAdmin,
+  },
+  it: {
+    header: itHeader,
+    common: itCommon,
+    auth: itAuth,
+    admin: itAdmin,
+  },
+  de: {
+    header: deHeader,
+    common: deCommon,
+    auth: deAuth,
+    admin: deAdmin,
   },
 };
 

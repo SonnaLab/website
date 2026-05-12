@@ -1,0 +1,216 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "infrastructure": "Infraestructura",
+    "tracking": "Tracking",
+    "ouou": "OUOU (IA)",
+    "seo": "SEO",
+    "news": "Noticias",
+    "users": "Usuarios",
+    "billing": "Facturación",
+    "projects": "Proyectos"
+  },
+  "dashboard": {
+    "title": "Bienvenido, =={{name}}==",
+    "fallbackName": "Admin",
+    "subtitle": "Administración SonnaLab",
+    "latest": "Últimas acciones",
+    "lastAction": "Últimas acciones",
+    "viewMore": "Ver más",
+    "widgets": {
+      "infrastructure": { "title": "Infraestructura", "empty": "Sin actividad de infraestructura." },
+      "tracking": { "title": "Tracking", "empty": "Sin sesiones recientes." },
+      "news": { "title": "Noticias", "empty": "Sin artículos recientes." },
+      "users": { "title": "Usuarios", "empty": "Sin usuarios recientes." },
+      "billing": { "title": "Facturación", "empty": "Sin documentos recientes." },
+      "projects": { "title": "Proyectos", "empty": "Sin proyectos recientes." },
+      "seo": { "title": "SEO", "empty": "Sin páginas recientes." },
+      "ouou": { "title": "OUOU (IA)", "empty": "Sin conversaciones recientes." }
+    }
+  },
+  "infrastructure": {
+    "title": "Infraestructura",
+    "subtitle": "Estado de la aplicación en tiempo real.",
+    "refresh": "Actualizar",
+    "app": "Aplicación",
+    "database": "Base de datos",
+    "redis": "Redis",
+    "sidekiq": "Sidekiq",
+    "deployment": "Despliegue",
+    "version": "Versión",
+    "uptime": "Uptime",
+    "latency": "Latencia",
+    "queues": "Colas",
+    "retries": "Reintentos",
+    "dead": "Muertos",
+    "processes": "Procesos",
+    "slot": "Slot",
+    "commit": "Commit",
+    "statusUp": "OK",
+    "statusDown": "No disponible"
+  },
+  "tracking": {
+    "title": "Seguimiento de visitantes",
+    "subtitle": "Sesiones, eventos, geografía.",
+    "tabs": {
+      "overview": "Resumen",
+      "realtime": "Tiempo real",
+      "sessions": "Sesiones",
+      "funnel": "Embudo",
+      "geo": "Geo"
+    },
+    "activeNow": "Activos ahora",
+    "totalSessions": "Sesiones",
+    "totalEvents": "Eventos",
+    "device": "Dispositivo",
+    "country": "País",
+    "city": "Ciudad",
+    "language": "Idioma",
+    "page": "Página",
+    "consented": "Consentimiento",
+    "duration": "Duración"
+  },
+  "ouou": {
+    "title": "OUOU — Asistente IA",
+    "subtitle": "Conversaciones con ai.sonnalab.com.",
+    "newConversation": "Nueva conversación",
+    "conversations": "Conversaciones",
+    "model": "Modelo",
+    "provider": "Proveedor",
+    "messages": "Mensajes",
+    "tokens": "Tokens",
+    "promptPlaceholder": "Haz tu pregunta…",
+    "send": "Enviar",
+    "archive": "Archivar",
+    "quotaTitle": "Cuota",
+    "quotaUsed": "{{used}} / {{max}}",
+    "quotaExhausted": "Cuota agotada"
+  },
+  "seo": {
+    "title": "SEO",
+    "subtitle": "Páginas, palabras clave, auditorías.",
+    "tabs": { "pages": "Páginas", "keywords": "Palabras clave" },
+    "newPage": "Nueva página",
+    "newKeyword": "Nueva palabra clave",
+    "path": "Ruta",
+    "locale": "Idioma",
+    "metaTitle": "Título",
+    "metaDescription": "Meta descripción",
+    "indexable": "Indexable",
+    "priority": "Prioridad",
+    "score": "Puntuación",
+    "audit": "Auditar",
+    "keyword": "Palabra clave",
+    "intent": "Intención",
+    "rank": "Posición",
+    "volume": "Volumen"
+  },
+  "common": {
+    "loading": "Cargando…",
+    "error": "Se produjo un error.",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear"
+  },
+  "news": {
+    "title": "Noticias",
+    "subtitle": "Gestión de artículos y publicaciones.",
+    "empty": "Sin artículos por ahora.",
+    "tabs": {
+      "overview": "Resumen",
+      "articles": "Artículos",
+      "prompts": "Prompts",
+      "calendar": "Calendario",
+      "strategy": "Estrategia"
+    },
+    "overview": {
+      "objectives": "Objetivos de la semana",
+      "noObjectives": "Sin objetivos esta semana.",
+      "addObjective": "Añadir",
+      "newObjectivePlaceholder": "Nuevo objetivo…",
+      "recentArticles": "Artículos recientes",
+      "noRecent": "Sin artículos recientes.",
+      "stats": {
+        "published": "Publicados",
+        "drafts": "Borradores",
+        "thisWeek": "Esta semana",
+        "total": "Total"
+      }
+    },
+    "articles": {
+      "new": "Nuevo artículo",
+      "empty": "Sin artículos por ahora.",
+      "searchPlaceholder": "Buscar un artículo…",
+      "title": "Título",
+      "status": "Estado",
+      "locale": "Idioma",
+      "author": "Autor",
+      "date": "Fecha",
+      "actions": "Acciones",
+      "publish": "Publicar",
+      "unpublish": "Despublicar",
+      "confirmDelete": "¿Eliminar este artículo?",
+      "statuses": {
+        "draft": "Borrador",
+        "published": "Publicado",
+        "scheduled": "Programado"
+      },
+      "form": {
+        "title": "Título",
+        "titlePlaceholder": "Título del artículo",
+        "excerpt": "Resumen",
+        "excerptPlaceholder": "Resumen del artículo…",
+        "locale": "Idioma",
+        "status": "Estado",
+        "category": "Categoría",
+        "categoryPlaceholder": "ej: IA, Diseño…",
+        "tags": "Etiquetas (separadas por coma)",
+        "tagsPlaceholder": "react, typescript, IA…"
+      }
+    },
+    "prompts": {
+      "new": "Nuevo prompt",
+      "empty": "Sin prompts por ahora.",
+      "title": "Título",
+      "category": "Categoría",
+      "content": "Contenido",
+      "date": "Fecha",
+      "actions": "Acciones",
+      "confirmDelete": "¿Eliminar este prompt?",
+      "form": {
+        "title": "Título",
+        "titlePlaceholder": "Título del prompt",
+        "content": "Contenido",
+        "contentPlaceholder": "Escribe un artículo sobre el siguiente tema…",
+        "category": "Categoría",
+        "categoryPlaceholder": "ej: SEO, Redacción…"
+      }
+    },
+    "calendar": {
+      "empty": "Sin publicaciones programadas.",
+      "month": "Mes",
+      "today": "Hoy",
+      "scheduled": "programado(s)"
+    },
+    "strategy": {
+      "empty": "Sin estrategia definida.",
+      "goals": "Objetivos de contenido",
+      "keywords": "Palabras clave objetivo",
+      "themes": "Temas editoriales",
+      "frequency": "Frecuencia de publicación",
+      "save": "Guardar",
+      "saved": "Estrategia guardada.",
+      "goalsPlaceholder": "Aumentar visibilidad, atraer leads…",
+      "keywordsPlaceholder": "IA, laboratorio, digital…",
+      "themesPlaceholder": "Tech, Innovación, Diseño, IA generativa…",
+      "frequencyPlaceholder": "2 artículos / semana"
+    }
+  },
+  "users": {
+    "title": "Usuarios",
+    "subtitle": "Gestión de cuentas y roles.",
+    "empty": "Sin usuarios para mostrar."
+  }
+}

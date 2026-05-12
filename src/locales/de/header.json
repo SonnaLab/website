@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "home": "Startseite",
+    "about": "Über uns",
+    "services": "Leistungen",
+    "projects": "Projekte",
+    "research": "F & E",
+    "blog": "Blog",
+    "contact": "Kontakt"
+  },
+  "cta": {
+    "portfolio": "Portfolio",
+    "consultation": "Beratung",
+    "signIn": "Anmelden",
+    "dashboard": "Dashboard"
+  },
+  "mobile": {
+    "phone": "+33 (0)7 53 31 56 03",
+    "email": "contact@sonnalab.com",
+    "location": "Paris, Frankreich"
+  },
+  "accessibility": {
+    "menuTitle": "Navigationsmenü",
+    "menuDescription": "Mobiles Navigationsmenü von SonnaLab",
+    "languageSelect": "Sprache ändern"
+  }
+}
