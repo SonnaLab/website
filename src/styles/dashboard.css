@@ -1838,6 +1838,7 @@
 .admin-news-calendar__toolbar {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 16px;
   flex-wrap: wrap;
 }
@@ -1850,7 +1851,7 @@
 /* ── Weekly view ── */
 .admin-news-calendar--weekly {
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -2024,7 +2025,7 @@
 /* ── Responsive ── */
 @media (max-width: 900px) {
   .admin-news-calendar--weekly {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 

@@ -709,7 +709,7 @@ function CalendarTab() {
     if (viewMode === 'daily') {
       return new Intl.DateTimeFormat(isFr ? 'fr' : 'en', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(selectedDay);
     } else if (viewMode === 'weekly') {
-      const wEnd = new Date(weekStart); wEnd.setDate(wEnd.getDate() + 6);
+      const wEnd = new Date(weekStart); wEnd.setDate(wEnd.getDate() + 4);
       const fmt = new Intl.DateTimeFormat(isFr ? 'fr' : 'en', { day: 'numeric', month: 'short' });
       return `${fmt.format(weekStart)} – ${fmt.format(wEnd)} ${weekStart.getFullYear()}`;
     } else {
@@ -719,7 +719,7 @@ function CalendarTab() {
 
   // ── Weekly view ─────────────────────────────
   const renderWeekly = () => {
-    const cols = Array.from({ length: 7 }, (_, i) => {
+    const cols = Array.from({ length: 5 }, (_, i) => {
       const d = new Date(weekStart); d.setDate(d.getDate() + i);
       return d;
     });
