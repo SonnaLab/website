@@ -181,6 +181,18 @@
       "goto": "Open article",
       "generated": "AI generated",
       "noContent": "No content available.",
+      "generation": {
+        "title": "Article generation",
+        "running": "Generation in progress",
+        "success": "Generation succeeded",
+        "failed": "Generation failed",
+        "runningMessage": "The next scheduled article is being generated and pushed to the blog.",
+        "successMessage": "The generated article was received and added to the list.",
+        "successWithoutArticle": "Generation is complete, but no local article has been returned yet.",
+        "failedMessage": "Generation could not complete. You can restart the process.",
+        "retry": "Retry",
+        "close": "Close"
+      },
       "publish": "Publish",
       "unpublish": "Unpublish",
       "confirmDelete": "Delete this article?",

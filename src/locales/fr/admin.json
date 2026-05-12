@@ -181,6 +181,18 @@
       "goto": "Ouvrir l'article",
       "generated": "Généré par IA",
       "noContent": "Aucun contenu disponible.",
+      "generation": {
+        "title": "Génération de l'article",
+        "running": "Génération en cours",
+        "success": "Génération réussie",
+        "failed": "Génération échouée",
+        "runningMessage": "Le prochain article planifié est en cours de génération et d'envoi vers le blog.",
+        "successMessage": "L'article généré a été reçu et ajouté à la liste.",
+        "successWithoutArticle": "La génération est terminée, mais aucun article local n'a encore été retourné.",
+        "failedMessage": "La génération n'a pas pu aboutir. Tu peux relancer le processus.",
+        "retry": "Réessayer",
+        "close": "Fermer"
+      },
       "publish": "Publier",
       "unpublish": "Dépublier",
       "confirmDelete": "Supprimer cet article ?",

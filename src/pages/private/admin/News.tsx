@@ -23,7 +23,9 @@ import {
   Trash2Icon,
   SearchIcon,
   CheckIcon,
+  CheckCircle2Icon,
   RefreshCwIcon,
+  XCircleIcon,
   ChevronDownIcon,
   TrendingUpIcon,
   GlobeIcon,
@@ -250,6 +252,7 @@ const ARTICLE_FORM_DEFAULTS: Partial<Article> = {
 };
 
 type ArticleModalMode = 'preview' | 'edit';
+type ArticleGenerationModalState = 'idle' | 'running' | 'success' | 'failed';
 
 function articleMetadataValue(article: Partial<Article>, key: string) {
   const metadata = article.lesankofa_metadata ?? {};
@@ -272,6 +275,9 @@ function ArticlesTab() {
   const [editing, setEditing]     = useState<Partial<Article>>(ARTICLE_FORM_DEFAULTS);
   const [saving, setSaving]       = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [generationStatus, setGenerationStatus] = useState<ArticleGenerationModalState>('idle');
+  const [generationMessage, setGenerationMessage] = useState('');
+  const [generationResultArticle, setGenerationResultArticle] = useState<Article | null>(null);
   const [actionId, setActionId]   = useState<string | null>(null);
 
   const reload = (q = search) => {
@@ -297,6 +303,21 @@ function ArticlesTab() {
   };
 
   const closeModal = () => { setModalOpen(false); setEditing(ARTICLE_FORM_DEFAULTS); };
+
+  const closeGenerationModal = () => {
+    if (generationStatus === 'running') return;
+    setGenerationStatus('idle');
+    setGenerationMessage('');
+    setGenerationResultArticle(null);
+  };
+
+  const previewGeneratedArticle = () => {
+    if (!generationResultArticle) return;
+    closeGenerationModal();
+    setModalMode('preview');
+    setEditing(generationResultArticle);
+    setModalOpen(true);
+  };
 
   const save = async () => {
     if (!editing.id || !editing.title?.trim()) return;
@@ -325,16 +346,19 @@ function ArticlesTab() {
 
   const generateNextArticle = async () => {
     setGenerating(true);
+    setGenerationResultArticle(null);
+    setGenerationStatus('running');
+    setGenerationMessage(t('news.articles.generation.runningMessage'));
     try {
       const data = await apiService.adminNewsAIGenerateNextArticle();
+      setGenerationResultArticle(data.article ?? null);
+      setGenerationStatus('success');
+      setGenerationMessage(data.article ? t('news.articles.generation.successMessage') : t('news.articles.generation.successWithoutArticle'));
       toast.success(t('news.articles.generateSuccess'));
       await reload();
-      if (data.article) {
-        setModalMode('preview');
-        setEditing(data.article);
-        setModalOpen(true);
-      }
     } catch {
+      setGenerationStatus('failed');
+      setGenerationMessage(t('news.articles.generation.failedMessage'));
       toast.error(t('news.articles.generateUnavailable'));
     } finally {
       setGenerating(false);
@@ -655,6 +679,62 @@ function ArticlesTab() {
           </div>
         </div>
         )}
+      </Modal>
+
+      <Modal
+        open={generationStatus !== 'idle'}
+        onClose={closeGenerationModal}
+        title={t('news.articles.generation.title')}
+        size="md"
+        footer={
+          generationStatus === 'running' ? (
+            <button type="button" className="adm-btn adm-btn--ghost" disabled>
+              <RefreshCwIcon size={14} className="adm-spin" />
+              {t('news.articles.generation.running')}
+            </button>
+          ) : generationStatus === 'success' ? (
+            <>
+              <button type="button" className="adm-btn adm-btn--ghost" onClick={closeGenerationModal}>{t('news.articles.generation.close')}</button>
+              {generationResultArticle && (
+                <button type="button" className="adm-btn adm-btn--primary" onClick={previewGeneratedArticle}>
+                  <EyeIcon size={14} />
+                  {t('news.articles.preview')}
+                </button>
+              )}
+            </>
+          ) : (
+            <>
+              <button type="button" className="adm-btn adm-btn--ghost" onClick={closeGenerationModal}>{t('news.articles.generation.close')}</button>
+              <button type="button" className="adm-btn adm-btn--primary" onClick={generateNextArticle}>
+                <RefreshCwIcon size={14} />
+                {t('news.articles.generation.retry')}
+              </button>
+            </>
+          )
+        }
+      >
+        <div className={`admin-news-articles-generation admin-news-articles-generation--${generationStatus}`} role="status" aria-live="polite">
+          <div className="admin-news-articles-generation__visual">
+            {generationStatus === 'running' && (
+              <>
+                <RefreshCwIcon size={34} className="adm-spin" />
+                <span />
+              </>
+            )}
+            {generationStatus === 'success' && <CheckCircle2Icon size={38} />}
+            {generationStatus === 'failed' && <XCircleIcon size={38} />}
+          </div>
+          <div className="admin-news-articles-generation__copy">
+            <h3>{t(`news.articles.generation.${generationStatus}`)}</h3>
+            <p>{generationMessage}</p>
+          </div>
+          {generationResultArticle && generationStatus === 'success' && (
+            <div className="admin-news-articles-generation__article">
+              <strong>{generationResultArticle.title}</strong>
+              <span>{generationResultArticle.locale?.toUpperCase()} · {generationResultArticle.slug}</span>
+            </div>
+          )}
+        </div>
       </Modal>
     </div>
   );

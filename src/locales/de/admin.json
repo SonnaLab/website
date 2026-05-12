@@ -157,6 +157,18 @@
       "goto": "Artikel öffnen",
       "generated": "KI-generiert",
       "noContent": "Kein Inhalt verfügbar.",
+      "generation": {
+        "title": "Artikelgenerierung",
+        "running": "Generierung läuft",
+        "success": "Generierung erfolgreich",
+        "failed": "Generierung fehlgeschlagen",
+        "runningMessage": "Der nächste geplante Artikel wird generiert und an den Blog gesendet.",
+        "successMessage": "Der generierte Artikel wurde empfangen und der Liste hinzugefügt.",
+        "successWithoutArticle": "Die Generierung ist abgeschlossen, aber es wurde noch kein lokaler Artikel zurückgegeben.",
+        "failedMessage": "Die Generierung konnte nicht abgeschlossen werden. Du kannst den Prozess erneut starten.",
+        "retry": "Erneut versuchen",
+        "close": "Schließen"
+      },
       "publish": "Veröffentlichen",
       "unpublish": "Zurückziehen",
       "confirmDelete": "Diesen Artikel löschen?",

@@ -157,6 +157,18 @@
       "goto": "Abrir artículo",
       "generated": "Generado por IA",
       "noContent": "No hay contenido disponible.",
+      "generation": {
+        "title": "Generación del artículo",
+        "running": "Generación en curso",
+        "success": "Generación exitosa",
+        "failed": "Generación fallida",
+        "runningMessage": "El próximo artículo planificado se está generando y enviando al blog.",
+        "successMessage": "El artículo generado fue recibido y añadido a la lista.",
+        "successWithoutArticle": "La generación terminó, pero aún no se devolvió ningún artículo local.",
+        "failedMessage": "La generación no pudo completarse. Puedes reiniciar el proceso.",
+        "retry": "Reintentar",
+        "close": "Cerrar"
+      },
       "publish": "Publicar",
       "unpublish": "Despublicar",
       "confirmDelete": "¿Eliminar este artículo?",
