@@ -1667,72 +1667,164 @@
   gap: 16px;
 }
 
-.admin-news-prompts__toolbar {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.admin-news-prompts__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 14px;
-}
-
-.admin-news-prompts__card {
+.admin-news-prompts__name {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 16px;
-  background: #ffffff;
-  border: 1px solid #e8eaed;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: border-color 0.12s;
+  gap: 4px;
+  min-width: 220px;
 }
 
-.admin-news-prompts__card:hover {
-  border-color: #c8ccd2;
-}
-
-.admin-news-prompts__card-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.admin-news-prompts__card-title {
+.admin-news-prompts__title {
   font-size: 13.5px;
   font-weight: 700;
   color: #111111;
+  max-width: 320px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  flex: 1;
 }
 
-.admin-news-prompts__card-content {
-  margin: 0;
-  font-size: 12.5px;
-  color: #6b7280;
-  line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
+.admin-news-prompts__meta {
+  font-size: 11.5px;
+  color: #9ca3af;
+  max-width: 320px;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.admin-news-prompts__card-footer {
+.admin-news-prompts__push {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.admin-news-prompts__locale {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 6px;
+  background: #111111;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.admin-news-prompts__reason {
+  display: block;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #4b5563;
+  font-size: 12.5px;
+}
+
+.admin-news-prompts__modal {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-news-prompts__modal-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  margin-top: auto;
+  gap: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #e8eaed;
 }
 
-.admin-news-prompts__card-date {
-  font-size: 11px;
+.admin-news-prompts__modal-head h3 {
+  margin: 0 0 5px;
+  color: #111111;
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+.admin-news-prompts__modal-head p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 12.5px;
+}
+
+.admin-news-prompts__reason-box {
+  padding: 12px 14px;
+  border: 1px solid #e8eaed;
+  border-radius: 8px;
+  background: #f8f9fa;
+}
+
+.admin-news-prompts__reason-box span,
+.admin-news-prompts__detail span,
+.admin-news-prompts__prompt-block h4 {
+  display: block;
+  margin: 0 0 6px;
   color: #9ca3af;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.admin-news-prompts__reason-box p {
+  margin: 0;
+  color: #374151;
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.admin-news-prompts__details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.admin-news-prompts__detail {
+  padding: 10px 12px;
+  border: 1px solid #e8eaed;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.admin-news-prompts__detail strong {
+  display: block;
+  color: #111111;
+  font-size: 12.5px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.admin-news-prompts__prompt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.admin-news-prompts__prompt-block {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #e8eaed;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.admin-news-prompts__prompt-block pre {
+  margin: 0;
+  max-height: 320px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: #374151;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 11.5px;
+  line-height: 1.55;
 }
 
 /* ── Calendar tab ── */

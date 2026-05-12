@@ -52,6 +52,39 @@ export interface NewsPrompt {
   updated_at: string;
 }
 
+export interface NewsAIPrompt {
+  id: string;
+  generation_id: number;
+  client_id?: string | null;
+  editorial_calendar_id?: number | null;
+  keyword?: string | null;
+  title?: string | null;
+  locale?: string | null;
+  country_id?: string | null;
+  article_format?: string | null;
+  status: string;
+  push_status?: string | null;
+  reason?: string | null;
+  error_message?: string | null;
+  push_error_message?: string | null;
+  prompt_system?: string | null;
+  prompt_user?: string | null;
+  prompt_version?: string | null;
+  seo_rules_snapshot?: Array<Record<string, unknown>> | null;
+  generation_payload?: Record<string, unknown> | null;
+  push_response?: Record<string, unknown> | null;
+  model_used?: string | null;
+  provider?: string | null;
+  temperature?: number | null;
+  prompt_tokens?: number | null;
+  completion_tokens?: number | null;
+  total_tokens?: number | null;
+  generation_time_ms?: number | null;
+  created_at: string;
+  updated_at: string;
+  completed_at?: string | null;
+}
+
 export interface WeeklyObjective {
   id: string;
   label: string;
@@ -387,6 +420,11 @@ class ApiService {
   async adminNewsCreatePrompt(payload: Partial<NewsPrompt>) { return (await this.client.post('/api/v1/admin/news/prompts', { prompt: payload })).data; }
   async adminNewsUpdatePrompt(id: string, payload: Partial<NewsPrompt>) { return (await this.client.patch(`/api/v1/admin/news/prompts/${id}`, { prompt: payload })).data; }
   async adminNewsDeletePrompt(id: string) { return (await this.client.delete(`/api/v1/admin/news/prompts/${id}`)).data; }
+
+  async adminNewsAIPrompts(params?: { limit?: number }): Promise<{ prompts: NewsAIPrompt[] }> { return (await this.client.get('/api/v1/admin/news/ai-prompts', { params })).data; }
+  async adminNewsAIPrompt(id: string): Promise<{ prompt: NewsAIPrompt }> { return (await this.client.get(`/api/v1/admin/news/ai-prompts/${id}`)).data; }
+  async adminNewsRestartAIPrompt(id: string): Promise<{ generation: any; prompt: NewsAIPrompt }> { return (await this.client.post(`/api/v1/admin/news/ai-prompts/${id}/restart`)).data; }
+  async adminNewsDeleteAIPrompt(id: string): Promise<{ success: boolean }> { return (await this.client.delete(`/api/v1/admin/news/ai-prompts/${id}`)).data; }
 
   async adminNewsCalendar(params?: { year?: number; month?: number }) { return (await this.client.get('/api/v1/admin/news/calendar', { params })).data; }
   async adminNewsAICalendar(params?: { view?: 'weekly' | 'monthly' | 'daily'; week_start?: string; year?: number; month?: number; date?: string }) { return (await this.client.get('/api/v1/admin/news/ai-calendar', { params })).data; }

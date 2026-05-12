@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { apiService } from '@/services/api';
-import type { AICalendarItem, Article, ArticleStatus, CalendarEntry, NewsPrompt, NewsStrategy, StrategicObjective, WeeklyObjective } from '@/services/api';
+import type { AICalendarItem, Article, ArticleStatus, CalendarEntry, NewsAIPrompt, NewsStrategy, StrategicObjective, WeeklyObjective } from '@/services/api';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
@@ -468,134 +468,288 @@ function ArticlesTab() {
 // Tab: Prompts
 // ─────────────────────────────────────────────
 
-const PROMPT_FORM_DEFAULTS: Partial<NewsPrompt> = { title: '', content: '', category: '' };
+type StatusBadgeVariant = 'default' | 'success' | 'warning' | 'danger' | 'info' | 'muted';
+
+function aiPromptStatusVariant(status?: string | null, pushStatus?: string | null): StatusBadgeVariant {
+  if (pushStatus === 'failed') return 'danger';
+
+  switch (status) {
+    case 'failed': return 'danger';
+    case 'running': return 'info';
+    case 'pending': return 'warning';
+    case 'rejected': return 'muted';
+    case 'success': return 'success';
+    default: return 'default';
+  }
+}
+
+function formatOptional(value?: string | number | null) {
+  return value === undefined || value === null || value === '' ? '—' : String(value);
+}
+
+function formatDuration(ms?: number | null) {
+  if (!ms) return '—';
+  return ms >= 1000 ? `${(ms / 1000).toFixed(1)} s` : `${Math.round(ms)} ms`;
+}
+
+function formatJson(value?: Record<string, unknown> | Array<Record<string, unknown>> | null) {
+  if (!value) return '—';
+  if (Array.isArray(value) && value.length === 0) return '—';
+  if (!Array.isArray(value) && Object.keys(value).length === 0) return '—';
+  return JSON.stringify(value, null, 2);
+}
+
+function promptReason(prompt: NewsAIPrompt, fallback: string) {
+  return prompt.error_message || prompt.push_error_message || prompt.reason || fallback;
+}
 
 function PromptsTab() {
   const { t, i18n } = useTranslation('admin');
-  const [prompts, setPrompts]     = useState<NewsPrompt[]>([]);
+  const [prompts, setPrompts]     = useState<NewsAIPrompt[]>([]);
   const [loading, setLoading]     = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing]     = useState<Partial<NewsPrompt>>(PROMPT_FORM_DEFAULTS);
-  const [saving, setSaving]       = useState(false);
+  const [selectedPrompt, setSelectedPrompt] = useState<NewsAIPrompt | null>(null);
+  const [actionId, setActionId]   = useState<string | null>(null);
 
-  const reload = () =>
-    apiService.adminNewsPrompts()
+  const reload = () => {
+    setLoading(true);
+    return apiService.adminNewsAIPrompts({ limit: 200 })
       .then(d => setPrompts(d.prompts ?? []))
       .catch(() => toast.error(t('common.error')))
       .finally(() => setLoading(false));
+  };
 
   useEffect(() => { reload(); }, []);
 
-  const openNew    = () => { setEditing(PROMPT_FORM_DEFAULTS); setModalOpen(true); };
-  const openEdit   = (p: NewsPrompt) => { setEditing(p); setModalOpen(true); };
-  const closeModal = () => { setModalOpen(false); setEditing(PROMPT_FORM_DEFAULTS); };
-
-  const save = async () => {
-    if (!editing.title?.trim()) return;
-    setSaving(true);
+  const openPreview = async (prompt: NewsAIPrompt) => {
+    setSelectedPrompt(prompt);
+    setModalOpen(true);
     try {
-      if (editing.id) await apiService.adminNewsUpdatePrompt(editing.id, editing);
-      else await apiService.adminNewsCreatePrompt(editing);
-      toast.success(t('common.save'));
-      closeModal();
-      reload();
-    } catch { toast.error(t('common.error')); }
-    finally { setSaving(false); }
+      const data = await apiService.adminNewsAIPrompt(prompt.id);
+      setSelectedPrompt(data.prompt ?? prompt);
+    } catch {
+      toast.error(t('common.error'));
+    }
+  };
+
+  const closeModal = () => { setModalOpen(false); setSelectedPrompt(null); };
+
+  const restart = async (id: string) => {
+    setActionId(`restart-${id}`);
+    try {
+      const data = await apiService.adminNewsRestartAIPrompt(id);
+      if (selectedPrompt?.id === id) setSelectedPrompt(data.prompt);
+      toast.success(t('news.prompts.restartQueued'));
+      await reload();
+    } catch {
+      toast.error(t('common.error'));
+    } finally {
+      setActionId(null);
+    }
   };
 
   const remove = async (id: string) => {
     if (!confirm(t('news.prompts.confirmDelete'))) return;
-    try { await apiService.adminNewsDeletePrompt(id); reload(); }
-    catch { toast.error(t('common.error')); }
+    setActionId(`delete-${id}`);
+    try {
+      await apiService.adminNewsDeleteAIPrompt(id);
+      toast.success(t('news.prompts.deleted'));
+      if (selectedPrompt?.id === id) closeModal();
+      await reload();
+    } catch {
+      toast.error(t('common.error'));
+    } finally {
+      setActionId(null);
+    }
   };
+
+  const selectedReason = selectedPrompt ? promptReason(selectedPrompt, t('news.prompts.noReason')) : '';
+
+  const selectedDetails = selectedPrompt ? [
+    [t('news.prompts.client'), formatOptional(selectedPrompt.client_id)],
+    [t('news.prompts.calendarId'), formatOptional(selectedPrompt.editorial_calendar_id)],
+    [t('news.prompts.model'), formatOptional(selectedPrompt.model_used)],
+    [t('news.prompts.provider'), formatOptional(selectedPrompt.provider)],
+    [t('news.prompts.temperature'), formatOptional(selectedPrompt.temperature)],
+    [t('news.prompts.tokens'), formatOptional(selectedPrompt.total_tokens)],
+    [t('news.prompts.duration'), formatDuration(selectedPrompt.generation_time_ms)],
+    [t('news.prompts.createdAt'), fmtDate(selectedPrompt.created_at, i18n.language)],
+    [t('news.prompts.updatedAt'), fmtDate(selectedPrompt.updated_at, i18n.language)],
+    [t('news.prompts.completedAt'), selectedPrompt.completed_at ? fmtDate(selectedPrompt.completed_at, i18n.language) : '—'],
+  ] : [];
 
   return (
     <div className="admin-news-prompts">
-      <div className="admin-news-prompts__toolbar">
-        <button type="button" className="adm-btn adm-btn--primary" onClick={openNew}>
-          <PlusIcon size={14} />
-          {t('news.prompts.new')}
-        </button>
-      </div>
-
-      {loading ? (
-        <p className="adm-loading">{t('common.loading')}</p>
-      ) : prompts.length === 0 ? (
-        <div className="adm-empty-state">
-          <ClipboardListIcon size={36} />
-          <p>{t('news.prompts.empty')}</p>
-        </div>
-      ) : (
-        <div className="admin-news-prompts__grid">
-          {prompts.map(p => (
-            <div key={p.id} className="admin-news-prompts__card" onClick={() => openEdit(p)}>
-              <div className="admin-news-prompts__card-top">
-                <span className="admin-news-prompts__card-title">{p.title}</span>
-                {p.category && <StatusBadge label={p.category} variant="info" />}
-              </div>
-              <p className="admin-news-prompts__card-content">{p.content}</p>
-              <div className="admin-news-prompts__card-footer">
-                <span className="admin-news-prompts__card-date">{fmtDate(p.created_at, i18n.language)}</span>
-                <button
-                  type="button"
-                  className="adm-btn adm-btn--ghost adm-btn--xs adm-btn--danger"
-                  onClick={e => { e.stopPropagation(); remove(p.id); }}
-                  aria-label={t('common.delete')}
-                >
-                  <Trash2Icon size={13} />
-                </button>
-              </div>
-            </div>
+      <DataTable>
+        <DataTableHead>
+          <DataTableRow>
+            <DataTableTh>{t('news.prompts.title')}</DataTableTh>
+            <DataTableTh>{t('news.prompts.status')}</DataTableTh>
+            <DataTableTh>{t('news.prompts.locale')}</DataTableTh>
+            <DataTableTh>{t('news.prompts.format')}</DataTableTh>
+            <DataTableTh>{t('news.prompts.reason')}</DataTableTh>
+            <DataTableTh>{t('news.prompts.date')}</DataTableTh>
+            <DataTableTh>{t('news.prompts.actions')}</DataTableTh>
+          </DataTableRow>
+        </DataTableHead>
+        <DataTableBody>
+          {loading ? (
+            <DataTableRow>
+              <DataTableTd className="adm-table__loading">{t('common.loading')}</DataTableTd>
+            </DataTableRow>
+          ) : prompts.length === 0 ? (
+            <DataTableEmpty icon={<ClipboardListIcon size={28} />} label={t('news.prompts.empty')} />
+          ) : prompts.map(prompt => (
+            <DataTableRow key={prompt.id} onClick={() => openPreview(prompt)}>
+              <DataTableTd>
+                <div className="admin-news-prompts__name">
+                  <span className="admin-news-prompts__title">{prompt.title || prompt.keyword || `#${prompt.generation_id}`}</span>
+                  <span className="admin-news-prompts__meta">#{prompt.generation_id} · {formatOptional(prompt.keyword)}</span>
+                </div>
+              </DataTableTd>
+              <DataTableTd>
+                <StatusBadge
+                  label={t(`news.prompts.statuses.${prompt.status}`, { defaultValue: prompt.status })}
+                  variant={aiPromptStatusVariant(prompt.status, prompt.push_status)}
+                />
+                {prompt.push_status === 'failed' && <span className="admin-news-prompts__push">{t('news.prompts.pushFailed')}</span>}
+              </DataTableTd>
+              <DataTableTd>
+                <span className="admin-news-prompts__locale">{formatOptional(prompt.locale).toUpperCase()}</span>
+              </DataTableTd>
+              <DataTableTd>{formatOptional(prompt.article_format)}</DataTableTd>
+              <DataTableTd>
+                <span className="admin-news-prompts__reason">{promptReason(prompt, t('news.prompts.noReason'))}</span>
+              </DataTableTd>
+              <DataTableTd>{fmtDate(prompt.created_at, i18n.language)}</DataTableTd>
+              <DataTableTd>
+                <div className="adm-table__actions">
+                  <button
+                    type="button"
+                    className="adm-btn adm-btn--ghost adm-btn--xs"
+                    onClick={event => { event.stopPropagation(); restart(prompt.id); }}
+                    disabled={actionId === `restart-${prompt.id}`}
+                    aria-label={t('news.prompts.restart')}
+                    title={t('news.prompts.restart')}
+                  >
+                    <RefreshCwIcon size={13} className={actionId === `restart-${prompt.id}` ? 'adm-spin' : undefined} />
+                  </button>
+                  <button
+                    type="button"
+                    className="adm-btn adm-btn--ghost adm-btn--xs"
+                    onClick={event => { event.stopPropagation(); openPreview(prompt); }}
+                    aria-label={t('news.prompts.preview')}
+                    title={t('news.prompts.preview')}
+                  >
+                    <EyeIcon size={13} />
+                  </button>
+                  <button
+                    type="button"
+                    className="adm-btn adm-btn--ghost adm-btn--xs adm-btn--danger"
+                    onClick={event => { event.stopPropagation(); remove(prompt.id); }}
+                    disabled={actionId === `delete-${prompt.id}`}
+                    aria-label={t('common.delete')}
+                    title={t('common.delete')}
+                  >
+                    <Trash2Icon size={13} />
+                  </button>
+                </div>
+              </DataTableTd>
+            </DataTableRow>
           ))}
-        </div>
-      )}
+        </DataTableBody>
+      </DataTable>
 
       <Modal
         open={modalOpen}
         onClose={closeModal}
-        title={editing.id ? t('common.edit') : t('news.prompts.new')}
-        size="md"
+        title={selectedPrompt ? `${t('news.prompts.modalTitle')} #${selectedPrompt.generation_id}` : t('news.prompts.modalTitle')}
+        size="lg"
         footer={
           <>
             <button type="button" className="adm-btn adm-btn--ghost" onClick={closeModal}>{t('common.cancel')}</button>
-            <button type="button" className="adm-btn adm-btn--primary" onClick={save} disabled={saving}>
-              {t('common.save')}
-            </button>
+            {selectedPrompt && (
+              <button
+                type="button"
+                className="adm-btn adm-btn--ghost adm-btn--danger"
+                onClick={() => remove(selectedPrompt.id)}
+                disabled={actionId === `delete-${selectedPrompt.id}`}
+              >
+                <Trash2Icon size={14} />
+                {t('common.delete')}
+              </button>
+            )}
+            {selectedPrompt && (
+              <button
+                type="button"
+                className="adm-btn adm-btn--primary"
+                onClick={() => restart(selectedPrompt.id)}
+                disabled={actionId === `restart-${selectedPrompt.id}`}
+              >
+                <RefreshCwIcon size={14} className={actionId === `restart-${selectedPrompt.id}` ? 'adm-spin' : undefined} />
+                {t('news.prompts.restart')}
+              </button>
+            )}
           </>
         }
       >
-        <div className="adm-form">
-          <div className="adm-form__field">
-            <label className="adm-form__label">{t('news.prompts.form.title')}</label>
-            <input
-              type="text"
-              className="adm-input"
-              placeholder={t('news.prompts.form.titlePlaceholder')}
-              value={editing.title ?? ''}
-              onChange={e => setEditing(p => ({ ...p, title: e.target.value }))}
-            />
+        {selectedPrompt && (
+          <div className="admin-news-prompts__modal">
+            <div className="admin-news-prompts__modal-head">
+              <div>
+                <h3>{selectedPrompt.title || selectedPrompt.keyword || t('news.prompts.noPrompt')}</h3>
+                <p>{formatOptional(selectedPrompt.keyword)} · {formatOptional(selectedPrompt.locale).toUpperCase()} · {formatOptional(selectedPrompt.article_format)}</p>
+              </div>
+              <StatusBadge
+                label={t(`news.prompts.statuses.${selectedPrompt.status}`, { defaultValue: selectedPrompt.status })}
+                variant={aiPromptStatusVariant(selectedPrompt.status, selectedPrompt.push_status)}
+              />
+            </div>
+
+            <div className="admin-news-prompts__reason-box">
+              <span>{t('news.prompts.reason')}</span>
+              <p>{selectedReason}</p>
+            </div>
+
+            <div className="admin-news-prompts__details">
+              {selectedDetails.map(([label, value]) => (
+                <div key={label} className="admin-news-prompts__detail">
+                  <span>{label}</span>
+                  <strong>{value}</strong>
+                </div>
+              ))}
+            </div>
+
+            <div className="admin-news-prompts__prompt-grid">
+              <section className="admin-news-prompts__prompt-block">
+                <h4>{t('news.prompts.systemPrompt')}</h4>
+                <pre>{selectedPrompt.prompt_system || t('news.prompts.noPrompt')}</pre>
+              </section>
+              <section className="admin-news-prompts__prompt-block">
+                <h4>{t('news.prompts.userPrompt')}</h4>
+                <pre>{selectedPrompt.prompt_user || t('news.prompts.noPrompt')}</pre>
+              </section>
+            </div>
+
+            <div className="admin-news-prompts__prompt-grid">
+              <section className="admin-news-prompts__prompt-block">
+                <h4>{t('news.prompts.seoRules')}</h4>
+                <pre>{formatJson(selectedPrompt.seo_rules_snapshot)}</pre>
+              </section>
+              <section className="admin-news-prompts__prompt-block">
+                <h4>{t('news.prompts.payload')}</h4>
+                <pre>{formatJson(selectedPrompt.generation_payload)}</pre>
+              </section>
+            </div>
+
+            {selectedPrompt.push_response && (
+              <section className="admin-news-prompts__prompt-block">
+                <h4>{t('news.prompts.pushResponse')}</h4>
+                <pre>{formatJson(selectedPrompt.push_response)}</pre>
+              </section>
+            )}
           </div>
-          <div className="adm-form__field">
-            <label className="adm-form__label">{t('news.prompts.form.category')}</label>
-            <input
-              type="text"
-              className="adm-input"
-              placeholder={t('news.prompts.form.categoryPlaceholder')}
-              value={editing.category ?? ''}
-              onChange={e => setEditing(p => ({ ...p, category: e.target.value }))}
-            />
-          </div>
-          <div className="adm-form__field">
-            <label className="adm-form__label">{t('news.prompts.form.content')}</label>
-            <textarea
-              className="adm-textarea"
-              rows={6}
-              placeholder={t('news.prompts.form.contentPlaceholder')}
-              value={editing.content ?? ''}
-              onChange={e => setEditing(p => ({ ...p, content: e.target.value }))}
-            />
-          </div>
-        </div>
+        )}
       </Modal>
     </div>
   );
