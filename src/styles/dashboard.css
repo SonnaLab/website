@@ -2205,6 +2205,15 @@
   transition: border-color 0.15s, background 0.15s;
 }
 
+.strat-accord:not(.strat-accord--open) {
+  background: #fbfbfb;
+}
+
+.strat-accord:not(.strat-accord--open):hover {
+  border-color: #111111;
+  background: #ffffff;
+}
+
 .strat-accord--open {
   border-color: var(--adm-text);
   background: #ffffff;
@@ -2212,19 +2221,34 @@
 
 .strat-accord__header {
   width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0;
+  min-height: 48px;
+  padding: 0;
+  background: none;
+  border: none;
+  text-align: left;
+}
+
+.strat-accord__toggle {
+  flex: 1;
+  min-width: 0;
+  min-height: 54px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  min-height: 48px;
-  padding: 11px 14px;
-  background: none;
-  border: none;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 0;
+  background: transparent;
+  color: inherit;
   cursor: pointer;
   text-align: left;
 }
 
-.strat-accord__header:hover {
+.strat-accord__toggle:hover {
   background: var(--adm-hover);
 }
 
@@ -2250,6 +2274,12 @@
   font-weight: 700;
 }
 
+.strat-accord--open .strat-accord__rank {
+  background: #111111;
+  border-color: #111111;
+  color: #ffffff;
+}
+
 .strat-accord__right {
   display: flex;
   align-items: center;
@@ -2259,7 +2289,7 @@
 
 .strat-accord__mini {
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--adm-text-muted);
   white-space: nowrap;
 }
@@ -2274,7 +2304,7 @@
 .strat-priority-pill {
   font-size: 10px;
   font-weight: 700;
-  color: var(--adm-text-muted);
+  color: var(--adm-text);
   background: var(--adm-surface);
   border: 1px solid var(--adm-border);
   border-radius: 20px;
@@ -2337,11 +2367,27 @@
   border-color: #333333;
 }
 
+.strat-detail-btn--header {
+  min-height: 32px;
+  margin-right: 14px;
+  padding: 7px 12px;
+  background-color: #111111 !important;
+  border-color: #111111 !important;
+  color: #ffffff !important;
+  border-radius: 6px;
+  opacity: 1;
+  white-space: nowrap;
+}
+
+.strat-detail-btn--header:hover {
+  background-color: #333333 !important;
+  border-color: #333333 !important;
+}
+
 .strat-summary-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
-  margin-bottom: 12px;
 }
 
 .strat-summary-item {
@@ -2424,12 +2470,14 @@
 }
 
 .strat-locale-tag {
-  background: var(--adm-surface);
+  background: #ffffff;
   border: 1px solid var(--adm-border);
   border-radius: 4px;
-  padding: 1px 5px;
+  padding: 2px 7px;
   font-size: 10px;
-  font-weight: 500;
+  font-weight: 800;
+  color: var(--adm-text);
+  letter-spacing: 0.03em;
 }
 
 .strat-phase-tag {

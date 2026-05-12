@@ -884,8 +884,8 @@ const PHASE_LABELS: Record<string, string> = {
   scale:             'Scale',
 };
 
-const LOCALE_FLAGS: Record<string, string> = {
-  fr: '🇫🇷', en: '🇬🇧', es: '🇪🇸', it: '🇮🇹', de: '🇩🇪',
+const LOCALE_LABELS: Record<string, string> = {
+  fr: 'FR', en: 'EN', es: 'ES', it: 'IT', de: 'DE',
 };
 
 const CHART_GRAYS = ['#111111', '#3d3d3d', '#666666', '#8a8a8a', '#aaaaaa', '#cccccc'];
@@ -941,7 +941,7 @@ function StrategyTab() {
     }, {})
   )
     .sort((a, b) => b[1] - a[1])
-    .map(([locale, count]) => ({ name: `${LOCALE_FLAGS[locale] ?? ''} ${locale.toUpperCase()}`, count }));
+    .map(([locale, count]) => ({ name: LOCALE_LABELS[locale] ?? locale.toUpperCase(), count }));
 
   const phaseData = Object.entries(
     objectives.reduce<Record<string, number>>((acc, o) => {
@@ -1081,35 +1081,37 @@ function StrategyTab() {
 
             return (
             <div key={obj.id} className={`strat-accord${expanded ? ' strat-accord--open' : ''}`}>
-              <button
-                type="button"
-                className="strat-accord__header"
-                onClick={() => {
-                  if (obj.id === firstObjectiveId) return;
-                  setOpenIds(current => current.includes(obj.id)
-                    ? current.filter(id => id !== obj.id)
-                    : [...current, obj.id]
-                  );
-                }}
-              >
-                <span className="strat-accord__left">
-                  <span className="strat-accord__rank">#{filteredObjectives.indexOf(obj) + 1}</span>
-                  <span className="strat-accord__title">{obj.title}</span>
-                </span>
-                <span className="strat-accord__right">
-                  <span className="strat-accord__mini">{articlesTarget} articles/mois</span>
-                  <span className="strat-priority-pill">{obj.priority}</span>
-                  <ChevronDownIcon size={14} className={`strat-chevron${expanded ? ' strat-chevron--up' : ''}`} />
-                </span>
-              </button>
+              <div className="strat-accord__header">
+                <button
+                  type="button"
+                  className="strat-accord__toggle"
+                  onClick={() => {
+                    if (obj.id === firstObjectiveId) return;
+                    setOpenIds(current => current.includes(obj.id)
+                      ? current.filter(id => id !== obj.id)
+                      : [...current, obj.id]
+                    );
+                  }}
+                >
+                  <span className="strat-accord__left">
+                    <span className="strat-accord__rank">#{filteredObjectives.indexOf(obj) + 1}</span>
+                    <span className="strat-accord__title">{obj.title}</span>
+                  </span>
+                  <span className="strat-accord__right">
+                    <span className="strat-accord__mini">{articlesTarget} articles/mois</span>
+                    <span className="strat-priority-pill">{obj.priority}</span>
+                    <ChevronDownIcon size={14} className={`strat-chevron${expanded ? ' strat-chevron--up' : ''}`} />
+                  </span>
+                </button>
+                <button type="button" className="strat-detail-btn strat-detail-btn--header" onClick={() => setSelectedObjective(obj)}>
+                  <EyeIcon size={13} /> Détail complet
+                </button>
+              </div>
 
               {expanded && (
                 <div className="strat-accord__body">
                   <div className="strat-accord__lead">
                     <p className="strat-desc">{obj.description}</p>
-                    <button type="button" className="strat-detail-btn" onClick={() => setSelectedObjective(obj)}>
-                      <EyeIcon size={13} /> Détail complet
-                    </button>
                   </div>
 
                   <div className="strat-summary-grid">
@@ -1128,45 +1130,6 @@ function StrategyTab() {
                     <div className="strat-summary-item">
                       <span>Phase</span>
                       <strong>{PHASE_LABELS[obj.target_phase] ?? obj.target_phase}</strong>
-                    </div>
-                  </div>
-
-                  <div className="strat-compact-grid">
-                    <div className="strat-compact-panel">
-                      <span className="strat-tag-label">Marchés & locales</span>
-                      <div className="strat-chip-row">
-                        {(obj.target_locales ?? []).map(locale => (
-                          <span key={locale} className="strat-locale-tag">{LOCALE_FLAGS[locale] ?? locale} {locale.toUpperCase()}</span>
-                        ))}
-                      </div>
-                      {(obj.target_countries ?? []).length > 0 && (
-                        <p className="strat-compact-note">{obj.target_countries.join(', ')}</p>
-                      )}
-                    </div>
-
-                    <div className="strat-compact-panel">
-                      <span className="strat-tag-label">Topics prioritaires</span>
-                      <div className="strat-chip-row">
-                        {(obj.target_topics ?? []).slice(0, 4).map(topic => (
-                          <span key={topic} className="strat-tag strat-tag--topic">{topic}</span>
-                        ))}
-                        {(obj.target_topics ?? []).length > 4 && <span className="strat-tag strat-tag--more">+{obj.target_topics.length - 4}</span>}
-                      </div>
-                    </div>
-
-                    <div className="strat-compact-panel">
-                      <span className="strat-tag-label">Keywords</span>
-                      <div className="strat-chip-row">
-                        {(obj.target_keywords ?? []).slice(0, 6).map(keyword => <span key={keyword} className="strat-tag">{keyword}</span>)}
-                        {(obj.target_keywords ?? []).length > 6 && <span className="strat-tag strat-tag--more">+{obj.target_keywords.length - 6}</span>}
-                      </div>
-                    </div>
-
-                    <div className="strat-compact-panel">
-                      <span className="strat-tag-label">Formats</span>
-                      <div className="strat-chip-row">
-                        {(obj.target_formats ?? []).map(format => <span key={format} className="strat-tag strat-tag--format">{format}</span>)}
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -1192,7 +1155,7 @@ function StrategyTab() {
                 <span className="strat-tag-label">Cibles marché</span>
                 <div className="strat-chip-row">
                   {(selectedObjective.target_locales ?? []).map(locale => (
-                    <span key={locale} className="strat-locale-tag">{LOCALE_FLAGS[locale] ?? locale} {locale.toUpperCase()}</span>
+                    <span key={locale} className="strat-locale-tag">{LOCALE_LABELS[locale] ?? locale.toUpperCase()}</span>
                   ))}
                 </div>
                 {(selectedObjective.target_countries ?? []).length > 0 && (
