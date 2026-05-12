@@ -615,9 +615,7 @@ function aiStatusVariant(status: string): string {
     case 'published': return 'published';
     case 'generated': case 'pushed': return 'generated';
     case 'in_generation': return 'generating';
-    case 'approved': return 'success';
     case 'planned':  return 'planned';
-    case 'draft':    return 'warning';
     case 'failed':   return 'danger';
     default:         return 'default';
   }
