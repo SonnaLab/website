@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { apiService } from '@/services/api';
-import type { AICalendarItem, Article, ArticleStatus, CalendarEntry, NewsPrompt, NewsStrategy, WeeklyObjective } from '@/services/api';
+import type { AICalendarItem, Article, ArticleStatus, CalendarEntry, NewsPrompt, NewsStrategy, StrategicObjective, WeeklyObjective } from '@/services/api';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
 import { DataTable, DataTableHead, DataTableBody, DataTableRow, DataTableTh, DataTableTd, DataTableEmpty } from '@/components/common/DataTable';
@@ -22,6 +23,11 @@ import {
   SearchIcon,
   CheckIcon,
   RefreshCwIcon,
+  ChevronDownIcon,
+  TrendingUpIcon,
+  GlobeIcon,
+  LayersIcon,
+  ZapIcon,
 } from '@icons';
 
 // ─────────────────────────────────────────────
@@ -870,92 +876,273 @@ interface StrategyForm {
   updated_at?: string;
 }
 
+// ─── Strategy helpers ────────────────────────────────────────────────────────
+
+const OBJECTIVE_TYPE_COLORS: Record<string, string> = {
+  acquisition:        '#3b82f6',
+  topical_authority:  '#8b5cf6',
+  market_expansion:   '#10b981',
+  conversion:         '#f97316',
+  trend_capture:      '#eab308',
+  competitor_capture: '#ef4444',
+};
+
+const PHASE_LABELS: Record<string, string> = {
+  foundation:        'Foundation',
+  cluster_expansion: 'Cluster Expansion',
+  scale:             'Scale',
+};
+
+const LOCALE_FLAGS: Record<string, string> = {
+  fr: '🇫🇷', en: '🇬🇧', es: '🇪🇸', it: '🇮🇹', de: '🇩🇪',
+};
+
+const CHART_COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f97316', '#eab308', '#ef4444', '#06b6d4', '#ec4899'];
+
+function formatObjectiveType(type: string) {
+  return type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
 function StrategyTab() {
-  const { t } = useTranslation('admin');
-  const [form, setForm]       = useState<StrategyForm>({});
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving]   = useState(false);
+  const [objectives, setObjectives] = useState<StrategicObjective[]>([]);
+  const [loading, setLoading]       = useState(true);
+  const [openId, setOpenId]         = useState<number | null>(null);
 
   useEffect(() => {
-    apiService.adminNewsStrategy()
-      .then(d => {
-        const s = d.strategy ?? {};
-        setForm({
-          ...s,
-          goals:    Array.isArray(s.goals)    ? s.goals.join('\n')    : (s.goals    ?? ''),
-          keywords: Array.isArray(s.keywords) ? s.keywords.join(', ') : (s.keywords ?? ''),
-          themes:   Array.isArray(s.themes)   ? s.themes.join(', ')   : (s.themes   ?? ''),
-        });
-      })
+    apiService.adminNewsAIStrategicObjectives()
+      .then(d => setObjectives(d.objectives ?? []))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
-  const save = async () => {
-    setSaving(true);
-    try {
-      const payload: Partial<NewsStrategy> = {
-        frequency: form.frequency,
-        goals:    form.goals    ? form.goals.split('\n').map(s => s.trim()).filter(Boolean)    : [],
-        keywords: form.keywords ? form.keywords.split(',').map(s => s.trim()).filter(Boolean)  : [],
-        themes:   form.themes   ? form.themes.split(',').map(s => s.trim()).filter(Boolean)    : [],
-      };
-      await apiService.adminNewsSaveStrategy(payload);
-      toast.success(t('news.strategy.saved'));
-    } catch { toast.error(t('common.error')); }
-    finally { setSaving(false); }
-  };
+  // ── Derived KPIs ──────────────────────────────────────────────────────────
+  const totalArticles  = objectives.reduce((s, o) => s + (o.success_metrics?.articles_per_month_target ?? 0), 0);
+  const totalLeads     = objectives.reduce((s, o) => s + (o.success_metrics?.monthly_leads ?? 0), 0);
+  const avgPriority    = objectives.length ? Math.round(objectives.reduce((s, o) => s + o.priority, 0) / objectives.length) : 0;
 
-  if (loading) return <p className="adm-loading">{t('common.loading')}</p>;
+  const articlesData = objectives
+    .slice()
+    .sort((a, b) => b.priority - a.priority)
+    .map(o => ({
+      name: o.title.length > 32 ? o.title.slice(0, 32) + '…' : o.title,
+      articles: o.success_metrics?.articles_per_month_target ?? 0,
+    }));
+
+  const typeData = Object.entries(
+    objectives.reduce<Record<string, number>>((acc, o) => {
+      acc[o.objective_type] = (acc[o.objective_type] ?? 0) + 1;
+      return acc;
+    }, {})
+  ).map(([name, value]) => ({ name: formatObjectiveType(name), value }));
+
+  const localeData = Object.entries(
+    objectives.reduce<Record<string, number>>((acc, o) => {
+      (o.target_locales ?? []).forEach(l => { acc[l] = (acc[l] ?? 0) + 1; });
+      return acc;
+    }, {})
+  )
+    .sort((a, b) => b[1] - a[1])
+    .map(([locale, count]) => ({ name: `${LOCALE_FLAGS[locale] ?? ''} ${locale.toUpperCase()}`, count }));
+
+  const phaseData = Object.entries(
+    objectives.reduce<Record<string, number>>((acc, o) => {
+      const p = o.target_phase ?? 'unknown';
+      acc[p] = (acc[p] ?? 0) + 1;
+      return acc;
+    }, {})
+  ).map(([phase, count]) => ({ name: PHASE_LABELS[phase] ?? phase, count }));
+
+  if (loading) return <p className="adm-loading"><RefreshCwIcon size={14} className="adm-spin" /> Chargement…</p>;
 
   return (
-    <div className="admin-news-strategy">
-      <div className="adm-form">
-        <div className="adm-form__field">
-          <label className="adm-form__label">{t('news.strategy.goals')}</label>
-          <textarea
-            className="adm-textarea"
-            rows={3}
-            placeholder={t('news.strategy.goalsPlaceholder')}
-            value={form.goals ?? ''}
-            onChange={e => setForm(p => ({ ...p, goals: e.target.value }))}
-          />
+    <div className="strat-layout">
+
+      {/* ── Left: Accordions ── */}
+      <div className="strat-left">
+        <h3 className="strat-section-title">
+          <TargetIcon size={15} /> Objectifs stratégiques ({objectives.length})
+        </h3>
+        <div className="strat-accordions">
+          {objectives
+            .slice()
+            .sort((a, b) => b.priority - a.priority)
+            .map(obj => (
+              <div key={obj.id} className={`strat-accord${openId === obj.id ? ' strat-accord--open' : ''}`}>
+                <button
+                  type="button"
+                  className="strat-accord__header"
+                  onClick={() => setOpenId(openId === obj.id ? null : obj.id)}
+                >
+                  <span className="strat-accord__left">
+                    <span
+                      className="strat-type-badge"
+                      style={{ background: OBJECTIVE_TYPE_COLORS[obj.objective_type] ?? '#6b7280' }}
+                    >
+                      {formatObjectiveType(obj.objective_type)}
+                    </span>
+                    <span className="strat-accord__title">{obj.title}</span>
+                  </span>
+                  <span className="strat-accord__right">
+                    <span className="strat-priority-pill">{obj.priority}</span>
+                    <ChevronDownIcon size={14} className={`strat-chevron${openId === obj.id ? ' strat-chevron--up' : ''}`} />
+                  </span>
+                </button>
+
+                {openId === obj.id && (
+                  <div className="strat-accord__body">
+                    <p className="strat-desc">{obj.description}</p>
+
+                    <div className="strat-accord__meta">
+                      <div className="strat-meta-row">
+                        <GlobeIcon size={12} />
+                        <span className="strat-meta-label">Locales</span>
+                        <span className="strat-meta-val">
+                          {(obj.target_locales ?? []).map(l => (
+                            <span key={l} className="strat-locale-tag">{LOCALE_FLAGS[l] ?? l} {l.toUpperCase()}</span>
+                          ))}
+                        </span>
+                      </div>
+                      {(obj.target_countries ?? []).length > 0 && (
+                        <div className="strat-meta-row">
+                          <GlobeIcon size={12} />
+                          <span className="strat-meta-label">Pays</span>
+                          <span className="strat-meta-val">{obj.target_countries.join(', ')}</span>
+                        </div>
+                      )}
+                      <div className="strat-meta-row">
+                        <LayersIcon size={12} />
+                        <span className="strat-meta-label">Phase</span>
+                        <span className={`strat-phase-tag strat-phase-tag--${obj.target_phase}`}>
+                          {PHASE_LABELS[obj.target_phase] ?? obj.target_phase}
+                        </span>
+                      </div>
+                    </div>
+
+                    {obj.target_topics?.length > 0 && (
+                      <div className="strat-tag-row">
+                        <span className="strat-tag-label">Topics</span>
+                        {obj.target_topics.map(t => <span key={t} className="strat-tag strat-tag--topic">{t}</span>)}
+                      </div>
+                    )}
+                    {obj.target_keywords?.length > 0 && (
+                      <div className="strat-tag-row">
+                        <span className="strat-tag-label">Keywords</span>
+                        {obj.target_keywords.slice(0, 6).map(k => <span key={k} className="strat-tag">{k}</span>)}
+                        {obj.target_keywords.length > 6 && <span className="strat-tag strat-tag--more">+{obj.target_keywords.length - 6}</span>}
+                      </div>
+                    )}
+                    {obj.target_formats?.length > 0 && (
+                      <div className="strat-tag-row">
+                        <span className="strat-tag-label">Formats</span>
+                        {obj.target_formats.map(f => <span key={f} className="strat-tag strat-tag--format">{f}</span>)}
+                      </div>
+                    )}
+
+                    {obj.success_metrics && Object.keys(obj.success_metrics).length > 0 && (
+                      <div className="strat-metrics">
+                        <span className="strat-tag-label">KPIs cibles</span>
+                        <div className="strat-metrics__grid">
+                          {Object.entries(obj.success_metrics).map(([k, v]) => (
+                            <div key={k} className="strat-metric-item">
+                              <span className="strat-metric-key">{k.replace(/_/g, ' ')}</span>
+                              <span className="strat-metric-val">{v}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
         </div>
-        <div className="adm-form__field">
-          <label className="adm-form__label">{t('news.strategy.keywords')}</label>
-          <input
-            type="text"
-            className="adm-input"
-            placeholder={t('news.strategy.keywordsPlaceholder')}
-            value={form.keywords ?? ''}
-            onChange={e => setForm(p => ({ ...p, keywords: e.target.value }))}
-          />
+      </div>
+
+      {/* ── Right: Charts ── */}
+      <div className="strat-right">
+        <h3 className="strat-section-title">
+          <TrendingUpIcon size={15} /> Tableau de bord KPI
+        </h3>
+
+        {/* KPI Cards */}
+        <div className="strat-kpi-row">
+          <div className="strat-kpi-card">
+            <span className="strat-kpi-value">{totalArticles}</span>
+            <span className="strat-kpi-label">Articles / mois (cible)</span>
+          </div>
+          <div className="strat-kpi-card">
+            <span className="strat-kpi-value">{totalLeads}</span>
+            <span className="strat-kpi-label">Leads / mois (cible)</span>
+          </div>
+          <div className="strat-kpi-card">
+            <span className="strat-kpi-value">{avgPriority}</span>
+            <span className="strat-kpi-label">Priorité moyenne</span>
+          </div>
+          <div className="strat-kpi-card">
+            <span className="strat-kpi-value">{objectives.filter(o => o.is_active).length}</span>
+            <span className="strat-kpi-label">Objectifs actifs</span>
+          </div>
         </div>
-        <div className="adm-form__field">
-          <label className="adm-form__label">{t('news.strategy.themes')}</label>
-          <input
-            type="text"
-            className="adm-input"
-            placeholder={t('news.strategy.themesPlaceholder')}
-            value={form.themes ?? ''}
-            onChange={e => setForm(p => ({ ...p, themes: e.target.value }))}
-          />
+
+        {/* Articles par objectif */}
+        <div className="strat-chart-block">
+          <h4 className="strat-chart-title"><ZapIcon size={12} /> Articles / mois par objectif</h4>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={articlesData} layout="vertical" margin={{ left: 8, right: 16, top: 4, bottom: 4 }}>
+              <XAxis type="number" tick={{ fontSize: 11 }} />
+              <YAxis type="category" dataKey="name" width={180} tick={{ fontSize: 10 }} />
+              <Tooltip />
+              <Bar dataKey="articles" fill="#3b82f6" radius={[0, 3, 3, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
-        <div className="adm-form__field">
-          <label className="adm-form__label">{t('news.strategy.frequency')}</label>
-          <input
-            type="text"
-            className="adm-input"
-            placeholder={t('news.strategy.frequencyPlaceholder')}
-            value={form.frequency ?? ''}
-            onChange={e => setForm(p => ({ ...p, frequency: e.target.value }))}
-          />
+
+        <div className="strat-charts-2col">
+          {/* Types distribution */}
+          <div className="strat-chart-block">
+            <h4 className="strat-chart-title">Types d'objectifs</h4>
+            <ResponsiveContainer width="100%" height={200}>
+              <PieChart>
+                <Pie data={typeData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} innerRadius={35} paddingAngle={3}>
+                  {typeData.map((entry, i) => (
+                    <Cell key={entry.name} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend iconSize={10} wrapperStyle={{ fontSize: 11 }} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Phase distribution */}
+          <div className="strat-chart-block">
+            <h4 className="strat-chart-title">Distribution par phase</h4>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={phaseData} margin={{ left: 0, right: 8, top: 4, bottom: 24 }}>
+                <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
+                <Tooltip />
+                <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+                  {phaseData.map((entry, i) => (
+                    <Cell key={entry.name} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
-        <div className="admin-news-strategy__footer">
-          <button type="button" className="adm-btn adm-btn--primary" onClick={save} disabled={saving}>
-            {saving ? <RefreshCwIcon size={14} className="adm-spin" /> : <TargetIcon size={14} />}
-            {t('news.strategy.save')}
-          </button>
+
+        {/* Locales coverage */}
+        <div className="strat-chart-block">
+          <h4 className="strat-chart-title"><GlobeIcon size={12} /> Couverture par locale</h4>
+          <ResponsiveContainer width="100%" height={140}>
+            <BarChart data={localeData} margin={{ left: 0, right: 16, top: 4, bottom: 4 }}>
+              <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+              <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
+              <Tooltip />
+              <Bar dataKey="count" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>

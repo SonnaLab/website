@@ -360,3 +360,38 @@ export function CheckIcon(p: IconProps) {
     </svg>
   );
 }
+
+export function ChevronDownIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
+
+export function LayersIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z" />
+      <path d="m6.08 9.5-3.5 1.6a1 1 0 0 0 0 1.81l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9a1 1 0 0 0 0-1.83l-3.5-1.59" />
+      <path d="m6.08 14.5-3.5 1.6a1 1 0 0 0 0 1.81l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9a1 1 0 0 0 0-1.83l-3.5-1.59" />
+    </svg>
+  );
+}
+
+export function ZapIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" />
+    </svg>
+  );
+}
+
+export function TrendingUpIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+      <polyline points="16 7 22 7 22 13" />
+    </svg>
+  );
+}

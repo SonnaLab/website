@@ -93,6 +93,27 @@ export interface AICalendarItem {
   rationale?: string | null;
 }
 
+export interface StrategicObjective {
+  id: number;
+  client_id: string;
+  objective_type: string;
+  title: string;
+  description: string;
+  priority: number;
+  weight: number;
+  target_locales: string[];
+  target_countries: string[];
+  target_topics: string[];
+  target_keywords: string[];
+  target_formats: string[];
+  target_phase: string;
+  success_metrics: Record<string, number>;
+  constraints: Record<string, unknown>;
+  is_active: boolean;
+  valid_from: string;
+  valid_until?: string | null;
+}
+
 export function getStoredAccessToken(): string | null {
   return localStorage.getItem(AUTH_STORAGE_KEYS.access);
 }
@@ -369,6 +390,7 @@ class ApiService {
 
   async adminNewsCalendar(params?: { year?: number; month?: number }) { return (await this.client.get('/api/v1/admin/news/calendar', { params })).data; }
   async adminNewsAICalendar(params?: { view?: 'weekly' | 'monthly' | 'daily'; week_start?: string; year?: number; month?: number; date?: string }) { return (await this.client.get('/api/v1/admin/news/ai-calendar', { params })).data; }
+  async adminNewsAIStrategicObjectives(): Promise<{ objectives: StrategicObjective[] }> { return (await this.client.get('/api/v1/admin/news/ai-strategic-objectives')).data; }
 
   async adminNewsStrategy() { return (await this.client.get('/api/v1/admin/news/strategy')).data; }
   async adminNewsSaveStrategy(payload: Partial<NewsStrategy>) { return (await this.client.patch('/api/v1/admin/news/strategy', { strategy: payload })).data; }

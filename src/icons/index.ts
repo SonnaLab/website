@@ -46,4 +46,8 @@ export {
   ClipboardListIcon,
   CalendarDaysIcon,
   CheckIcon,
+  ChevronDownIcon,
+  LayersIcon,
+  ZapIcon,
+  TrendingUpIcon,
 } from './icons';
