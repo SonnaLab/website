@@ -25,6 +25,11 @@
     "results": "{{count}} article(s) found",
     "noResults": "No articles found"
   },
+  "stats": {
+    "articles": "Articles",
+    "categories": "Topics",
+    "page": "Page"
+  },
   "article": {
     "readTime": "{{time}} min read",
     "publishedOn": "Published on",

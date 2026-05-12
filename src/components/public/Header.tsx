@@ -34,6 +34,13 @@ export function Header() {
     { name: t('nav.contact'), href: '/contact', section: null },
   ];
 
+  const isActiveNavItem = (item: typeof navigation[number]) => {
+    if (item.section) return false;
+    if (item.href === '/') return location.pathname === '/';
+
+    return location.pathname === item.href || location.pathname.startsWith(`${item.href}/`);
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       const offset = window.scrollY;
@@ -105,17 +112,20 @@ export function Header() {
         </div>
 
         <nav className="hidden md:flex items-center space-x-8">
-          {navigation.map((item) => (
-            <a
-              key={item.name}
-              href={item.section ? `#${item.section}` : item.href}
-              onClick={handleNavigationClick(item.href, item.section)}
-              className={`text-sm font-medium transition-colors duration-300 hover:text-gray-400 cursor-pointer text-gray-700
-                ${location.pathname === item.href && !item.section ? 'underline underline-offset-4' : ''}`}
-            >
-              {item.name}
-            </a>
-          ))}
+          {navigation.map((item) => {
+            const active = isActiveNavItem(item);
+
+            return (
+              <a
+                key={item.name}
+                href={item.section ? `#${item.section}` : item.href}
+                onClick={handleNavigationClick(item.href, item.section)}
+                className={`public-nav-link inline-flex h-16 items-center text-sm font-medium transition-colors duration-300 cursor-pointer ${active ? 'public-nav-link--active text-black' : 'text-gray-700 hover:text-black'}`}
+              >
+                {item.name}
+              </a>
+            );
+          })}
         </nav>
 
         <div className="hidden md:flex items-center space-x-3">

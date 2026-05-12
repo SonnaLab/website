@@ -214,6 +214,19 @@ html:has(body:not(:has([data-state='open']))) {
   --scrollbar-width: calc(100vw - 100%);
 }
 
+.public-nav-link {
+  border-bottom: 2px solid transparent;
+}
+
+.public-nav-link:hover {
+  border-bottom-color: #d1d5db;
+}
+
+.public-nav-link--active,
+.public-nav-link--active:hover {
+  border-bottom-color: #000000;
+}
+
 
 /* Use Raleway with higher font weights for bold text */
 .font-gilroy {
