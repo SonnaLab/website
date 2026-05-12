@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { apiService } from '@/services/api';
-import type { AICalendarItem, Article, ArticleStatus, CalendarEntry, NewsAIPrompt, NewsStrategy, StrategicObjective, WeeklyObjective } from '@/services/api';
+import type { AICalendarItem, Article, ArticleImageOption, ArticleStatus, CalendarEntry, NewsAIPrompt, NewsStrategy, StrategicObjective, WeeklyObjective } from '@/services/api';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
@@ -32,6 +32,7 @@ import {
   LayersIcon,
   ZapIcon,
   ArrowUpRightIcon,
+  CameraIcon,
 } from '@icons';
 
 // ─────────────────────────────────────────────
@@ -251,6 +252,8 @@ const ARTICLE_FORM_DEFAULTS: Partial<Article> = {
   title: '', excerpt: '', locale: 'fr', status: 'draft', category: '', tags: [],
 };
 
+const ARTICLE_LOCALES = ['fr', 'en', 'es', 'de', 'it'];
+
 type ArticleModalMode = 'preview' | 'edit';
 type ArticleGenerationModalState = 'idle' | 'running' | 'success' | 'failed';
 
@@ -278,6 +281,10 @@ function ArticlesTab() {
   const [generationStatus, setGenerationStatus] = useState<ArticleGenerationModalState>('idle');
   const [generationMessage, setGenerationMessage] = useState('');
   const [generationResultArticle, setGenerationResultArticle] = useState<Article | null>(null);
+  const [imagePickerOpen, setImagePickerOpen] = useState(false);
+  const [imageQuery, setImageQuery] = useState('');
+  const [imageResults, setImageResults] = useState<ArticleImageOption[]>([]);
+  const [imageLoading, setImageLoading] = useState(false);
   const [actionId, setActionId]   = useState<string | null>(null);
 
   const reload = (q = search) => {
@@ -302,7 +309,11 @@ function ArticlesTab() {
     }
   };
 
-  const closeModal = () => { setModalOpen(false); setEditing(ARTICLE_FORM_DEFAULTS); };
+  const closeModal = () => {
+    setModalOpen(false);
+    setImagePickerOpen(false);
+    setEditing(ARTICLE_FORM_DEFAULTS);
+  };
 
   const closeGenerationModal = () => {
     if (generationStatus === 'running') return;
@@ -329,6 +340,50 @@ function ArticlesTab() {
       reload();
     } catch { toast.error(t('common.error')); }
     finally { setSaving(false); }
+  };
+
+  const searchImages = async (query = imageQuery) => {
+    const cleanQuery = query.trim();
+    if (!cleanQuery) {
+      setImageResults([]);
+      return;
+    }
+
+    setImageLoading(true);
+    try {
+      const data = await apiService.adminNewsArticleImages({
+        query: cleanQuery,
+        locale: editing.locale || i18n.language || 'fr',
+        limit: 12,
+      });
+      setImageResults(data.images ?? []);
+    } catch {
+      toast.error(t('news.articles.imagePickerError'));
+    } finally {
+      setImageLoading(false);
+    }
+  };
+
+  const openImagePicker = () => {
+    const seed = articleMetadataValue(editing, 'feature_image_query') || editing.category || editing.title || '';
+    setImageQuery(seed);
+    setImagePickerOpen(true);
+    searchImages(seed);
+  };
+
+  const selectArticleImage = (image: ArticleImageOption) => {
+    const url = image.url_regular || image.url || image.url_full || image.url_small || '';
+    setEditing(current => ({
+      ...current,
+      feature_image: url,
+      feature_image_alt: image.alt || current.feature_image_alt || current.title || '',
+      lesankofa_metadata: {
+        ...(current.lesankofa_metadata ?? {}),
+        feature_image_query: image.query || imageQuery,
+        feature_image_credit: image.credit ?? (current.lesankofa_metadata ?? {}).feature_image_credit,
+      },
+    }));
+    setImagePickerOpen(false);
   };
 
   const togglePublish = async (article: Article | Partial<Article>) => {
@@ -374,6 +429,7 @@ function ArticlesTab() {
   const filtered = articles.filter(a =>
     !search || a.title.toLowerCase().includes(search.toLowerCase())
   );
+  const localeOptions = Array.from(new Set([...ARTICLE_LOCALES, editing.locale].filter(Boolean) as string[]));
 
   return (
     <div className="admin-news-articles">
@@ -574,8 +630,9 @@ function ArticlesTab() {
                 value={editing.locale ?? 'fr'}
                 onChange={e => setEditing(p => ({ ...p, locale: e.target.value }))}
               >
-                <option value="fr">FR</option>
-                <option value="en">EN</option>
+                {localeOptions.map(locale => (
+                  <option key={locale} value={locale}>{locale.toUpperCase()}</option>
+                ))}
               </select>
             </div>
             <div className="adm-form__field">
@@ -648,13 +705,24 @@ function ArticlesTab() {
           <div className="adm-form__row">
             <div className="adm-form__field">
               <label className="adm-form__label">{t('news.articles.form.featureImage')}</label>
-              <input
-                type="text"
-                className="adm-input"
-                placeholder={t('news.articles.form.featureImagePlaceholder')}
-                value={editing.feature_image ?? ''}
-                onChange={e => setEditing(p => ({ ...p, feature_image: e.target.value }))}
-              />
+              <div className="admin-news-articles__image-input">
+                <input
+                  type="text"
+                  className="adm-input"
+                  placeholder={t('news.articles.form.featureImagePlaceholder')}
+                  value={editing.feature_image ?? ''}
+                  onChange={e => setEditing(p => ({ ...p, feature_image: e.target.value }))}
+                />
+                <button
+                  type="button"
+                  className="adm-btn adm-btn--ghost admin-news-articles__image-button"
+                  onClick={openImagePicker}
+                  aria-label={t('news.articles.imagePickerOpen')}
+                  title={t('news.articles.imagePickerOpen')}
+                >
+                  <CameraIcon size={14} />
+                </button>
+              </div>
             </div>
             <div className="adm-form__field">
               <label className="adm-form__label">{t('news.articles.form.featureImageAlt')}</label>
@@ -679,6 +747,74 @@ function ArticlesTab() {
           </div>
         </div>
         )}
+      </Modal>
+
+      <Modal
+        open={imagePickerOpen}
+        onClose={() => setImagePickerOpen(false)}
+        title={t('news.articles.imagePickerTitle')}
+        size="lg"
+        footer={
+          <button type="button" className="adm-btn adm-btn--ghost" onClick={() => setImagePickerOpen(false)}>
+            {t('common.cancel')}
+          </button>
+        }
+      >
+        <div className="admin-news-image-picker">
+          {editing.feature_image && (
+            <div className="admin-news-image-picker__current">
+              <img src={editing.feature_image} alt={editing.feature_image_alt || editing.title || ''} />
+              <div>
+                <span>{t('news.articles.imagePickerCurrent')}</span>
+                <strong>{editing.feature_image_alt || editing.title || editing.feature_image}</strong>
+              </div>
+            </div>
+          )}
+
+          <div className="admin-news-image-picker__search">
+            <div className="adm-search">
+              <SearchIcon size={15} />
+              <input
+                type="text"
+                className="adm-search__input"
+                placeholder={t('news.articles.imagePickerSearchPlaceholder')}
+                value={imageQuery}
+                onChange={event => setImageQuery(event.target.value)}
+                onKeyDown={event => { if (event.key === 'Enter') searchImages(); }}
+              />
+            </div>
+            <button type="button" className="adm-btn adm-btn--primary" onClick={() => searchImages()} disabled={imageLoading}>
+              {imageLoading ? <RefreshCwIcon size={14} className="adm-spin" /> : <SearchIcon size={14} />}
+              {t('news.articles.imagePickerSearch')}
+            </button>
+          </div>
+
+          {imageLoading ? (
+            <p className="adm-loading">{t('news.articles.imagePickerLoading')}</p>
+          ) : imageResults.length === 0 ? (
+            <p className="adm-empty-state-text">{t('news.articles.imagePickerEmpty')}</p>
+          ) : (
+            <div className="admin-news-image-picker__grid">
+              {imageResults.map(image => {
+                const imageUrl = image.url_small || image.url || image.url_regular;
+                const credit = image.credit?.photographer ? String(image.credit.photographer) : 'Unsplash';
+
+                return (
+                  <button
+                    key={image.id || image.url}
+                    type="button"
+                    className="admin-news-image-picker__card"
+                    onClick={() => selectArticleImage(image)}
+                  >
+                    {imageUrl && <img src={imageUrl} alt={image.alt || image.query || ''} loading="lazy" />}
+                    <span>{image.alt || image.query || t('news.articles.imagePickerSelect')}</span>
+                    <small>{t('news.articles.imagePickerCredit', { photographer: credit })}</small>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </Modal>
 
       <Modal

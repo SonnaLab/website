@@ -55,6 +55,19 @@ export interface Article {
   published_url?: string | null;
 }
 
+export interface ArticleImageOption {
+  id: string;
+  provider: string;
+  url: string;
+  url_regular?: string;
+  url_full?: string;
+  url_small?: string;
+  download_url?: string;
+  alt?: string;
+  query?: string;
+  credit?: Record<string, unknown>;
+}
+
 export interface NewsPrompt {
   id: string;
   title: string;
@@ -442,8 +455,9 @@ class ApiService {
   async adminNewsCalendar(params?: { year?: number; month?: number }) { return (await this.client.get('/api/v1/admin/news/calendar', { params })).data; }
   async adminNewsAICalendar(params?: { view?: 'weekly' | 'monthly' | 'daily'; week_start?: string; year?: number; month?: number; date?: string }) { return (await this.client.get('/api/v1/admin/news/ai-calendar', { params })).data; }
   async adminNewsAIApplyCalendarReview(payload: { week_start: string; max_items_per_client: number }): Promise<{ generation: any; items: AICalendarItem[] }> { return (await this.client.post('/api/v1/admin/news/ai-calendar/apply-review', payload)).data; }
-  async adminNewsAIGenerateArticle(item: AICalendarItem): Promise<{ event_status: string; generation: any; article?: Article | null }> { return (await this.client.post('/api/v1/admin/news/ai-calendar/generate-article', { item })).data; }
-  async adminNewsAIGenerateNextArticle(): Promise<{ event_status: string; generation: any; item: AICalendarItem; article?: Article | null }> { return (await this.client.post('/api/v1/admin/news/ai-calendar/generate-next-article')).data; }
+  async adminNewsArticleImages(params: { query: string; locale?: string; limit?: number }): Promise<{ images: ArticleImageOption[] }> { return (await this.client.get('/api/v1/admin/news/article-images', { params, timeout: 30000 })).data; }
+  async adminNewsAIGenerateArticle(item: AICalendarItem): Promise<{ event_status: string; generation: any; article?: Article | null }> { return (await this.client.post('/api/v1/admin/news/ai-calendar/generate-article', { item }, { timeout: 210000 })).data; }
+  async adminNewsAIGenerateNextArticle(): Promise<{ event_status: string; generation: any; item: AICalendarItem; article?: Article | null }> { return (await this.client.post('/api/v1/admin/news/ai-calendar/generate-next-article', undefined, { timeout: 210000 })).data; }
   async adminNewsAIStrategicObjectives(): Promise<{ objectives: StrategicObjective[] }> { return (await this.client.get('/api/v1/admin/news/ai-strategic-objectives')).data; }
 
   async adminNewsStrategy() { return (await this.client.get('/api/v1/admin/news/strategy')).data; }

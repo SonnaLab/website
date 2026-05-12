@@ -45,6 +45,7 @@ export {
   PenLineIcon,
   ClipboardListIcon,
   CalendarDaysIcon,
+  CameraIcon,
   CheckIcon,
   ChevronDownIcon,
   LayersIcon,
