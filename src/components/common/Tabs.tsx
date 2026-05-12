@@ -48,10 +48,11 @@ interface TabsTriggerProps {
   value: string;
   children: ReactNode;
   icon?: ReactNode;
+  count?: number;
   className?: string;
 }
 
-export function TabsTrigger({ value, children, icon, className }: TabsTriggerProps) {
+export function TabsTrigger({ value, children, icon, count, className }: TabsTriggerProps) {
   const { active, setActive } = useTabs();
   const isActive = active === value;
   return (
@@ -68,6 +69,9 @@ export function TabsTrigger({ value, children, icon, className }: TabsTriggerPro
     >
       {icon && <span className="adm-tabs__trigger-icon">{icon}</span>}
       {children}
+      {count !== undefined && (
+        <span className="adm-tabs__count">{count}</span>
+      )}
     </button>
   );
 }
