@@ -878,15 +878,6 @@ interface StrategyForm {
 
 // ─── Strategy helpers ────────────────────────────────────────────────────────
 
-const OBJECTIVE_TYPE_COLORS: Record<string, string> = {
-  acquisition:        '#3b82f6',
-  topical_authority:  '#8b5cf6',
-  market_expansion:   '#10b981',
-  conversion:         '#f97316',
-  trend_capture:      '#eab308',
-  competitor_capture: '#ef4444',
-};
-
 const PHASE_LABELS: Record<string, string> = {
   foundation:        'Foundation',
   cluster_expansion: 'Cluster Expansion',
@@ -897,7 +888,7 @@ const LOCALE_FLAGS: Record<string, string> = {
   fr: '🇫🇷', en: '🇬🇧', es: '🇪🇸', it: '🇮🇹', de: '🇩🇪',
 };
 
-const CHART_COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f97316', '#eab308', '#ef4444', '#06b6d4', '#ec4899'];
+const CHART_GRAYS = ['#111111', '#3d3d3d', '#666666', '#8a8a8a', '#aaaaaa', '#cccccc'];
 
 function formatObjectiveType(type: string) {
   return type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
@@ -907,33 +898,39 @@ function StrategyTab() {
   const [objectives, setObjectives] = useState<StrategicObjective[]>([]);
   const [loading, setLoading]       = useState(true);
   const [openId, setOpenId]         = useState<number | null>(null);
+  const [activeType, setActiveType] = useState<string>('');
 
   useEffect(() => {
     apiService.adminNewsAIStrategicObjectives()
-      .then(d => setObjectives(d.objectives ?? []))
+      .then(d => {
+        const objs = d.objectives ?? [];
+        setObjectives(objs);
+        if (objs.length > 0) {
+          const sorted = [...objs].sort((a, b) => b.priority - a.priority);
+          setActiveType(sorted[0].objective_type);
+        }
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
-  // ── Derived KPIs ──────────────────────────────────────────────────────────
-  const totalArticles  = objectives.reduce((s, o) => s + (o.success_metrics?.articles_per_month_target ?? 0), 0);
-  const totalLeads     = objectives.reduce((s, o) => s + (o.success_metrics?.monthly_leads ?? 0), 0);
-  const avgPriority    = objectives.length ? Math.round(objectives.reduce((s, o) => s + o.priority, 0) / objectives.length) : 0;
+  // ── Derived data ──────────────────────────────────────────────────────────
+  const totalArticles = objectives.reduce((s, o) => s + (o.success_metrics?.articles_per_month_target ?? 0), 0);
+  const totalLeads    = objectives.reduce((s, o) => s + (o.success_metrics?.monthly_leads ?? 0), 0);
+  const avgPriority   = objectives.length ? Math.round(objectives.reduce((s, o) => s + o.priority, 0) / objectives.length) : 0;
 
-  const articlesData = objectives
-    .slice()
-    .sort((a, b) => b.priority - a.priority)
-    .map(o => ({
-      name: o.title.length > 32 ? o.title.slice(0, 32) + '…' : o.title,
-      articles: o.success_metrics?.articles_per_month_target ?? 0,
-    }));
+  const sortedByPriority = [...objectives].sort((a, b) => b.priority - a.priority);
+  const typeOrder = [...new Set(sortedByPriority.map(o => o.objective_type))];
 
-  const typeData = Object.entries(
-    objectives.reduce<Record<string, number>>((acc, o) => {
-      acc[o.objective_type] = (acc[o.objective_type] ?? 0) + 1;
-      return acc;
-    }, {})
-  ).map(([name, value]) => ({ name: formatObjectiveType(name), value }));
+  const articlesData = sortedByPriority.map(o => ({
+    name: o.title.length > 28 ? o.title.slice(0, 28) + '…' : o.title,
+    articles: o.success_metrics?.articles_per_month_target ?? 0,
+  }));
+
+  const typeData = typeOrder.map(type => ({
+    name: formatObjectiveType(type),
+    value: objectives.filter(o => o.objective_type === type).length,
+  }));
 
   const localeData = Object.entries(
     objectives.reduce<Record<string, number>>((acc, o) => {
@@ -952,197 +949,207 @@ function StrategyTab() {
     }, {})
   ).map(([phase, count]) => ({ name: PHASE_LABELS[phase] ?? phase, count }));
 
+  const filteredObjectives = sortedByPriority.filter(o => o.objective_type === activeType);
+
   if (loading) return <p className="adm-loading"><RefreshCwIcon size={14} className="adm-spin" /> Chargement…</p>;
 
   return (
-    <div className="strat-layout">
+    <div className="strat-page">
 
-      {/* ── Left: Accordions ── */}
-      <div className="strat-left">
-        <h3 className="strat-section-title">
-          <TargetIcon size={15} /> Objectifs stratégiques ({objectives.length})
-        </h3>
-        <div className="strat-accordions">
-          {objectives
-            .slice()
-            .sort((a, b) => b.priority - a.priority)
-            .map(obj => (
-              <div key={obj.id} className={`strat-accord${openId === obj.id ? ' strat-accord--open' : ''}`}>
-                <button
-                  type="button"
-                  className="strat-accord__header"
-                  onClick={() => setOpenId(openId === obj.id ? null : obj.id)}
-                >
-                  <span className="strat-accord__left">
-                    <span
-                      className="strat-type-badge"
-                      style={{ background: OBJECTIVE_TYPE_COLORS[obj.objective_type] ?? '#6b7280' }}
-                    >
-                      {formatObjectiveType(obj.objective_type)}
-                    </span>
-                    <span className="strat-accord__title">{obj.title}</span>
-                  </span>
-                  <span className="strat-accord__right">
-                    <span className="strat-priority-pill">{obj.priority}</span>
-                    <ChevronDownIcon size={14} className={`strat-chevron${openId === obj.id ? ' strat-chevron--up' : ''}`} />
-                  </span>
-                </button>
-
-                {openId === obj.id && (
-                  <div className="strat-accord__body">
-                    <p className="strat-desc">{obj.description}</p>
-
-                    <div className="strat-accord__meta">
-                      <div className="strat-meta-row">
-                        <GlobeIcon size={12} />
-                        <span className="strat-meta-label">Locales</span>
-                        <span className="strat-meta-val">
-                          {(obj.target_locales ?? []).map(l => (
-                            <span key={l} className="strat-locale-tag">{LOCALE_FLAGS[l] ?? l} {l.toUpperCase()}</span>
-                          ))}
-                        </span>
-                      </div>
-                      {(obj.target_countries ?? []).length > 0 && (
-                        <div className="strat-meta-row">
-                          <GlobeIcon size={12} />
-                          <span className="strat-meta-label">Pays</span>
-                          <span className="strat-meta-val">{obj.target_countries.join(', ')}</span>
-                        </div>
-                      )}
-                      <div className="strat-meta-row">
-                        <LayersIcon size={12} />
-                        <span className="strat-meta-label">Phase</span>
-                        <span className={`strat-phase-tag strat-phase-tag--${obj.target_phase}`}>
-                          {PHASE_LABELS[obj.target_phase] ?? obj.target_phase}
-                        </span>
-                      </div>
-                    </div>
-
-                    {obj.target_topics?.length > 0 && (
-                      <div className="strat-tag-row">
-                        <span className="strat-tag-label">Topics</span>
-                        {obj.target_topics.map(t => <span key={t} className="strat-tag strat-tag--topic">{t}</span>)}
-                      </div>
-                    )}
-                    {obj.target_keywords?.length > 0 && (
-                      <div className="strat-tag-row">
-                        <span className="strat-tag-label">Keywords</span>
-                        {obj.target_keywords.slice(0, 6).map(k => <span key={k} className="strat-tag">{k}</span>)}
-                        {obj.target_keywords.length > 6 && <span className="strat-tag strat-tag--more">+{obj.target_keywords.length - 6}</span>}
-                      </div>
-                    )}
-                    {obj.target_formats?.length > 0 && (
-                      <div className="strat-tag-row">
-                        <span className="strat-tag-label">Formats</span>
-                        {obj.target_formats.map(f => <span key={f} className="strat-tag strat-tag--format">{f}</span>)}
-                      </div>
-                    )}
-
-                    {obj.success_metrics && Object.keys(obj.success_metrics).length > 0 && (
-                      <div className="strat-metrics">
-                        <span className="strat-tag-label">KPIs cibles</span>
-                        <div className="strat-metrics__grid">
-                          {Object.entries(obj.success_metrics).map(([k, v]) => (
-                            <div key={k} className="strat-metric-item">
-                              <span className="strat-metric-key">{k.replace(/_/g, ' ')}</span>
-                              <span className="strat-metric-val">{v}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            ))}
+      {/* ── KPI Cards ── */}
+      <div className="strat-kpi-row">
+        <div className="strat-kpi-card">
+          <span className="strat-kpi-value">{totalArticles}</span>
+          <span className="strat-kpi-label">Articles / mois (cible)</span>
+        </div>
+        <div className="strat-kpi-card">
+          <span className="strat-kpi-value">{totalLeads}</span>
+          <span className="strat-kpi-label">Leads / mois (cible)</span>
+        </div>
+        <div className="strat-kpi-card">
+          <span className="strat-kpi-value">{avgPriority}</span>
+          <span className="strat-kpi-label">Priorité moyenne</span>
+        </div>
+        <div className="strat-kpi-card">
+          <span className="strat-kpi-value">{objectives.filter(o => o.is_active).length}</span>
+          <span className="strat-kpi-label">Objectifs actifs</span>
+        </div>
+        <div className="strat-kpi-card">
+          <span className="strat-kpi-value">{typeOrder.length}</span>
+          <span className="strat-kpi-label">Types d'objectifs</span>
+        </div>
+        <div className="strat-kpi-card">
+          <span className="strat-kpi-value">{localeData.length}</span>
+          <span className="strat-kpi-label">Locales couvertes</span>
         </div>
       </div>
 
-      {/* ── Right: Charts ── */}
-      <div className="strat-right">
-        <h3 className="strat-section-title">
-          <TrendingUpIcon size={15} /> Tableau de bord KPI
-        </h3>
-
-        {/* KPI Cards */}
-        <div className="strat-kpi-row">
-          <div className="strat-kpi-card">
-            <span className="strat-kpi-value">{totalArticles}</span>
-            <span className="strat-kpi-label">Articles / mois (cible)</span>
-          </div>
-          <div className="strat-kpi-card">
-            <span className="strat-kpi-value">{totalLeads}</span>
-            <span className="strat-kpi-label">Leads / mois (cible)</span>
-          </div>
-          <div className="strat-kpi-card">
-            <span className="strat-kpi-value">{avgPriority}</span>
-            <span className="strat-kpi-label">Priorité moyenne</span>
-          </div>
-          <div className="strat-kpi-card">
-            <span className="strat-kpi-value">{objectives.filter(o => o.is_active).length}</span>
-            <span className="strat-kpi-label">Objectifs actifs</span>
-          </div>
-        </div>
-
-        {/* Articles par objectif */}
+      {/* ── Charts row (3 inline) ── */}
+      <div className="strat-charts-3col">
         <div className="strat-chart-block">
           <h4 className="strat-chart-title"><ZapIcon size={12} /> Articles / mois par objectif</h4>
-          <ResponsiveContainer width="100%" height={220}>
+          <ResponsiveContainer width="100%" height={240}>
             <BarChart data={articlesData} layout="vertical" margin={{ left: 8, right: 16, top: 4, bottom: 4 }}>
-              <XAxis type="number" tick={{ fontSize: 11 }} />
-              <YAxis type="category" dataKey="name" width={180} tick={{ fontSize: 10 }} />
+              <XAxis type="number" tick={{ fontSize: 10 }} />
+              <YAxis type="category" dataKey="name" width={160} tick={{ fontSize: 9 }} />
               <Tooltip />
-              <Bar dataKey="articles" fill="#3b82f6" radius={[0, 3, 3, 0]} />
+              <Bar dataKey="articles" fill="#111111" radius={[0, 3, 3, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
-        <div className="strat-charts-2col">
-          {/* Types distribution */}
-          <div className="strat-chart-block">
-            <h4 className="strat-chart-title">Types d'objectifs</h4>
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie data={typeData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} innerRadius={35} paddingAngle={3}>
-                  {typeData.map((entry, i) => (
-                    <Cell key={entry.name} fill={CHART_COLORS[i % CHART_COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend iconSize={10} wrapperStyle={{ fontSize: 11 }} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Phase distribution */}
-          <div className="strat-chart-block">
-            <h4 className="strat-chart-title">Distribution par phase</h4>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={phaseData} margin={{ left: 0, right: 8, top: 4, bottom: 24 }}>
-                <XAxis dataKey="name" tick={{ fontSize: 10 }} />
-                <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
-                <Tooltip />
-                <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-                  {phaseData.map((entry, i) => (
-                    <Cell key={entry.name} fill={CHART_COLORS[i % CHART_COLORS.length]} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+        <div className="strat-chart-block">
+          <h4 className="strat-chart-title">Types d'objectifs</h4>
+          <ResponsiveContainer width="100%" height={240}>
+            <PieChart>
+              <Pie data={typeData} dataKey="value" nameKey="name" cx="50%" cy="44%" outerRadius={72} innerRadius={36} paddingAngle={3}>
+                {typeData.map((entry, i) => (
+                  <Cell key={entry.name} fill={CHART_GRAYS[i % CHART_GRAYS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend iconSize={9} wrapperStyle={{ fontSize: 10 }} />
+            </PieChart>
+          </ResponsiveContainer>
         </div>
 
-        {/* Locales coverage */}
         <div className="strat-chart-block">
-          <h4 className="strat-chart-title"><GlobeIcon size={12} /> Couverture par locale</h4>
-          <ResponsiveContainer width="100%" height={140}>
-            <BarChart data={localeData} margin={{ left: 0, right: 16, top: 4, bottom: 4 }}>
-              <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+          <h4 className="strat-chart-title">Distribution par phase</h4>
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart data={phaseData} margin={{ left: 0, right: 8, top: 4, bottom: 28 }}>
+              <XAxis dataKey="name" tick={{ fontSize: 10 }} />
               <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
               <Tooltip />
-              <Bar dataKey="count" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+                {phaseData.map((entry, i) => (
+                  <Cell key={entry.name} fill={CHART_GRAYS[i % CHART_GRAYS.length]} />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* ── Locales row ── */}
+      <div className="strat-chart-block strat-chart-block--full">
+        <h4 className="strat-chart-title"><GlobeIcon size={12} /> Couverture par locale</h4>
+        <ResponsiveContainer width="100%" height={130}>
+          <BarChart data={localeData} margin={{ left: 0, right: 16, top: 4, bottom: 4 }}>
+            <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+            <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
+            <Tooltip />
+            <Bar dataKey="count" fill="#111111" radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* ── Objectives by type — tabs ── */}
+      <div className="strat-obj-section">
+        <div className="strat-obj-header">
+          <h3 className="strat-section-title">
+            <TargetIcon size={15} /> Objectifs stratégiques ({objectives.length})
+          </h3>
+        </div>
+        <div className="strat-type-tabs">
+          {typeOrder.map(type => (
+            <button
+              key={type}
+              type="button"
+              className={`strat-type-tab${activeType === type ? ' strat-type-tab--active' : ''}`}
+              onClick={() => { setActiveType(type); setOpenId(null); }}
+            >
+              {formatObjectiveType(type)}
+              <span className="strat-type-tab__count">
+                {objectives.filter(o => o.objective_type === type).length}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        <div className="strat-accordions">
+          {filteredObjectives.map(obj => (
+            <div key={obj.id} className={`strat-accord${openId === obj.id ? ' strat-accord--open' : ''}`}>
+              <button
+                type="button"
+                className="strat-accord__header"
+                onClick={() => setOpenId(openId === obj.id ? null : obj.id)}
+              >
+                <span className="strat-accord__left">
+                  <span className="strat-accord__title">{obj.title}</span>
+                </span>
+                <span className="strat-accord__right">
+                  <span className="strat-priority-pill">{obj.priority}</span>
+                  <ChevronDownIcon size={14} className={`strat-chevron${openId === obj.id ? ' strat-chevron--up' : ''}`} />
+                </span>
+              </button>
+
+              {openId === obj.id && (
+                <div className="strat-accord__body">
+                  <p className="strat-desc">{obj.description}</p>
+
+                  <div className="strat-accord__meta">
+                    <div className="strat-meta-row">
+                      <GlobeIcon size={12} />
+                      <span className="strat-meta-label">Locales</span>
+                      <span className="strat-meta-val">
+                        {(obj.target_locales ?? []).map(l => (
+                          <span key={l} className="strat-locale-tag">{LOCALE_FLAGS[l] ?? l} {l.toUpperCase()}</span>
+                        ))}
+                      </span>
+                    </div>
+                    {(obj.target_countries ?? []).length > 0 && (
+                      <div className="strat-meta-row">
+                        <GlobeIcon size={12} />
+                        <span className="strat-meta-label">Pays</span>
+                        <span className="strat-meta-val">{obj.target_countries.join(', ')}</span>
+                      </div>
+                    )}
+                    <div className="strat-meta-row">
+                      <LayersIcon size={12} />
+                      <span className="strat-meta-label">Phase</span>
+                      <span className={`strat-phase-tag strat-phase-tag--${obj.target_phase}`}>
+                        {PHASE_LABELS[obj.target_phase] ?? obj.target_phase}
+                      </span>
+                    </div>
+                  </div>
+
+                  {obj.target_topics?.length > 0 && (
+                    <div className="strat-tag-row">
+                      <span className="strat-tag-label">Topics</span>
+                      {obj.target_topics.map(t => <span key={t} className="strat-tag strat-tag--topic">{t}</span>)}
+                    </div>
+                  )}
+                  {obj.target_keywords?.length > 0 && (
+                    <div className="strat-tag-row">
+                      <span className="strat-tag-label">Keywords</span>
+                      {obj.target_keywords.slice(0, 6).map(k => <span key={k} className="strat-tag">{k}</span>)}
+                      {obj.target_keywords.length > 6 && <span className="strat-tag strat-tag--more">+{obj.target_keywords.length - 6}</span>}
+                    </div>
+                  )}
+                  {obj.target_formats?.length > 0 && (
+                    <div className="strat-tag-row">
+                      <span className="strat-tag-label">Formats</span>
+                      {obj.target_formats.map(f => <span key={f} className="strat-tag strat-tag--format">{f}</span>)}
+                    </div>
+                  )}
+
+                  {obj.success_metrics && Object.keys(obj.success_metrics).length > 0 && (
+                    <div className="strat-metrics">
+                      <span className="strat-tag-label">KPIs cibles</span>
+                      <div className="strat-metrics__grid">
+                        {Object.entries(obj.success_metrics).map(([k, v]) => (
+                          <div key={k} className="strat-metric-item">
+                            <span className="strat-metric-key">{k.replace(/_/g, ' ')}</span>
+                            <span className="strat-metric-val">{v}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </div>
