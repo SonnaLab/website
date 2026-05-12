@@ -897,8 +897,9 @@ function formatObjectiveType(type: string) {
 function StrategyTab() {
   const [objectives, setObjectives] = useState<StrategicObjective[]>([]);
   const [loading, setLoading]       = useState(true);
-  const [openId, setOpenId]         = useState<number | null>(null);
+  const [openIds, setOpenIds]       = useState<number[]>([]);
   const [activeType, setActiveType] = useState<string>('');
+  const [selectedObjective, setSelectedObjective] = useState<StrategicObjective | null>(null);
 
   useEffect(() => {
     apiService.adminNewsAIStrategicObjectives()
@@ -908,6 +909,7 @@ function StrategyTab() {
         if (objs.length > 0) {
           const sorted = [...objs].sort((a, b) => b.priority - a.priority);
           setActiveType(sorted[0].objective_type);
+          setOpenIds([sorted[0].id]);
         }
       })
       .catch(() => {})
@@ -950,6 +952,7 @@ function StrategyTab() {
   ).map(([phase, count]) => ({ name: PHASE_LABELS[phase] ?? phase, count }));
 
   const filteredObjectives = sortedByPriority.filter(o => o.objective_type === activeType);
+  const firstObjectiveId = filteredObjectives[0]?.id ?? null;
 
   if (loading) return <p className="adm-loading"><RefreshCwIcon size={14} className="adm-spin" /> Chargement…</p>;
 
@@ -1056,7 +1059,11 @@ function StrategyTab() {
               key={type}
               type="button"
               className={`strat-type-tab${activeType === type ? ' strat-type-tab--active' : ''}`}
-              onClick={() => { setActiveType(type); setOpenId(null); }}
+              onClick={() => {
+                const firstForType = sortedByPriority.find(objective => objective.objective_type === type);
+                setActiveType(type);
+                setOpenIds(firstForType ? [firstForType.id] : []);
+              }}
             >
               {formatObjectiveType(type)}
               <span className="strat-type-tab__count">
@@ -1067,91 +1074,176 @@ function StrategyTab() {
         </div>
 
         <div className="strat-accordions">
-          {filteredObjectives.map(obj => (
-            <div key={obj.id} className={`strat-accord${openId === obj.id ? ' strat-accord--open' : ''}`}>
+          {filteredObjectives.map(obj => {
+            const expanded = obj.id === firstObjectiveId || openIds.includes(obj.id);
+            const articlesTarget = obj.success_metrics?.articles_per_month_target ?? 0;
+            const leadsTarget = obj.success_metrics?.monthly_leads ?? 0;
+
+            return (
+            <div key={obj.id} className={`strat-accord${expanded ? ' strat-accord--open' : ''}`}>
               <button
                 type="button"
                 className="strat-accord__header"
-                onClick={() => setOpenId(openId === obj.id ? null : obj.id)}
+                onClick={() => {
+                  if (obj.id === firstObjectiveId) return;
+                  setOpenIds(current => current.includes(obj.id)
+                    ? current.filter(id => id !== obj.id)
+                    : [...current, obj.id]
+                  );
+                }}
               >
                 <span className="strat-accord__left">
+                  <span className="strat-accord__rank">#{filteredObjectives.indexOf(obj) + 1}</span>
                   <span className="strat-accord__title">{obj.title}</span>
                 </span>
                 <span className="strat-accord__right">
+                  <span className="strat-accord__mini">{articlesTarget} articles/mois</span>
                   <span className="strat-priority-pill">{obj.priority}</span>
-                  <ChevronDownIcon size={14} className={`strat-chevron${openId === obj.id ? ' strat-chevron--up' : ''}`} />
+                  <ChevronDownIcon size={14} className={`strat-chevron${expanded ? ' strat-chevron--up' : ''}`} />
                 </span>
               </button>
 
-              {openId === obj.id && (
+              {expanded && (
                 <div className="strat-accord__body">
-                  <p className="strat-desc">{obj.description}</p>
+                  <div className="strat-accord__lead">
+                    <p className="strat-desc">{obj.description}</p>
+                    <button type="button" className="strat-detail-btn" onClick={() => setSelectedObjective(obj)}>
+                      <EyeIcon size={13} /> Détail complet
+                    </button>
+                  </div>
 
-                  <div className="strat-accord__meta">
-                    <div className="strat-meta-row">
-                      <GlobeIcon size={12} />
-                      <span className="strat-meta-label">Locales</span>
-                      <span className="strat-meta-val">
-                        {(obj.target_locales ?? []).map(l => (
-                          <span key={l} className="strat-locale-tag">{LOCALE_FLAGS[l] ?? l} {l.toUpperCase()}</span>
-                        ))}
-                      </span>
+                  <div className="strat-summary-grid">
+                    <div className="strat-summary-item">
+                      <span>Articles/mois</span>
+                      <strong>{articlesTarget}</strong>
                     </div>
-                    {(obj.target_countries ?? []).length > 0 && (
-                      <div className="strat-meta-row">
-                        <GlobeIcon size={12} />
-                        <span className="strat-meta-label">Pays</span>
-                        <span className="strat-meta-val">{obj.target_countries.join(', ')}</span>
-                      </div>
-                    )}
-                    <div className="strat-meta-row">
-                      <LayersIcon size={12} />
-                      <span className="strat-meta-label">Phase</span>
-                      <span className={`strat-phase-tag strat-phase-tag--${obj.target_phase}`}>
-                        {PHASE_LABELS[obj.target_phase] ?? obj.target_phase}
-                      </span>
+                    <div className="strat-summary-item">
+                      <span>Leads/mois</span>
+                      <strong>{leadsTarget}</strong>
+                    </div>
+                    <div className="strat-summary-item">
+                      <span>Poids</span>
+                      <strong>{obj.weight}</strong>
+                    </div>
+                    <div className="strat-summary-item">
+                      <span>Phase</span>
+                      <strong>{PHASE_LABELS[obj.target_phase] ?? obj.target_phase}</strong>
                     </div>
                   </div>
 
-                  {obj.target_topics?.length > 0 && (
-                    <div className="strat-tag-row">
-                      <span className="strat-tag-label">Topics</span>
-                      {obj.target_topics.map(t => <span key={t} className="strat-tag strat-tag--topic">{t}</span>)}
-                    </div>
-                  )}
-                  {obj.target_keywords?.length > 0 && (
-                    <div className="strat-tag-row">
-                      <span className="strat-tag-label">Keywords</span>
-                      {obj.target_keywords.slice(0, 6).map(k => <span key={k} className="strat-tag">{k}</span>)}
-                      {obj.target_keywords.length > 6 && <span className="strat-tag strat-tag--more">+{obj.target_keywords.length - 6}</span>}
-                    </div>
-                  )}
-                  {obj.target_formats?.length > 0 && (
-                    <div className="strat-tag-row">
-                      <span className="strat-tag-label">Formats</span>
-                      {obj.target_formats.map(f => <span key={f} className="strat-tag strat-tag--format">{f}</span>)}
-                    </div>
-                  )}
-
-                  {obj.success_metrics && Object.keys(obj.success_metrics).length > 0 && (
-                    <div className="strat-metrics">
-                      <span className="strat-tag-label">KPIs cibles</span>
-                      <div className="strat-metrics__grid">
-                        {Object.entries(obj.success_metrics).map(([k, v]) => (
-                          <div key={k} className="strat-metric-item">
-                            <span className="strat-metric-key">{k.replace(/_/g, ' ')}</span>
-                            <span className="strat-metric-val">{v}</span>
-                          </div>
+                  <div className="strat-compact-grid">
+                    <div className="strat-compact-panel">
+                      <span className="strat-tag-label">Marchés & locales</span>
+                      <div className="strat-chip-row">
+                        {(obj.target_locales ?? []).map(locale => (
+                          <span key={locale} className="strat-locale-tag">{LOCALE_FLAGS[locale] ?? locale} {locale.toUpperCase()}</span>
                         ))}
                       </div>
+                      {(obj.target_countries ?? []).length > 0 && (
+                        <p className="strat-compact-note">{obj.target_countries.join(', ')}</p>
+                      )}
                     </div>
-                  )}
+
+                    <div className="strat-compact-panel">
+                      <span className="strat-tag-label">Topics prioritaires</span>
+                      <div className="strat-chip-row">
+                        {(obj.target_topics ?? []).slice(0, 4).map(topic => (
+                          <span key={topic} className="strat-tag strat-tag--topic">{topic}</span>
+                        ))}
+                        {(obj.target_topics ?? []).length > 4 && <span className="strat-tag strat-tag--more">+{obj.target_topics.length - 4}</span>}
+                      </div>
+                    </div>
+
+                    <div className="strat-compact-panel">
+                      <span className="strat-tag-label">Keywords</span>
+                      <div className="strat-chip-row">
+                        {(obj.target_keywords ?? []).slice(0, 6).map(keyword => <span key={keyword} className="strat-tag">{keyword}</span>)}
+                        {(obj.target_keywords ?? []).length > 6 && <span className="strat-tag strat-tag--more">+{obj.target_keywords.length - 6}</span>}
+                      </div>
+                    </div>
+
+                    <div className="strat-compact-panel">
+                      <span className="strat-tag-label">Formats</span>
+                      <div className="strat-chip-row">
+                        {(obj.target_formats ?? []).map(format => <span key={format} className="strat-tag strat-tag--format">{format}</span>)}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
-          ))}
+          );
+          })}
         </div>
       </div>
+
+      <Modal
+        open={Boolean(selectedObjective)}
+        onClose={() => setSelectedObjective(null)}
+        title={selectedObjective?.title ?? 'Objectif stratégique'}
+        size="lg"
+      >
+        {selectedObjective && (
+          <div className="strat-modal-detail">
+            <p className="strat-modal-desc">{selectedObjective.description}</p>
+
+            <div className="strat-modal-grid">
+              <div className="strat-modal-panel">
+                <span className="strat-tag-label">Cibles marché</span>
+                <div className="strat-chip-row">
+                  {(selectedObjective.target_locales ?? []).map(locale => (
+                    <span key={locale} className="strat-locale-tag">{LOCALE_FLAGS[locale] ?? locale} {locale.toUpperCase()}</span>
+                  ))}
+                </div>
+                {(selectedObjective.target_countries ?? []).length > 0 && (
+                  <p className="strat-compact-note">{selectedObjective.target_countries.join(', ')}</p>
+                )}
+              </div>
+
+              <div className="strat-modal-panel">
+                <span className="strat-tag-label">Pilotage</span>
+                <div className="strat-modal-kv"><span>Type</span><strong>{formatObjectiveType(selectedObjective.objective_type)}</strong></div>
+                <div className="strat-modal-kv"><span>Priorité</span><strong>{selectedObjective.priority}</strong></div>
+                <div className="strat-modal-kv"><span>Poids</span><strong>{selectedObjective.weight}</strong></div>
+                <div className="strat-modal-kv"><span>Phase</span><strong>{PHASE_LABELS[selectedObjective.target_phase] ?? selectedObjective.target_phase}</strong></div>
+              </div>
+            </div>
+
+            <div className="strat-modal-panel">
+              <span className="strat-tag-label">KPIs cibles</span>
+              <div className="strat-metrics__grid strat-metrics__grid--modal">
+                {Object.entries(selectedObjective.success_metrics ?? {}).map(([metricKey, metricValue]) => (
+                  <div key={metricKey} className="strat-metric-item">
+                    <span className="strat-metric-key">{metricKey.replace(/_/g, ' ')}</span>
+                    <span className="strat-metric-val">{metricValue}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="strat-modal-panel">
+              <span className="strat-tag-label">Topics</span>
+              <div className="strat-chip-row">
+                {(selectedObjective.target_topics ?? []).map(topic => <span key={topic} className="strat-tag strat-tag--topic">{topic}</span>)}
+              </div>
+            </div>
+
+            <div className="strat-modal-panel">
+              <span className="strat-tag-label">Keywords</span>
+              <div className="strat-chip-row">
+                {(selectedObjective.target_keywords ?? []).map(keyword => <span key={keyword} className="strat-tag">{keyword}</span>)}
+              </div>
+            </div>
+
+            <div className="strat-modal-panel">
+              <span className="strat-tag-label">Formats</span>
+              <div className="strat-chip-row">
+                {(selectedObjective.target_formats ?? []).map(format => <span key={format} className="strat-tag strat-tag--format">{format}</span>)}
+              </div>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

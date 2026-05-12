@@ -2141,40 +2141,40 @@
 .strat-type-tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 14px;
+  gap: 0;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--adm-border);
 }
 
 .strat-type-tab {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 5px 12px;
-  border: 1px solid var(--adm-border);
-  border-radius: 20px;
-  background: var(--adm-bg);
+  padding: 9px 13px 10px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--adm-text-muted);
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  margin-bottom: -1px;
+  transition: border-color 0.15s, color 0.15s;
   white-space: nowrap;
 }
 
 .strat-type-tab:hover {
-  border-color: var(--adm-text);
   color: var(--adm-text);
 }
 
 .strat-type-tab--active {
-  background: var(--adm-text);
-  border-color: var(--adm-text);
-  color: var(--adm-bg);
+  border-bottom-color: var(--adm-text);
+  color: var(--adm-text);
 }
 
 .strat-type-tab--active:hover {
-  background: var(--adm-text);
-  color: var(--adm-bg);
+  color: var(--adm-text);
 }
 
 .strat-type-tab__count {
@@ -2187,25 +2187,27 @@
 }
 
 .strat-type-tab--active .strat-type-tab__count {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.12);
 }
 
 /* Accordions */
 .strat-accordions {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 8px;
 }
 
 .strat-accord {
   border: 1px solid var(--adm-border);
   border-radius: 7px;
   overflow: hidden;
-  background: var(--adm-bg);
+  background: var(--adm-surface);
+  transition: border-color 0.15s, background 0.15s;
 }
 
 .strat-accord--open {
   border-color: var(--adm-text);
+  background: #ffffff;
 }
 
 .strat-accord__header {
@@ -2214,7 +2216,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 10px 12px;
+  min-height: 48px;
+  padding: 11px 14px;
   background: none;
   border: none;
   cursor: pointer;
@@ -2228,9 +2231,23 @@
 .strat-accord__left {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 9px;
   flex: 1;
   min-width: 0;
+}
+
+.strat-accord__rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 24px;
+  border: 1px solid var(--adm-border);
+  border-radius: 6px;
+  background: var(--adm-bg);
+  color: var(--adm-text-muted);
+  font-size: 10px;
+  font-weight: 700;
 }
 
 .strat-accord__right {
@@ -2240,9 +2257,16 @@
   flex-shrink: 0;
 }
 
+.strat-accord__mini {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--adm-text-muted);
+  white-space: nowrap;
+}
+
 .strat-accord__title {
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--adm-text);
   line-height: 1.35;
 }
@@ -2268,15 +2292,108 @@
 }
 
 .strat-accord__body {
-  padding: 0 12px 12px;
+  padding: 14px;
   border-top: 1px solid var(--adm-border);
+  background: linear-gradient(180deg, #ffffff 0%, var(--adm-bg) 100%);
 }
 
 .strat-desc {
   font-size: 12px;
   color: var(--adm-text-muted);
   line-height: 1.5;
-  margin: 10px 0 8px;
+  margin: 0;
+}
+
+.strat-accord__lead .strat-desc {
+  flex: 1;
+  min-width: 0;
+}
+
+.strat-accord__lead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.strat-detail-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  border: 1px solid var(--adm-text);
+  border-radius: 6px;
+  background: var(--adm-text);
+  color: #ffffff;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.strat-detail-btn:hover {
+  background: #333333;
+  border-color: #333333;
+}
+
+.strat-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.strat-summary-item {
+  border: 1px solid var(--adm-border);
+  border-radius: 7px;
+  background: #ffffff;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.strat-summary-item span {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--adm-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.strat-summary-item strong {
+  font-size: 13px;
+  color: var(--adm-text);
+  line-height: 1.25;
+}
+
+.strat-compact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.strat-compact-panel,
+.strat-modal-panel {
+  border: 1px solid var(--adm-border);
+  border-radius: 7px;
+  background: #ffffff;
+  padding: 10px;
+}
+
+.strat-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 6px;
+}
+
+.strat-compact-note {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: var(--adm-text-muted);
+  line-height: 1.4;
 }
 
 .strat-accord__meta {
@@ -2387,6 +2504,52 @@
   color: var(--adm-text);
 }
 
+.strat-metrics__grid--modal {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.strat-modal-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.strat-modal-desc {
+  margin: 0;
+  color: var(--adm-text-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.strat-modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.strat-modal-kv {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid var(--adm-border);
+  padding: 7px 0;
+  font-size: 12px;
+}
+
+.strat-modal-kv:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.strat-modal-kv span {
+  color: var(--adm-text-muted);
+}
+
+.strat-modal-kv strong {
+  color: var(--adm-text);
+  text-align: right;
+}
+
 /* Responsive */
 @media (max-width: 1200px) {
   .strat-kpi-row {
@@ -2401,11 +2564,30 @@
   .strat-kpi-row {
     grid-template-columns: repeat(3, 1fr);
   }
+  .strat-summary-grid,
+  .strat-compact-grid,
+  .strat-modal-grid,
+  .strat-metrics__grid--modal {
+    grid-template-columns: 1fr;
+  }
+  .strat-accord__lead {
+    flex-direction: column;
+  }
 }
 
 @media (max-width: 640px) {
   .strat-kpi-row {
     grid-template-columns: repeat(2, 1fr);
+  }
+  .strat-accord__header {
+    align-items: flex-start;
+  }
+  .strat-accord__right {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  .strat-accord__mini {
+    display: none;
   }
 }
 
