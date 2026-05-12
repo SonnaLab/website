@@ -51,12 +51,12 @@ export default function SignUpPage() {
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
             <Label htmlFor="first_name">{t('signUp.firstName')}</Label>
-            <Input id="first_name" {...register('first_name')} />
+            <Input id="first_name" type="text" autoComplete="given-name" {...register('first_name')} />
             {errors.first_name && <p className="text-xs text-destructive">{errors.first_name.message}</p>}
           </div>
           <div className="space-y-2">
             <Label htmlFor="last_name">{t('signUp.lastName')}</Label>
-            <Input id="last_name" {...register('last_name')} />
+            <Input id="last_name" type="text" autoComplete="family-name" {...register('last_name')} />
             {errors.last_name && <p className="text-xs text-destructive">{errors.last_name.message}</p>}
           </div>
         </div>
