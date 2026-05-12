@@ -79,6 +79,20 @@ export interface CalendarEntry {
   article_id?: string;
 }
 
+export interface AICalendarItem {
+  id: number;
+  keyword: string;
+  locale: string;
+  topic_cluster?: string | null;
+  article_format: string;
+  content_angle?: string | null;
+  suggested_title?: string | null;
+  priority: number;
+  scheduled_for: string;
+  status: string;
+  rationale?: string | null;
+}
+
 export function getStoredAccessToken(): string | null {
   return localStorage.getItem(AUTH_STORAGE_KEYS.access);
 }
@@ -354,6 +368,7 @@ class ApiService {
   async adminNewsDeletePrompt(id: string) { return (await this.client.delete(`/api/v1/admin/news/prompts/${id}`)).data; }
 
   async adminNewsCalendar(params?: { year?: number; month?: number }) { return (await this.client.get('/api/v1/admin/news/calendar', { params })).data; }
+  async adminNewsAICalendar(params?: { view?: 'weekly' | 'monthly' | 'daily'; week_start?: string; year?: number; month?: number; date?: string }) { return (await this.client.get('/api/v1/admin/news/ai-calendar', { params })).data; }
 
   async adminNewsStrategy() { return (await this.client.get('/api/v1/admin/news/strategy')).data; }
   async adminNewsSaveStrategy(payload: Partial<NewsStrategy>) { return (await this.client.patch('/api/v1/admin/news/strategy', { strategy: payload })).data; }

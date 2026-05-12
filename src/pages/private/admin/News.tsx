@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { apiService } from '@/services/api';
-import type { Article, ArticleStatus, CalendarEntry, NewsPrompt, NewsStrategy, WeeklyObjective } from '@/services/api';
+import type { AICalendarItem, Article, ArticleStatus, CalendarEntry, NewsPrompt, NewsStrategy, WeeklyObjective } from '@/services/api';
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
 import { DataTable, DataTableHead, DataTableBody, DataTableRow, DataTableTh, DataTableTd, DataTableEmpty } from '@/components/common/DataTable';
@@ -604,13 +604,52 @@ const DAYS_EN = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 const MONTHS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
+const CLUSTER_COLORS = ['#6366f1', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#3b82f6'];
+function clusterColor(cluster?: string | null): string {
+  if (!cluster) return '#9ca3af';
+  let h = 0;
+  for (let i = 0; i < cluster.length; i++) h = (h * 31 + cluster.charCodeAt(i)) & 0xffffffff;
+  return CLUSTER_COLORS[Math.abs(h) % CLUSTER_COLORS.length];
+}
+
+function aiStatusVariant(status: string): string {
+  switch (status) {
+    case 'approved': case 'generated': case 'published': return 'success';
+    case 'planned':  return 'info';
+    case 'draft':    return 'warning';
+    case 'failed':   return 'danger';
+    default:         return 'default';
+  }
+}
+
+function getMonday(d: Date): Date {
+  const date = new Date(d);
+  const day = date.getDay();
+  const diff = (day === 0 ? -6 : 1 - day);
+  date.setDate(date.getDate() + diff);
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
+function toISODate(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 function CalendarTab() {
   const { t, i18n } = useTranslation('admin');
   const today = new Date();
-  const [year, setYear]       = useState(today.getFullYear());
-  const [month, setMonth]     = useState(today.getMonth()); // 0-based
-  const [entries, setEntries] = useState<CalendarEntry[]>([]);
-  const [loading, setLoading] = useState(true);
+
+  const [viewMode, setViewMode]     = useState<'weekly' | 'monthly' | 'daily'>('weekly');
+  const [year, setYear]             = useState(today.getFullYear());
+  const [month, setMonth]           = useState(today.getMonth()); // 0-based
+  const [weekStart, setWeekStart]   = useState<Date>(getMonday(today));
+  const [selectedDay, setSelectedDay] = useState<Date>(today);
+  const [aiItems, setAiItems]       = useState<AICalendarItem[]>([]);
+  const [entries, setEntries]       = useState<CalendarEntry[]>([]);
+  const [loading, setLoading]       = useState(true);
 
   const isFr = i18n.language.startsWith('fr');
   const DAYS = isFr ? DAYS_FR : DAYS_EN;
@@ -618,81 +657,200 @@ function CalendarTab() {
 
   useEffect(() => {
     setLoading(true);
-    apiService.adminNewsCalendar({ year, month: month + 1 })
-      .then(d => setEntries(d.entries ?? []))
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [year, month]);
+    if (viewMode === 'weekly') {
+      apiService.adminNewsAICalendar({ view: 'weekly', week_start: toISODate(weekStart) })
+        .then(d => setAiItems(d.items ?? []))
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    } else if (viewMode === 'monthly') {
+      Promise.all([
+        apiService.adminNewsCalendar({ year, month: month + 1 }),
+        apiService.adminNewsAICalendar({ view: 'monthly', year, month: month + 1 }),
+      ])
+        .then(([cal, ai]) => { setEntries(cal.entries ?? []); setAiItems(ai.items ?? []); })
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    } else {
+      apiService.adminNewsAICalendar({ view: 'daily', date: toISODate(selectedDay) })
+        .then(d => setAiItems(d.items ?? []))
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    }
+  }, [viewMode, weekStart, year, month, selectedDay]);
 
-  const firstDay    = new Date(year, month, 1);
-  const startOffset = (firstDay.getDay() + 6) % 7;
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  const cells: (number | null)[] = [
-    ...Array(startOffset).fill(null),
-    ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
-  ];
-  while (cells.length % 7 !== 0) cells.push(null);
-
-  const prevMonth = () => { if (month === 0) { setMonth(11); setYear(y => y - 1); } else setMonth(m => m - 1); };
-  const nextMonth = () => { if (month === 11) { setMonth(0); setYear(y => y + 1); } else setMonth(m => m + 1); };
-
-  const entriesForDay = (day: number) => {
-    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    return entries.filter(e => e.date.startsWith(dateStr));
+  // ── Navigation helpers ──────────────────────
+  const prevPeriod = () => {
+    if (viewMode === 'daily') {
+      const d = new Date(selectedDay); d.setDate(d.getDate() - 1); setSelectedDay(d);
+    } else if (viewMode === 'weekly') {
+      const d = new Date(weekStart); d.setDate(d.getDate() - 7); setWeekStart(d);
+    } else {
+      if (month === 0) { setMonth(11); setYear(y => y - 1); } else setMonth(m => m - 1);
+    }
   };
+  const nextPeriod = () => {
+    if (viewMode === 'daily') {
+      const d = new Date(selectedDay); d.setDate(d.getDate() + 1); setSelectedDay(d);
+    } else if (viewMode === 'weekly') {
+      const d = new Date(weekStart); d.setDate(d.getDate() + 7); setWeekStart(d);
+    } else {
+      if (month === 11) { setMonth(0); setYear(y => y + 1); } else setMonth(m => m + 1);
+    }
+  };
+  const goToday = () => {
+    setSelectedDay(today);
+    setWeekStart(getMonday(today));
+    setYear(today.getFullYear());
+    setMonth(today.getMonth());
+  };
+
+  // ── Period label ────────────────────────────
+  const periodLabel = () => {
+    if (viewMode === 'daily') {
+      return new Intl.DateTimeFormat(isFr ? 'fr' : 'en', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(selectedDay);
+    } else if (viewMode === 'weekly') {
+      const wEnd = new Date(weekStart); wEnd.setDate(wEnd.getDate() + 6);
+      const fmt = new Intl.DateTimeFormat(isFr ? 'fr' : 'en', { day: 'numeric', month: 'short' });
+      return `${fmt.format(weekStart)} – ${fmt.format(wEnd)} ${weekStart.getFullYear()}`;
+    } else {
+      return `${MONTHS[month]} ${year}`;
+    }
+  };
+
+  // ── Weekly view ─────────────────────────────
+  const renderWeekly = () => {
+    const cols = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(weekStart); d.setDate(d.getDate() + i);
+      return d;
+    });
+    return (
+      <div className="admin-news-calendar--weekly">
+        {cols.map((day, i) => {
+          const dateStr = toISODate(day);
+          const dayItems = aiItems.filter(it => it.scheduled_for === dateStr);
+          const isToday = dateStr === toISODate(today);
+          return (
+            <div key={i} className={`admin-news-calendar__week-col${isToday ? ' admin-news-calendar__week-col--today' : ''}`}>
+              <div className="admin-news-calendar__week-col-header">
+                <span className="admin-news-calendar__week-day-name">{DAYS[i]}</span>
+                <span className={`admin-news-calendar__week-day-num${isToday ? ' admin-news-calendar__week-day-num--today' : ''}`}>{day.getDate()}</span>
+              </div>
+              <div className="admin-news-calendar__week-col-body">
+                {dayItems.map(item => (
+                  <div key={item.id} className="admin-news-calendar__ai-item">
+                    <span className="admin-news-calendar__ai-item-keyword">{item.keyword}</span>
+                    {item.topic_cluster && (
+                      <span className="admin-news-calendar__ai-item-cluster" style={{ background: clusterColor(item.topic_cluster) }}>
+                        {item.topic_cluster}
+                      </span>
+                    )}
+                    <span className={`admin-news-calendar__status admin-news-calendar__status--${aiStatusVariant(item.status)}`}>{item.status}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  // ── Monthly view ────────────────────────────
+  const renderMonthly = () => {
+    const firstDay    = new Date(year, month, 1);
+    const startOffset = (firstDay.getDay() + 6) % 7;
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const cells: (number | null)[] = [
+      ...Array(startOffset).fill(null),
+      ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
+    ];
+    while (cells.length % 7 !== 0) cells.push(null);
+
+    const entriesForDay = (day: number) => {
+      const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      return entries.filter(e => e.date.startsWith(dateStr));
+    };
+    const aiForDay = (day: number) => {
+      const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      return aiItems.filter(it => it.scheduled_for === dateStr);
+    };
+
+    return (
+      <div className="admin-news-calendar__grid">
+        {DAYS.map(d => <div key={d} className="admin-news-calendar__day-header">{d}</div>)}
+        {cells.map((day, idx) => {
+          const isToday = day !== null && year === today.getFullYear() && month === today.getMonth() && day === today.getDate();
+          const dayEntries = day ? entriesForDay(day) : [];
+          const dayAI = day ? aiForDay(day) : [];
+          return (
+            <div key={idx} className={['admin-news-calendar__cell', !day ? 'admin-news-calendar__cell--empty' : '', isToday ? 'admin-news-calendar__cell--today' : ''].filter(Boolean).join(' ')}>
+              {day && <span className="admin-news-calendar__cell-day">{day}</span>}
+              {dayEntries.map(e => (
+                <span key={e.id} className={`admin-news-calendar__event admin-news-calendar__event--${e.status}`} title={e.title}>{e.title}</span>
+              ))}
+              {dayAI.map(it => (
+                <span key={`ai-${it.id}`} className="admin-news-calendar__ai-chip" style={{ borderLeft: `3px solid ${clusterColor(it.topic_cluster)}` }} title={it.keyword}>
+                  {it.keyword}
+                </span>
+              ))}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  // ── Daily view ──────────────────────────────
+  const renderDaily = () => (
+    <div className="admin-news-calendar__daily-list">
+      {aiItems.length === 0 && !loading && (
+        <p className="adm-empty-state-text">{t('news.calendar.empty')}</p>
+      )}
+      {aiItems.map(item => (
+        <div key={item.id} className="admin-news-calendar__daily-item">
+          <div className="admin-news-calendar__daily-item-header">
+            <span className="admin-news-calendar__daily-item-keyword">{item.keyword}</span>
+            <span className={`admin-news-calendar__status admin-news-calendar__status--${aiStatusVariant(item.status)}`}>{item.status}</span>
+          </div>
+          {item.topic_cluster && (
+            <span className="admin-news-calendar__ai-item-cluster" style={{ background: clusterColor(item.topic_cluster) }}>
+              {item.topic_cluster}
+            </span>
+          )}
+          {item.suggested_title && <p className="admin-news-calendar__daily-item-title">{item.suggested_title}</p>}
+          {item.content_angle && <p className="admin-news-calendar__daily-item-angle">{item.content_angle}</p>}
+          {item.rationale && <p className="admin-news-calendar__daily-item-rationale">{item.rationale}</p>}
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <div className="admin-news-calendar">
-      <div className="admin-news-calendar__nav">
-        <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={prevMonth}>‹</button>
-        <span className="admin-news-calendar__month-label">{MONTHS[month]} {year}</span>
-        <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={nextMonth}>›</button>
-        <button
-          type="button"
-          className="adm-btn adm-btn--ghost adm-btn--sm"
-          onClick={() => { setYear(today.getFullYear()); setMonth(today.getMonth()); }}
-        >
-          {t('news.calendar.today')}
-        </button>
+      <div className="admin-news-calendar__toolbar">
+        <div className="admin-news-calendar__view-switcher">
+          {(['daily', 'weekly', 'monthly'] as const).map(v => (
+            <button key={v} type="button" className={`adm-btn adm-btn--sm${viewMode === v ? ' adm-btn--primary' : ' adm-btn--ghost'}`} onClick={() => setViewMode(v)}>
+              {v === 'daily' ? (isFr ? 'Jour' : 'Day') : v === 'weekly' ? (isFr ? 'Semaine' : 'Week') : (isFr ? 'Mois' : 'Month')}
+            </button>
+          ))}
+        </div>
+        <div className="admin-news-calendar__nav">
+          <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={prevPeriod}>‹</button>
+          <span className="admin-news-calendar__month-label">{periodLabel()}</span>
+          <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={nextPeriod}>›</button>
+          <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={goToday}>
+            {t('news.calendar.today')}
+          </button>
+        </div>
       </div>
 
       {loading ? <p className="adm-loading">{t('common.loading')}</p> : (
-        <div className="admin-news-calendar__grid">
-          {DAYS.map(d => <div key={d} className="admin-news-calendar__day-header">{d}</div>)}
-          {cells.map((day, idx) => {
-            const isToday = day !== null
-              && year === today.getFullYear()
-              && month === today.getMonth()
-              && day === today.getDate();
-            const dayEntries = day ? entriesForDay(day) : [];
-            return (
-              <div
-                key={idx}
-                className={[
-                  'admin-news-calendar__cell',
-                  !day ? 'admin-news-calendar__cell--empty' : '',
-                  isToday ? 'admin-news-calendar__cell--today' : '',
-                ].filter(Boolean).join(' ')}
-              >
-                {day && <span className="admin-news-calendar__cell-day">{day}</span>}
-                {dayEntries.map(e => (
-                  <span
-                    key={e.id}
-                    className={`admin-news-calendar__event admin-news-calendar__event--${e.status}`}
-                    title={e.title}
-                  >
-                    {e.title}
-                  </span>
-                ))}
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {!loading && entries.length === 0 && (
-        <p className="adm-empty-state-text">{t('news.calendar.empty')}</p>
+        <>
+          {viewMode === 'weekly'  && renderWeekly()}
+          {viewMode === 'monthly' && renderMonthly()}
+          {viewMode === 'daily'   && renderDaily()}
+        </>
       )}
     </div>
   );

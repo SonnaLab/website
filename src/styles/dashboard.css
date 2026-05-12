@@ -1834,6 +1834,206 @@
 .admin-news-calendar__event--draft     { background: #fffbeb; color: #d97706; }
 .admin-news-calendar__event--archived  { background: #f3f4f6; color: #9ca3af; }
 
+/* ── Calendar toolbar (view switcher + nav) ── */
+.admin-news-calendar__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.admin-news-calendar__view-switcher {
+  display: flex;
+  gap: 4px;
+}
+
+/* ── Weekly view ── */
+.admin-news-calendar--weekly {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.admin-news-calendar__week-col {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  min-height: 180px;
+}
+
+.admin-news-calendar__week-col--today {
+  border-color: var(--primary, #111);
+}
+
+.admin-news-calendar__week-col-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: var(--surface-alt, #f9fafb);
+  border-bottom: 1px solid var(--border);
+}
+
+.admin-news-calendar__week-day-name {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted, #6b7280);
+}
+
+.admin-news-calendar__week-day-num {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.admin-news-calendar__week-day-num--today {
+  background: var(--primary, #111);
+  color: #fff;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.admin-news-calendar__week-col-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  flex: 1;
+}
+
+/* ── AI item chip (weekly + monthly) ── */
+.admin-news-calendar__ai-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 6px 8px;
+  background: var(--surface, #fff);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.admin-news-calendar__ai-item-keyword {
+  font-weight: 600;
+  color: var(--text, #111);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-news-calendar__ai-item-cluster {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* ── AI chip in monthly view ── */
+.admin-news-calendar__ai-chip {
+  display: block;
+  padding: 2px 4px;
+  font-size: 10px;
+  font-weight: 500;
+  border-radius: 3px;
+  background: var(--surface-alt, #f9fafb);
+  color: var(--text, #111);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: default;
+}
+
+/* ── Status badge ── */
+.admin-news-calendar__status {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: lowercase;
+}
+
+.admin-news-calendar__status--info    { background: #eff6ff; color: #3b82f6; }
+.admin-news-calendar__status--success { background: #ecfdf5; color: #059669; }
+.admin-news-calendar__status--warning { background: #fffbeb; color: #d97706; }
+.admin-news-calendar__status--danger  { background: #fef2f2; color: #ef4444; }
+.admin-news-calendar__status--default { background: #f3f4f6; color: #6b7280; }
+
+/* ── Daily view ── */
+.admin-news-calendar__daily-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-news-calendar__daily-item {
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-news-calendar__daily-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.admin-news-calendar__daily-item-keyword {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text, #111);
+}
+
+.admin-news-calendar__daily-item-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text, #111);
+  margin: 0;
+}
+
+.admin-news-calendar__daily-item-angle {
+  font-size: 12px;
+  color: var(--text-muted, #6b7280);
+  font-style: italic;
+  margin: 0;
+}
+
+.admin-news-calendar__daily-item-rationale {
+  font-size: 12px;
+  color: var(--text-muted, #6b7280);
+  margin: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .admin-news-calendar--weekly {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-news-calendar--weekly {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 /* ── Strategy tab ── */
 .admin-news-strategy {
   max-width: 640px;
