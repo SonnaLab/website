@@ -26,7 +26,7 @@ export interface AuthUser {
 
 // ==================== News types ====================
 
-export type ArticleStatus = 'draft' | 'published' | 'archived';
+export type ArticleStatus = 'draft' | 'published' | 'scheduled';
 
 export interface Article {
   id: string;
@@ -56,15 +56,16 @@ export interface WeeklyObjective {
   id: string;
   label: string;
   done: boolean;
-  week?: string;
+  week_start?: string | null;
   created_at: string;
+  updated_at: string;
 }
 
 export interface NewsStrategy {
   id?: string;
-  goals?: string;
-  keywords?: string;
-  themes?: string;
+  goals?: string[];
+  keywords?: string[];
+  themes?: string[];
   frequency?: string;
   updated_at?: string;
 }

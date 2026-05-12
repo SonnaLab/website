@@ -179,7 +179,7 @@
       "statuses": {
         "draft": "Brouillon",
         "published": "Publié",
-        "archived": "Archivé"
+        "scheduled": "Planifié"
       },
       "form": {
         "title": "Titre",

@@ -179,7 +179,7 @@
       "statuses": {
         "draft": "Draft",
         "published": "Published",
-        "archived": "Archived"
+        "scheduled": "Scheduled"
       },
       "form": {
         "title": "Title",

@@ -32,7 +32,7 @@ function articleStatusVariant(status: ArticleStatus) {
   switch (status) {
     case 'published': return 'success' as const;
     case 'draft':     return 'warning' as const;
-    case 'archived':  return 'muted' as const;
+    case 'scheduled': return 'info' as const;
     default:          return 'default' as const;
   }
 }
@@ -426,7 +426,7 @@ function ArticlesTab() {
               >
                 <option value="draft">{t('news.articles.statuses.draft')}</option>
                 <option value="published">{t('news.articles.statuses.published')}</option>
-                <option value="archived">{t('news.articles.statuses.archived')}</option>
+                <option value="scheduled">{t('news.articles.statuses.scheduled')}</option>
               </select>
             </div>
           </div>
@@ -702,15 +702,33 @@ function CalendarTab() {
 // Tab: Strategy
 // ─────────────────────────────────────────────
 
+// Local form type uses strings so textarea/input can hold unsaved text.
+interface StrategyForm {
+  id?: string;
+  goals?: string;
+  keywords?: string;
+  themes?: string;
+  frequency?: string;
+  updated_at?: string;
+}
+
 function StrategyTab() {
   const { t } = useTranslation('admin');
-  const [form, setForm]       = useState<Partial<NewsStrategy>>({});
+  const [form, setForm]       = useState<StrategyForm>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving]   = useState(false);
 
   useEffect(() => {
     apiService.adminNewsStrategy()
-      .then(d => setForm(d.strategy ?? {}))
+      .then(d => {
+        const s = d.strategy ?? {};
+        setForm({
+          ...s,
+          goals:    Array.isArray(s.goals)    ? s.goals.join('\n')    : (s.goals    ?? ''),
+          keywords: Array.isArray(s.keywords) ? s.keywords.join(', ') : (s.keywords ?? ''),
+          themes:   Array.isArray(s.themes)   ? s.themes.join(', ')   : (s.themes   ?? ''),
+        });
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
@@ -718,7 +736,13 @@ function StrategyTab() {
   const save = async () => {
     setSaving(true);
     try {
-      await apiService.adminNewsSaveStrategy(form);
+      const payload: Partial<NewsStrategy> = {
+        frequency: form.frequency,
+        goals:    form.goals    ? form.goals.split('\n').map(s => s.trim()).filter(Boolean)    : [],
+        keywords: form.keywords ? form.keywords.split(',').map(s => s.trim()).filter(Boolean)  : [],
+        themes:   form.themes   ? form.themes.split(',').map(s => s.trim()).filter(Boolean)    : [],
+      };
+      await apiService.adminNewsSaveStrategy(payload);
       toast.success(t('news.strategy.saved'));
     } catch { toast.error(t('common.error')); }
     finally { setSaving(false); }
