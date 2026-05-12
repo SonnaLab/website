@@ -36,11 +36,23 @@ export interface Article {
   locale: string;
   author?: string;
   published_at?: string | null;
+  scheduled_at?: string | null;
   created_at: string;
   updated_at: string;
   excerpt?: string;
+  content_markdown?: string;
+  content_json?: Record<string, unknown>;
+  seo_title?: string;
+  meta_description?: string;
+  feature_image?: string;
+  feature_image_alt?: string;
+  reading_time_minutes?: number;
+  is_featured?: boolean;
   tags?: string[];
   category?: string;
+  lesankofa_transaction_id?: string | null;
+  lesankofa_metadata?: Record<string, unknown>;
+  published_url?: string | null;
 }
 
 export interface NewsPrompt {
@@ -406,7 +418,7 @@ class ApiService {
 
   // ==================== Admin: News ====================
 
-  async adminNewsArticles(params?: { status?: string; locale?: string; page?: number; per_page?: number; q?: string }) {
+  async adminNewsArticles(params?: { status?: string; locale?: string; page?: number; per_page?: number; q?: string; generated?: boolean }) {
     return (await this.client.get('/api/v1/admin/news/articles', { params })).data;
   }
   async adminNewsArticle(id: string) { return (await this.client.get(`/api/v1/admin/news/articles/${id}`)).data; }
@@ -430,6 +442,7 @@ class ApiService {
   async adminNewsAICalendar(params?: { view?: 'weekly' | 'monthly' | 'daily'; week_start?: string; year?: number; month?: number; date?: string }) { return (await this.client.get('/api/v1/admin/news/ai-calendar', { params })).data; }
   async adminNewsAIApplyCalendarReview(payload: { week_start: string; max_items_per_client: number }): Promise<{ generation: any; items: AICalendarItem[] }> { return (await this.client.post('/api/v1/admin/news/ai-calendar/apply-review', payload)).data; }
   async adminNewsAIGenerateArticle(item: AICalendarItem): Promise<{ event_status: string; generation: any; article?: Article | null }> { return (await this.client.post('/api/v1/admin/news/ai-calendar/generate-article', { item })).data; }
+  async adminNewsAIGenerateNextArticle(): Promise<{ event_status: string; generation: any; item: AICalendarItem; article?: Article | null }> { return (await this.client.post('/api/v1/admin/news/ai-calendar/generate-next-article')).data; }
   async adminNewsAIStrategicObjectives(): Promise<{ objectives: StrategicObjective[] }> { return (await this.client.get('/api/v1/admin/news/ai-strategic-objectives')).data; }
 
   async adminNewsStrategy() { return (await this.client.get('/api/v1/admin/news/strategy')).data; }

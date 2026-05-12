@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Ta
 import { DataTable, DataTableHead, DataTableBody, DataTableRow, DataTableTh, DataTableTd, DataTableEmpty } from '@/components/common/DataTable';
 import { Modal } from '@/components/common/Modal';
 import { StatusBadge } from '@/components/common/StatusBadge';
+import { MarkdownRenderer } from '@/components/public/blog/MarkdownRenderer';
 
 import {
   NewsIcon,
@@ -28,6 +29,7 @@ import {
   GlobeIcon,
   LayersIcon,
   ZapIcon,
+  ArrowUpRightIcon,
 } from '@icons';
 
 // ─────────────────────────────────────────────
@@ -247,56 +249,102 @@ const ARTICLE_FORM_DEFAULTS: Partial<Article> = {
   title: '', excerpt: '', locale: 'fr', status: 'draft', category: '', tags: [],
 };
 
+type ArticleModalMode = 'preview' | 'edit';
+
+function articleMetadataValue(article: Partial<Article>, key: string) {
+  const metadata = article.lesankofa_metadata ?? {};
+  const nested = metadata.metadata && typeof metadata.metadata === 'object' ? metadata.metadata as Record<string, unknown> : {};
+  const value = metadata[key] ?? nested[key];
+  return typeof value === 'string' || typeof value === 'number' ? String(value) : undefined;
+}
+
+function articlePublicUrl(article: Partial<Article>) {
+  return article.published_url || (article.slug ? `/blog/${article.slug}` : '');
+}
+
 function ArticlesTab() {
   const { t, i18n } = useTranslation('admin');
   const [articles, setArticles]   = useState<Article[]>([]);
   const [loading, setLoading]     = useState(true);
   const [search, setSearch]       = useState('');
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<ArticleModalMode>('preview');
   const [editing, setEditing]     = useState<Partial<Article>>(ARTICLE_FORM_DEFAULTS);
   const [saving, setSaving]       = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [actionId, setActionId]   = useState<string | null>(null);
 
-  const reload = (q = search) =>
-    apiService.adminNewsArticles(q ? { q } : undefined)
+  const reload = (q = search) => {
+    setLoading(true);
+    return apiService.adminNewsArticles({ generated: true, ...(q ? { q } : {}) })
       .then(d => setArticles(d.articles ?? []))
       .catch(() => toast.error(t('common.error')))
       .finally(() => setLoading(false));
+  };
 
   useEffect(() => { reload(); }, []);
 
-  const openNew    = () => { setEditing(ARTICLE_FORM_DEFAULTS); setModalOpen(true); };
-  const openEdit   = (a: Article) => { setEditing(a); setModalOpen(true); };
+  const openArticle = async (article: Article, mode: ArticleModalMode) => {
+    setModalMode(mode);
+    setEditing(article);
+    setModalOpen(true);
+    try {
+      const data = await apiService.adminNewsArticle(article.id);
+      setEditing(data.article ?? article);
+    } catch {
+      toast.error(t('common.error'));
+    }
+  };
+
   const closeModal = () => { setModalOpen(false); setEditing(ARTICLE_FORM_DEFAULTS); };
 
   const save = async () => {
-    if (!editing.title?.trim()) return;
+    if (!editing.id || !editing.title?.trim()) return;
     setSaving(true);
     try {
-      if (editing.id) {
-        await apiService.adminNewsUpdateArticle(editing.id, editing);
-        toast.success(t('common.save'));
-      } else {
-        await apiService.adminNewsCreateArticle(editing);
-        toast.success(t('common.create'));
-      }
+      await apiService.adminNewsUpdateArticle(editing.id, editing);
+      toast.success(t('common.save'));
       closeModal();
       reload();
     } catch { toast.error(t('common.error')); }
     finally { setSaving(false); }
   };
 
-  const remove = async (id: string) => {
-    if (!confirm(t('news.articles.confirmDelete'))) return;
-    try { await apiService.adminNewsDeleteArticle(id); reload(); }
-    catch { toast.error(t('common.error')); }
+  const togglePublish = async (article: Article | Partial<Article>) => {
+    if (!article.id) return;
+    setActionId(`publish-${article.id}`);
+    try {
+      const data = article.status === 'published'
+        ? await apiService.adminNewsUnpublishArticle(article.id)
+        : await apiService.adminNewsPublishArticle(article.id);
+      if (editing.id === article.id) setEditing(current => ({ ...current, ...(data.article ?? {}) }));
+      await reload();
+    } catch { toast.error(t('common.error')); }
+    finally { setActionId(null); }
   };
 
-  const togglePublish = async (a: Article) => {
+  const generateNextArticle = async () => {
+    setGenerating(true);
     try {
-      if (a.status === 'published') await apiService.adminNewsUnpublishArticle(a.id);
-      else await apiService.adminNewsPublishArticle(a.id);
-      reload();
-    } catch { toast.error(t('common.error')); }
+      const data = await apiService.adminNewsAIGenerateNextArticle();
+      toast.success(t('news.articles.generateSuccess'));
+      await reload();
+      if (data.article) {
+        setModalMode('preview');
+        setEditing(data.article);
+        setModalOpen(true);
+      }
+    } catch {
+      toast.error(t('news.articles.generateUnavailable'));
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const gotoArticle = (article: Article | Partial<Article>) => {
+    if (article.status !== 'published') return;
+    const url = articlePublicUrl(article);
+    if (url) window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   const filtered = articles.filter(a =>
@@ -316,9 +364,9 @@ function ArticlesTab() {
             onChange={e => { setSearch(e.target.value); reload(e.target.value); }}
           />
         </div>
-        <button type="button" className="adm-btn adm-btn--primary" onClick={openNew}>
-          <PlusIcon size={14} />
-          {t('news.articles.new')}
+        <button type="button" className="adm-btn adm-btn--primary" onClick={generateNextArticle} disabled={generating}>
+          {generating ? <RefreshCwIcon size={14} className="adm-spin" /> : <ZapIcon size={14} />}
+          {t('news.articles.generate')}
         </button>
       </div>
 
@@ -328,6 +376,7 @@ function ArticlesTab() {
             <DataTableTh>{t('news.articles.title')}</DataTableTh>
             <DataTableTh>{t('news.articles.status')}</DataTableTh>
             <DataTableTh>{t('news.articles.locale')}</DataTableTh>
+            <DataTableTh>{t('news.articles.format')}</DataTableTh>
             <DataTableTh>{t('news.articles.date')}</DataTableTh>
             <DataTableTh>{t('news.articles.actions')}</DataTableTh>
           </DataTableRow>
@@ -342,31 +391,56 @@ function ArticlesTab() {
           ) : filtered.map(a => (
             <DataTableRow key={a.id}>
               <DataTableTd>
-                <button type="button" className="adm-table__title-btn" onClick={() => openEdit(a)}>
-                  {a.title}
-                </button>
+                <div className="admin-news-articles__title-cell">
+                  <button type="button" className="adm-table__title-btn" onClick={() => openArticle(a, 'preview')}>
+                    {a.title}
+                  </button>
+                  <span>{a.lesankofa_transaction_id ? `#${a.lesankofa_transaction_id}` : articleMetadataValue(a, 'keyword') || '—'}</span>
+                </div>
               </DataTableTd>
               <DataTableTd>
                 <StatusBadge label={t(`news.articles.statuses.${a.status}`)} variant={articleStatusVariant(a.status)} />
               </DataTableTd>
               <DataTableTd>{a.locale?.toUpperCase()}</DataTableTd>
+              <DataTableTd>{articleMetadataValue(a, 'article_format') || '—'}</DataTableTd>
               <DataTableTd>{fmtDate(a.published_at ?? a.created_at, i18n.language)}</DataTableTd>
               <DataTableTd>
                 <div className="adm-table__actions">
                   <button
                     type="button"
                     className="adm-btn adm-btn--ghost adm-btn--xs"
+                    onClick={() => openArticle(a, 'preview')}
+                    aria-label={t('news.articles.preview')}
+                    title={t('news.articles.preview')}
+                  >
+                    <EyeIcon size={13} />
+                  </button>
+                  <button
+                    type="button"
+                    className="adm-btn adm-btn--ghost adm-btn--xs"
                     onClick={() => togglePublish(a)}
+                    disabled={actionId === `publish-${a.id}`}
                   >
                     {a.status === 'published' ? t('news.articles.unpublish') : t('news.articles.publish')}
                   </button>
                   <button
                     type="button"
-                    className="adm-btn adm-btn--ghost adm-btn--xs adm-btn--danger"
-                    onClick={() => remove(a.id)}
-                    aria-label={t('common.delete')}
+                    className="adm-btn adm-btn--ghost adm-btn--xs"
+                    onClick={() => openArticle(a, 'edit')}
+                    aria-label={t('common.edit')}
+                    title={t('common.edit')}
                   >
-                    <Trash2Icon size={13} />
+                    <PenLineIcon size={13} />
+                  </button>
+                  <button
+                    type="button"
+                    className="adm-btn adm-btn--ghost adm-btn--xs"
+                    onClick={() => gotoArticle(a)}
+                    disabled={a.status !== 'published'}
+                    aria-label={t('news.articles.goto')}
+                    title={t('news.articles.goto')}
+                  >
+                    <ArrowUpRightIcon size={13} />
                   </button>
                 </div>
               </DataTableTd>
@@ -378,19 +452,66 @@ function ArticlesTab() {
       <Modal
         open={modalOpen}
         onClose={closeModal}
-        title={editing.id ? t('common.edit') : t('news.articles.new')}
+        title={modalMode === 'edit' ? t('common.edit') : t('news.articles.preview')}
         size="lg"
         footer={
-          <>
-            <button type="button" className="adm-btn adm-btn--ghost" onClick={closeModal}>{t('common.cancel')}</button>
-            <button type="button" className="adm-btn adm-btn--primary" onClick={save} disabled={saving}>
-              {saving ? <RefreshCwIcon size={14} className="adm-spin" /> : null}
-              {t('common.save')}
-            </button>
-          </>
+          modalMode === 'edit' ? (
+            <>
+              <button type="button" className="adm-btn adm-btn--ghost" onClick={closeModal}>{t('common.cancel')}</button>
+              <button type="button" className="adm-btn adm-btn--primary" onClick={save} disabled={saving}>
+                {saving ? <RefreshCwIcon size={14} className="adm-spin" /> : null}
+                {t('common.save')}
+              </button>
+            </>
+          ) : (
+            <>
+              <button type="button" className="adm-btn adm-btn--ghost" onClick={closeModal}>{t('common.cancel')}</button>
+              <button type="button" className="adm-btn adm-btn--ghost" onClick={() => setModalMode('edit')} disabled={!editing.id}>
+                <PenLineIcon size={14} />
+                {t('common.edit')}
+              </button>
+              <button type="button" className="adm-btn adm-btn--ghost" onClick={() => togglePublish(editing)} disabled={!editing.id || actionId === `publish-${editing.id}`}>
+                {editing.status === 'published' ? t('news.articles.unpublish') : t('news.articles.publish')}
+              </button>
+              <button type="button" className="adm-btn adm-btn--primary" onClick={() => gotoArticle(editing)} disabled={editing.status !== 'published'}>
+                <ArrowUpRightIcon size={14} />
+                {t('news.articles.goto')}
+              </button>
+            </>
+          )
         }
       >
-        <div className="adm-form">
+        {modalMode === 'preview' ? (
+          <article className="admin-news-articles__preview">
+            {editing.feature_image && (
+              <img className="admin-news-articles__preview-image" src={editing.feature_image} alt={editing.feature_image_alt || editing.title || ''} />
+            )}
+            <div className="admin-news-articles__preview-head">
+              <div>
+                <h3>{editing.title}</h3>
+                {editing.excerpt && <p>{editing.excerpt}</p>}
+              </div>
+              {editing.status && (
+                <StatusBadge label={t(`news.articles.statuses.${editing.status}`)} variant={articleStatusVariant(editing.status)} />
+              )}
+            </div>
+            <div className="admin-news-articles__preview-meta">
+              <span>{formatOptional(editing.locale).toUpperCase()}</span>
+              <span>{articleMetadataValue(editing, 'article_format') || t('news.articles.generated')}</span>
+              <span>{editing.reading_time_minutes ? `${editing.reading_time_minutes} min` : '—'}</span>
+              <span>{fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
+            </div>
+            {!!editing.tags?.length && (
+              <div className="admin-news-articles__tags">
+                {editing.tags.map(tag => <span key={tag}>{tag}</span>)}
+              </div>
+            )}
+            <div className="admin-news-articles__markdown">
+              {editing.content_markdown ? <MarkdownRenderer content={editing.content_markdown} /> : <p>{t('news.articles.noContent')}</p>}
+            </div>
+          </article>
+        ) : (
+          <div className="adm-form">
           <div className="adm-form__field">
             <label className="adm-form__label">{t('news.articles.form.title')}</label>
             <input
@@ -399,6 +520,16 @@ function ArticlesTab() {
               placeholder={t('news.articles.form.titlePlaceholder')}
               value={editing.title ?? ''}
               onChange={e => setEditing(p => ({ ...p, title: e.target.value }))}
+            />
+          </div>
+          <div className="adm-form__field">
+            <label className="adm-form__label">{t('news.articles.form.slug')}</label>
+            <input
+              type="text"
+              className="adm-input"
+              placeholder={t('news.articles.form.slugPlaceholder')}
+              value={editing.slug ?? ''}
+              onChange={e => setEditing(p => ({ ...p, slug: e.target.value }))}
             />
           </div>
           <div className="adm-form__field">
@@ -458,7 +589,72 @@ function ArticlesTab() {
               />
             </div>
           </div>
+          <div className="adm-form__row">
+            <div className="adm-form__field">
+              <label className="adm-form__label">{t('news.articles.form.seoTitle')}</label>
+              <input
+                type="text"
+                className="adm-input"
+                placeholder={t('news.articles.form.seoTitlePlaceholder')}
+                value={editing.seo_title ?? ''}
+                onChange={e => setEditing(p => ({ ...p, seo_title: e.target.value }))}
+              />
+            </div>
+            <div className="adm-form__field">
+              <label className="adm-form__label">{t('news.articles.form.readingTime')}</label>
+              <input
+                type="number"
+                className="adm-input"
+                min={1}
+                value={editing.reading_time_minutes ?? 5}
+                onChange={e => setEditing(p => ({ ...p, reading_time_minutes: Number(e.target.value) || 5 }))}
+              />
+            </div>
+          </div>
+          <div className="adm-form__field">
+            <label className="adm-form__label">{t('news.articles.form.metaDescription')}</label>
+            <textarea
+              className="adm-textarea"
+              rows={3}
+              placeholder={t('news.articles.form.metaDescriptionPlaceholder')}
+              value={editing.meta_description ?? ''}
+              onChange={e => setEditing(p => ({ ...p, meta_description: e.target.value }))}
+            />
+          </div>
+          <div className="adm-form__row">
+            <div className="adm-form__field">
+              <label className="adm-form__label">{t('news.articles.form.featureImage')}</label>
+              <input
+                type="text"
+                className="adm-input"
+                placeholder={t('news.articles.form.featureImagePlaceholder')}
+                value={editing.feature_image ?? ''}
+                onChange={e => setEditing(p => ({ ...p, feature_image: e.target.value }))}
+              />
+            </div>
+            <div className="adm-form__field">
+              <label className="adm-form__label">{t('news.articles.form.featureImageAlt')}</label>
+              <input
+                type="text"
+                className="adm-input"
+                placeholder={t('news.articles.form.featureImageAltPlaceholder')}
+                value={editing.feature_image_alt ?? ''}
+                onChange={e => setEditing(p => ({ ...p, feature_image_alt: e.target.value }))}
+              />
+            </div>
+          </div>
+          <div className="adm-form__field">
+            <label className="adm-form__label">{t('news.articles.form.content')}</label>
+            <textarea
+              className="adm-textarea admin-news-articles__content-input"
+              rows={14}
+              placeholder={t('news.articles.form.contentPlaceholder')}
+              value={editing.content_markdown ?? ''}
+              onChange={e => setEditing(p => ({ ...p, content_markdown: e.target.value }))}
+            />
+          </div>
         </div>
+        )}
       </Modal>
     </div>
   );
