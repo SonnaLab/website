@@ -1245,7 +1245,8 @@ const MONTHS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July
 function aiStatusVariant(status: string): string {
   switch (status) {
     case 'published': return 'published';
-    case 'generated': case 'pushed': return 'generated';
+    case 'pushed':    return 'pushed';
+    case 'generated': return 'generated';
     case 'in_generation': return 'generating';
     case 'planned':  return 'planned';
     case 'failed':   return 'danger';
@@ -1493,7 +1494,7 @@ function CalendarTab() {
 
   const openAIItem = (item: AICalendarItem) => {
     setSelectedAIItem(item);
-    setGenerationState(item.status === 'published' ? 'published' : item.status === 'generated' ? 'generated' : 'idle');
+    setGenerationState(item.status === 'published' || item.status === 'pushed' ? 'published' : item.status === 'generated' ? 'generated' : 'idle');
     setGeneratedArticle(null);
     setGenerationError(null);
   };
