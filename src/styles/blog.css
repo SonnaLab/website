@@ -77,6 +77,10 @@
   padding: 24px 0;
 }
 
+.blog-index-toolbar__row--search-only {
+  grid-template-columns: minmax(240px, 560px);
+}
+
 .blog-index-search {
   position: relative;
   display: flex;

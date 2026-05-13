@@ -1,4 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { XIcon } from '@icons';
 
 interface ModalProps {
@@ -28,18 +29,20 @@ export function Modal({ open, onClose, title, children, footer, size = 'md', bad
     return () => { document.body.style.overflow = ''; };
   }, [open]);
 
-  if (!open) return null;
+  if (!open || typeof document === 'undefined') return null;
 
-  return (
+  return createPortal(
     <div
       ref={overlayRef}
       className="adm-modal-overlay"
       onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
     >
       <div className={`adm-modal adm-modal--${size}`} role="dialog" aria-modal="true">
-          {badge && <div className="adm-modal__badge">{badge}</div>}
-          <div className="adm-modal__header">
-          <h2 className="adm-modal__title">{title}</h2>
+        <div className="adm-modal__header">
+          <div className="adm-modal__heading">
+            {badge && <div className="adm-modal__badge">{badge}</div>}
+            <h2 className="adm-modal__title">{title}</h2>
+          </div>
           <button type="button" className="adm-modal__close" onClick={onClose} aria-label="Fermer">
             <XIcon size={18} />
           </button>
@@ -49,6 +52,7 @@ export function Modal({ open, onClose, title, children, footer, size = 'md', bad
 
         {footer && <div className="adm-modal__footer">{footer}</div>}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

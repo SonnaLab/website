@@ -1168,18 +1168,26 @@
 .adm-modal--md { max-width: 560px; }
 .adm-modal--lg { max-width: 760px; }
 
-.adm-modal__badge {
+.adm-modal__heading {
   display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.adm-modal__badge {
+  display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 11px 20px;
+  width: fit-content;
+  gap: 6px;
+  padding: 4px 8px;
   background: #000;
   color: #fff;
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.07em;
+  letter-spacing: 0;
   text-transform: uppercase;
-  border-radius: 10px 10px 0 0;
+  border-radius: 6px;
   flex-shrink: 0;
 }
 
@@ -1293,13 +1301,13 @@
 }
 
 .lang-switcher-modal__item--active {
-  background: #f0fdf4;
-  color: #111;
+  background: #111;
+  color: #fff;
   font-weight: 700;
 }
 
 .lang-switcher-modal__item--active svg {
-  color: #111;
+  color: #fff;
 }
 
 .adm-modal__footer {

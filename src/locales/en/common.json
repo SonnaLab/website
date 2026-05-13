@@ -4,7 +4,10 @@
     "en": "English",
     "es": "Spanish",
     "it": "Italian",
-    "de": "German"
+    "de": "German",
+    "tag": "Language",
+    "selectLanguage": "Select language",
+    "search": "Search..."
   },
   "actions": {
     "learnMore": "Learn more",

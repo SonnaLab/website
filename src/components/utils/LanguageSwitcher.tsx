@@ -59,7 +59,7 @@ export function LanguageSwitcher() {
                 badge={
                     <>
                         <Languages size={13} />
-                        <span>{t('language.selectLanguage', 'Select language')}</span>
+                        <span>{t('language.tag', 'Language')}</span>
                     </>
                 }
             >

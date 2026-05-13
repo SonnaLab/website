@@ -52,6 +52,8 @@ export default function Blog() {
       label: categoryLabel(category.id, category.label),
     })),
   ];
+  const hasCategoryTabs = categoryTabs.some(category => category.count > 0);
+  const shouldShowToolbar = hasCategoryTabs || searchQuery.trim().length > 0;
 
   useEffect(() => {
     let mounted = true;
@@ -111,33 +113,36 @@ export default function Blog() {
       </section>
 
       <section className="blog-index-list">
-                 <div className="blog-index-container">
-          <div className="blog-index-toolbar__row">
-            <label className="blog-index-search">
-              <Search size={18} />
-              <Input
-                type="text"
-                placeholder={t('search.placeholder')}
-                value={searchQuery}
-                onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
-                className="blog-index-search__input"
-              />
-            </label>
+        {shouldShowToolbar && (
+          <div className="blog-index-container">
+            <div className={`blog-index-toolbar__row${hasCategoryTabs ? '' : ' blog-index-toolbar__row--search-only'}`}>
+              <label className="blog-index-search">
+                <Search size={18} />
+                <Input
+                  type="text"
+                  placeholder={t('search.placeholder')}
+                  value={searchQuery}
+                  onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
+                  className="blog-index-search__input"
+                />
+              </label>
 
-            <div className="blog-index-filters" aria-label="Catégories">
-              {categoryTabs.map(category => (
-                <button
-                  key={category.id}
-                  type="button"
-                  className={`blog-index-filter${selectedCategory === category.id ? ' blog-index-filter--active' : ''}`}
-                  onClick={() => { setSelectedCategory(category.id); setPage(1); }}
-                >
-                  <span>{category.label}</span>
-                  <strong>{category.count}</strong>
-                </button>
-              ))}
+              {hasCategoryTabs && (
+                <div className="blog-index-filters" aria-label="Catégories">
+                  {categoryTabs.map(category => (
+                    <button
+                      key={category.id}
+                      type="button"
+                      className={`blog-index-filter${selectedCategory === category.id ? ' blog-index-filter--active' : ''}`}
+                      onClick={() => { setSelectedCategory(category.id); setPage(1); }}
+                    >
+                      <span>{category.label}</span>
+                      <strong>{category.count}</strong>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
 
             {searchQuery && (
               <p className="blog-index-toolbar__result">
@@ -145,6 +150,7 @@ export default function Blog() {
               </p>
             )}
           </div>
+        )}
         <div className="blog-index-container">
             {loading ? (
               <div className="blog-index-state">
