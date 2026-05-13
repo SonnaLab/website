@@ -1,0 +1,73 @@
+{
+  "seo": {
+    "title": "Progetti - Innovazione e Tecnologia",
+    "description": "Ogni applicazione utilizza tecnologie ad alte prestazioni per garantire affidabilità e scalabilità",
+    "keywords": "tecnologia all'avanguardia, esperienza utente, equità, trasparenza, SonnaLab"
+  },
+  "hero": {
+    "badge": "Le Nostre App di Punta",
+    "title": "Innovazione al Servizio delle tue Ambizioni",
+    "subtitle": "Scopri il nostro ecosistema di applicazioni progettate per trasformare le tue sfide in opportunità"
+  },
+  "stats": {
+    "users": { "value": "11K+", "label": "Utenti Attivi" },
+    "projects": { "value": "+03", "label": "Applicazioni Distribuite" },
+    "satisfaction": { "value": "94%", "label": "Soddisfazione dei Clienti" },
+    "uptime": { "value": "99.9%", "label": "Disponibilità" }
+  },
+  "lescopr": {
+    "badge": "Monitoraggio Applicazioni",
+    "title": "Lescopr",
+    "tagline": "L'Osservatore Intelligente per la tua Infrastruttura",
+    "description": "Lescopr è la piattaforma di monitoraggio progettata per i team moderni. Anticipa i bug prima che impattino sui tuoi utenti con analisi in tempo reale e integrazione rapida in tutti i tuoi ambienti.",
+    "features": {
+      "title": "Funzionalità Principali",
+      "list": ["Log intelligenti e contestuali","Dashboard dinamiche","Analisi predittiva integrata","Supporto multi-stack (Node, PHP, Django, Laravel)","Integrazioni Slack, Jira, Teams, Discord","Modalità dark/light adattiva"]
+    },
+    "tech": { "title": "Tecnologie", "stack": ["React","Node.js","PostgreSQL","Python","Redis","WebSocket"] },
+    "highlights": ["Interfaccia chiara e moderna","Installazione semplificata","Widget di monitoraggio pronti all'uso","Aggiornamenti continui"],
+    "cta": { "visit": "Scopri Lescopr", "demo": "Inizia una Prova Gratuita" }
+  },
+  "lebocheur": {
+    "badge": "Piattaforma Educativa",
+    "title": "Lebocheur",
+    "tagline": "Studia Meno, Impara di Più",
+    "description": "Lebocheur rivoluziona il modo di studiare. Accedi istantaneamente a migliaia di esami e soluzioni dettagliate, dalla scuola elementare all'università.",
+    "features": {
+      "title": "Funzionalità Principali",
+      "list": ["Libreria con +10K esami e soluzioni","Soluzioni dettagliate e metodologiche","Interfaccia senza distrazioni","Sistema di preferiti e salvataggio","Contenuto adattato ad ogni livello","Comunità di supporto attiva"]
+    },
+    "tech": { "title": "Tecnologie", "stack": ["React Native","Django","PostgreSQL","AWS","Elasticsearch"] },
+    "highlights": ["1K+ utenti attivi","86% recensioni positive","Aggiornamenti regolari dei contenuti","Disponibile su iOS e Android"],
+    "cta": { "visit": "Scopri Lebocheur", "demo": "Scarica l'App" }
+  },
+  "lecolt": {
+    "badge": "Economia Creativa",
+    "title": "Lecolt",
+    "tagline": "L'Arte nella sua Forma più Pura",
+    "description": "Lecolt ridefinisce l'economia artistica. Una piattaforma equa che connette artisti, fan e organizzatori, garantendo una retribuzione equa e un reddito minimo per ogni creativo attraverso un modello di solidarietà unico.",
+    "features": {
+      "title": "Funzionalità in Arrivo",
+      "list": ["Contenuti video brevi esclusivi per artisti","Sistema di prenotazione semplificato","Fondo di solidarietà con reddito garantito","Rete interdisciplinare (musica, danza, arti visive)","Economia circolare ed equa","Comunità selettiva e autentica"]
+    },
+    "tech": { "title": "Tecnologie Pianificate", "stack": ["React Native","Node.js","MongoDB","Stripe","AI/ML","WebRTC"] },
+    "highlights": ["Modello di solidarietà innovativo","Retribuzione equa garantita","Esperienza autentica senza intermediari","Focus sulla qualità piuttosto che sulla quantità"],
+    "cta": { "visit": "Visita Lecolt", "notify": "Unisciti alla Lista d'Attesa", "learn": "Scopri di Più" },
+    "launch": "Lancio previsto: Primavera 2026"
+  },
+  "ecosystem": {
+    "title": "Un Ecosistema Coeso",
+    "subtitle": "Tre applicazioni, una visione: trasformare le sfide in soluzioni sostenibili",
+    "items": [
+      { "title": "Tecnologia all'Avanguardia", "description": "Ogni applicazione utilizza tecnologie ad alte prestazioni per garantire affidabilità e scalabilità" },
+      { "title": "Esperienza Utente", "description": "Interfacce progettate per essere intuitive, eleganti e senza attrito" },
+      { "title": "Equità e Trasparenza", "description": "I nostri modelli di business promuovono l'equità e la trasparenza per tutti gli utenti" }
+    ]
+  },
+  "cta": {
+    "title": "Pronto a Unirti all'Avventura?",
+    "description": "Studenti, artisti o imprenditori: le nostre soluzioni si adattano alle tue esigenze.",
+    "button": "Fissa una Demo",
+    "contact": "Contattaci"
+  }
+}

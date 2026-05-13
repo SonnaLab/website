@@ -5,7 +5,7 @@
     "keywords": "blog technologie, IA, développement web, transformation digitale, innovation"
   },
   "hero": {
-    "badge": "POUR ALLER PLUS LOIN",
+    "badge": "Articles & Tendances",
     "title": "Restez informé des dernières tendances technologiques",
     "subtitle": "Articles, tutoriels et études de cas pour vous accompagner dans votre transformation numérique",
     "description": ""
@@ -30,15 +30,7 @@
     "categories": "Thématiques",
     "page": "Page"
   },
-  "article": {
-    "readTime": "{{time}} min de lecture",
-    "publishedOn": "Publié le",
-    "updatedOn": "Mis à jour le",
-    "tableOfContents": "Table des matières",
-    "share": "Partager cet article",
-    "relatedPosts": "Articles similaires",
-    "readMore": "POUR ALLER PLUS LOIN"
-  },
+
   "cta": {
     "title": "Besoin d'un accompagnement personnalisé ?",
     "description": "Nos experts sont là pour transformer vos défis en opportunités.",
@@ -59,5 +51,26 @@
   "breadcrumb": {
     "home": "Accueil",
     "blog": "Blog"
+  },
+  "share": {
+    "title": "Partager",
+    "subtitle": "Partagez cet article",
+    "twitter": "Partager sur Twitter",
+    "linkedin": "Partager sur LinkedIn",
+    "copyLink": "Copier le lien",
+    "copied": "Copié !"
+  },
+  "article": {
+    "readTime": "{{time}} min de lecture",
+    "publishedOn": "Publié le",
+    "updatedOn": "Mis à jour le",
+    "tableOfContents": "Table des matières",
+    "share": "Partager cet article",
+    "relatedPosts": "Articles similaires",
+    "relatedSubtitle": "Sélectionnés selon vos centres d'intérêt — similaires ou complémentaires à ce que vous venez de lire.",
+    "readMore": "Lire Plus",
+    "category": "Catégorie",
+    "readLabel": "Lecture",
+    "detailsLabel": "Détails de l'article"
   }
 }

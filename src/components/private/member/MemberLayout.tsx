@@ -10,7 +10,7 @@ import {
   ServerIcon,
   LineChartIcon,
   LogOutIcon,
-  ArrowLeftIcon,
+  ArrowRightIcon,
   GlobeIcon,
   MenuIcon,
   XIcon,
@@ -201,8 +201,8 @@ export function MemberLayout() {
               onClick={closeSidebar}
               title={sidebarExpanded ? undefined : t('nav.backToSite')}
             >
-              <ArrowLeftIcon size={16} />
               <span className="dash-nav-label">{t('nav.backToSite')}</span>
+              <ArrowRightIcon size={16} />
             </Link>
           </div>
         </aside>

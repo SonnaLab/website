@@ -1,0 +1,73 @@
+{
+  "seo": {
+    "title": "Proyectos - Innovación y Tecnología",
+    "description": "Cada aplicación utiliza tecnologías de alto rendimiento para garantizar fiabilidad y escalabilidad",
+    "keywords": "tecnología punta, experiencia de usuario, equidad, transparencia, SonnaLab"
+  },
+  "hero": {
+    "badge": "Nuestras Apps Insignia",
+    "title": "Innovación al Servicio de sus Ambiciones",
+    "subtitle": "Descubra nuestro ecosistema de aplicaciones diseñadas para convertir sus retos en oportunidades"
+  },
+  "stats": {
+    "users": { "value": "11K+", "label": "Usuarios Activos" },
+    "projects": { "value": "+03", "label": "Aplicaciones Desplegadas" },
+    "satisfaction": { "value": "94%", "label": "Satisfacción del Cliente" },
+    "uptime": { "value": "99.9%", "label": "Disponibilidad" }
+  },
+  "lescopr": {
+    "badge": "Monitorización de Aplicaciones",
+    "title": "Lescopr",
+    "tagline": "El Observador Inteligente para su Infraestructura",
+    "description": "Lescopr es la plataforma de monitorización diseñada para equipos modernos. Anticipe errores antes de que impacten a sus usuarios con análisis en tiempo real e integración rápida en todos sus entornos.",
+    "features": {
+      "title": "Funcionalidades Clave",
+      "list": ["Logs inteligentes y contextuales","Dashboards dinámicos","Análisis predictivo integrado","Soporte multi-stack (Node, PHP, Django, Laravel)","Integraciones con Slack, Jira, Teams, Discord","Modo oscuro/claro adaptativo"]
+    },
+    "tech": { "title": "Tecnologías", "stack": ["React","Node.js","PostgreSQL","Python","Redis","WebSocket"] },
+    "highlights": ["Interfaz clara y moderna","Instalación simplificada","Widgets de monitorización listos para usar","Actualizaciones continuas"],
+    "cta": { "visit": "Descubrir Lescopr", "demo": "Iniciar Prueba Gratuita" }
+  },
+  "lebocheur": {
+    "badge": "Plataforma Educativa",
+    "title": "Lebocheur",
+    "tagline": "Estudia Menos, Aprende Más",
+    "description": "Lebocheur revoluciona la forma de estudiar. Acceda instantáneamente a miles de exámenes y soluciones detalladas, desde primaria hasta la universidad.",
+    "features": {
+      "title": "Funcionalidades Clave",
+      "list": ["Biblioteca con +10K exámenes y soluciones","Soluciones detalladas y metodológicas","Interfaz sin distracciones","Sistema de favoritos y guardado","Contenido adaptado a cada nivel","Comunidad de soporte activa"]
+    },
+    "tech": { "title": "Tecnologías", "stack": ["React Native","Django","PostgreSQL","AWS","Elasticsearch"] },
+    "highlights": ["1K+ usuarios activos","86% reseñas positivas","Actualizaciones de contenido regulares","Disponible en iOS y Android"],
+    "cta": { "visit": "Descubrir Lebocheur", "demo": "Descargar la App" }
+  },
+  "lecolt": {
+    "badge": "Economía Creativa",
+    "title": "Lecolt",
+    "tagline": "El Arte en su Forma más Pura",
+    "description": "Lecolt redefine la economía artística. Una plataforma justa que conecta artistas, fans y organizadores, garantizando una remuneración equitativa y un ingreso mínimo para cada creador mediante un modelo de solidaridad único.",
+    "features": {
+      "title": "Próximas Funcionalidades",
+      "list": ["Contenido de vídeo corto exclusivo para artistas","Sistema de reservas simplificado","Fondo de solidaridad con ingresos garantizados","Red interdisciplinar (música, danza, artes visuales)","Economía circular y equitativa","Comunidad selectiva y auténtica"]
+    },
+    "tech": { "title": "Tecnologías Planificadas", "stack": ["React Native","Node.js","MongoDB","Stripe","AI/ML","WebRTC"] },
+    "highlights": ["Modelo de solidaridad innovador","Remuneración equitativa garantizada","Experiencia auténtica sin intermediarios","Enfoque en calidad sobre cantidad"],
+    "cta": { "visit": "Visitar Lecolt", "notify": "Unirse a la Lista de Espera", "learn": "Saber Más" },
+    "launch": "Lanzamiento previsto: Primavera 2026"
+  },
+  "ecosystem": {
+    "title": "Un Ecosistema Cohesivo",
+    "subtitle": "Tres aplicaciones, una visión: convertir los retos en soluciones sostenibles",
+    "items": [
+      { "title": "Tecnología Punta", "description": "Cada aplicación utiliza tecnologías de alto rendimiento para garantizar fiabilidad y escalabilidad" },
+      { "title": "Experiencia de Usuario", "description": "Interfaces diseñadas para ser intuitivas, elegantes y sin fricción" },
+      { "title": "Equidad y Transparencia", "description": "Nuestros modelos de negocio promueven la equidad y la transparencia para todos los usuarios" }
+    ]
+  },
+  "cta": {
+    "title": "¿Listo para unirse a la aventura?",
+    "description": "Estudiantes, artistas o emprendedores: nuestras soluciones se adaptan a sus necesidades.",
+    "button": "Agendar una Demo",
+    "contact": "Contáctenos"
+  }
+}

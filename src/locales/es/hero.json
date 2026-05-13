@@ -1,0 +1,43 @@
+{
+  "title": "El laboratorio de ideas que transforma lo digital",
+  "subtitle": "Creamos soluciones tecnológicas innovadoras para impulsar su empresa hacia el futuro",
+  "description": "De la idea al despliegue, transformamos sus ambiciones en realidad digital gracias a nuestra experiencia en desarrollo, diseño y estrategia.",
+  "cta": {
+    "primary": "Iniciar un proyecto",
+    "secondary": "Descubrir nuestros servicios",
+    "search": "Buscar"
+  },
+  "search": {
+    "placeholder": "Buscar un servicio web, móvil, chatbot...",
+    "noResults": "Ningún servicio encontrado para",
+    "tryOther": "Pruebe otras palabras clave o inicie un proyecto personalizado",
+    "button": "Buscar"
+  },
+  "services": {
+    "web": {
+      "title": "Aplicación Web",
+      "description": "Sitios web, PWA, SaaS & E-commerce"
+    },
+    "mobile": {
+      "title": "Aplicación Móvil",
+      "description": "iOS, Android & React Native"
+    },
+    "ai": {
+      "title": "Inteligencia Artificial",
+      "description": "Chatbots, ML & Automatización"
+    },
+    "consulting": {
+      "title": "Consultoría & Auditoría",
+      "description": "Experiencia técnica & Estrategia digital"
+    },
+    "other": {
+      "title": "Otros Servicios",
+      "description": "DevOps, Cloud & Mantenimiento"
+    }
+  },
+  "stats": {
+    "projects": "Proyectos completados",
+    "clients": "Clientes satisfechos",
+    "expertise": "Años de experiencia"
+  }
+}

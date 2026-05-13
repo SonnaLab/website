@@ -20,7 +20,7 @@ function getArticleBodyContent(content: string): string {
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
   const { t, i18n } = useTranslation('blog');
-  const lang = i18n.language.startsWith('en') ? 'en' : 'fr';
+  const lang = i18n.language.substring(0, 2);
   const navigate = useNavigate();
   
   const [post, setPost] = useState<BlogPostType | null>(null);
@@ -37,17 +37,17 @@ export default function BlogPost() {
       
       setLoading(true);      
       try {
-        const response = await apiService.getBlogPost(slug);
+        const response = await apiService.getBlogPost(slug, { locale: lang });
         const fetchedPost = response.post;
 
         if (fetchedPost) {
           setPost(fetchedPost);
-          const relatedResponse = await apiService.getBlogPosts({ category: fetchedPost.category, limit: 4 });
+          const relatedResponse = await apiService.getBlogPosts({ category: fetchedPost.category, limit: 4, locale: lang });
           let relatedCandidates = (relatedResponse.posts ?? []).filter(p => p.id !== fetchedPost.id);
 
           if (relatedCandidates.length < 3) {
             try {
-              const complementaryResponse = await apiService.getBlogPosts({ limit: 6 });
+              const complementaryResponse = await apiService.getBlogPosts({ limit: 6, locale: lang });
               const complementaryPosts = (complementaryResponse.posts ?? []).filter((candidate) => (
                 candidate.id !== fetchedPost.id &&
                 !relatedCandidates.some((relatedPost) => relatedPost.id === candidate.id)
@@ -177,7 +177,7 @@ export default function BlogPost() {
             {/* RIGHT SIDEBAR - Social Share */}
             <aside className="blog-social-sidebar">
               <div className="sticky-sidebar blog-right-rail">
-                <section className="blog-article-details-card" aria-label="Détails de l'article">
+                <section className="blog-article-details-card" aria-label={t('article.detailsLabel', "Article details")}>
                   <div className="blog-article-author flex items-center gap-3">
                     <div className="blog-article-author__avatar w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
                       <img src="/favicon.ico" alt="" width="24" height="24" aria-hidden="true" />
@@ -194,14 +194,14 @@ export default function BlogPost() {
                     <div>
                       <dt>
                         <ListChecks aria-hidden="true" />
-                        <span>Catégorie</span>
+                        <span>{t('article.category')}</span>
                       </dt>
                       <dd>{post.category}</dd>
                     </div>
                     <div>
                       <dt>
                         <CalendarDays aria-hidden="true" />
-                        <span>Publié le</span>
+                        <span>{t('article.publishedOn')}</span>
                       </dt>
                       <dd>
                         {new Date(post.publishedAt).toLocaleDateString(lang, {
@@ -214,7 +214,7 @@ export default function BlogPost() {
                     <div>
                       <dt>
                         <Clock3 aria-hidden="true" />
-                        <span>Lecture</span>
+                        <span>{t('article.readLabel')}</span>
                       </dt>
                       <dd>{post.readTime} min</dd>
                     </div>
@@ -234,7 +234,7 @@ export default function BlogPost() {
       <div className="blog-related-shell">
         <RelatedArticles
           articles={relatedPosts}
-          title="Articles qui pourraient vous intéresser"
+          title={t('article.relatedPosts')}
           lang={lang}
         />
       </div>

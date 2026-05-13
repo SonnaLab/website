@@ -1,0 +1,37 @@
+{
+  "banner": {
+    "title": "Usamos cookies",
+    "description": "Para mejorar su experiencia, utilizamos cookies esenciales y, con su consentimiento, cookies analíticas. Sus datos se procesan conforme al RGPD.",
+    "customize": "Personalizar",
+    "reject": "Rechazar todo",
+    "acceptAll": "Aceptar todo"
+  },
+  "settings": {
+    "title": "Preferencias de cookies",
+    "description": "Gestione sus preferencias de cookies. Puede cambiar estos ajustes en cualquier momento.",
+    "alwaysActive": "Siempre activo",
+    "categories": {
+      "essential": {
+        "title": "Cookies esenciales",
+        "description": "Estas cookies son necesarias para el funcionamiento del sitio web.",
+        "examples": ["Sesión de usuario", "Preferencias de idioma", "Seguridad CSRF", "Consentimiento de cookies"]
+      },
+      "analytics": {
+        "title": "Cookies analíticas",
+        "description": "Estas cookies nos ayudan a entender cómo interactúan los visitantes con el sitio.",
+        "examples": ["Páginas visitadas", "Tiempo de lectura", "Tasa de rebote", "Recorrido del usuario", "Rendimiento del sitio"]
+      },
+      "marketing": {
+        "title": "Cookies de marketing",
+        "description": "Estas cookies se utilizan para rastrear visitantes en los sitios web.",
+        "examples": ["Publicidad dirigida", "Retargeting", "Redes sociales", "Campañas de email"]
+      }
+    },
+    "cancel": "Cancelar",
+    "save": "Guardar mis preferencias"
+  },
+  "widget": {
+    "title": "Configuración de cookies",
+    "manage": "Gestionar cookies"
+  }
+}

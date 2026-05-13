@@ -1,0 +1,75 @@
+{
+  "seo": {
+    "title": "Blog | SonnaLab - Innovazione Digitale & IA",
+    "description": "Scoprite i nostri articoli sull'intelligenza artificiale, lo sviluppo web e la trasformazione digitale.",
+    "keywords": "blog tecnologia, IA, sviluppo web, trasformazione digitale, innovazione"
+  },
+  "hero": {
+    "badge": "Tendenze & Approfondimenti",
+    "title": "Rimanete aggiornati sulle ultime tendenze tecnologiche",
+    "subtitle": "Articoli, tutorial e casi studio per accompagnarvi nella vostra trasformazione digitale",
+    "description": ""
+  },
+  "categories": {
+    "all": "Tutti gli articoli",
+    "innovation": "Innovazione",
+    "coding": "Tecnologie",
+    "ia": "Intelligenza Artificiale",
+    "case-studies": "Casi Studio",
+    "ecology": "Ecologia",
+    "tips": "Consigli & Trucchi"
+  },
+  "search": {
+    "loading": "Caricamento...",
+    "placeholder": "Cerca un articolo...",
+    "results": "{{count}} articolo/i trovato/i",
+    "noResults": "Nessun articolo trovato"
+  },
+  "stats": {
+    "articles": "Articoli",
+    "categories": "Temi",
+    "page": "Pagina"
+  },
+  "article": {
+    "readTime": "{{time}} min di lettura",
+    "publishedOn": "Pubblicato il",
+    "updatedOn": "Aggiornato il",
+    "tableOfContents": "Indice",
+    "share": "Condividi questo articolo",
+    "relatedPosts": "Articoli correlati",
+    "relatedSubtitle": "Selezionati in base ai tuoi interessi — simili o complementari a ciò che hai appena letto.",
+    "readMore": "LEGGI ALTRO",
+    "category": "Categoria",
+    "readLabel": "Lettura",
+    "detailsLabel": "Dettagli dell'articolo"
+  },
+  "cta": {
+    "title": "Hai bisogno di una guida personalizzata?",
+    "description": "I nostri esperti sono qui per trasformare le tue sfide in opportunità.",
+    "button": "Prenota una chiamata"
+  },
+  "pagination": {
+    "previous": "Articolo precedente",
+    "next": "Articolo successivo",
+    "previousPage": "Precedente",
+    "nextPage": "Successivo"
+  },
+  "blogErrors": {
+    "loadPosts": "Errore nel caricamento degli articoli. Riprova più tardi.",
+    "articleDoesntExist": "Articolo non trovato.",
+    "notFound": "Ci dispiace, l'articolo che stai cercando non esiste o è stato spostato.",
+    "goBack": "Torna al blog"
+  },
+  "breadcrumb": {
+    "home": "Home",
+    "blog": "Blog"
+  },
+  "share": {
+    "title": "Condividi",
+    "subtitle": "Condividi questo articolo",
+    "twitter": "Condividi su Twitter",
+    "linkedin": "Condividi su LinkedIn",
+    "copyLink": "Copia link",
+    "copied": "Copiato!"
+  }
+}

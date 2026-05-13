@@ -1,0 +1,52 @@
+{
+  "title": "Nuestros Servicios",
+  "subtitle": "De la concepción al lanzamiento, creamos soluciones digitales a medida que cumplen sus objetivos empresariales.",
+  "cta": {
+    "more": "Saber más",
+    "all": "Ver todos los servicios"
+  },
+  "items": [
+    {
+      "icon": "globe",
+      "title": "Sitios Web",
+      "description": "Sitios web corporativos e institucionales modernos y de alto rendimiento",
+      "tests": ["Landing Page", "Sitio Vitrina", "Sitio Corporativo", "Portfolio"],
+      "turnaround": "2-4 semanas"
+    },
+    {
+      "icon": "smartphone",
+      "title": "Aplicaciones Móviles",
+      "description": "Apps nativas y multiplataforma para iOS y Android",
+      "tests": ["App Nativa", "React Native", "Flutter", "PWA"],
+      "turnaround": "6-12 semanas"
+    },
+    {
+      "icon": "shopping-cart",
+      "title": "E-commerce",
+      "description": "Soluciones completas y optimizadas de venta en línea",
+      "tests": ["Shopify", "WooCommerce", "Tienda Personalizada", "Marketplace"],
+      "turnaround": "4-8 semanas"
+    },
+    {
+      "icon": "palette",
+      "title": "Diseño UX/UI",
+      "description": "Diseño de interfaces modernas e intuitivas",
+      "tests": ["Wireframes", "Prototipos", "Design System", "Pruebas de Usuario"],
+      "turnaround": "1-3 semanas"
+    },
+    {
+      "icon": "bar-chart-3",
+      "title": "Estrategia Digital",
+      "description": "Consultoría y acompañamiento en su transformación digital",
+      "tests": ["Auditoría Digital", "Estrategia SEO", "Analytics", "Growth Hacking"],
+      "turnaround": "1-2 semanas"
+    },
+    {
+      "icon": "code",
+      "title": "Desarrollo Personalizado",
+      "description": "Soluciones a medida adaptadas a sus necesidades específicas",
+      "tests": ["API", "SaaS", "CRM", "Integraciones"],
+      "turnaround": "4-16 semanas"
+    }
+  ]
+}

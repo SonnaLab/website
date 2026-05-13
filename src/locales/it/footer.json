@@ -1,0 +1,63 @@
+{
+  "newsletter": {
+    "title": "Sempre all'avanguardia",
+    "description": "Ricevi i nostri approfondimenti tech, trend IA e analisi di mercato direttamente nella tua casella di posta.",
+    "inputPlaceholder": "Il tuo indirizzo email",
+    "subscribe": "Iscriviti",
+    "success": "Grazie per l'iscrizione!"
+  },
+  "company": {
+    "description": "Laboratorio di innovazione digitale: SonnaLab guida la tua trasformazione tecnologica, dalla consulenza strategica allo sviluppo di app personalizzate.",
+    "address": { "line1": "Station F, Parigi", "line2": "Parigi, Francia" },
+    "contact": { "email": "contact@sonnalab.com", "phone": "+33 07 53 31 56 03" }
+  },
+  "sections": {
+    "about": {
+      "title": "Chi siamo?",
+      "links": [
+        { "label": "Chi siamo", "href": "/#about" },
+        { "label": "I Nostri Servizi", "href": "/#services" },
+        { "label": "Portfolio", "href": "/#projects" },
+        { "label": "Blog Tech", "href": "/blog" },
+        { "label": "Contatti", "href": "/contact" }
+      ]
+    },
+    "services": {
+      "title": "Cosa facciamo?",
+      "links": [
+        { "label": "Sviluppo Web", "href": "/#services" },
+        { "label": "App Mobile", "href": "/#services" },
+        { "label": "Consulenza Tech", "href": "/#services" },
+        { "label": "Design UI/UX", "href": "/#services" },
+        { "label": "E-commerce", "href": "/#services" },
+        { "label": "Intelligenza Artificiale", "href": "/#services" }
+      ]
+    },
+    "legal": {
+      "title": "Informazioni Legali",
+      "links": [
+        { "label": "Informativa sulla Privacy", "href": "/legal/privacy" },
+        { "label": "Termini di Servizio", "href": "/legal/terms" },
+        { "label": "Politica della Qualità", "href": "/legal/quality" },
+        { "label": "Note Legali", "href": "/legal/notice" },
+        { "label": "Cookie", "href": "/legal/cookies" },
+        { "label": "Proprietà Intellettuale", "href": "/legal/intellectual-property" }
+      ]
+    }
+  },
+  "social": {
+    "title": "Seguici",
+    "description": "Unisciti alla nostra community",
+    "links": {
+      "linkedin": "https://linkedin.com/company/sonnalab",
+      "twitter": "https://twitter.com/sonnalab",
+      "github": "https://github.com/sonnalab",
+      "instagram": "https://instagram.com/sonnalab"
+    }
+  },
+  "bottom": {
+    "copyright": "© {{year}} SonnaLab. Tutti i diritti riservati.",
+    "certifications": ["French Tech", "ISO 27001", "GDPR Conforme"],
+    "madeWith": "#fromIdeaToInnovation"
+  }
+}

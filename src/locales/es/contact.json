@@ -1,0 +1,55 @@
+{
+  "seo": {
+    "title": "Contacto - Hablemos de su Proyecto",
+    "description": "Póngase en contacto con SonnaLab para hablar de su proyecto digital.",
+    "keywords": "contacto, proyecto digital, SonnaLab, consultoría tecnológica"
+  },
+  "hero": {
+    "header": "Hablemos de Negocios",
+    "title": "Transformemos su Visión en Realidad",
+    "subtitle": "¿Una pregunta? ¿Un proyecto? Nuestro equipo de expertos está aquí para guiarle en cada paso de su transformación digital."
+  },
+  "form": {
+    "first_name": { "label": "Nombre", "placeholder": "¿Cómo debemos llamarle?" },
+    "last_name": { "label": "Apellidos", "placeholder": "¿Cuál es su apellido?" },
+    "email": { "label": "Correo electrónico", "placeholder": "usted@empresa.com" },
+    "phone": { "label": "Teléfono", "placeholder": "+34 600 123 456" },
+    "company": { "label": "Empresa", "placeholder": "Nombre de su empresa" },
+    "role": { "label": "Su Rol", "placeholder": "CTO, CEO, Product Manager..." },
+    "project_type": {
+      "label": "Tipo de Proyecto",
+      "placeholder": "Seleccione su necesidad",
+      "options": ["Aplicación Web", "Aplicación Móvil", "E-commerce", "Consultoría CTO", "IA & Innovación", "Otro"]
+    },
+    "budget": {
+      "label": "Presupuesto Estimado",
+      "placeholder": "Seleccione su presupuesto",
+      "options": ["< €10K", "€10K - €25K", "€25K - €50K", "€50K - €100K", "> €100K"]
+    },
+    "message": { "label": "Cuéntenos su Proyecto", "placeholder": "Describa sus objetivos y desafíos..." },
+    "submit": "Iniciar la Conversación",
+    "submitting": "Enviando...",
+    "success": "¡Gracias! Le responderemos en 24h.",
+    "error": "Ocurrió un error. Por favor, inténtelo de nuevo."
+  },
+  "info": {
+    "email": { "title": "Email Directo", "value": "contact@sonnalab.com", "description": "Respuesta garantizada en 24h" },
+    "phone": { "title": "Llámenos", "value": "+33 07 53 31 56 03", "description": "Lun-Vie, 9-18h" },
+    "address": { "title": "Nuestra Oficina", "value": "Station F, París", "description": "El campus de startups más grande del mundo" },
+    "availability": { "title": "Disponibilidad", "schedule": "Lun - Vie: 9h - 18h", "response": "Respuesta en 24h", "emergency": "¿Urgente? ¡Déjenos un mensaje!" }
+  },
+  "cta": {
+    "title": "¿Listo para Innovar?",
+    "description": "Únase a más de 100 empresas que confían en nosotros para su transformación digital.",
+    "button": "Reservar una Cita"
+  },
+  "validation": {
+    "name": { "required": "El nombre es obligatorio", "min": "El nombre debe tener al menos {{count}} caracteres", "max": "El nombre no puede superar {{count}} caracteres", "regex": "El nombre solo puede contener letras" },
+    "email": { "required": "El correo es obligatorio", "invalid": "Dirección de correo inválida", "max": "El correo es demasiado largo" },
+    "phone": { "required": "El teléfono es obligatorio", "invalid": "Número de teléfono inválido", "min": "El teléfono es demasiado corto", "max": "El teléfono es demasiado largo" },
+    "company": { "required": "El nombre de la empresa es obligatorio", "min": "Debe tener al menos {{count}} caracteres", "max": "No puede superar {{count}} caracteres" },
+    "projectType": { "required": "Seleccione un tipo de proyecto" },
+    "budget": { "required": "Seleccione un presupuesto" },
+    "message": { "required": "El mensaje es obligatorio", "min": "El mensaje debe tener al menos {{count}} caracteres", "max": "El mensaje no puede superar {{count}} caracteres" }
+  }
+}

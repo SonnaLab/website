@@ -1,0 +1,75 @@
+{
+  "step": { "type": "Projektart", "details": "Details", "contact": "Kontakt", "confirmation": "Bestätigung" },
+  "projectType": {
+    "title": "Welche Art von Projekt möchten Sie starten?",
+    "subtitle": "Wählen Sie die Projektart, die am besten zu Ihren Bedürfnissen passt",
+    "web": "Webanwendung", "webDesc": "Website, PWA, SaaS, E-Commerce",
+    "mobile": "Mobile App", "mobileDesc": "iOS, Android, React Native",
+    "consulting": "Beratung", "consultingDesc": "Audit, technischer Rat",
+    "ai": "Künstliche Intelligenz", "aiDesc": "Chatbots, ML, Automatisierung",
+    "other": "Anderes Projekt", "otherDesc": "Individuelles Projekt"
+  },
+  "details": {
+    "title": "Erzählen Sie uns von Ihrem Projekt",
+    "subtitle": "Je mehr Sie uns mitteilen, desto besser können wir helfen",
+    "descriptionLabel": "Projektbeschreibung",
+    "descriptionPlaceholder": "Beschreiben Sie Ihr Projekt, Ihre Ziele und spezifischen Anforderungen...",
+    "descriptionRequired": "*",
+    "charactersCount": "{{count}} / 500 Zeichen",
+    "budgetLabel": "Geschätztes Budget",
+    "timelineLabel": "Gewünschter Zeitrahmen",
+    "budget": {
+      "small": "< €10K", "smallDesc": "Kleines Projekt",
+      "medium": "€10K - €50K", "mediumDesc": "Mittleres Projekt",
+      "large": "€50K - €150K", "largeDesc": "Großes Projekt",
+      "enterprise": "> €150K", "enterpriseDesc": "Enterprise"
+    },
+    "timeline": {
+      "urgent": "< 1 Monat", "urgentDesc": "Dringend",
+      "1-3months": "1-3 Monate", "1-3monthsDesc": "Kurzfristig",
+      "3-6months": "3-6 Monate", "3-6monthsDesc": "Mittelfristig",
+      "6months+": "> 6 Monate", "6months+Desc": "Langfristig"
+    }
+  },
+  "contact": {
+    "title": "Ihre Kontaktdaten",
+    "subtitle": "Damit wir uns schnell bei Ihnen melden können",
+    "firstName": "Vorname", "firstNamePlaceholder": "Max",
+    "lastName": "Nachname", "lastNamePlaceholder": "Mustermann",
+    "email": "E-Mail", "emailPlaceholder": "max.mustermann@beispiel.de",
+    "phone": "Telefon", "phonePlaceholder": "+49 170 1234567",
+    "company": "Unternehmen", "companyPlaceholder": "Ihr Unternehmensname",
+    "role": "Rolle", "rolePlaceholder": "CEO, CTO, Product Manager...",
+    "required": "*"
+  },
+  "confirmation": {
+    "title": "Angaben überprüfen",
+    "subtitle": "Stellen Sie sicher, dass alles korrekt ist, bevor Sie die Anfrage absenden",
+    "projectTypeLabel": "Projektart",
+    "descriptionLabel": "Beschreibung",
+    "budgetLabel": "Budget",
+    "timelineLabel": "Zeitrahmen",
+    "contactLabel": "Ihre Kontaktdaten",
+    "successTitle": "Anfrage erfolgreich gesendet!",
+    "successDesc": "Wir haben Ihre Anfrage erhalten und werden uns in Kürze bei Ihnen melden.",
+    "emailSent": "📧 Eine Bestätigungs-E-Mail wurde gesendet an",
+    "sending": "Wird gesendet..."
+  },
+  "cta": {
+    "next": "Weiter", "prev": "Zurück",
+    "send": "Anfrage senden", "sending": "Wird gesendet...", "close": "Schließen"
+  },
+  "accessibility": {
+    "modalTitle": "Neue Projektanfrage - Schritt {{step}} von {{total}}",
+    "modalTitleSuccess": "Anfrage erfolgreich gesendet",
+    "modalDescription": "Füllen Sie das mehrstufige Formular aus, um Ihr Projekt mit uns zu starten.",
+    "modalDescriptionSuccess": "Ihre Anfrage wurde erfolgreich gesendet. Wir werden Sie bald kontaktieren.",
+    "closeButton": "Modal schließen"
+  },
+  "errors": {
+    "serverError": "Fehler {{status}}: {{message}}",
+    "networkError": "Server nicht erreichbar. Überprüfen Sie Ihre Verbindung.",
+    "genericError": "Beim Senden ist ein Fehler aufgetreten.",
+    "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten."
+  }
+}

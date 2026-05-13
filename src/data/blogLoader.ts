@@ -82,7 +82,7 @@ export function getBlogPostsByCategory(category: string, lang: 'fr' | 'en'): Omi
 
 export function getBlogPosts(): Promise<BlogPost[]> {
   initializeMetadata();
-  const loadPromises = Array.from(metadataCache.values()).map(meta => getBlogPost(meta.slug, meta.lang));
+  const loadPromises = Array.from(metadataCache.values()).map(meta => getBlogPost(meta.slug, meta.lang as 'fr' | 'en'));
   return Promise.all(loadPromises).then(posts => posts.filter((p): p is BlogPost => p !== undefined));
 }
 

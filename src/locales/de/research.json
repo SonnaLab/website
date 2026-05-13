@@ -1,0 +1,71 @@
+{
+  "title": "Forschung & Entwicklung",
+  "subtitle": "Unser Innovationslabor erforscht aufkommende Technologien, um die Lösungen von morgen zu schaffen.",
+  "areas": [
+    {
+      "title": "Künstliche Intelligenz",
+      "description": "Entwicklung fortschrittlicher KI-Algorithmen zur Optimierung von Geschäftsprozessen",
+      "technologies": ["Machine Learning", "Deep Learning", "NLP"],
+      "status": "In Progress",
+      "icon": "Brain",
+      "color": "text-blue-600"
+    },
+    {
+      "title": "Blockchain & Web3",
+      "description": "Erforschung dezentraler Technologien für Datensicherheit und transparente Transaktionen",
+      "technologies": ["Ethereum", "Smart Contracts", "DeFi"],
+      "status": "Research",
+      "icon": "Blocks",
+      "color": "text-purple-600"
+    },
+    {
+      "title": "Cloud Computing",
+      "description": "Innovation in nativen Cloud-Architekturen, Serverless und Edge Computing",
+      "technologies": ["Kubernetes", "Microservices", "Edge Computing"],
+      "status": "Development",
+      "icon": "Cloud",
+      "color": "text-cyan-600"
+    },
+    {
+      "title": "Cybersicherheit",
+      "description": "Forschung in fortschrittlicher Cybersicherheit und proaktivem Schutz digitaler Infrastrukturen",
+      "technologies": ["Zero Trust", "Kryptographie", "Bedrohungserkennung"],
+      "status": "In Progress",
+      "icon": "Shield",
+      "color": "text-red-600"
+    },
+    {
+      "title": "Quantencomputing",
+      "description": "Erforschung von Quantenalgorithmen zur Lösung komplexer Rechenprobleme",
+      "technologies": ["Qubits", "Quantenalgorithmen", "Post-Quantum-Kryptographie"],
+      "status": "Research",
+      "icon": "FlaskConical",
+      "color": "text-green-600"
+    },
+    {
+      "title": "IoT & Edge AI",
+      "description": "Entwicklung intelligenter IoT-Lösungen mit Edge-Verarbeitung",
+      "technologies": ["Edge AI", "Sensoren", "Echtzeit-Analyse"],
+      "status": "Development",
+      "icon": "Rocket",
+      "color": "text-orange-600"
+    }
+  ],
+  "partners": [
+    {
+      "icon": "University",
+      "title": "Partneruniversitäten",
+      "description": "Zusammenarbeit mit führenden Universitäten"
+    },
+    {
+      "icon": "FlaskConical",
+      "title": "Innovationslabore",
+      "description": "Fortgeschrittenes Forschungs- und Entwicklungsökosystem"
+    },
+    {
+      "icon": "Rocket",
+      "title": "Tech-Startups",
+      "description": "Partnerschaften mit innovativen Startup-Ökosystemen"
+    }
+  ]
+}

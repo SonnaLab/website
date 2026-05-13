@@ -133,7 +133,7 @@ export function Header() {
           <Button 
             size="sm"
             asChild
-            className="bg-black hover:bg-gray-800 text-white transition-all duration-300"
+            className="text-white transition-all duration-300"
           >
             <Link to={ctaHref}>{ctaLabel}<CtaIcon className="ml-2 h-7 w-7" /></Link>
           </Button>
@@ -199,7 +199,7 @@ export function Header() {
                 {/* Language Switcher */}
                 <div className="space-y-3">
                   <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-2">
-                    Langue
+                    {t('mobile.languageLabel')}
                   </p>
                   <LanguageSwitcher />
                 </div>
@@ -215,7 +215,7 @@ export function Header() {
                 {/* Contact Info */}
                 <div className="space-y-3 pt-4 border-t border-gray-200">
                   <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-2">
-                    Contact
+                    {t('mobile.contactLabel')}
                   </p>
                   <div className="space-y-2.5">
                     <a 

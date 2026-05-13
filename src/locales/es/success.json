@@ -1,0 +1,18 @@
+{
+  "title": "Nuestros Logros",
+  "description": "Resultados concretos que demuestran nuestra experiencia y compromiso con la excelencia tecnológica.",
+  "metrics": [
+    { "icon": "Star", "value": "4.6/5", "label": "Valoración Media", "description": "Trustpilot & Google" },
+    { "icon": "Trophy", "value": "20+", "label": "Proyectos Completados", "description": "Soluciones Desplegadas" },
+    { "icon": "Target", "value": "3+", "label": "Soluciones Desplegadas", "description": "En producción" },
+    { "icon": "Users", "value": "98%", "label": "Clientes Satisfechos", "description": "Tasa de Satisfacción" },
+    { "icon": "ThumbsUp", "value": "92%", "label": "Nos Recomiendan", "description": "Recomendaciones Activas" }
+  ],
+  "banner": {
+    "items": [
+      { "value": "+{{experience}} años de experiencia", "caption": "En innovación tech" },
+      { "value": "3 aplicaciones clave", "caption": "AppOne, AppTwo, AppThree" },
+      { "value": "Soporte 24/7", "caption": "Asistencia continua" }
+    ]
+  }
+}

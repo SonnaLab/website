@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import { ArrowRight, CheckCircle2, Rocket, Smartphone } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Rocket } from 'lucide-react';
+import { useModal } from '@/components/providers/ModalProvider';
 
 type BlogDetailCTAVariant = 'diagnostic' | 'project';
 
@@ -11,34 +11,26 @@ interface BlogDetailCTAProps {
 const copy = {
   fr: {
     diagnostic: {
-      eyebrow: 'Diagnostic SonnaLab',
-      title: 'Vous voulez valider les choix techniques de votre projet ?',
-      text: 'On analyse votre stack, vos parcours et vos priorites pour clarifier les prochaines decisions produit.',
-      action: 'Demander un diagnostic',
-      chips: ['Audit stack', 'UX produit', 'Roadmap claire'],
+      title: 'Clarifier les choix techniques',
+      text: 'Un diagnostic court pour valider stack, UX et roadmap.',
+      action: 'Lancer le diagnostic',
     },
     project: {
-      eyebrow: 'Equipe produit',
-      title: 'Besoin de construire une application web performante ?',
-      text: 'SonnaLab accompagne la conception, le developpement et l optimisation de produits React, Next.js et SaaS.',
-      action: 'Parler du projet',
-      chips: ['React & Next.js', 'Performance', 'SEO technique'],
+      title: 'Construire une app performante',
+      text: 'On cadre et développe votre produit web avec une trajectoire nette.',
+      action: 'Ouvrir le brief',
     },
   },
   en: {
     diagnostic: {
-      eyebrow: 'SonnaLab diagnostic',
-      title: 'Want to validate your project technical choices?',
-      text: 'We review your stack, user flows, and product priorities so the next decisions are easier to make.',
-      action: 'Request a diagnostic',
-      chips: ['Stack audit', 'Product UX', 'Clear roadmap'],
+      title: 'Clarify technical choices',
+      text: 'A short diagnostic to validate stack, UX, and roadmap.',
+      action: 'Start the diagnostic',
     },
     project: {
-      eyebrow: 'Product team',
-      title: 'Need to build a high-performing web application?',
-      text: 'SonnaLab supports product design, development, and optimization for React, Next.js, and SaaS platforms.',
-      action: 'Talk about the project',
-      chips: ['React & Next.js', 'Performance', 'Technical SEO'],
+      title: 'Build a performant app',
+      text: 'We frame and develop your web product with a clear trajectory.',
+      action: 'Open the brief',
     },
   },
 } as const;
@@ -47,30 +39,25 @@ export function BlogDetailCTA({ variant, lang = 'fr' }: BlogDetailCTAProps) {
   const locale = lang.startsWith('en') ? 'en' : 'fr';
   const content = copy[locale][variant];
   const Icon = variant === 'diagnostic' ? CheckCircle2 : Rocket;
-  const BadgeIcon = variant === 'diagnostic' ? Smartphone : Rocket;
+  const { openConsultationModal } = useModal();
 
   return (
-    <aside className={`blog-detail-cta blog-detail-cta--${variant}`} aria-label={content.eyebrow}>
+    <aside className={`blog-detail-cta blog-detail-cta--${variant}`} aria-label={content.title}>
       <div className="blog-detail-cta__icon" aria-hidden="true">
         <Icon />
       </div>
       <div className="blog-detail-cta__body">
-        <span className="blog-detail-cta__eyebrow">
-          <BadgeIcon aria-hidden="true" />
-          {content.eyebrow}
-        </span>
         <p className="blog-detail-cta__title">{content.title}</p>
         <p className="blog-detail-cta__text">{content.text}</p>
-        <div className="blog-detail-cta__chips" aria-hidden="true">
-          {content.chips.map((chip) => (
-            <span key={chip}>{chip}</span>
-          ))}
-        </div>
+        <button
+          type="button"
+          className="blog-detail-cta__button"
+          onClick={() => openConsultationModal()}
+        >
+          <span>{content.action}</span>
+          <ArrowRight aria-hidden="true" />
+        </button>
       </div>
-      <Link to="/contact" className="blog-detail-cta__button">
-        <span>{content.action}</span>
-        <ArrowRight aria-hidden="true" />
-      </Link>
     </aside>
   );
 }

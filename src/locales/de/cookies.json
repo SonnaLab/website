@@ -1,0 +1,37 @@
+{
+  "banner": {
+    "title": "Wir verwenden Cookies",
+    "description": "Um Ihre Erfahrung zu verbessern, verwenden wir essentielle Cookies und, mit Ihrer Zustimmung, Analyse-Cookies. Ihre Daten werden DSGVO-konform verarbeitet.",
+    "customize": "Anpassen",
+    "reject": "Alle ablehnen",
+    "acceptAll": "Alle akzeptieren"
+  },
+  "settings": {
+    "title": "Cookie-Einstellungen",
+    "description": "Verwalten Sie Ihre Cookie-Einstellungen. Sie können diese jederzeit ändern.",
+    "alwaysActive": "Immer aktiv",
+    "categories": {
+      "essential": {
+        "title": "Essentielle Cookies",
+        "description": "Diese Cookies sind für die Funktion der Website notwendig.",
+        "examples": ["Benutzersitzung", "Spracheinstellungen", "CSRF-Sicherheit", "Cookie-Zustimmung"]
+      },
+      "analytics": {
+        "title": "Analyse-Cookies",
+        "description": "Diese Cookies helfen uns zu verstehen, wie Besucher die Website nutzen.",
+        "examples": ["Besuchte Seiten", "Lesezeit", "Absprungrate", "Benutzerreise", "Site-Performance"]
+      },
+      "marketing": {
+        "title": "Marketing-Cookies",
+        "description": "Diese Cookies werden verwendet, um Besucher auf Websites zu verfolgen.",
+        "examples": ["Zielgerichtete Werbung", "Retargeting", "Soziale Netzwerke", "E-Mail-Kampagnen"]
+      }
+    },
+    "cancel": "Abbrechen",
+    "save": "Meine Einstellungen speichern"
+  },
+  "widget": {
+    "title": "Cookie-Einstellungen",
+    "manage": "Cookies verwalten"
+  }
+}

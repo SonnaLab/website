@@ -1,0 +1,75 @@
+{
+  "seo": {
+    "title": "Blog | SonnaLab - Digitale Innovation & KI",
+    "description": "Entdecken Sie unsere Artikel über künstliche Intelligenz, Webentwicklung und digitale Transformation.",
+    "keywords": "Tech-Blog, KI, Webentwicklung, digitale Transformation, Innovation"
+  },
+  "hero": {
+    "badge": "Einblicke & Trends",
+    "title": "Bleiben Sie über die neuesten Technologietrends informiert",
+    "subtitle": "Artikel, Tutorials und Fallstudien für Ihre digitale Transformation",
+    "description": ""
+  },
+  "categories": {
+    "all": "Alle Artikel",
+    "innovation": "Innovation",
+    "coding": "Technologien",
+    "ia": "Künstliche Intelligenz",
+    "case-studies": "Fallstudien",
+    "ecology": "Ökologie",
+    "tips": "Tipps & Tricks"
+  },
+  "search": {
+    "loading": "Laden...",
+    "placeholder": "Artikel suchen...",
+    "results": "{{count}} Artikel gefunden",
+    "noResults": "Keine Artikel gefunden"
+  },
+  "stats": {
+    "articles": "Artikel",
+    "categories": "Themen",
+    "page": "Seite"
+  },
+  "article": {
+    "readTime": "{{time}} Min. Lesezeit",
+    "publishedOn": "Veröffentlicht am",
+    "updatedOn": "Aktualisiert am",
+    "tableOfContents": "Inhaltsverzeichnis",
+    "share": "Artikel teilen",
+    "relatedPosts": "Verwandte Artikel",
+    "relatedSubtitle": "Ausgewählt nach Ihren Interessen — ähnlich oder ergänzend zu dem, was Sie gerade gelesen haben.",
+    "readMore": "WEITERLESEN",
+    "category": "Kategorie",
+    "readLabel": "Lesezeit",
+    "detailsLabel": "Artikeldetails"
+  },
+  "cta": {
+    "title": "Persönliche Beratung gewünscht?",
+    "description": "Unsere Experten helfen Ihnen, Ihre Herausforderungen in Chancen zu verwandeln.",
+    "button": "Gespräch vereinbaren"
+  },
+  "pagination": {
+    "previous": "Vorheriger Artikel",
+    "next": "Nächster Artikel",
+    "previousPage": "Zurück",
+    "nextPage": "Weiter"
+  },
+  "blogErrors": {
+    "loadPosts": "Fehler beim Laden der Artikel. Bitte versuchen Sie es später erneut.",
+    "articleDoesntExist": "Artikel nicht gefunden.",
+    "notFound": "Der gesuchte Artikel existiert nicht oder wurde verschoben.",
+    "goBack": "Zurück zum Blog"
+  },
+  "breadcrumb": {
+    "home": "Startseite",
+    "blog": "Blog"
+  },
+  "share": {
+    "title": "Teilen",
+    "subtitle": "Diesen Artikel teilen",
+    "twitter": "Auf Twitter teilen",
+    "linkedin": "Auf LinkedIn teilen",
+    "copyLink": "Link kopieren",
+    "copied": "Kopiert!"
+  }
+}

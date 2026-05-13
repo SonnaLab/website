@@ -1,0 +1,31 @@
+{
+  "title": "Il Nostro Processo",
+  "subtitle": "Un metodo collaudato per risultati garantiti",
+  "steps": [
+    {
+      "title": "Scoperta",
+      "description": "Analizziamo le tue esigenze, i tuoi obiettivi e il mercato per definire la migliore strategia.",
+      "duration": "1-2 settimane"
+    },
+    {
+      "title": "Design",
+      "description": "I nostri designer creano mockup interattivi validati con te ad ogni passo.",
+      "duration": "2-4 settimane"
+    },
+    {
+      "title": "Sviluppo",
+      "description": "Il nostro team sviluppa la tua soluzione con le migliori tecnologie e pratiche.",
+      "duration": "4-12 settimane"
+    },
+    {
+      "title": "Lancio",
+      "description": "Distribuiamo, testiamo e ottimizziamo il tuo progetto per un lancio di successo.",
+      "duration": "1-2 settimane"
+    }
+  ],
+  "cta": {
+    "ready": "Pronti a iniziare?",
+    "discuss": "Parliamo del tuo progetto e trasformiamo le tue idee in realtà.",
+    "contact": "Parliamone"
+  }
+}

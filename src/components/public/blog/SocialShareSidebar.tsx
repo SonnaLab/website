@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   Share2, 
   Twitter, 
@@ -15,6 +16,7 @@ interface SocialShareSidebarProps {
 }
 
 export function SocialShareSidebar({ url, title, excerpt }: SocialShareSidebarProps) {
+  const { t } = useTranslation('blog');
   const [copied, setCopied] = useState(false);
 
   const shareLinks = {
@@ -44,8 +46,8 @@ export function SocialShareSidebar({ url, title, excerpt }: SocialShareSidebarPr
       <div className="blog-share-card__header">
         <Share2 aria-hidden="true" />
         <div>
-          <h3>Partager</h3>
-          <p>Partagez cet article</p>
+          <h3>{t('share.title')}</h3>
+          <p>{t('share.subtitle')}</p>
         </div>
       </div>
       
@@ -56,8 +58,8 @@ export function SocialShareSidebar({ url, title, excerpt }: SocialShareSidebarPr
           size="icon"
           onClick={() => handleShare('twitter')}
           className="blog-share-card__action hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-all"
-          aria-label="Partager sur Twitter"
-          title="Partager sur Twitter"
+          aria-label={t('share.twitter')}
+          title={t('share.twitter')}
         >
           <Twitter aria-hidden="true" />
         </Button>
@@ -68,8 +70,8 @@ export function SocialShareSidebar({ url, title, excerpt }: SocialShareSidebarPr
           size="icon"
           onClick={() => handleShare('linkedin')}
           className="blog-share-card__action hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 transition-all"
-          aria-label="Partager sur LinkedIn"
-          title="Partager sur LinkedIn"
+          aria-label={t('share.linkedin')}
+          title={t('share.linkedin')}
         >
           <Linkedin aria-hidden="true" />
         </Button>
@@ -80,8 +82,8 @@ export function SocialShareSidebar({ url, title, excerpt }: SocialShareSidebarPr
           size="icon"
           onClick={handleCopyLink}
           className={`blog-share-card__action ${copied ? 'blog-share-card__action--copied' : ''} hover:bg-gray-50 transition-all`}
-          aria-label={copied ? 'Lien copié' : 'Copier le lien'}
-          title={copied ? 'Lien copié' : 'Copier le lien'}
+          aria-label={copied ? t('share.copied') : t('share.copyLink')}
+          title={copied ? t('share.copied') : t('share.copyLink')}
         >
           {copied ? (
             <Check aria-hidden="true" />

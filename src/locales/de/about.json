@@ -1,0 +1,40 @@
+{
+  "mission": {
+    "title": "Über uns",
+    "description": "SonnaLab ist das Ideenlabor, das digitale Ideen in die Realität umsetzt. Wir begleiten Unternehmen in ihrer technologischen Transformation und bieten innovative Lösungen von F&E bis zu konkreten Anwendungen. Unsere Mission: Ihr vertrauenswürdiger Partner in der Tech-Beratung."
+  },
+  "features": {
+    "column1": [
+      {
+        "title": "Kontinuierliche Innovation",
+        "description": "Forschung und Entwicklung im Tech-Ökosystem, von KI bis zu Chip-Fertigungsmaterialien."
+      },
+      {
+        "title": "Maßgeschneiderte Entwicklung",
+        "description": "Web- und Mobile-Apps, E-Commerce, UI/UX-Design – die volle Expertise einer modernen Agentur."
+      }
+    ],
+    "column2": [
+      {
+        "title": "Tech-Beratung",
+        "description": "CTO-Positionierung für Ihre Tech-Projekte mit anerkannter Expertise und bewährten Lösungen."
+      },
+      {
+        "title": "Gestartete Anwendungen",
+        "description": "AppOne, AppTwo, AppThree – unsere am Markt etablierten und bewährten Lösungen."
+      }
+    ]
+  },
+  "achievements": [
+    { "label": "20+", "description": "Abgeschlossene Projekte" },
+    { "label": "15+", "description": "Zufriedene Kunden" },
+    { "label": "15+", "description": "Beherrschte Technologien" },
+    { "label": "24/7", "description": "Kontinuierliche Innovation" }
+  ],
+  "cta": {
+    "title": "Bereit, Ihre Vision in die Realität umzusetzen?",
+    "description": "Schließen Sie sich den Unternehmen an, die SonnaLab für ihre digitale Transformation vertrauen.",
+    "primary": "Projekt starten",
+    "secondary": "Unsere Lösungen entdecken"
+  }
+}

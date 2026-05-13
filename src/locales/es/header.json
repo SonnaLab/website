@@ -17,7 +17,9 @@
   "mobile": {
     "phone": "+33 (0)7 53 31 56 03",
     "email": "contact@sonnalab.com",
-    "location": "París, Francia"
+    "location": "París, Francia",
+    "languageLabel": "Idioma",
+    "contactLabel": "Contacto"
   },
   "accessibility": {
     "menuTitle": "Menú de navegación",

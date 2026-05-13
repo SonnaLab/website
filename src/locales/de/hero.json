@@ -1,0 +1,43 @@
+{
+  "title": "Das Ideenlabor, das das Digitale transformiert",
+  "subtitle": "Wir schaffen innovative technologische Lösungen, um Ihr Unternehmen in die Zukunft zu führen",
+  "description": "Von der Idee bis zur Bereitstellung verwandeln wir Ihre Ambitionen in digitale Realität dank unserer Expertise in Entwicklung, Design und Strategie.",
+  "cta": {
+    "primary": "Projekt starten",
+    "secondary": "Unsere Leistungen entdecken",
+    "search": "Suchen"
+  },
+  "search": {
+    "placeholder": "Nach einem Web-, Mobile- oder Chatbot-Service suchen...",
+    "noResults": "Kein Service gefunden für",
+    "tryOther": "Versuchen Sie andere Begriffe oder starten Sie ein individuelles Projekt",
+    "button": "Suchen"
+  },
+  "services": {
+    "web": {
+      "title": "Webanwendung",
+      "description": "Websites, PWA, SaaS & E-Commerce"
+    },
+    "mobile": {
+      "title": "Mobile App",
+      "description": "iOS, Android & React Native"
+    },
+    "ai": {
+      "title": "Künstliche Intelligenz",
+      "description": "Chatbots, ML & Automatisierung"
+    },
+    "consulting": {
+      "title": "Beratung & Audit",
+      "description": "Technische Expertise & Digitalstrategie"
+    },
+    "other": {
+      "title": "Andere Leistungen",
+      "description": "DevOps, Cloud & Wartung"
+    }
+  },
+  "stats": {
+    "projects": "Abgeschlossene Projekte",
+    "clients": "Zufriedene Kunden",
+    "expertise": "Jahre Expertise"
+  }
+}

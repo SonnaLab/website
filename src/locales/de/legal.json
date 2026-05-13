@@ -1,0 +1,75 @@
+{
+  "privacy": {
+    "title": "Datenschutzrichtlinie",
+    "lastUpdate": "Zuletzt aktualisiert: 5. November 2025",
+    "sections": {
+      "intro": { "title": "Einleitung", "content": "SonnaLab (SONNALAB, RCS Cergy 920978210) verpflichtet sich, Ihre Privatsphäre zu schützen. Diese Richtlinie erklärt, wie wir Ihre personenbezogenen Daten erheben, verwenden und schützen." },
+      "dataCollection": { "title": "1. Erhobene Daten", "content": "Wir erheben folgende Informationen:", "items": ["Kontaktinformationen (Name, E-Mail, Telefon)","Projektinformationen (Beschreibung, Budget, Zeitrahmen)","Browsing-Daten (Cookies, Analysen)","Technische Daten (IP-Adresse, Browsertyp)"] },
+      "dataUsage": { "title": "2. Verwendung der Daten", "content": "Ihre Daten werden verwendet, um:", "items": ["Ihre Beratungsanfragen zu bearbeiten","Unsere Dienste zu verbessern","Ihnen Marketingmitteilungen zu senden (mit Einwilligung)","Unsere gesetzlichen Verpflichtungen zu erfüllen"] },
+      "dataProtection": { "title": "3. Datenschutz", "content": "Wir implementieren technische und organisatorische Sicherheitsmaßnahmen, um Ihre Daten vor unbefugtem Zugriff, Änderung, Offenlegung oder Vernichtung zu schützen." },
+      "rights": { "title": "4. Ihre Rechte (DSGVO)", "content": "Gemäß der DSGVO haben Sie folgende Rechte:", "items": ["Recht auf Zugang zu Ihren Daten","Recht auf Berichtigung","Recht auf Löschung ('Recht auf Vergessenwerden')","Recht auf Einschränkung der Verarbeitung","Recht auf Datenübertragbarkeit","Widerspruchsrecht"] },
+      "contact": { "title": "5. Kontakt", "content": "Für Fragen zu dieser Richtlinie oder zur Ausübung Ihrer Rechte kontaktieren Sie uns unter:", "email": "privacy@sonnalab.com", "dpo": "Datenschutzbeauftragter: legal@sonnalab.com" }
+    }
+  },
+  "terms": {
+    "title": "Nutzungsbedingungen",
+    "lastUpdate": "Zuletzt aktualisiert: 5. November 2025",
+    "sections": {
+      "acceptance": { "title": "1. Annahme der Bedingungen", "content": "Durch den Zugriff auf und die Nutzung der Dienste von SonnaLab erklären Sie sich mit diesen Nutzungsbedingungen einverstanden." },
+      "services": { "title": "2. Beschreibung der Dienste", "content": "SonnaLab bietet Entwicklung von Web- und Mobilanwendungen, künstliche Intelligenz und technische Beratungsdienstleistungen an." },
+      "license": { "title": "3. Nutzungslizenz", "content": "Wir gewähren Ihnen eine begrenzte, nicht-exklusive, nicht-übertragbare Lizenz zum Zugriff auf und zur Nutzung unserer Plattform gemäß diesen Bedingungen." },
+      "intellectualProperty": { "title": "4. Geistiges Eigentum", "content": "Alle Rechte des geistigen Eigentums an der SonnaLab-Plattform, einschließlich Quellcode, Design, Logos und Dokumentation, gehören SONNALAB (RCS Cergy 920978210).", "link": "Siehe unsere vollständige Richtlinie zum geistigen Eigentum" },
+      "liability": { "title": "5. Haftungsbeschränkung", "content": "SonnaLab haftet nicht für indirekte, zufällige oder Folgeschäden, die aus der Nutzung unserer Dienste entstehen." },
+      "termination": { "title": "6. Kündigung", "content": "Wir behalten uns das Recht vor, Ihren Zugang zu unseren Diensten bei Verstoß gegen diese Bedingungen auszusetzen oder zu beenden." },
+      "law": { "title": "7. Anwendbares Recht", "content": "Diese Bedingungen unterliegen französischem Recht. Streitigkeiten werden den Gerichten in Cergy, Frankreich, vorgelegt." }
+    }
+  },
+  "quality": {
+    "title": "Qualitätsrichtlinie",
+    "lastUpdate": "Zuletzt aktualisiert: 5. November 2025",
+    "sections": {
+      "commitment": { "title": "Unser Qualitätsversprechen", "content": "SonnaLab verpflichtet sich, hochwertige digitale Lösungen bereitzustellen, die die Erwartungen unserer Kunden übertreffen." },
+      "standards": { "title": "1. Standards und Normen", "items": ["Systematische Code-Reviews durch Senior-Entwickler","Automatisierte Tests (Unit, Integration, End-to-End)","Einhaltung von Sicherheitsstandards (OWASP Top 10)","Barrierefreiheit WCAG 2.1 Level AA","Optimierte Performance (Core Web Vitals)","Vollständige technische Dokumentation"] },
+      "process": { "title": "2. Entwicklungsprozess", "content": "Wir folgen einer agilen Methodik mit:", "items": ["2-wöchigen Sprints","Regelmäßigen Kunden-Demos","Kontinuierlicher Integration und Bereitstellung (CI/CD)","Produktionsüberwachung und Alarmen","Support und Wartung nach dem Start"] },
+      "improvement": { "title": "3. Kontinuierliche Verbesserung", "content": "Wir analysieren regelmäßig unsere Prozesse und sammeln Kundenfeedback, um die Qualität unserer Deliverables kontinuierlich zu verbessern." }
+    }
+  },
+  "notice": {
+    "title": "Impressum",
+    "lastUpdate": "Zuletzt aktualisiert: 5. November 2025",
+    "sections": {
+      "editor": { "title": "Herausgeber der Website", "company": "SONNALAB", "capital": "Stammkapital: €1.000", "rcs": "RCS Cergy 920978210", "siret": "92097821000010", "address": "Eingetragene Geschäftsadresse", "addressLine1": "Avenue des Grouettes", "addressLine2": "95000 Cergy, Frankreich", "phone": "Tel.: +33 1 XX XX XX XX", "email": "E-Mail: contact@sonnalab.com" },
+      "director": { "title": "Verantwortlicher Herausgeber", "name": "Herr SONNA", "role": "Geschäftsführer von SONNALAB" },
+      "hosting": { "title": "Hosting", "provider": "Die Website wird gehostet von:", "name": "Hosting Provider Inc.", "address": "passage de l'Industrie, 75000 Paris, Frankreich" },
+      "credits": { "title": "Danksagungen", "design": "Design und Entwicklung: SonnaLab", "icons": "Icons: Lucide React", "images": "Bilder: Unsplash, interne Erstellungen" }
+    }
+  },
+  "cookies": {
+    "title": "Cookie-Richtlinie",
+    "lastUpdate": "Zuletzt aktualisiert: 5. November 2025",
+    "sections": {
+      "intro": { "title": "Was ist ein Cookie?", "content": "Ein Cookie ist eine kleine Textdatei, die auf Ihrem Gerät gespeichert wird, wenn Sie unsere Website besuchen. Es ermöglicht uns, Ihren Browser zu erkennen und bestimmte Informationen zu speichern." },
+      "types": { "title": "1. Arten der verwendeten Cookies", "essential": { "title": "Notwendige Cookies (Erforderlich)", "content": "Notwendig für die Funktionalität der Website (Authentifizierung, Sicherheit, Spracheinstellungen)." }, "analytics": { "title": "Analyse-Cookies", "content": "Google Analytics zum Verständnis der Website-Nutzung (anonymisiert). Sie können sich abmelden." }, "marketing": { "title": "Marketing-Cookies", "content": "Zur Anzeige relevanter Werbung (LinkedIn, Facebook Pixel). Nur mit Ihrer Einwilligung." } },
+      "management": { "title": "2. Cookie-Verwaltung", "content": "Sie können Ihre Cookie-Einstellungen jederzeit verwalten über:", "items": ["Das Zustimmungsbanner beim ersten Besuch der Website","Ihre Browser-Einstellungen","Unser Präferenzzentrum (Link unten auf der Seite)"] },
+      "duration": { "title": "3. Aufbewahrungsdauer", "items": ["Notwendige Cookies: Sitzung oder max. 1 Jahr","Analyse-Cookies: 13 Monate (Google Analytics)","Marketing-Cookies: 90 Tage"] },
+      "optOut": { "title": "4. Ablehnung von Drittanbieter-Cookies", "google": "Google Analytics: https://tools.google.com/dlpage/gaoptout", "facebook": "Facebook: https://www.facebook.com/settings?tab=ads" }
+    }
+  },
+  "intellectualProperty": {
+    "title": "Richtlinie zum geistigen Eigentum",
+    "lastUpdate": "Zuletzt aktualisiert: 5. November 2025",
+    "sections": {
+      "ownership": { "title": "1. Eigentum von SonnaLab", "content": "Die SonnaLab-Plattform, einschließlich Website, Software, SDK, API, Design, Benutzeroberfläche, Funktionen, Dokumentation, Markenname, Logos und aller damit verbundenen Materialien sind das ausschließliche geistige Eigentum von SONNALAB, eingetragen beim RCS Cergy unter der Nummer 920978210.", "protection": "Alle Rechte, Titel und Interessen an den SonnaLab-Materialien sind durch Urheberrecht, Markenrecht und andere Gesetze zum geistigen Eigentum geschützt." },
+      "license": { "title": "2. Nutzer-Lizenzvergabe", "content": "SonnaLab gewährt Ihnen eine begrenzte, nicht-exklusive, nicht-übertragbare Lizenz zum Zugriff auf und zur Nutzung des Dienstes ausschließlich für den vorgesehenen Zweck.", "restrictions": "Diese Lizenz erlaubt es Ihnen nicht, Teile der SonnaLab-Materialien zu kopieren, zu ändern, zu verteilen, zu verkaufen oder zu vermieten." },
+      "userData": { "title": "3. Nutzerinhalte und -daten", "ownership": "Sie behalten das volle Eigentum an den Daten, Dateien, Inhalten und sonstigen Informationen, die Sie über den SonnaLab-Dienst übermitteln.", "grant": "Durch die Nutzung des Dienstes erteilen Sie SonnaLab eine notwendige, weltweite, lizenzgebührenfreie Lizenz zur Verarbeitung Ihrer Daten ausschließlich zum Zweck der Bereitstellung des Dienstes." },
+      "openSource": { "title": "4. Open-Source-Komponenten", "content": "SonnaLab kann bestimmte Open-Source-Softwarekomponenten integrieren. Ihre Nutzung dieser Komponenten unterliegt den Bedingungen der jeweiligen Open-Source-Lizenzen." },
+      "trademarks": { "title": "5. Marken", "content": "Der Name, das Logo von SonnaLab und alle damit verbundenen Produkt- oder Dienstleistungsnamen sind eingetragene Marken von SONNALAB. Sie dürfen diese Marken nicht ohne unsere vorherige schriftliche Genehmigung verwenden." },
+      "infringement": { "title": "6. Meldung von Verstößen", "content": "Wenn Sie der Ansicht sind, dass Inhalte auf dem SonnaLab-Dienst Ihre Rechte des geistigen Eigentums verletzen, benachrichtigen Sie uns bitte umgehend mit detaillierten Informationen." },
+      "contact": { "title": "7. Kontakt", "content": "Für Fragen zu dieser Richtlinie zum geistigen Eigentum wenden Sie sich bitte an:", "email": "legal@sonnalab.com" }
+    }
+  },
+  "navigation": {
+    "backToHome": "Zurück zur Startseite",
+    "allPolicies": "Alle unsere Richtlinien"
+  }
+}

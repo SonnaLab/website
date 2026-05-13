@@ -1,0 +1,75 @@
+{
+  "privacy": {
+    "title": "Política de Privacidad",
+    "lastUpdate": "Última actualización: 5 de noviembre de 2025",
+    "sections": {
+      "intro": { "title": "Introducción", "content": "SonnaLab (SONNALAB, RCS Cergy 920978210) se compromete a proteger su privacidad. Esta política explica cómo recopilamos, utilizamos y protegemos sus datos personales." },
+      "dataCollection": { "title": "1. Datos Recopilados", "content": "Recopilamos la siguiente información:", "items": ["Información de contacto (nombre, email, teléfono)","Información del proyecto (descripción, presupuesto, plazo)","Datos de navegación (cookies, analíticas)","Datos técnicos (dirección IP, tipo de navegador)"] },
+      "dataUsage": { "title": "2. Uso de los Datos", "content": "Sus datos se utilizan para:", "items": ["Tramitar sus solicitudes de consultoría","Mejorar nuestros servicios","Enviarle comunicaciones de marketing (con consentimiento)","Cumplir con nuestras obligaciones legales"] },
+      "dataProtection": { "title": "3. Protección de Datos", "content": "Implementamos medidas de seguridad técnicas y organizativas para proteger sus datos contra acceso no autorizado, modificación, divulgación o destrucción." },
+      "rights": { "title": "4. Sus Derechos (RGPD)", "content": "De acuerdo con el RGPD, tiene los siguientes derechos:", "items": ["Derecho de acceso a sus datos","Derecho de rectificación","Derecho de supresión ('derecho al olvido')","Derecho a la limitación del tratamiento","Derecho a la portabilidad de datos","Derecho de oposición"] },
+      "contact": { "title": "5. Contáctenos", "content": "Para cualquier pregunta sobre esta política o para ejercer sus derechos, contáctenos en:", "email": "privacy@sonnalab.com", "dpo": "DPO: legal@sonnalab.com" }
+    }
+  },
+  "terms": {
+    "title": "Términos de Servicio",
+    "lastUpdate": "Última actualización: 5 de noviembre de 2025",
+    "sections": {
+      "acceptance": { "title": "1. Aceptación de los Términos", "content": "Al acceder y utilizar los servicios de SonnaLab, acepta quedar vinculado por estos términos de servicio." },
+      "services": { "title": "2. Descripción de los Servicios", "content": "SonnaLab ofrece servicios de desarrollo de aplicaciones web y móviles, inteligencia artificial y consultoría técnica." },
+      "license": { "title": "3. Licencia de Uso", "content": "Le otorgamos una licencia limitada, no exclusiva e intransferible para acceder y utilizar nuestra plataforma de acuerdo con estos términos." },
+      "intellectualProperty": { "title": "4. Propiedad Intelectual", "content": "Todos los derechos de propiedad intelectual de la plataforma SonnaLab, incluidos el código fuente, diseño, logos y documentación, pertenecen a SONNALAB (RCS Cergy 920978210).", "link": "Ver nuestra Política de Propiedad Intelectual completa" },
+      "liability": { "title": "5. Limitación de Responsabilidad", "content": "SonnaLab no será responsable de daños indirectos, incidentales o consecuentes derivados del uso de nuestros servicios." },
+      "termination": { "title": "6. Rescisión", "content": "Nos reservamos el derecho a suspender o cancelar su acceso a nuestros servicios en caso de incumplimiento de estos términos." },
+      "law": { "title": "7. Ley Aplicable", "content": "Estos términos se rigen por la ley francesa. Cualquier disputa se someterá a la jurisdicción exclusiva de los tribunales de Cergy, Francia." }
+    }
+  },
+  "quality": {
+    "title": "Política de Calidad",
+    "lastUpdate": "Última actualización: 5 de noviembre de 2025",
+    "sections": {
+      "commitment": { "title": "Nuestro Compromiso de Calidad", "content": "SonnaLab se compromete a proporcionar soluciones digitales de alta calidad que superen las expectativas de nuestros clientes." },
+      "standards": { "title": "1. Estándares y Normas", "items": ["Revisiones de código sistemáticas por desarrolladores senior","Pruebas automatizadas (unitarias, integración, extremo a extremo)","Cumplimiento de estándares de seguridad (OWASP Top 10)","Accesibilidad WCAG 2.1 Nivel AA","Rendimiento optimizado (Core Web Vitals)","Documentación técnica completa"] },
+      "process": { "title": "2. Proceso de Desarrollo", "content": "Seguimos una metodología ágil con:", "items": ["Sprints de 2 semanas","Demos regulares con clientes","Integración y despliegue continuos (CI/CD)","Monitorización y alertas en producción","Soporte y mantenimiento post-lanzamiento"] },
+      "improvement": { "title": "3. Mejora Continua", "content": "Analizamos regularmente nuestros procesos y recopilamos feedback de clientes para mejorar continuamente la calidad de nuestros entregables." }
+    }
+  },
+  "notice": {
+    "title": "Aviso Legal",
+    "lastUpdate": "Última actualización: 5 de noviembre de 2025",
+    "sections": {
+      "editor": { "title": "Editor del Sitio", "company": "SONNALAB", "capital": "Capital social: €1.000", "rcs": "RCS Cergy 920978210", "siret": "92097821000010", "address": "Domicilio social", "addressLine1": "Avenue des Grouettes", "addressLine2": "95000 Cergy, Francia", "phone": "Tel.: +33 1 XX XX XX XX", "email": "Email: contact@sonnalab.com" },
+      "director": { "title": "Director de Publicación", "name": "Sr. SONNA", "role": "CEO de SONNALAB" },
+      "hosting": { "title": "Alojamiento", "provider": "El sitio está alojado por:", "name": "Hosting Provider Inc.", "address": "passage de l'Industrie, 75000 Paris, Francia" },
+      "credits": { "title": "Créditos", "design": "Diseño y desarrollo: SonnaLab", "icons": "Iconos: Lucide React", "images": "Imágenes: Unsplash, creaciones internas" }
+    }
+  },
+  "cookies": {
+    "title": "Política de Cookies",
+    "lastUpdate": "Última actualización: 5 de noviembre de 2025",
+    "sections": {
+      "intro": { "title": "¿Qué es una Cookie?", "content": "Una cookie es un pequeño archivo de texto almacenado en su dispositivo cuando visita nuestro sitio web. Nos permite reconocer su navegador y recordar cierta información." },
+      "types": { "title": "1. Tipos de Cookies Utilizadas", "essential": { "title": "Cookies Esenciales (Obligatorias)", "content": "Necesarias para la funcionalidad del sitio (autenticación, seguridad, preferencias de idioma)." }, "analytics": { "title": "Cookies Analíticas", "content": "Google Analytics para entender el uso del sitio (anonimizado). Puede optar por no participar." }, "marketing": { "title": "Cookies de Marketing", "content": "Utilizadas para mostrar anuncios relevantes (LinkedIn, Facebook Pixel). Solo con su consentimiento." } },
+      "management": { "title": "2. Gestión de Cookies", "content": "Puede gestionar sus preferencias de cookies en cualquier momento a través de:", "items": ["El banner de consentimiento en la primera visita al sitio","La configuración de su navegador","Nuestro Centro de Preferencias (enlace al pie de página)"] },
+      "duration": { "title": "3. Período de Retención", "items": ["Cookies esenciales: Sesión o máximo 1 año","Cookies analíticas: 13 meses (Google Analytics)","Cookies de marketing: 90 días"] },
+      "optOut": { "title": "4. Opt-out de Cookies de Terceros", "google": "Google Analytics: https://tools.google.com/dlpage/gaoptout", "facebook": "Facebook: https://www.facebook.com/settings?tab=ads" }
+    }
+  },
+  "intellectualProperty": {
+    "title": "Política de Propiedad Intelectual",
+    "lastUpdate": "Última actualización: 5 de noviembre de 2025",
+    "sections": {
+      "ownership": { "title": "1. Propiedad de SonnaLab", "content": "La plataforma SonnaLab, incluyendo su sitio web, software, SDK, API, diseño visual, interfaz de usuario, funcionalidades, documentación, nombre de marca, logos y todos los materiales asociados son propiedad intelectual exclusiva de SONNALAB, registrada en RCS Cergy bajo el número 920978210.", "protection": "Todos los derechos, títulos e intereses en los Materiales de SonnaLab están protegidos por derechos de autor, marcas registradas y otras leyes de propiedad intelectual." },
+      "license": { "title": "2. Concesión de Licencia al Usuario", "content": "SonnaLab le otorga una licencia limitada, no exclusiva e intransferible para acceder y utilizar el Servicio únicamente para su propósito previsto.", "restrictions": "Esta licencia no le permite copiar, modificar, distribuir, vender o alquilar ninguna parte de los Materiales de SonnaLab." },
+      "userData": { "title": "3. Contenido y Datos del Usuario", "ownership": "Usted conserva la plena propiedad de los datos, archivos, contenidos y cualquier otra información que transmita a través del Servicio SonnaLab.", "grant": "Al utilizar el Servicio, otorga a SonnaLab una licencia necesaria, mundial y libre de regalías para procesar sus datos únicamente con el fin de prestar el Servicio." },
+      "openSource": { "title": "4. Componentes de Código Abierto", "content": "SonnaLab puede integrar ciertos componentes de software de código abierto. Su uso de estos componentes está sujeto a los términos de sus respectivas licencias de código abierto." },
+      "trademarks": { "title": "5. Marcas Registradas", "content": "El nombre, el logo de SonnaLab y todos los nombres de productos o servicios asociados son marcas registradas de SONNALAB. No puede utilizar estas marcas sin nuestro permiso previo por escrito." },
+      "infringement": { "title": "6. Denuncia de Infracciones", "content": "Si cree que el contenido del Servicio SonnaLab infringe sus derechos de propiedad intelectual, notifíquenoslo de inmediato con información detallada." },
+      "contact": { "title": "7. Contáctenos", "content": "Para cualquier pregunta sobre esta Política de Propiedad Intelectual, contacte con nuestro equipo legal en:", "email": "legal@sonnalab.com" }
+    }
+  },
+  "navigation": {
+    "backToHome": "Volver al inicio",
+    "allPolicies": "Todas nuestras políticas"
+  }
+}

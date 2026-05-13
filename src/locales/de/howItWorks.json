@@ -1,0 +1,31 @@
+{
+  "title": "Unser Prozess",
+  "subtitle": "Eine bewährte Methode für garantierte Ergebnisse",
+  "steps": [
+    {
+      "title": "Entdeckung",
+      "description": "Wir analysieren Ihre Bedürfnisse, Ziele und den Markt, um die beste Strategie zu definieren.",
+      "duration": "1-2 Wochen"
+    },
+    {
+      "title": "Design",
+      "description": "Unsere Designer erstellen interaktive Mockups, die bei jedem Schritt mit Ihnen abgestimmt werden.",
+      "duration": "2-4 Wochen"
+    },
+    {
+      "title": "Entwicklung",
+      "description": "Unser Team entwickelt Ihre Lösung mit den besten Technologien und Praktiken.",
+      "duration": "4-12 Wochen"
+    },
+    {
+      "title": "Start",
+      "description": "Wir setzen ein, testen und optimieren Ihr Projekt für einen erfolgreichen Launch.",
+      "duration": "1-2 Wochen"
+    }
+  ],
+  "cta": {
+    "ready": "Bereit loszulegen?",
+    "discuss": "Lassen Sie uns Ihr Projekt besprechen und Ihre Ideen in die Realität umsetzen.",
+    "contact": "Gespräch starten"
+  }
+}

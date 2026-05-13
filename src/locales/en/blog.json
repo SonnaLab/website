@@ -59,5 +59,26 @@
   "breadcrumb": {
     "home": "Home",
     "blog": "Blog"
+  },
+  "share": {
+    "title": "Share",
+    "subtitle": "Share this article",
+    "twitter": "Share on Twitter",
+    "linkedin": "Share on LinkedIn",
+    "copyLink": "Copy link",
+    "copied": "Copied!"
+  },
+  "article": {
+    "readTime": "{{time}} min read",
+    "publishedOn": "Published on",
+    "updatedOn": "Updated on",
+    "tableOfContents": "Table of contents",
+    "share": "Share this article",
+    "relatedPosts": "Related articles",
+    "relatedSubtitle": "Selected based on your interests — similar or complementary to what you just read.",
+    "readMore": "READ MORE",
+    "category": "Category",
+    "readLabel": "Reading",
+    "detailsLabel": "Article details"
   }
 }

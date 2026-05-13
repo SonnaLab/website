@@ -1,0 +1,40 @@
+{
+  "mission": {
+    "title": "Sobre Nosotros",
+    "description": "SonnaLab es el laboratorio de ideas que transforma las ideas digitales en realidad. Acompañamos a las empresas en su transformación tecnológica ofreciendo soluciones innovadoras, desde la I+D hasta aplicaciones concretas. Nuestra misión: ser su socio de confianza en consultoría tecnológica."
+  },
+  "features": {
+    "column1": [
+      {
+        "title": "Innovación Continua",
+        "description": "Investigación y desarrollo en el ecosistema tech, desde IA hasta materiales de fabricación de chips."
+      },
+      {
+        "title": "Desarrollo a Medida",
+        "description": "Aplicaciones web y móviles, e-commerce, diseño UI/UX – la experiencia completa de una agencia moderna."
+      }
+    ],
+    "column2": [
+      {
+        "title": "Consultoría Tech",
+        "description": "Posicionamiento CTO para sus proyectos tecnológicos con experiencia reconocida y soluciones probadas."
+      },
+      {
+        "title": "Aplicaciones Lanzadas",
+        "description": "AppOne, AppTwo, AppThree – nuestras soluciones adoptadas y probadas en el mercado."
+      }
+    ]
+  },
+  "achievements": [
+    { "label": "20+", "description": "Proyectos Completados" },
+    { "label": "15+", "description": "Clientes Satisfechos" },
+    { "label": "15+", "description": "Tecnologías Dominadas" },
+    { "label": "24/7", "description": "Innovación Continua" }
+  ],
+  "cta": {
+    "title": "¿Listo para transformar su visión en realidad?",
+    "description": "Únase a las empresas que confían en SonnaLab para su transformación digital.",
+    "primary": "Iniciar un Proyecto",
+    "secondary": "Descubrir Nuestras Soluciones"
+  }
+}

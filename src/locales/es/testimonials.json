@@ -1,0 +1,33 @@
+{
+  "title": "La Confianza de Muchos",
+  "description": "Desde startups hasta grandes empresas, descubra cómo SonnaLab convierte ideas en éxitos tecnológicos concretos.",
+  "items": [
+    {
+      "name": "Marie Dubois",
+      "title": "CEO, TechStart",
+      "location": "París, Francia",
+      "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      "rating": 5,
+      "text": "SonnaLab transformó nuestra visión en realidad. Su experiencia técnica nos permitió lanzar nuestra plataforma SaaS en tiempo récord. ¡Un equipo excepcional!",
+      "projectType": "Plataforma SaaS"
+    },
+    {
+      "name": "Laurent Martin",
+      "title": "CTO, EcoTech",
+      "location": "Lyon, Francia",
+      "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      "rating": 5,
+      "text": "Los consejos tecnológicos de SonnaLab nos salvaron de errores costosos. Su posicionamiento como CTO externo nos dio acceso a experiencia de primer nivel. Resultado: +200% de rendimiento.",
+      "projectType": "Consultoría CTO & Arquitectura"
+    },
+    {
+      "name": "Sophie Leroy",
+      "title": "Fundadora, EdTech Solutions",
+      "location": "Burdeos, Francia",
+      "image": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      "rating": 5,
+      "text": "La app móvil desarrollada por SonnaLab superó nuestras expectativas. Con una interfaz intuitiva, excelente rendimiento y entrega puntual, ¡son un socio de confianza!",
+      "projectType": "App Móvil React Native"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "title": "I Nostri Servizi",
+  "subtitle": "Dalla concezione al lancio, creiamo soluzioni digitali su misura che soddisfano i tuoi obiettivi aziendali.",
+  "cta": {
+    "more": "Scopri di più",
+    "all": "Vedi tutti i servizi"
+  },
+  "items": [
+    {
+      "icon": "globe",
+      "title": "Siti Web",
+      "description": "Siti web aziendali e istituzionali moderni e performanti",
+      "tests": ["Landing Page", "Sito Vetrina", "Sito Corporate", "Portfolio"],
+      "turnaround": "2-4 settimane"
+    },
+    {
+      "icon": "smartphone",
+      "title": "App Mobile",
+      "description": "App native e multipiattaforma per iOS e Android",
+      "tests": ["App Nativa", "React Native", "Flutter", "PWA"],
+      "turnaround": "6-12 settimane"
+    },
+    {
+      "icon": "shopping-cart",
+      "title": "E-commerce",
+      "description": "Soluzioni complete e ottimizzate per la vendita online",
+      "tests": ["Shopify", "WooCommerce", "Negozio Personalizzato", "Marketplace"],
+      "turnaround": "4-8 settimane"
+    },
+    {
+      "icon": "palette",
+      "title": "Design UX/UI",
+      "description": "Design di interfacce utente moderne e intuitive",
+      "tests": ["Wireframe", "Prototipi", "Design System", "Test Utente"],
+      "turnaround": "1-3 settimane"
+    },
+    {
+      "icon": "bar-chart-3",
+      "title": "Strategia Digitale",
+      "description": "Consulenza e supporto nella trasformazione digitale",
+      "tests": ["Audit Digitale", "Strategia SEO", "Analytics", "Growth Hacking"],
+      "turnaround": "1-2 settimane"
+    },
+    {
+      "icon": "code",
+      "title": "Sviluppo Personalizzato",
+      "description": "Soluzioni su misura adattate alle tue esigenze specifiche",
+      "tests": ["API", "SaaS", "CRM", "Integrazioni"],
+      "turnaround": "4-16 settimane"
+    }
+  ]
+}

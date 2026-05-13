@@ -1,0 +1,73 @@
+{
+  "seo": {
+    "title": "Projekte - Innovation & Technologie",
+    "description": "Jede Anwendung verwendet leistungsstarke Technologien für Zuverlässigkeit und Skalierbarkeit",
+    "keywords": "modernste Technologie, Nutzererfahrung, Fairness, Transparenz, SonnaLab"
+  },
+  "hero": {
+    "badge": "Unsere Flaggschiff-Apps",
+    "title": "Innovation im Dienste Ihrer Ambitionen",
+    "subtitle": "Entdecken Sie unser Ökosystem von Anwendungen, das Ihre Herausforderungen in Chancen verwandelt"
+  },
+  "stats": {
+    "users": { "value": "11K+", "label": "Aktive Nutzer" },
+    "projects": { "value": "+03", "label": "Bereitgestellte Anwendungen" },
+    "satisfaction": { "value": "94%", "label": "Kundenzufriedenheit" },
+    "uptime": { "value": "99.9%", "label": "Verfügbarkeit" }
+  },
+  "lescopr": {
+    "badge": "Anwendungsüberwachung",
+    "title": "Lescopr",
+    "tagline": "Der intelligente Beobachter für Ihre Infrastruktur",
+    "description": "Lescopr ist die Überwachungsplattform für moderne Teams. Antizipieren Sie Fehler, bevor sie Ihre Nutzer beeinflussen, mit Echtzeit-Analysen und schneller Integration in alle Ihre Umgebungen.",
+    "features": {
+      "title": "Hauptfunktionen",
+      "list": ["Intelligente und kontextuelle Logs","Dynamische Dashboards","Integrierte prädiktive Analyse","Multi-Stack-Support (Node, PHP, Django, Laravel)","Slack, Jira, Teams, Discord Integrationen","Adaptiver Dark/Light-Modus"]
+    },
+    "tech": { "title": "Technologien", "stack": ["React","Node.js","PostgreSQL","Python","Redis","WebSocket"] },
+    "highlights": ["Klare und moderne Oberfläche","Vereinfachte Installation","Gebrauchsfertige Monitoring-Widgets","Kontinuierliche Updates"],
+    "cta": { "visit": "Lescopr entdecken", "demo": "Kostenlos testen" }
+  },
+  "lebocheur": {
+    "badge": "Bildungsplattform",
+    "title": "Lebocheur",
+    "tagline": "Weniger lernen, mehr verstehen",
+    "description": "Lebocheur revolutioniert die Art des Lernens. Greifen Sie sofort auf Tausende von Prüfungen und Lösungen zu, von der Grundschule bis zur Universität.",
+    "features": {
+      "title": "Hauptfunktionen",
+      "list": ["Bibliothek mit 10K+ Prüfungen und Lösungen","Detaillierte und methodische Lösungen","Ablenkungsfreie Oberfläche","Favoriten- und Speichersystem","Inhalte für jedes Niveau","Aktive Support-Community"]
+    },
+    "tech": { "title": "Technologien", "stack": ["React Native","Django","PostgreSQL","AWS","Elasticsearch"] },
+    "highlights": ["1K+ aktive Nutzer","86% positive Bewertungen","Regelmäßige Inhaltsaktualisierungen","Verfügbar auf iOS und Android"],
+    "cta": { "visit": "Lebocheur entdecken", "demo": "App herunterladen" }
+  },
+  "lecolt": {
+    "badge": "Kreativwirtschaft",
+    "title": "Lecolt",
+    "tagline": "Kunst in ihrer reinsten Form",
+    "description": "Lecolt definiert die Kunstwirtschaft neu. Eine faire Plattform, die Künstler, Fans und Veranstalter verbindet und durch ein einzigartiges Solidaritätsmodell ein Mindesteinkommen für jeden Kreativen garantiert.",
+    "features": {
+      "title": "Kommende Funktionen",
+      "list": ["Exklusive Kurzvideos für Künstler","Vereinfachtes Buchungssystem","Solidaritätsfonds mit garantiertem Einkommen","Interdisziplinäres Netzwerk (Musik, Tanz, Bildende Kunst)","Kreislauf- und Fairwirtschaft","Selektive und authentische Gemeinschaft"]
+    },
+    "tech": { "title": "Geplante Technologien", "stack": ["React Native","Node.js","MongoDB","Stripe","AI/ML","WebRTC"] },
+    "highlights": ["Innovatives Solidaritätsmodell","Garantierte faire Vergütung","Authentisches Erlebnis ohne Zwischenhändler","Fokus auf Qualität statt Quantität"],
+    "cta": { "visit": "Lecolt besuchen", "notify": "Warteliste beitreten", "learn": "Mehr erfahren" },
+    "launch": "Geplanter Start: Frühling 2026"
+  },
+  "ecosystem": {
+    "title": "Ein kohärentes Ökosystem",
+    "subtitle": "Drei Anwendungen, eine Vision: Herausforderungen in nachhaltige Lösungen verwandeln",
+    "items": [
+      { "title": "Modernste Technologie", "description": "Jede Anwendung verwendet leistungsstarke Technologien für Zuverlässigkeit und Skalierbarkeit" },
+      { "title": "Nutzererfahrung", "description": "Benutzeroberflächen, die intuitiv, elegant und reibungslos gestaltet sind" },
+      { "title": "Fairness & Transparenz", "description": "Unsere Geschäftsmodelle fördern Fairness und Transparenz für alle Nutzer" }
+    ]
+  },
+  "cta": {
+    "title": "Bereit, das Abenteuer zu beginnen?",
+    "description": "Studenten, Künstler oder Unternehmer: Unsere Lösungen passen sich Ihren Bedürfnissen an.",
+    "button": "Demo vereinbaren",
+    "contact": "Kontaktieren Sie uns"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "seo": {
+    "title": "Kontakt - Sprechen wir über Ihr Projekt",
+    "description": "Kontaktieren Sie SonnaLab, um Ihr digitales Projekt zu besprechen.",
+    "keywords": "Kontakt, digitales Projekt, SonnaLab, Technologieberatung"
+  },
+  "hero": {
+    "header": "Geschäftsgespräch",
+    "title": "Lassen Sie uns Ihre Vision in die Realität umsetzen",
+    "subtitle": "Eine Frage? Ein Projekt? Unser Expertenteam begleitet Sie bei jedem Schritt Ihrer digitalen Transformation."
+  },
+  "form": {
+    "first_name": { "label": "Vorname", "placeholder": "Wie sollen wir Sie nennen?" },
+    "last_name": { "label": "Nachname", "placeholder": "Wie lautet Ihr Familienname?" },
+    "email": { "label": "E-Mail", "placeholder": "sie@unternehmen.de" },
+    "phone": { "label": "Telefon", "placeholder": "+49 170 1234567" },
+    "company": { "label": "Unternehmen", "placeholder": "Ihr Unternehmensname" },
+    "role": { "label": "Ihre Rolle", "placeholder": "CTO, CEO, Product Manager..." },
+    "project_type": {
+      "label": "Projektart",
+      "placeholder": "Wählen Sie Ihren Bedarf",
+      "options": ["Webanwendung", "Mobile App", "E-Commerce", "CTO-Beratung", "KI & Innovation", "Sonstiges"]
+    },
+    "budget": {
+      "label": "Geschätztes Budget",
+      "placeholder": "Wählen Sie Ihr Budget",
+      "options": ["< €10K", "€10K - €25K", "€25K - €50K", "€50K - €100K", "> €100K"]
+    },
+    "message": { "label": "Erzählen Sie uns von Ihrem Projekt", "placeholder": "Beschreiben Sie Ihre Ziele und Herausforderungen..." },
+    "submit": "Gespräch starten",
+    "submitting": "Wird gesendet...",
+    "success": "Vielen Dank! Wir melden uns innerhalb von 24h.",
+    "error": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+  },
+  "info": {
+    "email": { "title": "Direkte E-Mail", "value": "contact@sonnalab.com", "description": "Antwort garantiert innerhalb von 24h" },
+    "phone": { "title": "Rufen Sie uns an", "value": "+33 07 53 31 56 03", "description": "Mo-Fr, 9-18 Uhr" },
+    "address": { "title": "Unser Büro", "value": "Station F, Paris", "description": "Der weltgrößte Startup-Campus" },
+    "availability": { "title": "Verfügbarkeit", "schedule": "Mo - Fr: 9 - 18 Uhr", "response": "Antwort innerhalb von 24h", "emergency": "Dringend? Hinterlassen Sie uns eine Nachricht!" }
+  },
+  "cta": {
+    "title": "Bereit zu innovieren?",
+    "description": "Schließen Sie sich über 100 Unternehmen an, die uns für ihre digitale Transformation vertrauen.",
+    "button": "Termin buchen"
+  },
+  "validation": {
+    "name": { "required": "Name ist erforderlich", "min": "Name muss mindestens {{count}} Zeichen lang sein", "max": "Name darf {{count}} Zeichen nicht überschreiten", "regex": "Name darf nur Buchstaben enthalten" },
+    "email": { "required": "E-Mail ist erforderlich", "invalid": "Ungültige E-Mail-Adresse", "max": "E-Mail ist zu lang" },
+    "phone": { "required": "Telefonnummer ist erforderlich", "invalid": "Ungültige Telefonnummer", "min": "Telefonnummer ist zu kurz", "max": "Telefonnummer ist zu lang" },
+    "company": { "required": "Unternehmensname ist erforderlich", "min": "Unternehmensname muss mindestens {{count}} Zeichen lang sein", "max": "Unternehmensname darf {{count}} Zeichen nicht überschreiten" },
+    "projectType": { "required": "Bitte wählen Sie eine Projektart" },
+    "budget": { "required": "Bitte wählen Sie ein Budget" },
+    "message": { "required": "Nachricht ist erforderlich", "min": "Nachricht muss mindestens {{count}} Zeichen lang sein", "max": "Nachricht darf {{count}} Zeichen nicht überschreiten" }
+  }
+}

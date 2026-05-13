@@ -1,0 +1,75 @@
+{
+  "seo": {
+    "title": "Blog | SonnaLab - Innovación Digital & IA",
+    "description": "Descubra nuestros artículos sobre inteligencia artificial, desarrollo web y transformación digital.",
+    "keywords": "blog tecnología, IA, desarrollo web, transformación digital, innovación"
+  },
+  "hero": {
+    "badge": "Tendencias & Perspectivas",
+    "title": "Manténgase al día con las últimas tendencias tecnológicas",
+    "subtitle": "Artículos, tutoriales y estudios de caso para acompañarle en su transformación digital",
+    "description": ""
+  },
+  "categories": {
+    "all": "Todos los artículos",
+    "innovation": "Innovación",
+    "coding": "Tecnologías",
+    "ia": "Inteligencia Artificial",
+    "case-studies": "Estudios de Caso",
+    "ecology": "Ecología",
+    "tips": "Consejos & Trucos"
+  },
+  "search": {
+    "loading": "Cargando...",
+    "placeholder": "Buscar un artículo...",
+    "results": "{{count}} artículo(s) encontrado(s)",
+    "noResults": "No se encontraron artículos"
+  },
+  "stats": {
+    "articles": "Artículos",
+    "categories": "Temas",
+    "page": "Página"
+  },
+  "article": {
+    "readTime": "{{time}} min de lectura",
+    "publishedOn": "Publicado el",
+    "updatedOn": "Actualizado el",
+    "tableOfContents": "Tabla de contenidos",
+    "share": "Compartir este artículo",
+    "relatedPosts": "Artículos relacionados",
+    "relatedSubtitle": "Seleccionados según sus intereses — similares o complementarios a lo que acaba de leer.",
+    "readMore": "LEER MÁS",
+    "category": "Categoría",
+    "readLabel": "Lectura",
+    "detailsLabel": "Detalles del artículo"
+  },
+  "cta": {
+    "title": "¿Necesita orientación personalizada?",
+    "description": "Nuestros expertos están aquí para convertir sus desafíos en oportunidades.",
+    "button": "Reservar una llamada"
+  },
+  "pagination": {
+    "previous": "Artículo anterior",
+    "next": "Artículo siguiente",
+    "previousPage": "Anterior",
+    "nextPage": "Siguiente"
+  },
+  "blogErrors": {
+    "loadPosts": "Error al cargar los artículos. Por favor, inténtelo más tarde.",
+    "articleDoesntExist": "Artículo no encontrado.",
+    "notFound": "Lo sentimos, el artículo que busca no existe o ha sido movido.",
+    "goBack": "Volver al blog"
+  },
+  "breadcrumb": {
+    "home": "Inicio",
+    "blog": "Blog"
+  },
+  "share": {
+    "title": "Compartir",
+    "subtitle": "Comparte este artículo",
+    "twitter": "Compartir en Twitter",
+    "linkedin": "Compartir en LinkedIn",
+    "copyLink": "Copiar enlace",
+    "copied": "¡Copiado!"
+  }
+}

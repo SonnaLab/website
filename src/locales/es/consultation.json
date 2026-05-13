@@ -1,0 +1,75 @@
+{
+  "step": { "type": "Tipo de Proyecto", "details": "Detalles", "contact": "Contacto", "confirmation": "Confirmación" },
+  "projectType": {
+    "title": "¿Qué tipo de proyecto desea lanzar?",
+    "subtitle": "Seleccione el tipo de proyecto que mejor se adapte a sus necesidades",
+    "web": "Aplicación Web", "webDesc": "Sitio web, PWA, SaaS, E-commerce",
+    "mobile": "Aplicación Móvil", "mobileDesc": "iOS, Android, React Native",
+    "consulting": "Consultoría", "consultingDesc": "Auditoría, asesoramiento técnico",
+    "ai": "Inteligencia Artificial", "aiDesc": "Chatbots, ML, automatización",
+    "other": "Otro proyecto", "otherDesc": "Proyecto personalizado"
+  },
+  "details": {
+    "title": "Cuéntenos su proyecto",
+    "subtitle": "Cuanto más nos cuente, mejor podremos ayudarle",
+    "descriptionLabel": "Descripción del proyecto",
+    "descriptionPlaceholder": "Describa su proyecto, objetivos y necesidades específicas...",
+    "descriptionRequired": "*",
+    "charactersCount": "{{count}} / 500 caracteres",
+    "budgetLabel": "Presupuesto estimado",
+    "timelineLabel": "Plazo deseado",
+    "budget": {
+      "small": "< €10K", "smallDesc": "Proyecto pequeño",
+      "medium": "€10K - €50K", "mediumDesc": "Proyecto mediano",
+      "large": "€50K - €150K", "largeDesc": "Proyecto grande",
+      "enterprise": "> €150K", "enterpriseDesc": "Enterprise"
+    },
+    "timeline": {
+      "urgent": "< 1 mes", "urgentDesc": "Urgente",
+      "1-3months": "1-3 meses", "1-3monthsDesc": "Corto plazo",
+      "3-6months": "3-6 meses", "3-6monthsDesc": "Medio plazo",
+      "6months+": "> 6 meses", "6months+Desc": "Largo plazo"
+    }
+  },
+  "contact": {
+    "title": "Sus datos de contacto",
+    "subtitle": "Para poder responderle rápidamente",
+    "firstName": "Nombre", "firstNamePlaceholder": "Juan",
+    "lastName": "Apellidos", "lastNamePlaceholder": "García",
+    "email": "Email", "emailPlaceholder": "juan.garcia@empresa.com",
+    "phone": "Teléfono", "phonePlaceholder": "+34 600 123 456",
+    "company": "Empresa", "companyPlaceholder": "Nombre de su empresa",
+    "role": "Rol", "rolePlaceholder": "CEO, CTO, Product Manager...",
+    "required": "*"
+  },
+  "confirmation": {
+    "title": "Revise su información",
+    "subtitle": "Asegúrese de que todo es correcto antes de enviar su solicitud",
+    "projectTypeLabel": "Tipo de proyecto",
+    "descriptionLabel": "Descripción",
+    "budgetLabel": "Presupuesto",
+    "timelineLabel": "Plazo",
+    "contactLabel": "Sus datos de contacto",
+    "successTitle": "¡Solicitud enviada con éxito!",
+    "successDesc": "Hemos recibido su solicitud y le contactaremos en breve.",
+    "emailSent": "📧 Se ha enviado un email de confirmación a",
+    "sending": "Enviando..."
+  },
+  "cta": {
+    "next": "Siguiente", "prev": "Anterior",
+    "send": "Enviar solicitud", "sending": "Enviando...", "close": "Cerrar"
+  },
+  "accessibility": {
+    "modalTitle": "Nueva solicitud - Paso {{step}} de {{total}}",
+    "modalTitleSuccess": "Solicitud enviada con éxito",
+    "modalDescription": "Rellene el formulario para iniciar su proyecto con nosotros.",
+    "modalDescriptionSuccess": "Su solicitud ha sido enviada. Le contactaremos pronto.",
+    "closeButton": "Cerrar modal"
+  },
+  "errors": {
+    "serverError": "Error {{status}}: {{message}}",
+    "networkError": "No se puede contactar con el servidor. Compruebe su conexión.",
+    "genericError": "Ocurrió un error al enviar.",
+    "unexpectedError": "Ocurrió un error inesperado."
+  }
+}

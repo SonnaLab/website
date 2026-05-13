@@ -1,0 +1,31 @@
+{
+  "title": "Nuestro Proceso",
+  "subtitle": "Un método probado para resultados garantizados",
+  "steps": [
+    {
+      "title": "Descubrimiento",
+      "description": "Analizamos sus necesidades, objetivos y el mercado para definir la mejor estrategia.",
+      "duration": "1-2 semanas"
+    },
+    {
+      "title": "Diseño",
+      "description": "Nuestros diseñadores crean maquetas interactivas validadas con usted en cada etapa.",
+      "duration": "2-4 semanas"
+    },
+    {
+      "title": "Desarrollo",
+      "description": "Nuestro equipo desarrolla su solución con las mejores tecnologías y prácticas.",
+      "duration": "4-12 semanas"
+    },
+    {
+      "title": "Lanzamiento",
+      "description": "Desplegamos, probamos y optimizamos su proyecto para un lanzamiento exitoso.",
+      "duration": "1-2 semanas"
+    }
+  ],
+  "cta": {
+    "ready": "¿Listo para empezar?",
+    "discuss": "Hablemos de su proyecto y convirtamos sus ideas en realidad.",
+    "contact": "Hablemos"
+  }
+}

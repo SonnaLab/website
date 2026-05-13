@@ -1,0 +1,75 @@
+{
+  "step": { "type": "Tipo Progetto", "details": "Dettagli", "contact": "Contatti", "confirmation": "Conferma" },
+  "projectType": {
+    "title": "Che tipo di progetto vuoi avviare?",
+    "subtitle": "Seleziona il tipo di progetto più adatto alle tue esigenze",
+    "web": "Applicazione Web", "webDesc": "Sito web, PWA, SaaS, E-commerce",
+    "mobile": "App Mobile", "mobileDesc": "iOS, Android, React Native",
+    "consulting": "Consulenza", "consultingDesc": "Audit, consulenza tecnica",
+    "ai": "Intelligenza Artificiale", "aiDesc": "Chatbot, ML, automazione",
+    "other": "Altro progetto", "otherDesc": "Progetto personalizzato"
+  },
+  "details": {
+    "title": "Parlaci del tuo progetto",
+    "subtitle": "Più ci dici, meglio possiamo aiutarti",
+    "descriptionLabel": "Descrizione del progetto",
+    "descriptionPlaceholder": "Descrivi il tuo progetto, i tuoi obiettivi e le esigenze specifiche...",
+    "descriptionRequired": "*",
+    "charactersCount": "{{count}} / 500 caratteri",
+    "budgetLabel": "Budget stimato",
+    "timelineLabel": "Tempistica desiderata",
+    "budget": {
+      "small": "< €10K", "smallDesc": "Piccolo progetto",
+      "medium": "€10K - €50K", "mediumDesc": "Progetto medio",
+      "large": "€50K - €150K", "largeDesc": "Progetto grande",
+      "enterprise": "> €150K", "enterpriseDesc": "Enterprise"
+    },
+    "timeline": {
+      "urgent": "< 1 mese", "urgentDesc": "Urgente",
+      "1-3months": "1-3 mesi", "1-3monthsDesc": "Breve termine",
+      "3-6months": "3-6 mesi", "3-6monthsDesc": "Medio termine",
+      "6months+": "> 6 mesi", "6months+Desc": "Lungo termine"
+    }
+  },
+  "contact": {
+    "title": "I tuoi dati di contatto",
+    "subtitle": "Per risponderti rapidamente",
+    "firstName": "Nome", "firstNamePlaceholder": "Mario",
+    "lastName": "Cognome", "lastNamePlaceholder": "Rossi",
+    "email": "Email", "emailPlaceholder": "mario.rossi@azienda.it",
+    "phone": "Telefono", "phonePlaceholder": "+39 320 123 4567",
+    "company": "Azienda", "companyPlaceholder": "Nome della tua azienda",
+    "role": "Ruolo", "rolePlaceholder": "CEO, CTO, Product Manager...",
+    "required": "*"
+  },
+  "confirmation": {
+    "title": "Verifica le tue informazioni",
+    "subtitle": "Assicurati che tutto sia corretto prima di inviare la richiesta",
+    "projectTypeLabel": "Tipo di progetto",
+    "descriptionLabel": "Descrizione",
+    "budgetLabel": "Budget",
+    "timelineLabel": "Tempistica",
+    "contactLabel": "I tuoi dati di contatto",
+    "successTitle": "Richiesta inviata con successo!",
+    "successDesc": "Abbiamo ricevuto la tua richiesta e ti contatteremo a breve.",
+    "emailSent": "📧 Una email di conferma è stata inviata a",
+    "sending": "Invio in corso..."
+  },
+  "cta": {
+    "next": "Avanti", "prev": "Indietro",
+    "send": "Invia la mia richiesta", "sending": "Invio...", "close": "Chiudi"
+  },
+  "accessibility": {
+    "modalTitle": "Nuova richiesta - Passo {{step}} di {{total}}",
+    "modalTitleSuccess": "Richiesta inviata con successo",
+    "modalDescription": "Compila il modulo per avviare il tuo progetto con noi.",
+    "modalDescriptionSuccess": "La tua richiesta è stata inviata. Ti contatteremo presto.",
+    "closeButton": "Chiudi modal"
+  },
+  "errors": {
+    "serverError": "Errore {{status}}: {{message}}",
+    "networkError": "Impossibile contattare il server. Controlla la tua connessione.",
+    "genericError": "Si è verificato un errore durante l'invio.",
+    "unexpectedError": "Si è verificato un errore inaspettato."
+  }
+}

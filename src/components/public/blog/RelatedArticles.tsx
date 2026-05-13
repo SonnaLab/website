@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
-import { Clock, ArrowRight, BookOpen } from 'lucide-react';
+import { Clock, ArrowRight, Dumbbell } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 interface RelatedArticle {
   id: string;
@@ -15,20 +16,22 @@ interface RelatedArticle {
 interface RelatedArticlesProps {
   articles: RelatedArticle[];
   title?: string;
-  lang: 'fr' | 'en';
+  lang?: string;
 }
 
-export function RelatedArticles({ articles, title = "Articles qui pourraient vous intéresser", lang }: RelatedArticlesProps) {
+export function RelatedArticles({ articles, title, lang: _lang }: RelatedArticlesProps) {
+  const { t } = useTranslation('blog');
+  const displayTitle = title ?? t('article.relatedPosts');
   return (
     <section className="blog-related-section">
       <div className="blog-related-section__header">
         <p className="blog-related-section__eyebrow">
-          <BookOpen aria-hidden="true" />
-          <span>POUR ALLER PLUS LOIN</span>
+          <Dumbbell aria-hidden="true"  />
+          <span>{t('article.readMore')}</span>
         </p>
-        <h2>{title}</h2>
+        <h2>{displayTitle}</h2>
         <span>
-          Sélectionnés selon vos centres d'intérêt — similaires ou complémentaires à ce que vous venez de lire.
+          {t('article.relatedSubtitle')}
         </span>
       </div>
       
@@ -42,7 +45,7 @@ export function RelatedArticles({ articles, title = "Articles qui pourraient vou
             className="blog-related-card"
           >
             <Link
-              to={`/${lang === 'en' ? 'en/' : ''}blog/${article.slug}`}
+            to={`/blog/${article.slug}`}
               className="blog-related-card__link"
             >
               <div className="blog-related-card__media">
