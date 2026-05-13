@@ -1168,6 +1168,26 @@
 .adm-modal--md { max-width: 560px; }
 .adm-modal--lg { max-width: 760px; }
 
+.adm-modal__badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 11px 20px;
+  background: #000;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  border-radius: 10px 10px 0 0;
+  flex-shrink: 0;
+}
+
+.adm-modal__badge svg {
+  opacity: 0.75;
+  flex-shrink: 0;
+}
+
 .adm-modal__header {
   display: flex;
   align-items: center;
@@ -1207,6 +1227,79 @@
   padding: 20px;
   overflow-y: auto;
   flex: 1;
+}
+
+/* Language Switcher Modal */
+.lang-switcher-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lang-switcher-modal__search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #f9fafb;
+  color: #9ca3af;
+}
+
+.lang-switcher-modal__input {
+  flex: 1;
+  padding: 9px 0;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13px;
+  color: #111;
+}
+
+.lang-switcher-modal__input::placeholder {
+  color: #9ca3af;
+}
+
+.lang-switcher-modal__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lang-switcher-modal__item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: background 0.15s;
+  text-align: left;
+}
+
+.lang-switcher-modal__item:hover {
+  background: #f3f4f6;
+  color: #111;
+}
+
+.lang-switcher-modal__item--active {
+  background: #f0fdf4;
+  color: #111;
+  font-weight: 700;
+}
+
+.lang-switcher-modal__item--active svg {
+  color: #111;
 }
 
 .adm-modal__footer {
@@ -2532,10 +2625,10 @@
 .admin-news-calendar__daily-item--published .admin-news-calendar__status--published,
 .admin-news-calendar__daily-item--pushed .admin-news-calendar__status--pushed {
   background: transparent;
-  color: #22c55e;
+  color: #FFF;
   padding-left: 0;
   padding-right: 0;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 /* ── Daily view ── */

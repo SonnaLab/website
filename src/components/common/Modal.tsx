@@ -8,9 +8,10 @@ interface ModalProps {
   children: ReactNode;
   footer?: ReactNode;
   size?: 'sm' | 'md' | 'lg';
+  badge?: ReactNode;
 }
 
-export function Modal({ open, onClose, title, children, footer, size = 'md' }: ModalProps) {
+export function Modal({ open, onClose, title, children, footer, size = 'md', badge }: ModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
 
   /* Close on Escape */
@@ -36,7 +37,8 @@ export function Modal({ open, onClose, title, children, footer, size = 'md' }: M
       onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
     >
       <div className={`adm-modal adm-modal--${size}`} role="dialog" aria-modal="true">
-        <div className="adm-modal__header">
+          {badge && <div className="adm-modal__badge">{badge}</div>}
+          <div className="adm-modal__header">
           <h2 className="adm-modal__title">{title}</h2>
           <button type="button" className="adm-modal__close" onClick={onClose} aria-label="Fermer">
             <XIcon size={18} />
