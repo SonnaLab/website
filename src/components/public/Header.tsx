@@ -100,8 +100,8 @@ export function Header() {
         ? 'bg-white/95 backdrop-blur-lg shadow-sm'
         : 'bg-white/80 backdrop-blur-sm'
     }`}>
-      <div className="flex h-16 items-center justify-between px-6 max-w-7xl mx-auto">
-        <div className="flex items-center space-x-3">
+      <div className="flex h-16 items-center justify-between gap-4 px-4 lg:px-6 max-w-7xl mx-auto">
+        <div className="flex shrink-0 items-center space-x-3">
           <a href="/" onClick={handleLogoClick} className="cursor-pointer">
             <img 
               src={sonnaLabLogo} 
@@ -111,7 +111,7 @@ export function Header() {
           </a>
         </div>
 
-        <nav className="hidden md:flex items-center space-x-8">
+        <nav className="public-header-nav shrink-0 items-center gap-5 xl:gap-7 whitespace-nowrap">
           {navigation.map((item) => {
             const active = isActiveNavItem(item);
 
@@ -128,7 +128,7 @@ export function Header() {
           })}
         </nav>
 
-        <div className="hidden md:flex items-center space-x-3">
+        <div className="public-header-actions shrink-0 items-center gap-2 xl:gap-3">
           <LanguageSwitcher />
           <Button 
             size="sm"
@@ -140,11 +140,11 @@ export function Header() {
         </div>
 
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetTrigger asChild className="md:hidden">
+          <SheetTrigger asChild>
             <Button 
               variant="ghost" 
               size="icon"
-              className="text-black hover:bg-gray-100 transition-colors duration-300"
+              className="public-header-menu-button text-black hover:bg-gray-100 transition-colors duration-300"
             >
               <Menu className="h-5 w-5" />
             </Button>

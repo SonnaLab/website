@@ -214,6 +214,44 @@ html:has(body:not(:has([data-state='open']))) {
   --scrollbar-width: calc(100vw - 100%);
 }
 
+.public-layout-main {
+  padding-top: 4rem;
+}
+
+.public-header-nav,
+.public-header-actions {
+  display: none;
+}
+
+.public-header-nav {
+  gap: 1.35rem;
+}
+
+.public-header-actions {
+  gap: 0.75rem;
+}
+
+.public-header-menu-button {
+  display: inline-flex;
+}
+
+@media (min-width: 1024px) {
+  .public-header-nav,
+  .public-header-actions {
+    display: flex;
+  }
+
+  .public-header-menu-button {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .public-header-nav {
+    gap: 1.75rem;
+  }
+}
+
 .public-nav-link {
   border-bottom: 2px solid transparent;
 }

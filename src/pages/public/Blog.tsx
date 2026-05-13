@@ -10,7 +10,7 @@ import { useModal } from '@/components/providers/ModalProvider';
 import { apiService, type BlogCategorySummary } from '@/services/api';
 import type { BlogPost as BlogPostType } from '@/types/blog';
 
-const POSTS_PER_PAGE = 3;
+const POSTS_PER_PAGE = 6;
 
 type BlogListPost = Omit<BlogPostType, 'content'>;
 
@@ -20,6 +20,10 @@ function humanizeCategory(category: string) {
     .filter(Boolean)
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
+}
+
+function sortByNewestPost(firstPost: BlogListPost, secondPost: BlogListPost) {
+  return new Date(secondPost.publishedAt).getTime() - new Date(firstPost.publishedAt).getTime();
 }
 
 export default function Blog() {
@@ -64,7 +68,7 @@ export default function Blog() {
       .then(response => {
         if (!mounted) return;
 
-        setBlogPosts(response.posts ?? []);
+        setBlogPosts([...(response.posts ?? [])].sort(sortByNewestPost).slice(0, POSTS_PER_PAGE));
         setCategories(response.categories ?? []);
         setTotal(response.total ?? 0);
         setTotalPages(response.total_pages ?? 0);
@@ -102,26 +106,11 @@ export default function Blog() {
             <h1>{t('hero.title')}</h1>
             <p>{t('hero.subtitle')}</p>
           </div>
-
-          <dl className="blog-index-hero__stats" aria-label="Blog">
-            <div>
-              <dt>{t('stats.articles')}</dt>
-              <dd>{total}</dd>
-            </div>
-            <div>
-              <dt>{t('stats.categories')}</dt>
-              <dd>{categories.length}</dd>
-            </div>
-            <div>
-              <dt>{t('stats.page')}</dt>
-              <dd>{page}</dd>
-            </div>
-          </dl>
         </div>
       </section>
 
-      <section className="blog-index-toolbar">
-        <div className="blog-index-container">
+      <section className="blog-index-list">
+                 <div className="blog-index-container">
           <div className="blog-index-toolbar__row">
             <label className="blog-index-search">
               <Search size={18} />
@@ -155,9 +144,6 @@ export default function Blog() {
               </p>
             )}
           </div>
-      </section>
-
-      <section className="blog-index-list">
         <div className="blog-index-container">
             {loading ? (
               <div className="blog-index-state">
@@ -206,9 +192,15 @@ export default function Blog() {
                           </div>
                           <h2>{post.title}</h2>
                           <p>{post.excerpt}</p>
-                          <span className="blog-index-card__cta">
-                            {t('article.readMore')} <ArrowRight size={16} />
+                        </div>
+                        <div className="blog-related-card__footer blog-index-card__footer" aria-hidden="true">
+                          <span className="blog-related-card__brand">
+                            <span className="blog-related-card__brand-icon">
+                              <img src="/favicon.ico" alt="" width="18" height="18" />
+                            </span>
+                            <span>SonnaLab</span>
                           </span>
+                          <ArrowRight />
                         </div>
                       </Link>
                     </motion.article>

@@ -3,11 +3,8 @@ import {
   Share2, 
   Twitter, 
   Linkedin, 
-  Facebook, 
-  Mail, 
   Link as LinkIcon,
   Check,
-  MessageCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -43,94 +40,53 @@ export function SocialShareSidebar({ url, title, excerpt }: SocialShareSidebarPr
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
-      <div className="text-center mb-6">
-        <Share2 className="w-6 h-6 mx-auto text-gray-700 mb-3" />
-        <h3 className="text-lg font-bold text-gray-900">Partager</h3>
-        <p className="text-xs text-gray-600 mt-1">Partagez cet article</p>
+    <div className="blog-share-card">
+      <div className="blog-share-card__header">
+        <Share2 aria-hidden="true" />
+        <div>
+          <h3>Partager</h3>
+          <p>Partagez cet article</p>
+        </div>
       </div>
       
-      <div className="space-y-3">
+      <div className="blog-share-card__actions">
         {/* Twitter */}
         <Button
           variant="outline"
-          size="sm"
+          size="icon"
           onClick={() => handleShare('twitter')}
-          className="w-full justify-start gap-3 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-all"
+          className="blog-share-card__action hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-all"
           aria-label="Partager sur Twitter"
+          title="Partager sur Twitter"
         >
-          <Twitter className="w-5 h-5" />
-          <span className="text-sm font-medium">Twitter</span>
+          <Twitter aria-hidden="true" />
         </Button>
 
         {/* LinkedIn */}
         <Button
           variant="outline"
-          size="sm"
+          size="icon"
           onClick={() => handleShare('linkedin')}
-          className="w-full justify-start gap-3 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 transition-all"
+          className="blog-share-card__action hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 transition-all"
           aria-label="Partager sur LinkedIn"
+          title="Partager sur LinkedIn"
         >
-          <Linkedin className="w-5 h-5" />
-          <span className="text-sm font-medium">LinkedIn</span>
+          <Linkedin aria-hidden="true" />
         </Button>
-
-        {/* Facebook */}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handleShare('facebook')}
-          className="w-full justify-start gap-3 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-all"
-          aria-label="Partager sur Facebook"
-        >
-          <Facebook className="w-5 h-5" />
-          <span className="text-sm font-medium">Facebook</span>
-        </Button>
-
-        {/* WhatsApp */}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handleShare('whatsapp')}
-          className="w-full justify-start gap-3 hover:bg-green-50 hover:text-green-600 hover:border-green-200 transition-all"
-          aria-label="Partager sur WhatsApp"
-        >
-          <MessageCircle className="w-5 h-5" />
-          <span className="text-sm font-medium">WhatsApp</span>
-        </Button>
-
-        {/* Email */}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handleShare('email')}
-          className="w-full justify-start gap-3 hover:bg-gray-50 hover:text-gray-700 hover:border-gray-300 transition-all"
-          aria-label="Partager par Email"
-        >
-          <Mail className="w-5 h-5" />
-          <span className="text-sm font-medium">Email</span>
-        </Button>
-
-        <div className="border-t border-gray-200 my-4"></div>
 
         {/* Copy Link */}
         <Button
           variant="outline"
-          size="sm"
+          size="icon"
           onClick={handleCopyLink}
-          className="w-full justify-start gap-3 hover:bg-gray-50 transition-all"
-          aria-label="Copier le lien"
+          className={`blog-share-card__action ${copied ? 'blog-share-card__action--copied' : ''} hover:bg-gray-50 transition-all`}
+          aria-label={copied ? 'Lien copié' : 'Copier le lien'}
+          title={copied ? 'Lien copié' : 'Copier le lien'}
         >
           {copied ? (
-            <>
-              <Check className="w-5 h-5 text-green-600" />
-              <span className="text-sm font-medium text-green-600">Lien copié !</span>
-            </>
+            <Check aria-hidden="true" />
           ) : (
-            <>
-              <LinkIcon className="w-5 h-5" />
-              <span className="text-sm font-medium">Copier le lien</span>
-            </>
+            <LinkIcon aria-hidden="true" />
           )}
         </Button>
       </div>

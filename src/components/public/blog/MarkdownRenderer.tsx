@@ -2,29 +2,103 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { Fragment } from 'react';
+import { BlogDetailCTA } from './BlogDetailCTA';
 
 interface MarkdownRendererProps {
   content: string;
+  lang?: string;
+  enableCtas?: boolean;
 }
 
-function slugify(text: string): string {
+type CtaMarker = 'diagnostic' | 'project';
+
+function splitMarkdownBlocks(markdown: string): string[] {
+  const blocks: string[] = [];
+  const current: string[] = [];
+  let inCodeFence = false;
+
+  markdown.split(/\r?\n/).forEach((line) => {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('```')) {
+      inCodeFence = !inCodeFence;
+      current.push(line);
+      return;
+    }
+
+    if (!inCodeFence && trimmed === '') {
+      if (current.length) {
+        blocks.push(current.join('\n'));
+        current.length = 0;
+      }
+      return;
+    }
+
+    current.push(line);
+  });
+
+  if (current.length) blocks.push(current.join('\n'));
+  return blocks.filter((block) => block.trim().length > 0);
+}
+
+function isParagraphBlock(block: string): boolean {
+  const trimmed = block.trim();
+  return !/^(#{1,6}\s|```|>|[-*+]\s|\d+\.\s|\|)/.test(trimmed);
+}
+
+function normalise(text: string): string {
   return text
     .toLowerCase()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s-]/g, ' ')
+    .replace(/\s+/g, ' ')
     .trim();
 }
 
-export function MarkdownRenderer({ content }: MarkdownRendererProps) {
-  let headingIndex = 0;
+function ctaInsertions(blocks: string[]): Map<number, CtaMarker[]> {
+  const insertions = new Map<number, CtaMarker[]>();
+  let paragraphCount = 0;
+  let diagnosticIndex = Math.min(blocks.length, Math.max(1, Math.ceil(blocks.length * 0.25)));
 
-  return (
+  for (let index = 0; index < blocks.length; index += 1) {
+    if (isParagraphBlock(blocks[index])) paragraphCount += 1;
+    if (paragraphCount >= 2) {
+      diagnosticIndex = index + 1;
+      break;
+    }
+  }
+
+  const conclusionIndex = blocks.findIndex((block) => {
+    const text = normalise(block.replace(/^#{1,6}\s*/, ''));
+    return /^#{1,6}\s/.test(block.trim()) && ['conclusion', 'pour conclure', 'next steps'].some((keyword) => text.includes(keyword));
+  });
+
+  let projectIndex = conclusionIndex >= 0 ? conclusionIndex : Math.min(blocks.length, Math.ceil(blocks.length * 0.72));
+  if (projectIndex <= diagnosticIndex + 2) projectIndex = Math.min(blocks.length, diagnosticIndex + 3);
+
+  const addInsertion = (index: number, marker: CtaMarker) => {
+    const existing = insertions.get(index) ?? [];
+    existing.push(marker);
+    insertions.set(index, existing);
+  };
+
+  addInsertion(diagnosticIndex, 'diagnostic');
+  addInsertion(projectIndex, 'project');
+  return insertions;
+}
+
+export function MarkdownRenderer({ content, lang = 'fr', enableCtas = false }: MarkdownRendererProps) {
+  let headingIndex = 0;
+  const blocks = enableCtas ? splitMarkdownBlocks(content) : [content];
+  const insertions = enableCtas ? ctaInsertions(blocks) : new Map<number, CtaMarker[]>();
+
+  const renderMarkdown = (markdown: string, key: string) => (
     <ReactMarkdown
+      key={key}
       remarkPlugins={[remarkGfm]}
       components={{
         h1: ({ children }) => {
-          const text = String(children);
           const id = `heading-${headingIndex++}`;
           return (
             <h1 id={id} className="text-4xl font-bold mt-12 mb-6 text-gray-900 scroll-mt-24">
@@ -33,7 +107,6 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           );
         },
         h2: ({ children }) => {
-          const text = String(children);
           const id = `heading-${headingIndex++}`;
           return (
             <h2 id={id} className="text-3xl font-bold mt-10 mb-5 text-gray-900 scroll-mt-24">
@@ -42,7 +115,6 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           );
         },
         h3: ({ children }) => {
-          const text = String(children);
           const id = `heading-${headingIndex++}`;
           return (
             <h3 id={id} className="text-2xl font-semibold mt-8 mb-4 text-gray-800 scroll-mt-24">
@@ -67,7 +139,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
             {children}
           </blockquote>
         ),
-        code: ({ node, className, children, ...props }: any) => {
+        code: ({ className, children, ...props }: any) => {
           const match = /language-(\w+)/.exec(className || '');
           const inline = !match;
           return !inline && match ? (
@@ -133,7 +205,23 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         ),
       }}
     >
-      {content}
+      {markdown}
     </ReactMarkdown>
+  );
+
+  return (
+    <>
+      {blocks.map((block, index) => (
+        <Fragment key={`markdown-block-${index}`}>
+          {insertions.get(index)?.map((marker) => (
+            <BlogDetailCTA key={`${marker}-${index}`} variant={marker} lang={lang} />
+          ))}
+          {renderMarkdown(block, `markdown-${index}`)}
+        </Fragment>
+      ))}
+      {insertions.get(blocks.length)?.map((marker) => (
+        <BlogDetailCTA key={`${marker}-end`} variant={marker} lang={lang} />
+      ))}
+    </>
   );
 }

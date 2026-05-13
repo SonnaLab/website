@@ -1,18 +1,21 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
-import { Clock, Calendar, ArrowLeft, Tag } from 'lucide-react';
+import { ArrowLeft, CalendarDays, Clock3, ListChecks } from 'lucide-react';
 import { BlogSEO } from '@/components/seo/BlogSEO';
 import { MarkdownRenderer } from '@/components/public/blog/MarkdownRenderer';
 import { ReadingProgressBar } from '@/components/public/blog/ReadingProgressBar';
 import { SocialShareSidebar } from '@/components/public/blog/SocialShareSidebar';
 import { TableOfContents } from '@/components/public/blog/TableOfContents';
-import { AuthorBio } from '@/components/public/blog/AuthorBio';
 import { RelatedArticles } from '@/components/public/blog/RelatedArticles';
 import { BlogPost as BlogPostType } from '@/types/blog';
 import { Button } from '@/components/ui/button';
 import { useBlogTracking } from '@/hooks/useAnalytics';
 import { apiService } from '@/services/api';
+
+function getArticleBodyContent(content: string): string {
+  return content.replace(/^#\s+.+(?:\r?\n)+/, '').trimStart();
+}
 
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
@@ -40,7 +43,23 @@ export default function BlogPost() {
         if (fetchedPost) {
           setPost(fetchedPost);
           const relatedResponse = await apiService.getBlogPosts({ category: fetchedPost.category, limit: 4 });
-          setRelatedPosts((relatedResponse.posts ?? []).filter(p => p.id !== fetchedPost.id).slice(0, 3));
+          let relatedCandidates = (relatedResponse.posts ?? []).filter(p => p.id !== fetchedPost.id);
+
+          if (relatedCandidates.length < 3) {
+            try {
+              const complementaryResponse = await apiService.getBlogPosts({ limit: 6 });
+              const complementaryPosts = (complementaryResponse.posts ?? []).filter((candidate) => (
+                candidate.id !== fetchedPost.id &&
+                !relatedCandidates.some((relatedPost) => relatedPost.id === candidate.id)
+              ));
+
+              relatedCandidates = [...relatedCandidates, ...complementaryPosts];
+            } catch {
+              // The article should stay readable even if complementary links are unavailable.
+            }
+          }
+
+          setRelatedPosts(relatedCandidates.slice(0, 3));
         } else {
           setPost(null);
           setRelatedPosts([]);
@@ -59,13 +78,19 @@ export default function BlogPost() {
   useEffect(() => {
     if (!post) return;
 
-    const headings = post.content.match(/^#{1,3}\s.+$/gm) || [];
-    const toc = headings.map((heading, index) => {
+    const headings = getArticleBodyContent(post.content).match(/^#{1,3}\s.+$/gm) || [];
+    const allHeadings = headings.map((heading, index) => {
       const level = heading.match(/^#+/)?.[0].length || 1;
       const text = heading.replace(/^#+\s/, '');
       const id = `heading-${index}`;
       return { id, text, level };
     });
+    const preferredLevel = allHeadings.some((heading) => heading.level === 2)
+      ? 2
+      : Math.min(...allHeadings.map((heading) => heading.level));
+    const toc = Number.isFinite(preferredLevel)
+      ? allHeadings.filter((heading) => heading.level === preferredLevel)
+      : [];
     setTableOfContents(toc);
   }, [post]);
 
@@ -96,76 +121,43 @@ export default function BlogPost() {
   }
 
   const currentUrl = `https://sonnalab.com${lang === 'en' ? '/en' : ''}/blog/${post.slug}`;
+  const articleContent = getArticleBodyContent(post.content);
 
   return (
     <>
       <BlogSEO post={post} />
       <ReadingProgressBar />
       
-      <article className="pt-20 pb-16 py-20 bg-gray-50" itemScope itemType="https://schema.org/BlogPosting">
-        {/* Breadcrumb */}
-        <div className="container mx-auto px-4 pt-4 max-w-7xl">
-          <nav className="flex items-center text-sm text-gray-600 mb-8" aria-label="Breadcrumb">
-            <Link to="/" className="hover:text-black transition-colors">
-              {t('breadcrumb.home')}
-            </Link>
-            <span className="mx-2">/</span>
-            <Link to="/blog" className="hover:text-black transition-colors">
-              {t('breadcrumb.blog')}
-            </Link>
-            <span className="mx-2">/</span>
-            <span className="text-gray-900 font-medium truncate max-w-xs">{post.title}</span>
-          </nav>
-        </div>
+      <article className="blog-post-page" itemScope itemType="https://schema.org/BlogPosting">
+        <meta itemProp="datePublished" content={post.publishedAt} />
+        {post.updatedAt && <meta itemProp="dateModified" content={post.updatedAt} />}
 
-        {/* Hero Section */}
-        <header className="relative bg-black text-white py-16 mb-16">
-          <div className="container mx-auto max-w-5xl px-8">
-            {/* Metadata */}
-            <div className="flex flex-wrap items-center gap-4 mb-6">
-              <span className="px-4 py-2 bg-white/20 backdrop-blur-md rounded-full text-sm font-semibold">
-                {post.category}
-              </span>
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                <span className="text-sm">{post.readTime} min de lecture</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
-                <time dateTime={post.publishedAt} itemProp="datePublished" className="text-sm">
-                  {new Date(post.publishedAt).toLocaleDateString(lang, {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </time>
-              </div>
-              {post.updatedAt && (
-                <meta itemProp="dateModified" content={post.updatedAt} />
-              )}
-            </div>
-        
-            {/* Title */}
-            <h1 className="text-4xl lg:text-5xl font-bold mb-6 leading-tight" itemProp="headline">
-              {post.title}
-            </h1>
-        
-            {/* Author */}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
-                <span className="text-lg font-bold">{post.author.charAt(0)}</span>
-              </div>
-              <div>
-                <p className="font-semibold" itemProp="author" itemScope itemType="https://schema.org/Person">
-                  <span itemProp="name">{post.author}</span>
-                </p>
-              </div>
-            </div>
-          </div>
-        </header>
+        <section className="blog-post-intro" aria-labelledby="blog-post-title">
+          <nav className="blog-post-breadcrumb" aria-label="Breadcrumb">
+            <Link to="/blog">{t('breadcrumb.blog')}</Link>
+            <span aria-hidden="true">&gt;</span>
+            <span>{post.title}</span>
+          </nav>
+
+          <h1 id="blog-post-title" className="blog-post-title" itemProp="headline">
+            {post.title}
+          </h1>
+
+          <figure className="blog-post-hero-media">
+            <img
+              src={post.coverImage}
+              alt={post.title}
+              className="blog-post-hero-image"
+              itemProp="image"
+            />
+            <figcaption className="blog-post-hero-caption" itemProp="description">
+              {post.excerpt}
+            </figcaption>
+          </figure>
+        </section>
 
         {/* 3-Column Layout Container */}
-        <div className="container mx-auto px-4 max-w-[1600px]">
+        <div className="container mx-auto px-4 max-w-[1600px] blog-post-content-shell">
             <div className="blog-post-grid">
             {/* LEFT SIDEBAR - Table of Contents */}
             <aside className="blog-toc-sidebar">
@@ -176,60 +168,58 @@ export default function BlogPost() {
 
             {/* MAIN CONTENT - Center Column */}
             <main className="blog-main-content">
-              <img
-                src={post.coverImage}
-                alt={post.title}
-                className="w-full h-full object-cover"
-                itemProp="image"
-              />
-              {/* Excerpt */}
-              <div className="bg-gray-50 border-l-4 border-black p-6 rounded-r-2xl mb-12">
-                <p className="text-xl leading-relaxed text-gray-700 italic" itemProp="description">
-                  {post.excerpt}
-                </p>
-              </div>
-
-              {/* Tags */}
-              {post.tags.length > 0 && (
-                <div className="flex flex-wrap items-center gap-2 mb-8" itemProp="keywords">
-                  <Tag className="w-4 h-4 text-gray-600" />
-                  {post.tags.map(tag => (
-                    <span
-                      key={tag}
-                      className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm font-medium transition-colors cursor-pointer"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-
               {/* Article Body */}
               <div className="prose prose-lg max-w-none mb-16" itemProp="articleBody">
-                <MarkdownRenderer content={post.content} />
+                <MarkdownRenderer content={articleContent} lang={lang} enableCtas />
               </div>
-
-              {/* Author Bio */}
-              <div className="mb-16">
-                <AuthorBio
-                  name={post.author}
-                  bio={`Expert en innovation digitale, ${post.author} partage son expertise sur les dernières tendances technologiques et les meilleures pratiques du développement web moderne.`}
-                />
-              </div>
-
-              {/* Related Articles */}
-              {relatedPosts.length > 0 && (
-                <RelatedArticles
-                  articles={relatedPosts}
-                  title={t('article.relatedPosts')}
-                  lang={lang}
-                />
-              )}
             </main>
 
             {/* RIGHT SIDEBAR - Social Share */}
             <aside className="blog-social-sidebar">
-              <div className="sticky-sidebar">
+              <div className="sticky-sidebar blog-right-rail">
+                <section className="blog-article-details-card" aria-label="Détails de l'article">
+                  <div className="blog-article-author flex items-center gap-3">
+                    <div className="blog-article-author__avatar w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
+                      <img src="/favicon.ico" alt="" width="24" height="24" aria-hidden="true" />
+                    </div>
+                    <div>
+                      <p className="font-semibold" itemProp="author" itemScope itemType="https://schema.org/Person">
+                        <span itemProp="name">SonnaLab</span>
+                      </p>
+                      <span>{post.author}</span>
+                    </div>
+                  </div>
+
+                  <dl className="blog-article-details-list">
+                    <div>
+                      <dt>
+                        <ListChecks aria-hidden="true" />
+                        <span>Catégorie</span>
+                      </dt>
+                      <dd>{post.category}</dd>
+                    </div>
+                    <div>
+                      <dt>
+                        <CalendarDays aria-hidden="true" />
+                        <span>Publié le</span>
+                      </dt>
+                      <dd>
+                        {new Date(post.publishedAt).toLocaleDateString(lang, {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>
+                        <Clock3 aria-hidden="true" />
+                        <span>Lecture</span>
+                      </dt>
+                      <dd>{post.readTime} min</dd>
+                    </div>
+                  </dl>
+                </section>
                 <SocialShareSidebar
                   url={currentUrl}
                   title={post.title}
@@ -240,6 +230,14 @@ export default function BlogPost() {
           </div>
         </div>
       </article>
+
+      <div className="blog-related-shell">
+        <RelatedArticles
+          articles={relatedPosts}
+          title="Articles qui pourraient vous intéresser"
+          lang={lang}
+        />
+      </div>
 
       {/* Schema.org JSON-LD */}
       <script
