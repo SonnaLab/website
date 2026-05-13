@@ -28,7 +28,7 @@ function sortByNewestPost(firstPost: BlogListPost, secondPost: BlogListPost) {
 
 export default function Blog() {
   const { t, i18n } = useTranslation('blog');
-  const lang = i18n.language.startsWith('en') ? 'en' : 'fr';
+  const lang = i18n.language.substring(0, 2);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [blogPosts, setBlogPosts] = useState<BlogListPost[]>([]);
@@ -64,6 +64,7 @@ export default function Blog() {
       per_page: POSTS_PER_PAGE,
       category: selectedCategory === 'all' ? undefined : selectedCategory,
       q: searchQuery.trim() || undefined,
+      locale: lang,
     })
       .then(response => {
         if (!mounted) return;
@@ -85,7 +86,7 @@ export default function Blog() {
       });
 
     return () => { mounted = false; };
-  }, [page, searchQuery, selectedCategory, t]);
+  }, [page, searchQuery, selectedCategory, t, lang]);
 
   return (
     <>
@@ -209,29 +210,39 @@ export default function Blog() {
 
                 {totalPages > 1 && (
                   <nav className="blog-index-pagination" aria-label="Pagination blog">
-                    <Button
+                    <button
                       type="button"
-                      variant="outline"
-                      size="sm"
+                      className="blog-pagination__arrow"
                       disabled={page <= 1}
                       onClick={() => setPage(current => Math.max(1, current - 1))}
+                      aria-label={t('pagination.previousPage', { defaultValue: 'Précédent' })}
                     >
                       <ChevronLeft size={16} />
-                      {t('pagination.previousPage', { defaultValue: 'Précédent' })}
-                    </Button>
-                    <span>
-                      {page} / {totalPages}
-                    </span>
-                    <Button
+                    </button>
+
+                    <div className="blog-pagination__pages">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                        <button
+                          key={p}
+                          type="button"
+                          className={`blog-pagination__page${p === page ? ' blog-pagination__page--active' : ''}`}
+                          onClick={() => setPage(p)}
+                          aria-current={p === page ? 'page' : undefined}
+                        >
+                          {p}
+                        </button>
+                      ))}
+                    </div>
+
+                    <button
                       type="button"
-                      variant="outline"
-                      size="sm"
+                      className="blog-pagination__arrow"
                       disabled={page >= totalPages}
                       onClick={() => setPage(current => Math.min(totalPages, current + 1))}
+                      aria-label={t('pagination.nextPage', { defaultValue: 'Suivant' })}
                     >
-                      {t('pagination.nextPage', { defaultValue: 'Suivant' })}
                       <ChevronRight size={16} />
-                    </Button>
+                    </button>
                   </nav>
                 )}
               </>
