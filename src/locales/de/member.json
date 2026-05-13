@@ -1,0 +1,139 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "appointments": "Termine",
+    "projects": "Projekte",
+    "billing": "Abrechnung",
+    "account": "Mein Konto",
+    "signOut": "Abmelden",
+    "backToSite": "Zurück zur Website"
+  },
+  "dashboard": {
+    "title": "Willkommen {{name}}",
+    "subtitle": "Hier ist ein Überblick über Ihren Bereich.",
+    "appointments": "Termine",
+    "projects": "Projekte",
+    "invoices": "Rechnungen",
+    "quotes": "Angebote"
+  },
+  "appointments": {
+    "title": "Meine Termine",
+    "newButton": "Neuer Termin",
+    "empty": "Noch keine Termine.",
+    "scheduledAt": "Datum",
+    "kind": "Art",
+    "status": "Status",
+    "duration": "Dauer",
+    "location": "Ort",
+    "actions": "Aktionen",
+    "cancel": "Stornieren",
+    "confirmCancel": "Diesen Termin stornieren?"
+  },
+  "projects": {
+    "title": "Meine Projekte",
+    "loading": "Projekte werden geladen...",
+    "untitled": "Projekt ohne Titel",
+    "empty": "Noch keine Projekte.",
+    "status": "Status",
+    "progress": "Fortschritt",
+    "milestones": "Meilensteine",
+    "updates": "Updates",
+    "noUpdates": "Keine Updates.",
+    "tabs": {
+      "overview": "Übersicht",
+      "projects": "Projekte"
+    },
+    "overview": {
+      "total": "Projekte gesamt",
+      "active": "Aktiv",
+      "completed": "Abgeschlossen",
+      "avgProgress": "Durchschnittlicher Fortschritt",
+      "latestRequests": "Neueste Anfragen"
+    },
+    "columns": {
+      "project": "Projekt",
+      "status": "Status",
+      "progress": "Fortschritt",
+      "period": "Zeitraum",
+      "submitted": "Eingereicht am",
+      "actions": "Aktionen"
+    },
+    "actions": {
+      "preview": "Vorschau",
+      "previewProject": "Vorschau für {{name}}"
+    },
+    "statuses": {
+      "unknown": "Unbekannter Status",
+      "new": "Neu",
+      "pending": "Ausstehend",
+      "draft": "Entwurf",
+      "active": "Aktiv",
+      "started": "Gestartet",
+      "in_progress": "In Bearbeitung",
+      "completed": "Abgeschlossen",
+      "done": "Erledigt",
+      "paused": "Pausiert",
+      "on_hold": "Wartend",
+      "cancelled": "Storniert",
+      "canceled": "Storniert",
+      "failed": "Fehlgeschlagen",
+      "archived": "Archiviert"
+    },
+    "preview": {
+      "badge": "Anfrage",
+      "title": "Eingereichte Anfrage",
+      "close": "Schließen",
+      "project": "Projekt",
+      "contact": "Kontakt",
+      "noDescription": "Keine Beschreibung eingereicht.",
+      "fields": {
+        "projectType": "Projekttyp",
+        "budget": "Budget",
+        "timeline": "Zeitrahmen",
+        "submittedOn": "Eingereicht am",
+        "name": "Name",
+        "email": "E-Mail",
+        "phone": "Telefon",
+        "company": "Unternehmen",
+        "role": "Rolle"
+      },
+      "values": {
+        "projectTypes": {
+          "web": "Webanwendung",
+          "mobile": "Mobile Anwendung",
+          "consulting": "Beratung",
+          "ai": "Künstliche Intelligenz",
+          "other": "Anderes Projekt"
+        },
+        "budgets": {
+          "small": "Unter 10K €",
+          "medium": "10K - 50K €",
+          "large": "50K - 150K €",
+          "enterprise": "Über 150K €"
+        },
+        "timelines": {
+          "urgent": "Unter 1 Monat",
+          "1-3months": "1 bis 3 Monate",
+          "3-6months": "3 bis 6 Monate",
+          "6months+": "Über 6 Monate"
+        }
+      }
+    }
+  },
+  "billing": {
+    "title": "Abrechnung",
+    "quotes": "Angebote",
+    "invoices": "Rechnungen",
+    "number": "Nummer",
+    "status": "Status",
+    "total": "Gesamt",
+    "issuedOn": "Ausgestellt am",
+    "dueOn": "Fällig am",
+    "accept": "Akzeptieren",
+    "reject": "Ablehnen",
+    "view": "Anzeigen",
+    "download": "PDF",
+    "noQuotes": "Keine Angebote.",
+    "noInvoices": "Keine Rechnungen."
+  }
+}

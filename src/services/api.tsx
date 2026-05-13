@@ -2,6 +2,7 @@ import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'ax
 import { ContactFormInputs } from '@/schemas/contactSchema';
 import type { AnalyticsEvent, ConsentPayload } from '@/types/analytics';
 import type { BlogPost } from '@/types/blog';
+import type { Budget, ProjectType, Timeline } from '@/types/consultation';
 
 const API_BASE_URL = import.meta.env.PROD 
   ? import.meta.env.VITE_API_BASE_PROD_URL || 'https://api.sonnalab.com'
@@ -23,6 +24,19 @@ export interface AuthUser {
   role: AuthRole;
   language?: string;
   confirmed_at?: string | null;
+}
+
+export interface NewProjectPayload {
+  projectType: ProjectType;
+  description: string;
+  budget?: Budget | null;
+  timeline?: Timeline | null;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  company?: string | null;
+  role?: string | null;
 }
 
 // ==================== News types ====================
@@ -531,7 +545,7 @@ class ApiService {
 
   // ==================== New Project ====================
   
-  async submitNewProject(data: any) {
+  async submitNewProject(data: NewProjectPayload) {
     try {
       const response = await this.client.post('/api/v1/new/project', data);
       return response.data;

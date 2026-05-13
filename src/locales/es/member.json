@@ -1,0 +1,139 @@
+{
+  "nav": {
+    "dashboard": "Panel",
+    "appointments": "Citas",
+    "projects": "Proyectos",
+    "billing": "Facturación",
+    "account": "Mi cuenta",
+    "signOut": "Cerrar sesión",
+    "backToSite": "Volver al sitio"
+  },
+  "dashboard": {
+    "title": "Bienvenido {{name}}",
+    "subtitle": "Aquí tiene un resumen de su espacio.",
+    "appointments": "Citas",
+    "projects": "Proyectos",
+    "invoices": "Facturas",
+    "quotes": "Presupuestos"
+  },
+  "appointments": {
+    "title": "Mis citas",
+    "newButton": "Nueva cita",
+    "empty": "Aún no hay citas.",
+    "scheduledAt": "Fecha",
+    "kind": "Tipo",
+    "status": "Estado",
+    "duration": "Duración",
+    "location": "Lugar",
+    "actions": "Acciones",
+    "cancel": "Cancelar",
+    "confirmCancel": "¿Cancelar esta cita?"
+  },
+  "projects": {
+    "title": "Mis proyectos",
+    "loading": "Cargando proyectos...",
+    "untitled": "Proyecto sin título",
+    "empty": "Aún no hay proyectos.",
+    "status": "Estado",
+    "progress": "Progreso",
+    "milestones": "Hitos",
+    "updates": "Actualizaciones",
+    "noUpdates": "Sin actualizaciones.",
+    "tabs": {
+      "overview": "Resumen",
+      "projects": "Proyectos"
+    },
+    "overview": {
+      "total": "Total de proyectos",
+      "active": "Activos",
+      "completed": "Completados",
+      "avgProgress": "Progreso medio",
+      "latestRequests": "Últimas solicitudes"
+    },
+    "columns": {
+      "project": "Proyecto",
+      "status": "Estado",
+      "progress": "Progreso",
+      "period": "Periodo",
+      "submitted": "Enviado el",
+      "actions": "Acciones"
+    },
+    "actions": {
+      "preview": "Previsualizar",
+      "previewProject": "Previsualizar {{name}}"
+    },
+    "statuses": {
+      "unknown": "Estado desconocido",
+      "new": "Nuevo",
+      "pending": "Pendiente",
+      "draft": "Borrador",
+      "active": "Activo",
+      "started": "Iniciado",
+      "in_progress": "En curso",
+      "completed": "Completado",
+      "done": "Completado",
+      "paused": "En pausa",
+      "on_hold": "En espera",
+      "cancelled": "Cancelado",
+      "canceled": "Cancelado",
+      "failed": "Fallido",
+      "archived": "Archivado"
+    },
+    "preview": {
+      "badge": "Solicitud",
+      "title": "Solicitud enviada",
+      "close": "Cerrar",
+      "project": "Proyecto",
+      "contact": "Contacto",
+      "noDescription": "No se envió ninguna descripción.",
+      "fields": {
+        "projectType": "Tipo de proyecto",
+        "budget": "Presupuesto",
+        "timeline": "Plazo",
+        "submittedOn": "Enviado el",
+        "name": "Nombre",
+        "email": "Email",
+        "phone": "Teléfono",
+        "company": "Empresa",
+        "role": "Cargo"
+      },
+      "values": {
+        "projectTypes": {
+          "web": "Aplicación web",
+          "mobile": "Aplicación móvil",
+          "consulting": "Consultoría",
+          "ai": "Inteligencia artificial",
+          "other": "Otro proyecto"
+        },
+        "budgets": {
+          "small": "Menos de 10K €",
+          "medium": "10K - 50K €",
+          "large": "50K - 150K €",
+          "enterprise": "Más de 150K €"
+        },
+        "timelines": {
+          "urgent": "Menos de 1 mes",
+          "1-3months": "1 a 3 meses",
+          "3-6months": "3 a 6 meses",
+          "6months+": "Más de 6 meses"
+        }
+      }
+    }
+  },
+  "billing": {
+    "title": "Facturación",
+    "quotes": "Presupuestos",
+    "invoices": "Facturas",
+    "number": "Número",
+    "status": "Estado",
+    "total": "Total",
+    "issuedOn": "Emitido el",
+    "dueOn": "Vence el",
+    "accept": "Aceptar",
+    "reject": "Rechazar",
+    "view": "Ver",
+    "download": "PDF",
+    "noQuotes": "No hay presupuestos.",
+    "noInvoices": "No hay facturas."
+  }
+}

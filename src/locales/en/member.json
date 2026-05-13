@@ -31,12 +31,94 @@
   },
   "projects": {
     "title": "My projects",
+    "loading": "Loading projects...",
+    "untitled": "Untitled project",
     "empty": "No project yet.",
     "status": "Status",
     "progress": "Progress",
     "milestones": "Milestones",
     "updates": "Updates",
-    "noUpdates": "No updates."
+    "noUpdates": "No updates.",
+    "tabs": {
+      "overview": "Overview",
+      "projects": "Projects"
+    },
+    "overview": {
+      "total": "Total projects",
+      "active": "Active",
+      "completed": "Completed",
+      "avgProgress": "Average progress",
+      "latestRequests": "Latest requests"
+    },
+    "columns": {
+      "project": "Project",
+      "status": "Status",
+      "progress": "Progress",
+      "period": "Period",
+      "submitted": "Submitted on",
+      "actions": "Actions"
+    },
+    "actions": {
+      "preview": "Preview",
+      "previewProject": "Preview {{name}}"
+    },
+    "statuses": {
+      "unknown": "Unknown status",
+      "new": "New",
+      "pending": "Pending",
+      "draft": "Draft",
+      "active": "Active",
+      "started": "Started",
+      "in_progress": "In progress",
+      "completed": "Completed",
+      "done": "Done",
+      "paused": "Paused",
+      "on_hold": "On hold",
+      "cancelled": "Cancelled",
+      "canceled": "Canceled",
+      "failed": "Failed",
+      "archived": "Archived"
+    },
+    "preview": {
+      "badge": "Request",
+      "title": "Submitted request",
+      "close": "Close",
+      "project": "Project",
+      "contact": "Contact",
+      "noDescription": "No description submitted.",
+      "fields": {
+        "projectType": "Project type",
+        "budget": "Budget",
+        "timeline": "Timeline",
+        "submittedOn": "Submitted on",
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "company": "Company",
+        "role": "Role"
+      },
+      "values": {
+        "projectTypes": {
+          "web": "Web application",
+          "mobile": "Mobile application",
+          "consulting": "Consulting",
+          "ai": "Artificial intelligence",
+          "other": "Other project"
+        },
+        "budgets": {
+          "small": "Under €10K",
+          "medium": "€10K - €50K",
+          "large": "€50K - €150K",
+          "enterprise": "Over €150K"
+        },
+        "timelines": {
+          "urgent": "Under 1 month",
+          "1-3months": "1 to 3 months",
+          "3-6months": "3 to 6 months",
+          "6months+": "Over 6 months"
+        }
+      }
+    }
   },
   "billing": {
     "title": "Billing",

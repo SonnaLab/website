@@ -10,7 +10,7 @@ import { ProjectDetailsStep } from './steps/ProjectDetailsStep';
 import { ContactInfoStep } from './steps/ContactInfoStep';
 import { ConfirmationStep } from './steps/ConfirmationStep';
 import { motion, AnimatePresence } from 'framer-motion';
-import { apiService } from '@/services/api';
+import { apiService, type NewProjectPayload } from '@/services/api';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { useTranslation } from 'react-i18next';
 
@@ -18,7 +18,7 @@ const TOTAL_STEPS = 4;
 
 export function ConsultationModal() {
   const { t } = useTranslation('consultation');
-  const { isConsultationModalOpen, closeConsultationModal, preselectedProjectType } = useModal();
+  const { isConsultationModalOpen, closeConsultationModal } = useModal();
   const {
     currentStep,
     formData,
@@ -64,22 +64,39 @@ export function ConsultationModal() {
     }
   };
 
+  const canSubmit = () => Boolean(
+    formData.projectDetails?.type &&
+    formData.projectDetails?.description &&
+    formData.projectDetails.description.length >= 20 &&
+    formData.contactInfo?.firstName &&
+    formData.contactInfo?.lastName &&
+    formData.contactInfo?.email &&
+    formData.contactInfo?.phone &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.contactInfo.email)
+  );
+
   const handleSubmit = async () => {
-    setIsSubmitting(true);
     setError(null);
 
+    if (!canSubmit() || !formData.projectDetails || !formData.contactInfo) {
+      setError(t('errors.unexpectedError'));
+      return;
+    }
+
+    setIsSubmitting(true);
+
     try {
-      const payload = {
-        projectType: formData.projectDetails?.type,
-        description: formData.projectDetails?.description,
-        budget: formData.projectDetails?.budget,
-        timeline: formData.projectDetails?.timeline,
-        firstName: formData.contactInfo?.firstName,
-        lastName: formData.contactInfo?.lastName,
-        email: formData.contactInfo?.email,
-        phone: formData.contactInfo?.phone,
-        company: formData.contactInfo?.company || null,
-        role: formData.contactInfo?.role || null,
+      const payload: NewProjectPayload = {
+        projectType: formData.projectDetails.type!,
+        description: formData.projectDetails.description.trim(),
+        budget: formData.projectDetails.budget ?? null,
+        timeline: formData.projectDetails.timeline ?? null,
+        firstName: formData.contactInfo.firstName.trim(),
+        lastName: formData.contactInfo.lastName.trim(),
+        email: formData.contactInfo.email.trim(),
+        phone: formData.contactInfo.phone.trim(),
+        company: formData.contactInfo.company?.trim() || null,
+        role: formData.contactInfo.role?.trim() || null,
       };
 
       await apiService.submitNewProject(payload);
@@ -209,7 +226,7 @@ export function ConsultationModal() {
               {currentStep === TOTAL_STEPS && (
                 <Button
                   onClick={handleSubmit}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !canSubmit()}
                   className="gap-2 bg-black hover:bg-gray-800"
                 >
                   {isSubmitting ? (

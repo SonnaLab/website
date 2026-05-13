@@ -1,0 +1,139 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "appointments": "Appuntamenti",
+    "projects": "Progetti",
+    "billing": "Fatturazione",
+    "account": "Il mio account",
+    "signOut": "Disconnetti",
+    "backToSite": "Torna al sito"
+  },
+  "dashboard": {
+    "title": "Benvenuto {{name}}",
+    "subtitle": "Ecco una panoramica del tuo spazio.",
+    "appointments": "Appuntamenti",
+    "projects": "Progetti",
+    "invoices": "Fatture",
+    "quotes": "Preventivi"
+  },
+  "appointments": {
+    "title": "I miei appuntamenti",
+    "newButton": "Nuovo appuntamento",
+    "empty": "Nessun appuntamento ancora.",
+    "scheduledAt": "Data",
+    "kind": "Tipo",
+    "status": "Stato",
+    "duration": "Durata",
+    "location": "Luogo",
+    "actions": "Azioni",
+    "cancel": "Annulla",
+    "confirmCancel": "Annullare questo appuntamento?"
+  },
+  "projects": {
+    "title": "I miei progetti",
+    "loading": "Caricamento progetti...",
+    "untitled": "Progetto senza titolo",
+    "empty": "Nessun progetto ancora.",
+    "status": "Stato",
+    "progress": "Progresso",
+    "milestones": "Traguardi",
+    "updates": "Aggiornamenti",
+    "noUpdates": "Nessun aggiornamento.",
+    "tabs": {
+      "overview": "Panoramica",
+      "projects": "Progetti"
+    },
+    "overview": {
+      "total": "Totale progetti",
+      "active": "Attivi",
+      "completed": "Completati",
+      "avgProgress": "Progresso medio",
+      "latestRequests": "Ultime richieste"
+    },
+    "columns": {
+      "project": "Progetto",
+      "status": "Stato",
+      "progress": "Progresso",
+      "period": "Periodo",
+      "submitted": "Inviato il",
+      "actions": "Azioni"
+    },
+    "actions": {
+      "preview": "Anteprima",
+      "previewProject": "Anteprima di {{name}}"
+    },
+    "statuses": {
+      "unknown": "Stato sconosciuto",
+      "new": "Nuovo",
+      "pending": "In attesa",
+      "draft": "Bozza",
+      "active": "Attivo",
+      "started": "Avviato",
+      "in_progress": "In corso",
+      "completed": "Completato",
+      "done": "Completato",
+      "paused": "In pausa",
+      "on_hold": "In attesa",
+      "cancelled": "Annullato",
+      "canceled": "Annullato",
+      "failed": "Fallito",
+      "archived": "Archiviato"
+    },
+    "preview": {
+      "badge": "Richiesta",
+      "title": "Richiesta inviata",
+      "close": "Chiudi",
+      "project": "Progetto",
+      "contact": "Contatto",
+      "noDescription": "Nessuna descrizione inviata.",
+      "fields": {
+        "projectType": "Tipo di progetto",
+        "budget": "Budget",
+        "timeline": "Tempistiche",
+        "submittedOn": "Inviato il",
+        "name": "Nome",
+        "email": "Email",
+        "phone": "Telefono",
+        "company": "Azienda",
+        "role": "Ruolo"
+      },
+      "values": {
+        "projectTypes": {
+          "web": "Applicazione web",
+          "mobile": "Applicazione mobile",
+          "consulting": "Consulenza",
+          "ai": "Intelligenza artificiale",
+          "other": "Altro progetto"
+        },
+        "budgets": {
+          "small": "Meno di 10K €",
+          "medium": "10K - 50K €",
+          "large": "50K - 150K €",
+          "enterprise": "Oltre 150K €"
+        },
+        "timelines": {
+          "urgent": "Meno di 1 mese",
+          "1-3months": "Da 1 a 3 mesi",
+          "3-6months": "Da 3 a 6 mesi",
+          "6months+": "Oltre 6 mesi"
+        }
+      }
+    }
+  },
+  "billing": {
+    "title": "Fatturazione",
+    "quotes": "Preventivi",
+    "invoices": "Fatture",
+    "number": "Numero",
+    "status": "Stato",
+    "total": "Totale",
+    "issuedOn": "Emessa il",
+    "dueOn": "Scadenza il",
+    "accept": "Accetta",
+    "reject": "Rifiuta",
+    "view": "Visualizza",
+    "download": "PDF",
+    "noQuotes": "Nessun preventivo.",
+    "noInvoices": "Nessuna fattura."
+  }
+}

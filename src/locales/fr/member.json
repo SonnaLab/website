@@ -31,12 +31,94 @@
   },
   "projects": {
     "title": "Mes projets",
+    "loading": "Chargement des projets...",
+    "untitled": "Projet sans titre",
     "empty": "Aucun projet pour le moment.",
     "status": "Statut",
     "progress": "Progression",
     "milestones": "Jalons",
     "updates": "Mises à jour",
-    "noUpdates": "Aucune mise à jour."
+    "noUpdates": "Aucune mise à jour.",
+    "tabs": {
+      "overview": "Vue d'ensemble",
+      "projects": "Projets"
+    },
+    "overview": {
+      "total": "Total projets",
+      "active": "Actifs",
+      "completed": "Terminés",
+      "avgProgress": "Progression moyenne",
+      "latestRequests": "Dernières demandes"
+    },
+    "columns": {
+      "project": "Projet",
+      "status": "Statut",
+      "progress": "Progression",
+      "period": "Période",
+      "submitted": "Soumis le",
+      "actions": "Actions"
+    },
+    "actions": {
+      "preview": "Prévisualiser",
+      "previewProject": "Prévisualiser {{name}}"
+    },
+    "statuses": {
+      "unknown": "Statut inconnu",
+      "new": "Nouveau",
+      "pending": "En attente",
+      "draft": "Brouillon",
+      "active": "Actif",
+      "started": "Démarré",
+      "in_progress": "En cours",
+      "completed": "Terminé",
+      "done": "Terminé",
+      "paused": "En pause",
+      "on_hold": "En attente",
+      "cancelled": "Annulé",
+      "canceled": "Annulé",
+      "failed": "Échoué",
+      "archived": "Archivé"
+    },
+    "preview": {
+      "badge": "Demande",
+      "title": "Demande communiquée",
+      "close": "Fermer",
+      "project": "Projet",
+      "contact": "Contact",
+      "noDescription": "Aucune description communiquée.",
+      "fields": {
+        "projectType": "Type de projet",
+        "budget": "Budget",
+        "timeline": "Délai",
+        "submittedOn": "Soumis le",
+        "name": "Nom",
+        "email": "Email",
+        "phone": "Téléphone",
+        "company": "Entreprise",
+        "role": "Rôle"
+      },
+      "values": {
+        "projectTypes": {
+          "web": "Application web",
+          "mobile": "Application mobile",
+          "consulting": "Consulting",
+          "ai": "Intelligence artificielle",
+          "other": "Autre projet"
+        },
+        "budgets": {
+          "small": "Moins de 10K €",
+          "medium": "10K - 50K €",
+          "large": "50K - 150K €",
+          "enterprise": "Plus de 150K €"
+        },
+        "timelines": {
+          "urgent": "Moins d'un mois",
+          "1-3months": "1 à 3 mois",
+          "3-6months": "3 à 6 mois",
+          "6months+": "Plus de 6 mois"
+        }
+      }
+    }
   },
   "billing": {
     "title": "Facturation",
