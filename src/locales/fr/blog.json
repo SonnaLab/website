@@ -5,7 +5,7 @@
     "keywords": "blog technologie, IA, développement web, transformation digitale, innovation"
   },
   "hero": {
-    "badge": "Actualités",
+    "badge": "POUR ALLER PLUS LOIN",
     "title": "Restez informé des dernières tendances technologiques",
     "subtitle": "Articles, tutoriels et études de cas pour vous accompagner dans votre transformation numérique",
     "description": ""
@@ -37,7 +37,7 @@
     "tableOfContents": "Table des matières",
     "share": "Partager cet article",
     "relatedPosts": "Articles similaires",
-    "readMore": "Lire l'article"
+    "readMore": "POUR ALLER PLUS LOIN"
   },
   "cta": {
     "title": "Besoin d'un accompagnement personnalisé ?",

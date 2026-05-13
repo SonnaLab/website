@@ -36,6 +36,19 @@
   font-size: 13px;
   font-weight: 700;
   color: #ffffff;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.blog-index-hero__eyebrow svg {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+}
+
+.blog-index-hero__eyebrow span {
+  display: inline-block;
+  white-space: nowrap;
 }
 
 .blog-index-hero h1 {
@@ -1087,6 +1100,7 @@
   letter-spacing: 0;
   line-height: 1.2;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .blog-related-section__eyebrow svg {
@@ -1094,6 +1108,11 @@
   height: 0.92rem;
   flex: 0 0 auto;
   stroke-width: 2.2;
+}
+
+.blog-related-section__eyebrow span {
+  display: inline-block;
+  white-space: nowrap;
 }
 
 .blog-related-section__header h2 {
