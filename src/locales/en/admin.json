@@ -113,7 +113,10 @@
   "seo": {
     "title": "SEO",
     "subtitle": "Pages, keywords, audits.",
-    "tabs": { "pages": "Pages", "keywords": "Keywords" },
+    "tabs": {
+      "pages": "Pages",
+      "keywords": "Keywords"
+    },
     "newPage": "New page",
     "newKeyword": "New keyword",
     "path": "Path",
@@ -235,7 +238,8 @@
         "readingTime": "Reading",
         "content": "Markdown content",
         "contentPlaceholder": "# Title\n\nArticle content…"
-      }
+      },
+      "allStatuses": "All statuses"
     },
     "prompts": {
       "empty": "No non-success prompts for SonnaLab.",

@@ -18,14 +18,38 @@
     "lastAction": "Letzte Aktionen",
     "viewMore": "Mehr anzeigen",
     "widgets": {
-      "infrastructure": { "title": "Infrastruktur", "empty": "Keine Infrastrukturaktivität." },
-      "tracking": { "title": "Tracking", "empty": "Keine aktuellen Sitzungen." },
-      "news": { "title": "News", "empty": "Keine aktuellen Artikel." },
-      "users": { "title": "Benutzer", "empty": "Keine aktuellen Benutzer." },
-      "billing": { "title": "Abrechnung", "empty": "Keine aktuellen Dokumente." },
-      "projects": { "title": "Projekte", "empty": "Keine aktuellen Projekte." },
-      "seo": { "title": "SEO", "empty": "Keine aktuellen Seiten." },
-      "ouou": { "title": "OUOU (KI)", "empty": "Keine aktuellen Gespräche." }
+      "infrastructure": {
+        "title": "Infrastruktur",
+        "empty": "Keine Infrastrukturaktivität."
+      },
+      "tracking": {
+        "title": "Tracking",
+        "empty": "Keine aktuellen Sitzungen."
+      },
+      "news": {
+        "title": "News",
+        "empty": "Keine aktuellen Artikel."
+      },
+      "users": {
+        "title": "Benutzer",
+        "empty": "Keine aktuellen Benutzer."
+      },
+      "billing": {
+        "title": "Abrechnung",
+        "empty": "Keine aktuellen Dokumente."
+      },
+      "projects": {
+        "title": "Projekte",
+        "empty": "Keine aktuellen Projekte."
+      },
+      "seo": {
+        "title": "SEO",
+        "empty": "Keine aktuellen Seiten."
+      },
+      "ouou": {
+        "title": "OUOU (KI)",
+        "empty": "Keine aktuellen Gespräche."
+      }
     }
   },
   "infrastructure": {
@@ -89,7 +113,10 @@
   "seo": {
     "title": "SEO",
     "subtitle": "Seiten, Keywords, Audits.",
-    "tabs": { "pages": "Seiten", "keywords": "Keywords" },
+    "tabs": {
+      "pages": "Seiten",
+      "keywords": "Keywords"
+    },
     "newPage": "Neue Seite",
     "newKeyword": "Neues Keyword",
     "path": "Pfad",
@@ -211,7 +238,8 @@
         "readingTime": "Lesezeit",
         "content": "Markdown-Inhalt",
         "contentPlaceholder": "# Titel\n\nArtikelinhalt…"
-      }
+      },
+      "allStatuses": "Alle Status"
     },
     "prompts": {
       "empty": "Keine nicht erfolgreichen Prompts für SonnaLab.",

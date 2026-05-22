@@ -18,14 +18,38 @@
     "lastAction": "Últimas acciones",
     "viewMore": "Ver más",
     "widgets": {
-      "infrastructure": { "title": "Infraestructura", "empty": "Sin actividad de infraestructura." },
-      "tracking": { "title": "Tracking", "empty": "Sin sesiones recientes." },
-      "news": { "title": "Noticias", "empty": "Sin artículos recientes." },
-      "users": { "title": "Usuarios", "empty": "Sin usuarios recientes." },
-      "billing": { "title": "Facturación", "empty": "Sin documentos recientes." },
-      "projects": { "title": "Proyectos", "empty": "Sin proyectos recientes." },
-      "seo": { "title": "SEO", "empty": "Sin páginas recientes." },
-      "ouou": { "title": "OUOU (IA)", "empty": "Sin conversaciones recientes." }
+      "infrastructure": {
+        "title": "Infraestructura",
+        "empty": "Sin actividad de infraestructura."
+      },
+      "tracking": {
+        "title": "Tracking",
+        "empty": "Sin sesiones recientes."
+      },
+      "news": {
+        "title": "Noticias",
+        "empty": "Sin artículos recientes."
+      },
+      "users": {
+        "title": "Usuarios",
+        "empty": "Sin usuarios recientes."
+      },
+      "billing": {
+        "title": "Facturación",
+        "empty": "Sin documentos recientes."
+      },
+      "projects": {
+        "title": "Proyectos",
+        "empty": "Sin proyectos recientes."
+      },
+      "seo": {
+        "title": "SEO",
+        "empty": "Sin páginas recientes."
+      },
+      "ouou": {
+        "title": "OUOU (IA)",
+        "empty": "Sin conversaciones recientes."
+      }
     }
   },
   "infrastructure": {
@@ -89,7 +113,10 @@
   "seo": {
     "title": "SEO",
     "subtitle": "Páginas, palabras clave, auditorías.",
-    "tabs": { "pages": "Páginas", "keywords": "Palabras clave" },
+    "tabs": {
+      "pages": "Páginas",
+      "keywords": "Palabras clave"
+    },
     "newPage": "Nueva página",
     "newKeyword": "Nueva palabra clave",
     "path": "Ruta",
@@ -211,7 +238,8 @@
         "readingTime": "Lectura",
         "content": "Contenido Markdown",
         "contentPlaceholder": "# Título\n\nContenido del artículo…"
-      }
+      },
+      "allStatuses": "Todos los estados"
     },
     "prompts": {
       "empty": "No hay prompts sin éxito para SonnaLab.",

@@ -33,6 +33,8 @@ import {
   ZapIcon,
   ArrowUpRightIcon,
   CameraIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
 } from '@icons';
 
 // ─────────────────────────────────────────────
@@ -323,6 +325,9 @@ function ArticlesTab() {
   const [imageResults, setImageResults] = useState<ArticleImageOption[]>([]);
   const [imageLoading, setImageLoading] = useState(false);
   const [actionId, setActionId]   = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState('');
+  const [page, setPage]           = useState(1);
+  const PER_PAGE = 10;
 
   const reload = (q = search) => {
     setLoading(true);
@@ -464,8 +469,11 @@ function ArticlesTab() {
   };
 
   const filtered = articles.filter(a =>
-    !search || a.title.toLowerCase().includes(search.toLowerCase())
+    (!search || a.title.toLowerCase().includes(search.toLowerCase())) &&
+    (!statusFilter || a.status === statusFilter)
   );
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+  const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
   const localeOptions = Array.from(new Set([...ARTICLE_LOCALES, editing.locale].filter(Boolean) as string[]));
 
   return (
@@ -478,9 +486,20 @@ function ArticlesTab() {
             className="adm-search__input"
             placeholder={t('news.articles.searchPlaceholder')}
             value={search}
-            onChange={e => { setSearch(e.target.value); reload(e.target.value); }}
+            onChange={e => { setSearch(e.target.value); setPage(1); reload(e.target.value); }}
           />
         </div>
+        <select
+          className="adm-select adm-select--sm"
+          value={statusFilter}
+          onChange={e => { setStatusFilter(e.target.value); setPage(1); }}
+          aria-label={t('news.articles.allStatuses')}
+        >
+          <option value="">{t('news.articles.allStatuses')}</option>
+          <option value="draft">{t('news.articles.statuses.draft')}</option>
+          <option value="scheduled">{t('news.articles.statuses.scheduled')}</option>
+          <option value="published">{t('news.articles.statuses.published')}</option>
+        </select>
         <button type="button" className="adm-btn adm-btn--primary" onClick={generateNextArticle} disabled={generating}>
           {generating ? <RefreshCwIcon size={14} className="adm-spin" /> : <ZapIcon size={14} />}
           {t('news.articles.generate')}
@@ -505,7 +524,7 @@ function ArticlesTab() {
             </DataTableRow>
           ) : filtered.length === 0 ? (
             <DataTableEmpty label={t('news.articles.empty')} />
-          ) : filtered.map(a => (
+          ) : paginated.map(a => (
             <DataTableRow key={a.id}>
               <DataTableTd>
                 <div className="admin-news-articles__title-cell">
@@ -565,6 +584,32 @@ function ArticlesTab() {
           ))}
         </DataTableBody>
       </DataTable>
+
+      {totalPages > 1 && (
+        <div className="adm-pagination">
+          <span className="adm-pagination__info">
+            {filtered.length} &middot; {page} / {totalPages}
+          </span>
+          <div className="adm-pagination__nav">
+            <button
+              type="button"
+              className="adm-btn adm-btn--ghost adm-btn--xs"
+              disabled={page <= 1}
+              onClick={() => setPage(p => p - 1)}
+            >
+              <ChevronLeftIcon size={13} />
+            </button>
+            <button
+              type="button"
+              className="adm-btn adm-btn--ghost adm-btn--xs"
+              disabled={page >= totalPages}
+              onClick={() => setPage(p => p + 1)}
+            >
+              <ChevronRightIcon size={13} />
+            </button>
+          </div>
+        </div>
+      )}
 
       <Modal
         open={modalOpen}
