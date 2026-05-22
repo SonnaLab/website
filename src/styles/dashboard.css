@@ -1930,6 +1930,40 @@
   gap: 12px;
 }
 
+.admin-news-overview__block-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-news-overview__coverage {
+  font-size: 0.72rem;
+  font-weight: 750;
+  color: #536071;
+  background: #f0f2f5;
+  border-radius: 10px;
+  padding: 1px 7px;
+  white-space: nowrap;
+}
+
+.admin-news-overview__block-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  font-size: 0.74rem;
+  color: #536071;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+
+.admin-news-overview__block-link:hover {
+  color: #111111;
+}
+
 .admin-news-overview__block-head h3 {
   margin: 0;
   font-size: 0.85rem;
@@ -1962,28 +1996,26 @@
   border: 1px solid #f0f2f4;
 }
 
-.admin-news-overview__obj--done .admin-news-overview__obj-label {
-  text-decoration: line-through;
-  color: #9ca3af;
+.admin-news-overview__obj--covered .admin-news-overview__obj-label {
+  color: #059669;
 }
 
 .admin-news-overview__obj-check {
-  width: 18px;
-  height: 18px;
+  width: 17px;
+  height: 17px;
   flex-shrink: 0;
   border: 1.5px solid #d1d5db;
-  border-radius: 4px;
+  border-radius: 50%;
   background: #ffffff;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #059669;
-  transition: border-color 0.1s, background 0.1s;
+  color: #ffffff;
+  transition: border-color 0.15s, background 0.15s;
 }
 
-.admin-news-overview__obj--done .admin-news-overview__obj-check {
-  background: #ecfdf5;
+.admin-news-overview__obj-check--done {
+  background: #059669;
   border-color: #059669;
 }
 
@@ -1991,32 +2023,17 @@
   flex: 1;
   font-size: 13px;
   color: #374151;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
-.admin-news-overview__obj-del {
-  background: none;
-  border: none;
-  color: #d1d5db;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  padding: 2px;
-  border-radius: 4px;
+.admin-news-overview__obj-meta {
   flex-shrink: 0;
-  transition: color 0.1s;
-}
-
-.admin-news-overview__obj-del:hover {
-  color: #dc2626;
-}
-
-.admin-news-overview__obj-form {
-  display: flex;
-  gap: 8px;
-}
-
-.admin-news-overview__obj-form .adm-input {
-  flex: 1;
+  font-size: 11px;
+  color: #9ca3af;
+  white-space: nowrap;
 }
 
 .admin-news-overview__recent {
@@ -2069,6 +2086,12 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+
+.admin-news-articles__search-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .admin-news-articles__title-cell {

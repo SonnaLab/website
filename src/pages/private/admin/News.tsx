@@ -102,7 +102,7 @@ export default function AdminNews() {
           <TabsTrigger value="strategy" icon={<TargetIcon size={14} />}>{t('news.tabs.strategy')}</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview"><OverviewTab /></TabsContent>
+        <TabsContent value="overview"><OverviewTab setTab={setTab} /></TabsContent>
         <TabsContent value="articles"><ArticlesTab /></TabsContent>
         <TabsContent value="prompts"><PromptsTab /></TabsContent>
         <TabsContent value="calendar"><CalendarTab /></TabsContent>
@@ -153,22 +153,27 @@ function AdminNewsKpis() {
 // Tab: Overview
 // ─────────────────────────────────────────────
 
-function OverviewTab() {
+function OverviewTab({ setTab }: { setTab: (tab: string) => void }) {
   const { t, i18n } = useTranslation('admin');
-  const [objectives, setObjectives] = useState<WeeklyObjective[]>([]);
-  const [articles, setArticles]     = useState<Article[]>([]);
-  const [loading, setLoading]       = useState(true);
-  const [newLabel, setNewLabel]     = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [strategicObjectives, setStrategicObjectives] = useState<StrategicObjective[]>([]);
+  const [calendarItems, setCalendarItems]             = useState<AICalendarItem[]>([]);
+  const [articles, setArticles]                       = useState<Article[]>([]);
+  const [loading, setLoading]                         = useState(true);
 
   const reload = async () => {
     try {
-      const [objRes, artRes] = await Promise.allSettled([
-        apiService.adminNewsObjectives(),
+      const weekStart = getMonday(new Date());
+      const [objRes, artRes, calRes] = await Promise.allSettled([
+        apiService.adminNewsAIStrategicObjectives(),
         apiService.adminNewsArticles({ per_page: 5 }),
+        apiService.adminNewsAICalendar({ view: 'weekly', week_start: toISODate(weekStart) }),
       ]);
-      if (objRes.status === 'fulfilled') setObjectives(objRes.value.objectives ?? []);
+      if (objRes.status === 'fulfilled') {
+        const objs = [...(objRes.value.objectives ?? [])].sort((a, b) => b.priority - a.priority);
+        setStrategicObjectives(objs);
+      }
       if (artRes.status === 'fulfilled') setArticles(artRes.value.articles ?? []);
+      if (calRes.status === 'fulfilled') setCalendarItems(calRes.value.items ?? []);
     } finally {
       setLoading(false);
     }
@@ -176,83 +181,49 @@ function OverviewTab() {
 
   useEffect(() => { reload(); }, []);
 
-  const addObjective = async () => {
-    const label = newLabel.trim();
-    if (!label) return;
-    try {
-      await apiService.adminNewsCreateObjective({ label, done: false });
-      setNewLabel('');
-      reload();
-    } catch { toast.error(t('common.error')); }
-  };
-
-  const toggleObjective = async (obj: WeeklyObjective) => {
-    try {
-      await apiService.adminNewsUpdateObjective(obj.id, { done: !obj.done });
-      setObjectives(prev => prev.map(o => o.id === obj.id ? { ...o, done: !o.done } : o));
-    } catch { toast.error(t('common.error')); }
-  };
-
-  const deleteObjective = async (id: string) => {
-    try {
-      await apiService.adminNewsDeleteObjective(id);
-      setObjectives(prev => prev.filter(o => o.id !== id));
-    } catch { toast.error(t('common.error')); }
-  };
+  const coverage = strategicObjectives.map(obj => ({
+    obj,
+    covered: calendarItems.some(item => itemMatchesObjective(item, obj)),
+  }));
+  const coveredCount = coverage.filter(x => x.covered).length;
 
   if (loading) return <p className="adm-loading">{t('common.loading')}</p>;
 
   return (
     <div className="admin-news-overview">
       <div className="admin-news-overview__cols">
-        {/* Weekly objectives */}
+        {/* Strategic objectives coverage */}
         <div className="admin-news-overview__block">
           <div className="admin-news-overview__block-head">
-            <h3>{t('news.overview.objectives')}</h3>
+            <h3>
+              <TargetIcon size={13} />
+              Objectifs stratégiques ({strategicObjectives.length})
+            </h3>
+            <div className="admin-news-overview__block-right">
+              {strategicObjectives.length > 0 && (
+                <span className="admin-news-overview__coverage">{coveredCount}/{strategicObjectives.length}</span>
+              )}
+              <button type="button" className="admin-news-overview__block-link" onClick={() => setTab('strategy')}>
+                Détail <ArrowUpRightIcon size={11} />
+              </button>
+            </div>
           </div>
 
-          <ul className="admin-news-overview__objectives">
-            {objectives.length === 0 && (
-              <li className="admin-news-overview__objectives-empty">{t('news.overview.noObjectives')}</li>
-            )}
-            {objectives.map(obj => (
-              <li key={obj.id} className={`admin-news-overview__obj${obj.done ? ' admin-news-overview__obj--done' : ''}`}>
-                <button
-                  type="button"
-                  className="admin-news-overview__obj-check"
-                  onClick={() => toggleObjective(obj)}
-                  aria-label={obj.done ? 'Marquer non fait' : 'Marquer fait'}
-                >
-                  {obj.done && <CheckIcon size={11} />}
-                </button>
-                <span className="admin-news-overview__obj-label">{obj.label}</span>
-                <button
-                  type="button"
-                  className="admin-news-overview__obj-del"
-                  onClick={() => deleteObjective(obj.id)}
-                  aria-label={t('common.delete')}
-                >
-                  <Trash2Icon size={13} />
-                </button>
-              </li>
-            ))}
-          </ul>
-
-          <div className="admin-news-overview__obj-form">
-            <input
-              ref={inputRef}
-              type="text"
-              className="adm-input"
-              placeholder={t('news.overview.newObjectivePlaceholder')}
-              value={newLabel}
-              onChange={e => setNewLabel(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') addObjective(); }}
-            />
-            <button type="button" className="adm-btn adm-btn--primary" onClick={addObjective}>
-              <PlusIcon size={14} />
-              {t('news.overview.addObjective')}
-            </button>
-          </div>
+          {strategicObjectives.length === 0 ? (
+            <p className="admin-news-overview__objectives-empty">{t('news.articles.empty')}</p>
+          ) : (
+            <ul className="admin-news-overview__objectives">
+              {coverage.map(({ obj, covered }) => (
+                <li key={obj.id} className={`admin-news-overview__obj${covered ? ' admin-news-overview__obj--covered' : ''}`}>
+                  <span className={`admin-news-overview__obj-check${covered ? ' admin-news-overview__obj-check--done' : ''}`}>
+                    {covered && <CheckIcon size={10} />}
+                  </span>
+                  <span className="admin-news-overview__obj-label">{obj.title}</span>
+                  <span className="admin-news-overview__obj-meta">{obj.success_metrics?.articles_per_month_target ?? 0} art/mois</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         {/* Recent articles */}
@@ -479,27 +450,29 @@ function ArticlesTab() {
   return (
     <div className="admin-news-articles">
       <div className="admin-news-articles__toolbar">
-        <div className="adm-search">
-          <SearchIcon size={15} />
-          <input
-            type="text"
-            className="adm-search__input"
-            placeholder={t('news.articles.searchPlaceholder')}
-            value={search}
-            onChange={e => { setSearch(e.target.value); setPage(1); reload(e.target.value); }}
-          />
+        <div className="admin-news-articles__search-group">
+          <div className="adm-search">
+            <SearchIcon size={15} />
+            <input
+              type="text"
+              className="adm-search__input"
+              placeholder={t('news.articles.searchPlaceholder')}
+              value={search}
+              onChange={e => { setSearch(e.target.value); setPage(1); reload(e.target.value); }}
+            />
+          </div>
+          <select
+            className="adm-select adm-select--sm"
+            value={statusFilter}
+            onChange={e => { setStatusFilter(e.target.value); setPage(1); }}
+            aria-label={t('news.articles.allStatuses')}
+          >
+            <option value="">{t('news.articles.allStatuses')}</option>
+            <option value="draft">{t('news.articles.statuses.draft')}</option>
+            <option value="scheduled">{t('news.articles.statuses.scheduled')}</option>
+            <option value="published">{t('news.articles.statuses.published')}</option>
+          </select>
         </div>
-        <select
-          className="adm-select adm-select--sm"
-          value={statusFilter}
-          onChange={e => { setStatusFilter(e.target.value); setPage(1); }}
-          aria-label={t('news.articles.allStatuses')}
-        >
-          <option value="">{t('news.articles.allStatuses')}</option>
-          <option value="draft">{t('news.articles.statuses.draft')}</option>
-          <option value="scheduled">{t('news.articles.statuses.scheduled')}</option>
-          <option value="published">{t('news.articles.statuses.published')}</option>
-        </select>
         <button type="button" className="adm-btn adm-btn--primary" onClick={generateNextArticle} disabled={generating}>
           {generating ? <RefreshCwIcon size={14} className="adm-spin" /> : <ZapIcon size={14} />}
           {t('news.articles.generate')}
