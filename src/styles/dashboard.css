@@ -4151,6 +4151,27 @@
   padding-top: 4px;
 }
 
+/* Realtime active counter */
+.trk-realtime-active {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--brand, #0e7490) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--brand, #0e7490) 20%, transparent);
+}
+.trk-realtime-count {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--brand, #0e7490);
+}
+.trk-realtime-label {
+  font-size: 13px;
+  color: var(--muted-foreground, #64748b);
+}
+
 /* Shared table footer pagination */
 .trk-pagination {
   display: flex;

@@ -75,7 +75,7 @@ export function GeoTab() {
       {data.length === 0 ? (
         <EmptyState message={t('tracking.noData')} />
       ) : (
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden gap-0">
           <DataTable>
             <DataTableHead>
               <DataTableRow>
@@ -83,7 +83,7 @@ export function GeoTab() {
                 <DataTableTh>{t('tracking.country')}</DataTableTh>
                 <DataTableTh>Sessions</DataTableTh>
                 <DataTableTh>%</DataTableTh>
-                <DataTableTh></DataTableTh>
+                <DataTableTh>Actions</DataTableTh>
               </DataTableRow>
             </DataTableHead>
             <DataTableBody>
@@ -131,15 +131,20 @@ export function GeoTab() {
 
 export function RealtimeTab() {
   const { t } = useTranslation('admin');
+  const [overview, setOverview] = useState<any>(null);
   const [sessions, setSessions] = useState<any[]>([]);
   const [err, setErr] = useState(false);
   const [selected, setSelected] = useState<any>(null);
 
   const reload = useCallback(() => {
     setErr(false);
-    apiService.analyticsSessions(SITE, { page: 1, per_page: 10 })
-      .then(d => setSessions(Array.isArray(d) ? d : d.items ?? []))
-      .catch(() => setErr(true));
+    Promise.all([
+      apiService.analyticsOverview(SITE),
+      apiService.analyticsSessions(SITE, { page: 1, per_page: 10 }),
+    ]).then(([ov, d]) => {
+      setOverview(ov);
+      setSessions(Array.isArray(d) ? d : d.items ?? []);
+    }).catch(() => setErr(true));
   }, []);
 
   useEffect(() => {
@@ -151,11 +156,20 @@ export function RealtimeTab() {
   if (err) return <EmptyState message={t('tracking.loadError')} />;
 
   return (
-    <div className="trk-tab">
+    <div className="trk-tab space-y-4">
+      {overview != null && (
+        <div className="trk-realtime-active">
+          <span className="trk-realtime-count">{overview.realtime_active ?? 0}</span>
+          <span className="trk-realtime-label">visiteur(s) actif(s) en ce moment</span>
+        </div>
+      )}
+
+      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Sessions récentes</p>
+
       {sessions.length === 0 ? (
         <EmptyState message={t('tracking.noData')} />
       ) : (
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden gap-0">
           <DataTable>
             <DataTableHead>
               <DataTableRow>
@@ -163,7 +177,7 @@ export function RealtimeTab() {
                 <DataTableTh>{t('tracking.country')}</DataTableTh>
                 <DataTableTh>{t('tracking.duration')}</DataTableTh>
                 <DataTableTh>Début</DataTableTh>
-                <DataTableTh></DataTableTh>
+                <DataTableTh>Actions</DataTableTh>
               </DataTableRow>
             </DataTableHead>
             <DataTableBody>
@@ -220,6 +234,10 @@ export function VisitorsTab() {
       .finally(() => setLoading(false));
   }, [page]);
 
+  useEffect(() => {
+    if (!loading && data.length === 0 && page > 1) setPage(p => p - 1);
+  }, [loading, data, page]);
+
   if (err) return <EmptyState message={t('tracking.loadError')} />;
   if (loading) return <LoadingState />;
 
@@ -228,7 +246,7 @@ export function VisitorsTab() {
       {data.length === 0 ? (
         <EmptyState message={t('tracking.noData')} />
       ) : (
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden gap-0">
           <DataTable>
             <DataTableHead>
               <DataTableRow>
@@ -238,7 +256,7 @@ export function VisitorsTab() {
                 <DataTableTh>Visites</DataTableTh>
                 <DataTableTh>{t('tracking.country')}</DataTableTh>
                 <DataTableTh>{t('tracking.device')}</DataTableTh>
-                <DataTableTh></DataTableTh>
+                <DataTableTh>Actions</DataTableTh>
               </DataTableRow>
             </DataTableHead>
             <DataTableBody>
@@ -312,6 +330,10 @@ export function BotsTab() {
       .finally(() => setLoading(false));
   }, [page]);
 
+  useEffect(() => {
+    if (!loading && visits.length === 0 && page > 1) setPage(p => p - 1);
+  }, [loading, visits, page]);
+
   if (err) return <EmptyState message={t('tracking.loadError')} />;
   if (loading) return <LoadingState />;
 
@@ -320,7 +342,7 @@ export function BotsTab() {
       {visits.length === 0 ? (
         <EmptyState message={t('tracking.noData')} />
       ) : (
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden gap-0">
           <DataTable>
             <DataTableHead>
               <DataTableRow>
@@ -330,7 +352,7 @@ export function BotsTab() {
                 <DataTableTh>{t('tracking.country')}</DataTableTh>
                 <DataTableTh>Requêtes</DataTableTh>
                 <DataTableTh>Dernière vue</DataTableTh>
-                <DataTableTh></DataTableTh>
+                <DataTableTh>Actions</DataTableTh>
               </DataTableRow>
             </DataTableHead>
             <DataTableBody>
@@ -403,6 +425,10 @@ export function SessionsTab() {
       .finally(() => setLoading(false));
   }, [page]);
 
+  useEffect(() => {
+    if (!loading && data.length === 0 && page > 1) setPage(p => p - 1);
+  }, [loading, data, page]);
+
   if (err) return <EmptyState message={t('tracking.loadError')} />;
   if (loading) return <LoadingState />;
 
@@ -411,7 +437,7 @@ export function SessionsTab() {
       {data.length === 0 ? (
         <EmptyState message={t('tracking.noData')} />
       ) : (
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden gap-0">
           <DataTable>
             <DataTableHead>
               <DataTableRow>
@@ -422,7 +448,7 @@ export function SessionsTab() {
                 <DataTableTh>{t('tracking.duration')}</DataTableTh>
                 <DataTableTh>Rebond</DataTableTh>
                 <DataTableTh>Début</DataTableTh>
-                <DataTableTh></DataTableTh>
+                <DataTableTh>Actions</DataTableTh>
               </DataTableRow>
             </DataTableHead>
             <DataTableBody>
@@ -501,7 +527,7 @@ export function PagesTab() {
       {data.length === 0 ? (
         <EmptyState message={t('tracking.noData')} />
       ) : (
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden gap-0">
           <DataTable>
             <DataTableHead>
               <DataTableRow>
@@ -509,7 +535,7 @@ export function PagesTab() {
                 <DataTableTh>Vues</DataTableTh>
                 <DataTableTh>Visiteurs uniques</DataTableTh>
                 <DataTableTh>Temps moyen</DataTableTh>
-                <DataTableTh></DataTableTh>
+                <DataTableTh>Actions</DataTableTh>
               </DataTableRow>
             </DataTableHead>
             <DataTableBody>
@@ -579,14 +605,14 @@ export function AcquisitionTab() {
       {referrals.length === 0 ? (
         <EmptyState message={t('tracking.noData')} />
       ) : (
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden gap-0">
           <DataTable>
             <DataTableHead>
               <DataTableRow>
                 <DataTableTh>Domaine référent</DataTableTh>
                 <DataTableTh>Sessions</DataTableTh>
                 <DataTableTh>%</DataTableTh>
-                <DataTableTh></DataTableTh>
+                <DataTableTh>Actions</DataTableTh>
               </DataTableRow>
             </DataTableHead>
             <DataTableBody>
@@ -647,10 +673,14 @@ export function ConsentsTab() {
       .finally(() => setLoading(false));
   }, [page]);
 
+  const items: any[] = data?.items ?? [];
+
+  useEffect(() => {
+    if (!loading && items.length === 0 && page > 1) setPage(p => p - 1);
+  }, [loading, items, page]);
+
   if (err) return <EmptyState message={t('tracking.loadError')} />;
   if (loading) return <LoadingState />;
-
-  const items: any[] = data?.items ?? [];
 
   return (
     <div className="trk-tab space-y-4">
@@ -658,7 +688,7 @@ export function ConsentsTab() {
       {items.length === 0 ? (
         <EmptyState message={t('tracking.noData')} />
       ) : (
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden gap-0">
           <DataTable>
             <DataTableHead>
               <DataTableRow>
@@ -668,7 +698,7 @@ export function ConsentsTab() {
                 <DataTableTh>Marketing</DataTableTh>
                 <DataTableTh>Consenti le</DataTableTh>
                 <DataTableTh>Retiré</DataTableTh>
-                <DataTableTh></DataTableTh>
+                <DataTableTh>Actions</DataTableTh>
               </DataTableRow>
             </DataTableHead>
             <DataTableBody>
