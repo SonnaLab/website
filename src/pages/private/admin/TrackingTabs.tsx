@@ -50,6 +50,12 @@ function dur(s: number | null | undefined) {
   return `${Math.floor(s / 60)}m${s % 60}s`;
 }
 
+const _regionNames = new Intl.DisplayNames(['fr'], { type: 'region' });
+function countryName(code: string | null | undefined): string {
+  if (!code) return '—';
+  try { return _regionNames.of(code) ?? code; } catch { return code; }
+}
+
 // ─── Géographie ────────────────────────────────────────────────────────────────
 
 export function GeoTab() {
@@ -183,7 +189,7 @@ export function RealtimeTab() {
               {sessions.map((s: any) => (
                 <DataTableRow key={s.id}>
                   <DataTableTd>{s.device_type ?? '—'}</DataTableTd>
-                  <DataTableTd>{s.country ?? '—'}</DataTableTd>
+                  <DataTableTd>{countryName(s.country)}</DataTableTd>
                   <DataTableTd className="text-xs">{fmt(s.started_at)}</DataTableTd>
                   <DataTableTd>
                     <div className="adm-table__actions">
@@ -204,7 +210,7 @@ export function RealtimeTab() {
           <dl className="trk-modal-dl">
             <dt>Statut</dt><dd>{selected.duration_seconds == null ? 'Actif' : 'Terminé'}</dd>
             <dt>{t('tracking.device')}</dt><dd>{selected.device_type ?? '—'}</dd>
-            <dt>{t('tracking.country')}</dt><dd>{selected.country ?? '—'}</dd>
+            <dt>{t('tracking.country')}</dt><dd>{countryName(selected.country)}</dd>
             <dt>{t('tracking.duration')}</dt><dd>{dur(selected.duration_seconds)}</dd>
             <dt>Début</dt><dd>{fmt(selected.started_at)}</dd>
           </dl>
@@ -265,7 +271,7 @@ export function VisitorsTab() {
                   <DataTableTd className="text-xs">{fmt(v.first_seen_at)}</DataTableTd>
                   <DataTableTd className="text-xs">{fmt(v.last_seen_at)}</DataTableTd>
                   <DataTableTd>{v.visit_count}</DataTableTd>
-                  <DataTableTd>{v.country ?? '—'}</DataTableTd>
+                  <DataTableTd>{countryName(v.country)}</DataTableTd>
                   <DataTableTd>{v.device_type ?? '—'}</DataTableTd>
                   <DataTableTd>
                     <div className="adm-table__actions">
@@ -294,7 +300,7 @@ export function VisitorsTab() {
             <dt>1ère visite</dt><dd>{fmt(selected.first_seen_at)}</dd>
             <dt>Dernière visite</dt><dd>{fmt(selected.last_seen_at)}</dd>
             <dt>Nb visites</dt><dd>{selected.visit_count}</dd>
-            <dt>{t('tracking.country')}</dt><dd>{selected.country ?? '—'}</dd>
+            <dt>{t('tracking.country')}</dt><dd>{countryName(selected.country)}</dd>
             <dt>{t('tracking.device')}</dt><dd>{selected.device_type ?? '—'}</dd>
             <dt>Navigateur</dt><dd>{selected.browser ?? '—'}</dd>
             <dt>Bot</dt><dd>{selected.is_bot ? 'Oui' : 'Non'}</dd>
@@ -360,7 +366,7 @@ export function BotsTab() {
                   <DataTableTd className="font-mono text-xs">{v.ip_address ?? '—'}</DataTableTd>
                   <DataTableTd>{v.bot_type ?? '—'}</DataTableTd>
                   <DataTableTd>{v.confidence_score != null ? `${v.confidence_score}%` : '—'}</DataTableTd>
-                  <DataTableTd>{v.country ?? '—'}</DataTableTd>
+                  <DataTableTd>{v.country != null ? countryName(v.country) : '—'}</DataTableTd>
                   <DataTableTd>{v.request_count ?? 0}</DataTableTd>
                   <DataTableTd className="text-xs">{fmt(v.last_seen_at)}</DataTableTd>
                   <DataTableTd>
@@ -390,7 +396,7 @@ export function BotsTab() {
             <dt>Type</dt><dd>{selected.bot_type ?? '—'}</dd>
             <dt>Score</dt><dd>{selected.confidence_score != null ? `${selected.confidence_score}%` : '—'}</dd>
             <dt>ISP</dt><dd>{selected.isp ?? '—'}</dd>
-            <dt>{t('tracking.country')}</dt><dd>{selected.country ?? '—'}</dd>
+            <dt>{t('tracking.country')}</dt><dd>{countryName(selected.country)}</dd>
             <dt>User-Agent</dt><dd className="font-mono text-xs break-all">{selected.user_agent ?? '—'}</dd>
             <dt>Requêtes</dt><dd>{selected.request_count ?? 0}</dd>
             <dt>1ère vue</dt><dd>{fmt(selected.first_seen_at)}</dd>
@@ -455,7 +461,7 @@ export function SessionsTab() {
                 <DataTableRow key={s.id}>
                   <DataTableTd className="font-mono text-xs">{s.id?.slice(0, 8)}…</DataTableTd>
                   <DataTableTd>{s.device_type ?? '—'}</DataTableTd>
-                  <DataTableTd>{s.country ?? '—'}</DataTableTd>
+                  <DataTableTd>{countryName(s.country)}</DataTableTd>
                   <DataTableTd>{s.page_count ?? 0}</DataTableTd>
                   <DataTableTd>{dur(s.duration_seconds)}</DataTableTd>
                   <DataTableTd>{s.is_bounce ? 'Oui' : 'Non'}</DataTableTd>
@@ -487,7 +493,7 @@ export function SessionsTab() {
             <dt>Visiteur</dt><dd className="font-mono text-xs">{selected.visitor_id?.slice(0, 12)}…</dd>
             <dt>{t('tracking.device')}</dt><dd>{selected.device_type ?? '—'}</dd>
             <dt>Navigateur</dt><dd>{selected.browser ?? '—'}</dd>
-            <dt>{t('tracking.country')}</dt><dd>{selected.country ?? '—'}</dd>
+            <dt>{t('tracking.country')}</dt><dd>{countryName(selected.country)}</dd>
             <dt>Pages visitées</dt><dd>{selected.page_count ?? 0}</dd>
             <dt>{t('tracking.duration')}</dt><dd>{dur(selected.duration_seconds)}</dd>
             <dt>Rebond</dt><dd>{selected.is_bounce ? 'Oui' : 'Non'}</dd>
