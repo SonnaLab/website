@@ -25,7 +25,10 @@ export default function AdminTracking() {
   const [kpis, setKpis] = useState<any>(null);
 
   useEffect(() => {
-    apiService.analyticsOverview(SITE).then(setKpis).catch(() => {});
+    const load = () => apiService.analyticsOverview(SITE).then(setKpis).catch(() => {});
+    load();
+    const id = setInterval(load, 15_000);
+    return () => clearInterval(id);
   }, []);
 
   return (
