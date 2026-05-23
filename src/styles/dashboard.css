@@ -4102,7 +4102,29 @@
 }
 
 .trk-kpi-card {
-  padding: 16px 18px !important;
+  padding: 14px 18px !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+}
+
+.trk-kpi-left {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.trk-kpi-icon {
+  flex-shrink: 0;
+  color: var(--muted-foreground, #64748b);
+  opacity: 0.75;
+}
+
+.trk-kpi-icon--accent {
+  color: var(--brand, #0e7490);
+  opacity: 1;
 }
 
 .trk-kpi-label {
@@ -4110,14 +4132,17 @@
   color: var(--muted-foreground, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .trk-kpi-value {
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 700;
   color: var(--foreground, #1e293b);
   line-height: 1;
+  flex-shrink: 0;
 }
 
 .trk-kpi-value--accent {

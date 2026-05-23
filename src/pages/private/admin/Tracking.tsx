@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { apiService } from '@/services/api';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
-import { CookieIcon, GlobeIcon, ZapIcon, UsersIcon, BotIcon, LayersIcon, FileTextIcon, TrendingUpIcon } from '@icons';
+import { CookieIcon, GlobeIcon, ZapIcon, UsersIcon, BotIcon, LayersIcon, FileTextIcon, TrendingUpIcon, LineChartIcon } from '@icons';
 
 import {
   GeoTab, RealtimeTab, VisitorsTab, BotsTab,
@@ -43,23 +43,38 @@ export default function AdminTracking() {
       {/* ── 5 KPIs ── */}
       <div className="trk-kpi-row">
         <Card className="trk-kpi-card">
-          <p className="trk-kpi-label">{t('tracking.activeNow')}</p>
+          <div className="trk-kpi-left">
+            <ZapIcon size={15} className="trk-kpi-icon trk-kpi-icon--accent" />
+            <span className="trk-kpi-label">{t('tracking.activeNow')}</span>
+          </div>
           <p className="trk-kpi-value trk-kpi-value--accent">{kpis?.realtime_active ?? '—'}</p>
         </Card>
         <Card className="trk-kpi-card">
-          <p className="trk-kpi-label">{t('tracking.visitorsToday')}</p>
+          <div className="trk-kpi-left">
+            <UsersIcon size={15} className="trk-kpi-icon" />
+            <span className="trk-kpi-label">{t('tracking.visitorsToday')}</span>
+          </div>
           <p className="trk-kpi-value">{kpis?.visitors_today ?? '—'}</p>
         </Card>
         <Card className="trk-kpi-card">
-          <p className="trk-kpi-label">{t('tracking.sessionsToday')}</p>
+          <div className="trk-kpi-left">
+            <LayersIcon size={15} className="trk-kpi-icon" />
+            <span className="trk-kpi-label">{t('tracking.sessionsToday')}</span>
+          </div>
           <p className="trk-kpi-value">{kpis?.sessions_today ?? '—'}</p>
         </Card>
         <Card className="trk-kpi-card">
-          <p className="trk-kpi-label">{t('tracking.bounceRate')}</p>
+          <div className="trk-kpi-left">
+            <TrendingUpIcon size={15} className="trk-kpi-icon" />
+            <span className="trk-kpi-label">{t('tracking.bounceRate')}</span>
+          </div>
           <p className="trk-kpi-value">{kpis?.bounce_rate != null ? `${kpis.bounce_rate}%` : '—'}</p>
         </Card>
         <Card className="trk-kpi-card">
-          <p className="trk-kpi-label">{t('tracking.avgDuration')}</p>
+          <div className="trk-kpi-left">
+            <LineChartIcon size={15} className="trk-kpi-icon" />
+            <span className="trk-kpi-label">{t('tracking.avgDuration')}</span>
+          </div>
           <p className="trk-kpi-value">{fmt_dur(kpis?.avg_duration_seconds)}</p>
         </Card>
       </div>
