@@ -5,6 +5,7 @@ import { Layout } from '@/components/public/Layout';
 import { ProtectedRoute } from '@/components/private/auth/ProtectedRoute';
 import { MemberLayout } from '@/components/private/member/MemberLayout';
 
+import NotFound from '@/pages/public/404';
 import Home from '@/pages/public/Home';
 import Contact from '@/pages/public/Contact';
 import Projects from '@/pages/public/Projects';
@@ -91,11 +92,15 @@ export const router = createBrowserRouter([
       { path: '/reset-password',  element: <ResetPasswordPage /> },
       { path: '/confirm-email',   element: <ConfirmEmailPage /> },
 
-      // ---- Language prefix redirects (/en/*, /es/*, /it/*, /de/* → /*) ----
+      // ---- Language prefix redirects (/fr/*, /en/*, /es/*, /it/*, /de/* → /*) ----
+      { path: '/fr/*', element: <EnLangRedirect /> },
       { path: '/en/*', element: <EnLangRedirect /> },
       { path: '/es/*', element: <EnLangRedirect /> },
       { path: '/it/*', element: <EnLangRedirect /> },
       { path: '/de/*', element: <EnLangRedirect /> },
+
+      // ---- 404 catch-all (must be last) ----
+      { path: '*', element: <NotFound /> },
 
       // ---- Member (user) ----
       {

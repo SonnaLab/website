@@ -1,16 +1,18 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet-async';
 import { AlertTriangle, Home, ArrowLeft } from 'lucide-react';
 
 export default function NotFound(): React.ReactElement {
     const { t } = useTranslation('404');
 
-    useEffect(() => {
-        document.title = t('title');
-    }, [t]);
-
     return (
+        <>
+            <Helmet>
+                <title>{t('title')} | SonnaLab</title>
+                <meta name="robots" content="noindex, nofollow" />
+            </Helmet>
         <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
             <div className="text-center px-4">
                 <div className="inline-flex items-center justify-center w-24 h-24 bg-red-100 rounded-full mb-6">
@@ -43,5 +45,6 @@ export default function NotFound(): React.ReactElement {
                 </div>
             </div>
         </div>
+        </>
     );
 }

@@ -29,5 +29,16 @@ Disallow: /*.json$
 Disallow: /locales/
 Disallow: /src/
 
+# Disallow language-prefixed duplicates (canonical is without prefix)
+Disallow: /fr/
+Disallow: /en/
+Disallow: /es/
+Disallow: /it/
+Disallow: /de/
+
+# Disallow search & query strings
+Disallow: /search
+Disallow: /*?*
+
 # Allow specific JSON files
 Allow: /site.webmanifest
