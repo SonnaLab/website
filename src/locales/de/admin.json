@@ -74,25 +74,36 @@
     "statusDown": "Nicht verfügbar"
   },
   "tracking": {
-    "title": "Besucherverfolgung",
-    "subtitle": "Sitzungen, Ereignisse, Geografie.",
+    "title": "Cookies & Einwilligung",
+    "subtitle": "Besucher, Sitzungen, Bots, Geografie.",
     "tabs": {
-      "overview": "Übersicht",
+      "geo": "Geografie",
       "realtime": "Echtzeit",
+      "visitors": "Besucher",
+      "bots": "Bots",
       "sessions": "Sitzungen",
-      "funnel": "Trichter",
-      "geo": "Geo"
+      "pages": "Seiten",
+      "acquisition": "Akquisition",
+      "consents": "Einwilligungen"
     },
     "activeNow": "Gerade aktiv",
+    "visitorsToday": "Besucher heute",
+    "sessionsToday": "Sitzungen heute",
+    "pageviewsToday": "Seitenaufrufe heute",
+    "bounceRate": "Absprungrate",
+    "avgDuration": "Durchschn. Dauer",
     "totalSessions": "Sitzungen",
     "totalEvents": "Ereignisse",
-    "device": "Gerät",
+    "device": "Gerat",
     "country": "Land",
     "city": "Stadt",
     "language": "Sprache",
     "page": "Seite",
     "consented": "Einwilligung",
-    "duration": "Dauer"
+    "duration": "Dauer",
+    "noData": "Keine Daten.",
+    "loadError": "Ladefehler.",
+    "viewDetails": "Details"
   },
   "ouou": {
     "title": "OUOU — KI-Assistent",

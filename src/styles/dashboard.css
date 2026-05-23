@@ -2036,6 +2036,21 @@
   white-space: nowrap;
 }
 
+.admin-news-overview__obj-toggle {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 6px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--brand, #0e7490);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.admin-news-overview__obj-toggle:hover { opacity: 0.75; }
+
 .admin-news-overview__recent {
   list-style: none;
   margin: 0;
@@ -4055,5 +4070,144 @@
 
   .admin-news-calendar__cell {
     min-height: 48px;
+  }
+}
+
+/* ════════════════════════════════════════════════════════
+   Tracking (Cookies & consentement) — trk-* components
+════════════════════════════════════════════════════════ */
+
+.trk-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.trk-header__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.trk-header__icon {
+  color: var(--brand, #0e7490);
+  flex-shrink: 0;
+}
+
+/* KPI row */
+.trk-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.trk-kpi-card {
+  padding: 16px 18px !important;
+}
+
+.trk-kpi-label {
+  font-size: 11px;
+  color: var(--muted-foreground, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+
+.trk-kpi-value {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--foreground, #1e293b);
+  line-height: 1;
+}
+
+.trk-kpi-value--accent {
+  color: var(--brand, #0e7490);
+}
+
+/* Tab content area */
+.trk-tab {
+  padding-top: 4px;
+}
+
+/* Shared table footer pagination */
+.trk-pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border, #e2e8f0);
+  justify-content: flex-end;
+}
+
+.trk-pagination__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 6px;
+  background: none;
+  cursor: pointer;
+  color: var(--foreground, #1e293b);
+  transition: background 0.15s;
+}
+.trk-pagination__btn:hover:not(:disabled) { background: var(--muted, #f1f5f9); }
+.trk-pagination__btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.trk-pagination__page {
+  font-size: 12px;
+  color: var(--muted-foreground, #64748b);
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Empty / loading */
+.trk-empty,
+.trk-loading {
+  padding: 32px 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted-foreground, #64748b);
+}
+
+/* Detail button */
+.trk-detail-btn {
+  font-size: 11px;
+  color: var(--brand, #0e7490);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  padding: 0;
+  white-space: nowrap;
+}
+.trk-detail-btn:hover { opacity: 0.7; }
+
+/* Modal detail list */
+.trk-modal-dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 16px;
+  font-size: 13px;
+}
+.trk-modal-dl dt {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted-foreground, #64748b);
+  display: flex;
+  align-items: center;
+}
+.trk-modal-dl dd {
+  color: var(--foreground, #1e293b);
+  word-break: break-word;
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .trk-kpi-row {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

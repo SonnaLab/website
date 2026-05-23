@@ -437,6 +437,41 @@ class ApiService {
     return (await this.client.get('/api/v1/admin/tracking/geo', { params })).data;
   }
 
+  // ── Analytics microservice (direct via nginx proxy) ──
+  private get analyticsKey() { return import.meta.env.VITE_ANALYTICS_API_KEY ?? ''; }
+  private analyticsHeaders() { return { 'X-API-Key': this.analyticsKey }; }
+
+  async analyticsOverview(site: string) {
+    return (await this.client.get('/analytics/overview', { params: { site }, headers: this.analyticsHeaders() })).data;
+  }
+  async analyticsVisitors(site: string, params?: { page?: number; per_page?: number }) {
+    return (await this.client.get('/analytics/visitors', { params: { site, ...params }, headers: this.analyticsHeaders() })).data;
+  }
+  async analyticsSessions(site: string, params?: { page?: number; per_page?: number }) {
+    return (await this.client.get('/analytics/sessions', { params: { site, ...params }, headers: this.analyticsHeaders() })).data;
+  }
+  async analyticsPages(site: string, params?: { days?: number; limit?: number }) {
+    return (await this.client.get('/analytics/pages', { params: { site, ...params }, headers: this.analyticsHeaders() })).data;
+  }
+  async analyticsReferrals(site: string, params?: { days?: number; limit?: number }) {
+    return (await this.client.get('/analytics/referrals', { params: { site, ...params }, headers: this.analyticsHeaders() })).data;
+  }
+  async analyticsGeo(site: string, params?: { days?: number; limit?: number }) {
+    return (await this.client.get('/analytics/geo', { params: { site, ...params }, headers: this.analyticsHeaders() })).data;
+  }
+  async analyticsDevices(site: string, params?: { days?: number }) {
+    return (await this.client.get('/analytics/devices', { params: { site, ...params }, headers: this.analyticsHeaders() })).data;
+  }
+  async botsOverview(site: string) {
+    return (await this.client.get('/bots/overview', { params: { site }, headers: this.analyticsHeaders() })).data;
+  }
+  async botsVisits(site: string, params?: { page?: number; per_page?: number; bot_type?: string }) {
+    return (await this.client.get('/bots/visits', { params: { site, ...params }, headers: this.analyticsHeaders() })).data;
+  }
+  async consentAdmin(site: string, params?: { page?: number; per_page?: number }) {
+    return (await this.client.get('/consent/admin', { params: { site, ...params }, headers: this.analyticsHeaders() })).data;
+  }
+
   async adminOuouConversations()                              { return (await this.client.get('/api/v1/admin/ouou/conversations')).data; }
   async adminOuouConversation(id: string)                     { return (await this.client.get(`/api/v1/admin/ouou/conversations/${id}`)).data; }
   async adminOuouCreateConversation(payload: { title?: string; provider?: string; model?: string; system_prompt?: string }) {

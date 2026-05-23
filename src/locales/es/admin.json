@@ -74,25 +74,36 @@
     "statusDown": "No disponible"
   },
   "tracking": {
-    "title": "Seguimiento de visitantes",
-    "subtitle": "Sesiones, eventos, geografía.",
+    "title": "Cookies & consentimiento",
+    "subtitle": "Visitantes, sesiones, bots, geografia.",
     "tabs": {
-      "overview": "Resumen",
+      "geo": "Geografia",
       "realtime": "Tiempo real",
+      "visitors": "Visitantes",
+      "bots": "Bots",
       "sessions": "Sesiones",
-      "funnel": "Embudo",
-      "geo": "Geo"
+      "pages": "Paginas",
+      "acquisition": "Adquisicion",
+      "consents": "Consentimientos"
     },
     "activeNow": "Activos ahora",
+    "visitorsToday": "Visitantes hoy",
+    "sessionsToday": "Sesiones hoy",
+    "pageviewsToday": "Paginas hoy",
+    "bounceRate": "Tasa de rebote",
+    "avgDuration": "Dur. media",
     "totalSessions": "Sesiones",
     "totalEvents": "Eventos",
     "device": "Dispositivo",
-    "country": "País",
+    "country": "Pais",
     "city": "Ciudad",
     "language": "Idioma",
-    "page": "Página",
+    "page": "Pagina",
     "consented": "Consentimiento",
-    "duration": "Duración"
+    "duration": "Duracion",
+    "noData": "Sin datos.",
+    "loadError": "Error de carga.",
+    "viewDetails": "Detalles"
   },
   "ouou": {
     "title": "OUOU — Asistente IA",

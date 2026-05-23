@@ -74,16 +74,24 @@
     "statusDown": "Down"
   },
   "tracking": {
-    "title": "Visitor tracking",
-    "subtitle": "Sessions, events, geography.",
+    "title": "Cookies & consent",
+    "subtitle": "Visitors, sessions, bots, geography.",
     "tabs": {
-      "overview": "Overview",
+      "geo": "Geography",
       "realtime": "Realtime",
+      "visitors": "Visitors",
+      "bots": "Bots",
       "sessions": "Sessions",
-      "funnel": "Funnel",
-      "geo": "Geo"
+      "pages": "Pages",
+      "acquisition": "Acquisition",
+      "consents": "Consents"
     },
     "activeNow": "Active now",
+    "visitorsToday": "Visitors today",
+    "sessionsToday": "Sessions today",
+    "pageviewsToday": "Page views today",
+    "bounceRate": "Bounce rate",
+    "avgDuration": "Avg. duration",
     "totalSessions": "Sessions",
     "totalEvents": "Events",
     "device": "Device",
@@ -92,7 +100,10 @@
     "language": "Language",
     "page": "Page",
     "consented": "Consent",
-    "duration": "Duration"
+    "duration": "Duration",
+    "noData": "No data available.",
+    "loadError": "Loading error.",
+    "viewDetails": "Details"
   },
   "ouou": {
     "title": "OUOU — AI Assistant",
