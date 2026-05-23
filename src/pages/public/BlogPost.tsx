@@ -32,24 +32,49 @@ export default function BlogPost() {
   useBlogTracking(slug || '', post?.category);
 
   useEffect(() => {
+    const SUPPORTED_LOCALES = ['fr', 'en', 'es', 'it', 'de'];
+
     async function loadPost() {
       if (!slug) return;
       
-      setLoading(true);      
+      setLoading(true);
       try {
-        const response = await apiService.getBlogPost(slug, { locale: lang });
-        const fetchedPost = response.post;
+        // 1. Essai dans la langue courante
+        let fetchedPost: BlogPostType | null = null;
+        let articleLang = lang;
+
+        const primary = await apiService.getBlogPost(slug, { locale: lang }).catch(() => null);
+        fetchedPost = primary?.post ?? null;
+
+        // 2. Fallback : essayer les autres locales en parallèle
+        if (!fetchedPost) {
+          const fallbackLocales = SUPPORTED_LOCALES.filter(l => l !== lang);
+          const results = await Promise.allSettled(
+            fallbackLocales.map(l => apiService.getBlogPost(slug, { locale: l }).then(r => ({ ...r, _locale: l })))
+          );
+          for (const result of results) {
+            if (result.status === 'fulfilled' && result.value.post) {
+              fetchedPost = result.value.post;
+              articleLang = result.value._locale;
+              break;
+            }
+          }
+        }
 
         if (fetchedPost) {
+          // Si l'article est dans une autre langue, switcher l'interface
+          if (articleLang !== lang) {
+            i18n.changeLanguage(articleLang);
+          }
           setPost(fetchedPost);
-          const relatedResponse = await apiService.getBlogPosts({ category: fetchedPost.category, limit: 4, locale: lang });
-          let relatedCandidates = (relatedResponse.posts ?? []).filter(p => p.id !== fetchedPost.id);
+          const relatedResponse = await apiService.getBlogPosts({ category: fetchedPost.category, limit: 4, locale: articleLang });
+          let relatedCandidates = (relatedResponse.posts ?? []).filter(p => p.id !== fetchedPost!.id);
 
           if (relatedCandidates.length < 3) {
             try {
-              const complementaryResponse = await apiService.getBlogPosts({ limit: 6, locale: lang });
+              const complementaryResponse = await apiService.getBlogPosts({ limit: 6, locale: articleLang });
               const complementaryPosts = (complementaryResponse.posts ?? []).filter((candidate) => (
-                candidate.id !== fetchedPost.id &&
+                candidate.id !== fetchedPost!.id &&
                 !relatedCandidates.some((relatedPost) => relatedPost.id === candidate.id)
               ));
 
