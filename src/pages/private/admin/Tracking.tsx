@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { apiService } from '@/services/api';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
-import { CookieIcon, GlobeIcon, ZapIcon, UsersIcon, BotIcon, LayersIcon, FileTextIcon, TrendingUpIcon, LineChartIcon } from '@icons';
+import { CookieIcon, GlobeIcon, ZapIcon, UsersIcon, BotIcon, LayersIcon, FileTextIcon, TrendingUpIcon, LineChartIcon, CalendarIcon } from '@icons';
 
 import {
   GeoTab, RealtimeTab, VisitorsTab, BotsTab,
@@ -40,7 +40,7 @@ export default function AdminTracking() {
         <p className="mt-1 text-muted-foreground text-sm">{t('tracking.subtitle')}</p>
       </header>
 
-      {/* ── 5 KPIs ── */}
+      {/* ── 7 KPIs ── */}
       <div className="trk-kpi-row">
         <Card className="trk-kpi-card">
           <div className="trk-kpi-icon-wrap trk-kpi-icon-wrap--accent"><ZapIcon size={16} /></div>
@@ -58,6 +58,11 @@ export default function AdminTracking() {
           <p className="trk-kpi-label">{t('tracking.sessionsToday')}</p>
         </Card>
         <Card className="trk-kpi-card">
+          <div className="trk-kpi-icon-wrap"><FileTextIcon size={16} /></div>
+          <p className="trk-kpi-value">{kpis?.pageviews_today ?? '—'}</p>
+          <p className="trk-kpi-label">{t('tracking.pageviewsToday')}</p>
+        </Card>
+        <Card className="trk-kpi-card">
           <div className="trk-kpi-icon-wrap"><TrendingUpIcon size={16} /></div>
           <p className="trk-kpi-value">{kpis?.bounce_rate != null ? `${kpis.bounce_rate}%` : '—'}</p>
           <p className="trk-kpi-label">{t('tracking.bounceRate')}</p>
@@ -66,6 +71,11 @@ export default function AdminTracking() {
           <div className="trk-kpi-icon-wrap"><LineChartIcon size={16} /></div>
           <p className="trk-kpi-value">{fmt_dur(kpis?.avg_duration_seconds)}</p>
           <p className="trk-kpi-label">{t('tracking.avgDuration')}</p>
+        </Card>
+        <Card className="trk-kpi-card">
+          <div className="trk-kpi-icon-wrap"><CalendarIcon size={16} /></div>
+          <p className="trk-kpi-value">{kpis?.pageviews_7d ?? '—'}</p>
+          <p className="trk-kpi-label">{t('tracking.pageviews7d')}</p>
         </Card>
       </div>
 

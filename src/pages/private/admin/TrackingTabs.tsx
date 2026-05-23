@@ -57,6 +57,7 @@ export function GeoTab() {
   const [data, setData] = useState<any[] | null>(null);
   const [page, setPage] = useState(1);
   const [err, setErr] = useState(false);
+  const [selected, setSelected] = useState<any>(null);
 
   useEffect(() => {
     setErr(false);
@@ -82,6 +83,7 @@ export function GeoTab() {
                 <DataTableTh>{t('tracking.country')}</DataTableTh>
                 <DataTableTh>Sessions</DataTableTh>
                 <DataTableTh>%</DataTableTh>
+                <DataTableTh></DataTableTh>
               </DataTableRow>
             </DataTableHead>
             <DataTableBody>
@@ -91,6 +93,13 @@ export function GeoTab() {
                   <DataTableTd>{r.country_name ?? r.country ?? '—'}</DataTableTd>
                   <DataTableTd>{r.sessions}</DataTableTd>
                   <DataTableTd>{r.pct}%</DataTableTd>
+                  <DataTableTd>
+                    <div className="adm-table__actions">
+                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(r)} title={t('tracking.viewDetails')}>
+                        <EyeIcon size={13} />
+                      </button>
+                    </div>
+                  </DataTableTd>
                 </DataTableRow>
               ))}
             </DataTableBody>
@@ -103,6 +112,17 @@ export function GeoTab() {
           />
         </Card>
       )}
+
+      <Modal open={!!selected} onClose={() => setSelected(null)} title={selected?.country_name ?? selected?.country ?? '—'} size="sm">
+        {selected && (
+          <dl className="trk-modal-dl">
+            <dt>Code</dt><dd className="font-mono">{selected.country ?? '—'}</dd>
+            <dt>Pays</dt><dd>{selected.country_name ?? '—'}</dd>
+            <dt>Sessions</dt><dd>{selected.sessions}</dd>
+            <dt>Part</dt><dd>{selected.pct}%</dd>
+          </dl>
+        )}
+      </Modal>
     </div>
   );
 }
@@ -111,19 +131,15 @@ export function GeoTab() {
 
 export function RealtimeTab() {
   const { t } = useTranslation('admin');
-  const [overview, setOverview] = useState<any>(null);
   const [sessions, setSessions] = useState<any[]>([]);
   const [err, setErr] = useState(false);
+  const [selected, setSelected] = useState<any>(null);
 
   const reload = useCallback(() => {
     setErr(false);
-    Promise.all([
-      apiService.analyticsOverview(SITE),
-      apiService.analyticsSessions(SITE, { page: 1, per_page: 10 }),
-    ]).then(([ov, sess]) => {
-      setOverview(ov);
-      setSessions(Array.isArray(sess) ? sess : sess.items ?? []);
-    }).catch(() => setErr(true));
+    apiService.analyticsSessions(SITE, { page: 1, per_page: 10 })
+      .then(d => setSessions(Array.isArray(d) ? d : d.items ?? []))
+      .catch(() => setErr(true));
   }, []);
 
   useEffect(() => {
@@ -133,29 +149,9 @@ export function RealtimeTab() {
   }, [reload]);
 
   if (err) return <EmptyState message={t('tracking.loadError')} />;
-  if (!overview) return <LoadingState />;
 
   return (
-    <div className="trk-tab space-y-4">
-      <div className="trk-kpi-row">
-        <Card className="trk-kpi-card">
-          <p className="trk-kpi-label">{t('tracking.activeNow')}</p>
-          <p className="trk-kpi-value trk-kpi-value--accent">{overview.realtime_active ?? 0}</p>
-        </Card>
-        <Card className="trk-kpi-card">
-          <p className="trk-kpi-label">{t('tracking.visitorsToday')}</p>
-          <p className="trk-kpi-value">{overview.visitors_today ?? 0}</p>
-        </Card>
-        <Card className="trk-kpi-card">
-          <p className="trk-kpi-label">{t('tracking.sessionsToday')}</p>
-          <p className="trk-kpi-value">{overview.sessions_today ?? 0}</p>
-        </Card>
-        <Card className="trk-kpi-card">
-          <p className="trk-kpi-label">{t('tracking.pageviewsToday')}</p>
-          <p className="trk-kpi-value">{overview.pageviews_today ?? 0}</p>
-        </Card>
-      </div>
-
+    <div className="trk-tab">
       {sessions.length === 0 ? (
         <EmptyState message={t('tracking.noData')} />
       ) : (
@@ -167,6 +163,7 @@ export function RealtimeTab() {
                 <DataTableTh>{t('tracking.country')}</DataTableTh>
                 <DataTableTh>{t('tracking.duration')}</DataTableTh>
                 <DataTableTh>Début</DataTableTh>
+                <DataTableTh></DataTableTh>
               </DataTableRow>
             </DataTableHead>
             <DataTableBody>
@@ -176,12 +173,30 @@ export function RealtimeTab() {
                   <DataTableTd>{s.country ?? '—'}</DataTableTd>
                   <DataTableTd>{dur(s.duration_seconds)}</DataTableTd>
                   <DataTableTd className="text-xs">{fmt(s.started_at)}</DataTableTd>
+                  <DataTableTd>
+                    <div className="adm-table__actions">
+                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(s)} title={t('tracking.viewDetails')}>
+                        <EyeIcon size={13} />
+                      </button>
+                    </div>
+                  </DataTableTd>
                 </DataTableRow>
               ))}
             </DataTableBody>
           </DataTable>
         </Card>
       )}
+
+      <Modal open={!!selected} onClose={() => setSelected(null)} title="Détails session" size="sm">
+        {selected && (
+          <dl className="trk-modal-dl">
+            <dt>{t('tracking.device')}</dt><dd>{selected.device_type ?? '—'}</dd>
+            <dt>{t('tracking.country')}</dt><dd>{selected.country ?? '—'}</dd>
+            <dt>{t('tracking.duration')}</dt><dd>{dur(selected.duration_seconds)}</dd>
+            <dt>Début</dt><dd>{fmt(selected.started_at)}</dd>
+          </dl>
+        )}
+      </Modal>
     </div>
   );
 }
@@ -302,23 +317,6 @@ export function BotsTab() {
 
   return (
     <div className="trk-tab space-y-4">
-      {overview && (
-        <div className="trk-kpi-row">
-          <Card className="trk-kpi-card">
-            <p className="trk-kpi-label">Total bots</p>
-            <p className="trk-kpi-value">{overview.total_bot_visits ?? 0}</p>
-          </Card>
-          <Card className="trk-kpi-card">
-            <p className="trk-kpi-label">IPs uniques</p>
-            <p className="trk-kpi-value">{overview.unique_bot_ips ?? 0}</p>
-          </Card>
-          <Card className="trk-kpi-card">
-            <p className="trk-kpi-label">Aujourd'hui</p>
-            <p className="trk-kpi-value">{overview.bot_visits_today ?? 0}</p>
-          </Card>
-        </div>
-      )}
-
       {visits.length === 0 ? (
         <EmptyState message={t('tracking.noData')} />
       ) : (
@@ -485,6 +483,7 @@ export function PagesTab() {
   const [data, setData] = useState<any[] | null>(null);
   const [page, setPage] = useState(1);
   const [err, setErr] = useState(false);
+  const [selected, setSelected] = useState<any>(null);
 
   useEffect(() => {
     setErr(false);
@@ -510,6 +509,7 @@ export function PagesTab() {
                 <DataTableTh>Vues</DataTableTh>
                 <DataTableTh>Visiteurs uniques</DataTableTh>
                 <DataTableTh>Temps moyen</DataTableTh>
+                <DataTableTh></DataTableTh>
               </DataTableRow>
             </DataTableHead>
             <DataTableBody>
@@ -519,6 +519,13 @@ export function PagesTab() {
                   <DataTableTd>{r.views}</DataTableTd>
                   <DataTableTd>{r.unique_visitors}</DataTableTd>
                   <DataTableTd>{r.avg_time_on_page_ms != null ? `${Math.round(r.avg_time_on_page_ms / 1000)}s` : '—'}</DataTableTd>
+                  <DataTableTd>
+                    <div className="adm-table__actions">
+                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(r)} title={t('tracking.viewDetails')}>
+                        <EyeIcon size={13} />
+                      </button>
+                    </div>
+                  </DataTableTd>
                 </DataTableRow>
               ))}
             </DataTableBody>
@@ -531,6 +538,17 @@ export function PagesTab() {
           />
         </Card>
       )}
+
+      <Modal open={!!selected} onClose={() => setSelected(null)} title="Détails page" size="sm">
+        {selected && (
+          <dl className="trk-modal-dl">
+            <dt>Chemin</dt><dd className="font-mono text-xs break-all">{selected.url_path}</dd>
+            <dt>Vues</dt><dd>{selected.views}</dd>
+            <dt>Visiteurs uniques</dt><dd>{selected.unique_visitors}</dd>
+            <dt>Temps moyen</dt><dd>{selected.avg_time_on_page_ms != null ? `${Math.round(selected.avg_time_on_page_ms / 1000)}s` : '—'}</dd>
+          </dl>
+        )}
+      </Modal>
     </div>
   );
 }
@@ -540,19 +558,15 @@ export function PagesTab() {
 export function AcquisitionTab() {
   const { t } = useTranslation('admin');
   const [referrals, setReferrals] = useState<any[] | null>(null);
-  const [devices, setDevices] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const [err, setErr] = useState(false);
+  const [selected, setSelected] = useState<any>(null);
 
   useEffect(() => {
     setErr(false);
-    Promise.all([
-      apiService.analyticsReferrals(SITE, { days: 30, limit: 100 }),
-      apiService.analyticsDevices(SITE, { days: 30 }),
-    ]).then(([ref, dev]) => {
-      setReferrals(Array.isArray(ref) ? ref : []);
-      setDevices(Array.isArray(dev) ? dev : []);
-    }).catch(() => setErr(true));
+    apiService.analyticsReferrals(SITE, { days: 30, limit: 100 })
+      .then(d => setReferrals(Array.isArray(d) ? d : []))
+      .catch(() => setErr(true));
   }, []);
 
   if (err) return <EmptyState message={t('tracking.loadError')} />;
@@ -561,20 +575,7 @@ export function AcquisitionTab() {
   const slice = referrals.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
   return (
-    <div className="trk-tab space-y-6">
-      {devices.length > 0 && (
-        <div className="trk-kpi-row">
-          {devices.map((d: any) => (
-            <Card key={d.device_type} className="trk-kpi-card">
-              <p className="trk-kpi-label">{d.device_type}</p>
-              <p className="trk-kpi-value">{d.pct}%</p>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      <h3 className="text-sm font-medium text-foreground">Référents</h3>
-
+    <div className="trk-tab">
       {referrals.length === 0 ? (
         <EmptyState message={t('tracking.noData')} />
       ) : (
@@ -585,6 +586,7 @@ export function AcquisitionTab() {
                 <DataTableTh>Domaine référent</DataTableTh>
                 <DataTableTh>Sessions</DataTableTh>
                 <DataTableTh>%</DataTableTh>
+                <DataTableTh></DataTableTh>
               </DataTableRow>
             </DataTableHead>
             <DataTableBody>
@@ -593,6 +595,13 @@ export function AcquisitionTab() {
                   <DataTableTd>{r.referrer_domain}</DataTableTd>
                   <DataTableTd>{r.sessions}</DataTableTd>
                   <DataTableTd>{r.pct}%</DataTableTd>
+                  <DataTableTd>
+                    <div className="adm-table__actions">
+                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(r)} title={t('tracking.viewDetails')}>
+                        <EyeIcon size={13} />
+                      </button>
+                    </div>
+                  </DataTableTd>
                 </DataTableRow>
               ))}
             </DataTableBody>
@@ -605,6 +614,16 @@ export function AcquisitionTab() {
           />
         </Card>
       )}
+
+      <Modal open={!!selected} onClose={() => setSelected(null)} title="Détails référent" size="sm">
+        {selected && (
+          <dl className="trk-modal-dl">
+            <dt>Domaine</dt><dd>{selected.referrer_domain}</dd>
+            <dt>Sessions</dt><dd>{selected.sessions}</dd>
+            <dt>Part</dt><dd>{selected.pct}%</dd>
+          </dl>
+        )}
+      </Modal>
     </div>
   );
 }
@@ -632,24 +651,9 @@ export function ConsentsTab() {
   if (loading) return <LoadingState />;
 
   const items: any[] = data?.items ?? [];
-  const byLevel: Record<string, number> = data?.by_level ?? {};
 
   return (
     <div className="trk-tab space-y-4">
-      {Object.keys(byLevel).length > 0 && (
-        <div className="trk-kpi-row">
-          {Object.entries(byLevel).map(([level, count]) => (
-            <Card key={level} className="trk-kpi-card">
-              <p className="trk-kpi-label">{level}</p>
-              <p className="trk-kpi-value">{count as number}</p>
-            </Card>
-          ))}
-          <Card className="trk-kpi-card">
-            <p className="trk-kpi-label">Total actifs</p>
-            <p className="trk-kpi-value">{data?.total ?? 0}</p>
-          </Card>
-        </div>
-      )}
 
       {items.length === 0 ? (
         <EmptyState message={t('tracking.noData')} />

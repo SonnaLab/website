@@ -74,7 +74,7 @@
     "statusDown": "Down"
   },
   "tracking": {
-    "title": "Cookies & consent",
+    "title": "Cookies",
     "subtitle": "Visitors, sessions, bots, geography.",
     "tabs": {
       "geo": "Geography",
@@ -90,6 +90,7 @@
     "visitorsToday": "Visitors today",
     "sessionsToday": "Sessions today",
     "pageviewsToday": "Page views today",
+    "pageviews7d": "Pages / 7d",
     "bounceRate": "Bounce rate",
     "avgDuration": "Avg. duration",
     "totalSessions": "Sessions",

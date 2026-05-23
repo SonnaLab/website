@@ -74,7 +74,7 @@
     "statusDown": "Indisponible"
   },
   "tracking": {
-    "title": "Cookies & consentement",
+    "title": "Cookies",
     "subtitle": "Visiteurs, sessions, bots, géographie.",
     "tabs": {
       "geo": "Géographie",
@@ -90,6 +90,7 @@
     "visitorsToday": "Visiteurs aujourd'hui",
     "sessionsToday": "Sessions aujourd'hui",
     "pageviewsToday": "Pages vues aujourd'hui",
+    "pageviews7d": "Pages / 7j",
     "bounceRate": "Taux de rebond",
     "avgDuration": "Durée moy.",
     "totalSessions": "Sessions",
