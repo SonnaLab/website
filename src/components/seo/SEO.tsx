@@ -11,6 +11,7 @@ interface SEOProps {
   author?: string;
   publishedTime?: string;
   modifiedTime?: string;
+  hreflangAlternates?: Array<{ lang: string; href: string }>;
 }
 
 export function SEO({
@@ -22,7 +23,8 @@ export function SEO({
   type = 'website',
   author = 'SonnaLab',
   publishedTime,
-  modifiedTime
+  modifiedTime,
+  hreflangAlternates,
 }: SEOProps) {
   const { i18n } = useTranslation();
   const currentLang = i18n.language?.slice(0, 2) || 'fr';
@@ -49,10 +51,17 @@ export function SEO({
       {/* Canonical */}
       <link rel="canonical" href={fullUrl} />
 
-      {/* hreflang — same URL serves both languages via client-side i18n */}
-      <link rel="alternate" hrefLang="fr"        href={fullUrl} />
-      <link rel="alternate" hrefLang="en"        href={fullUrl} />
-      <link rel="alternate" hrefLang="x-default" href={fullUrl} />
+      {/* hreflang */}
+      {hreflangAlternates
+        ? hreflangAlternates.map(alt => (
+            <link key={alt.lang} rel="alternate" hrefLang={alt.lang} href={alt.href} />
+          ))
+        : <>
+            <link rel="alternate" hrefLang="fr"        href={fullUrl} />
+            <link rel="alternate" hrefLang="en"        href={fullUrl} />
+            <link rel="alternate" hrefLang="x-default" href={fullUrl} />
+          </>
+      }
 
       {/* Open Graph */}
       <meta property="og:type"         content={type}                                        />

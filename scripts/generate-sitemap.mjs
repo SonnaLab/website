@@ -14,18 +14,9 @@ const staticPages = [
     changefreq: 'weekly',
     priority: 1.0,
     alternates: [
-      { lang: 'en', href: `${BASE_URL}/en/` },
-      { lang: 'fr', href: `${BASE_URL}/` },
-    ]
-  },
-  {
-    loc: `${BASE_URL}/en/`,
-    lastmod: new Date().toISOString().split('T')[0],
-    changefreq: 'weekly',
-    priority: 1.0,
-    alternates: [
-      { lang: 'fr', href: `${BASE_URL}/` },
-      { lang: 'en', href: `${BASE_URL}/en/` },
+      { lang: 'fr',        href: `${BASE_URL}/` },
+      { lang: 'en',        href: `${BASE_URL}/` },
+      { lang: 'x-default', href: `${BASE_URL}/` },
     ]
   },
   {
@@ -34,18 +25,9 @@ const staticPages = [
     changefreq: 'weekly',
     priority: 0.9,
     alternates: [
-      { lang: 'en', href: `${BASE_URL}/en/blog` },
-      { lang: 'fr', href: `${BASE_URL}/blog` },
-    ]
-  },
-  {
-    loc: `${BASE_URL}/en/blog`,
-    lastmod: new Date().toISOString().split('T')[0],
-    changefreq: 'weekly',
-    priority: 0.9,
-    alternates: [
-      { lang: 'fr', href: `${BASE_URL}/blog` },
-      { lang: 'en', href: `${BASE_URL}/en/blog` },
+      { lang: 'fr',        href: `${BASE_URL}/blog` },
+      { lang: 'en',        href: `${BASE_URL}/blog` },
+      { lang: 'x-default', href: `${BASE_URL}/blog` },
     ]
   },
   {
@@ -54,18 +36,9 @@ const staticPages = [
     changefreq: 'monthly',
     priority: 0.8,
     alternates: [
-      { lang: 'en', href: `${BASE_URL}/en/projects` },
-      { lang: 'fr', href: `${BASE_URL}/projects` },
-    ]
-  },
-  {
-    loc: `${BASE_URL}/en/projects`,
-    lastmod: new Date().toISOString().split('T')[0],
-    changefreq: 'monthly',
-    priority: 0.8,
-    alternates: [
-      { lang: 'fr', href: `${BASE_URL}/projects` },
-      { lang: 'en', href: `${BASE_URL}/en/projects` },
+      { lang: 'fr',        href: `${BASE_URL}/projects` },
+      { lang: 'en',        href: `${BASE_URL}/projects` },
+      { lang: 'x-default', href: `${BASE_URL}/projects` },
     ]
   },
   {
@@ -74,18 +47,9 @@ const staticPages = [
     changefreq: 'monthly',
     priority: 0.7,
     alternates: [
-      { lang: 'en', href: `${BASE_URL}/en/contact` },
-      { lang: 'fr', href: `${BASE_URL}/contact` },
-    ]
-  },
-  {
-    loc: `${BASE_URL}/en/contact`,
-    lastmod: new Date().toISOString().split('T')[0],
-    changefreq: 'monthly',
-    priority: 0.7,
-    alternates: [
-      { lang: 'fr', href: `${BASE_URL}/contact` },
-      { lang: 'en', href: `${BASE_URL}/en/contact` },
+      { lang: 'fr',        href: `${BASE_URL}/contact` },
+      { lang: 'en',        href: `${BASE_URL}/contact` },
+      { lang: 'x-default', href: `${BASE_URL}/contact` },
     ]
   },
 ];
@@ -109,7 +73,7 @@ function getBlogPosts() {
   // French posts
   for (const post of frIndex) {
     const relatedPost = post.relatedPostId ? postMap.get(post.relatedPostId) : null;
-    const alternateUrl = relatedPost ? `${BASE_URL}/en/blog/${relatedPost.slug}` : null;
+    const alternateUrl = relatedPost ? `${BASE_URL}/blog/${relatedPost.slug}` : null;
     
     blogUrls.push({
       loc: `${BASE_URL}/blog/${post.slug}`,
@@ -129,13 +93,13 @@ function getBlogPosts() {
     const alternateUrl = relatedPost ? `${BASE_URL}/blog/${relatedPost.slug}` : null;
     
     blogUrls.push({
-      loc: `${BASE_URL}/en/blog/${post.slug}`,
+      loc: `${BASE_URL}/blog/${post.slug}`,
       lastmod: post.updatedAt || post.publishedAt,
       changefreq: 'monthly',
       priority: 0.8,
       alternates: alternateUrl ? [
         { lang: 'fr', href: alternateUrl },
-        { lang: 'en', href: `${BASE_URL}/en/blog/${post.slug}` },
+        { lang: 'en', href: `${BASE_URL}/blog/${post.slug}` },
       ] : null,
     });
   }
@@ -151,7 +115,7 @@ function generateSitemap() {
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
 ${allUrls.map(url => `  <url>
     <loc>${url.loc}</loc>${url.alternates ? `
-${url.alternates.map(alt => `    <xhtml:link rel="alternate" hreflang="${alt.lang}" href="${alt.href}"/>`).join('\n')}${url.alternates.find(a => a.lang === 'fr') ? `
+${url.alternates.map(alt => `    <xhtml:link rel="alternate" hreflang="${alt.lang}" href="${alt.href}"/>`).join('\n')}${!url.alternates.find(a => a.lang === 'x-default') && url.alternates.find(a => a.lang === 'fr') ? `
     <xhtml:link rel="alternate" hreflang="x-default" href="${url.alternates.find(a => a.lang === 'fr')?.href}"/>` : ''}` : ''}
     <lastmod>${url.lastmod}</lastmod>
     <changefreq>${url.changefreq}</changefreq>

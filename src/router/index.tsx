@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet, useParams } from 'react-router-dom';
 import { AnalyticsProvider } from '@/components/providers/AnalyticsProvider';
 import { AuthProvider } from '@/components/providers/AuthProvider';
 import { Layout } from '@/components/public/Layout';
@@ -56,6 +56,12 @@ function PublicShell() {
   return <Layout><Outlet /></Layout>;
 }
 
+// Redirect /en/* → /* so old sitemap /en/ URLs don't 404
+function EnLangRedirect() {
+  const { '*': wildcard = '' } = useParams();
+  return <Navigate to={`/${wildcard}`} replace />;
+}
+
 export const router = createBrowserRouter([
   {
     element: <RootShell />,
@@ -84,6 +90,9 @@ export const router = createBrowserRouter([
       { path: '/forgot-password', element: <ForgotPasswordPage /> },
       { path: '/reset-password',  element: <ResetPasswordPage /> },
       { path: '/confirm-email',   element: <ConfirmEmailPage /> },
+
+      // ---- EN language prefix redirect (/en/* → /*) ----
+      { path: '/en/*', element: <EnLangRedirect /> },
 
       // ---- Member (user) ----
       {
