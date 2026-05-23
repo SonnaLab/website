@@ -35,6 +35,8 @@ import {
   CameraIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  MegaphoneIcon,
+  MegaphoneOffIcon,
 } from '@icons';
 
 // ─────────────────────────────────────────────
@@ -300,9 +302,9 @@ function ArticlesTab() {
   const [page, setPage]           = useState(1);
   const PER_PAGE = 10;
 
-  const reload = (q = search) => {
+  const reload = (q = search, status = statusFilter) => {
     setLoading(true);
-    return apiService.adminNewsArticles({ generated: true, ...(q ? { q } : {}) })
+    return apiService.adminNewsArticles({ generated: true, ...(q ? { q } : {}), ...(status ? { status } : {}) })
       .then(d => setArticles(d.articles ?? []))
       .catch(() => toast.error(t('common.error')))
       .finally(() => setLoading(false));
@@ -464,7 +466,7 @@ function ArticlesTab() {
           <select
             className="adm-select adm-select--sm"
             value={statusFilter}
-            onChange={e => { setStatusFilter(e.target.value); setPage(1); }}
+            onChange={e => { const v = e.target.value; setStatusFilter(v); setPage(1); reload(search, v); }}
             aria-label={t('news.articles.allStatuses')}
           >
             <option value="">{t('news.articles.allStatuses')}</option>
@@ -529,8 +531,10 @@ function ArticlesTab() {
                     className="adm-btn adm-btn--ghost adm-btn--xs"
                     onClick={() => togglePublish(a)}
                     disabled={actionId === `publish-${a.id}`}
+                    aria-label={a.status === 'published' ? t('news.articles.unpublish') : t('news.articles.publish')}
+                    title={a.status === 'published' ? t('news.articles.unpublish') : t('news.articles.publish')}
                   >
-                    {a.status === 'published' ? t('news.articles.unpublish') : t('news.articles.publish')}
+                    {a.status === 'published' ? <MegaphoneOffIcon size={13} /> : <MegaphoneIcon size={13} />}
                   </button>
                   <button
                     type="button"
@@ -541,16 +545,17 @@ function ArticlesTab() {
                   >
                     <PenLineIcon size={13} />
                   </button>
-                  <button
-                    type="button"
-                    className="adm-btn adm-btn--ghost adm-btn--xs"
-                    onClick={() => gotoArticle(a)}
-                    disabled={a.status !== 'published'}
-                    aria-label={t('news.articles.goto')}
-                    title={t('news.articles.goto')}
-                  >
-                    <ArrowUpRightIcon size={13} />
-                  </button>
+                  {a.status === 'published' && (
+                    <button
+                      type="button"
+                      className="adm-btn adm-btn--ghost adm-btn--xs"
+                      onClick={() => gotoArticle(a)}
+                      aria-label={t('news.articles.goto')}
+                      title={t('news.articles.goto')}
+                    >
+                      <ArrowUpRightIcon size={13} />
+                    </button>
+                  )}
                 </div>
               </DataTableTd>
             </DataTableRow>

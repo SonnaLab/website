@@ -51,4 +51,6 @@ export {
   LayersIcon,
   ZapIcon,
   TrendingUpIcon,
+  MegaphoneIcon,
+  MegaphoneOffIcon,
 } from './icons';
