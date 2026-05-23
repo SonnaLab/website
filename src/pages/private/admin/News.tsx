@@ -298,7 +298,7 @@ const ARTICLE_LOCALES = ['fr', 'en', 'es', 'de', 'it'];
 
 type ArticleModalMode = 'preview' | 'edit';
 type ArticleGenerationModalState = 'idle' | 'running' | 'success' | 'failed';
-type ReviewOutcome = 'approved' | 'needs_revision';
+type ReviewOutcome = 'approve' | 'reject' | 'rebuild';
 interface ReviewModalState {
   open: boolean;
   article: Article | null;
@@ -458,13 +458,13 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
     setReviewModal(v => ({ ...v, status: 'submitting' }));
     try {
       await apiService.adminNewsAIReviewPrompt(String(genId), { action, ...(notes.trim() ? { notes: notes.trim() } : {}) });
-      if (action === 'needs_revision' && article.status === 'published') {
+      if (action === 'reject' && article.status === 'published') {
         await apiService.adminNewsUnpublishArticle(article.id);
         setArticles(prev => prev.map(a => a.id === article.id ? { ...a, status: 'draft' as const } : a));
         triggerSitemapRefresh();
       }
       setReviewModal(v => ({ ...v, status: 'done' }));
-      toast.success(action === 'approved' ? 'Article approuvé ✓' : 'Article marqué pour révision');
+      toast.success(action === 'approve' ? 'Article approuvé ✓' : action === 'rebuild' ? 'Regénération demandée' : 'Article rejeté');
       setTimeout(() => setReviewModal(v => ({ ...v, open: false })), 1400);
     } catch (e: any) {
       setReviewModal(v => ({ ...v, status: 'error', errorMsg: e?.response?.data?.error || e?.message || 'Erreur' }));
@@ -1004,22 +1004,30 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
               <div className="adm-review-modal__outcomes">
                 <button
                   type="button"
-                  className={`adm-review-modal__outcome${reviewModal.action === 'approved' ? ' adm-review-modal__outcome--active' : ''}`}
-                  onClick={() => setReviewModal(v => ({ ...v, action: 'approved' }))}
+                  className={`adm-review-modal__outcome${reviewModal.action === 'approve' ? ' adm-review-modal__outcome--active' : ''}`}
+                  onClick={() => setReviewModal(v => ({ ...v, action: 'approve' }))}
                 >
                   <CheckCircle2Icon size={16} />
                   Approuver
                 </button>
                 <button
                   type="button"
-                  className={`adm-review-modal__outcome${reviewModal.action === 'needs_revision' ? ' adm-review-modal__outcome--active' : ''}`}
-                  onClick={() => setReviewModal(v => ({ ...v, action: 'needs_revision' }))}
+                  className={`adm-review-modal__outcome${reviewModal.action === 'reject' ? ' adm-review-modal__outcome--active' : ''}`}
+                  onClick={() => setReviewModal(v => ({ ...v, action: 'reject' }))}
                 >
                   <AlertTriangleIcon size={16} />
-                  Révision requise
+                  Rejeter
+                </button>
+                <button
+                  type="button"
+                  className={`adm-review-modal__outcome${reviewModal.action === 'rebuild' ? ' adm-review-modal__outcome--active' : ''}`}
+                  onClick={() => setReviewModal(v => ({ ...v, action: 'rebuild' }))}
+                >
+                  <RefreshCwIcon size={16} />
+                  Regénérer
                 </button>
               </div>
-              {reviewModal.action === 'needs_revision' && reviewModal.article?.status === 'published' && (
+              {reviewModal.action === 'reject' && reviewModal.article?.status === 'published' && (
                 <p className="adm-review-modal__warn">
                   <AlertTriangleIcon size={13} />
                   L'article sera dépublié automatiquement.

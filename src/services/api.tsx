@@ -524,7 +524,7 @@ class ApiService {
   async adminNewsAIPrompts(params?: { limit?: number }): Promise<{ prompts: NewsAIPrompt[] }> { return (await this.client.get('/api/v1/admin/news/ai-prompts', { params })).data; }
   async adminNewsAIPrompt(id: string): Promise<{ prompt: NewsAIPrompt }> { return (await this.client.get(`/api/v1/admin/news/ai-prompts/${id}`)).data; }
   async adminNewsRestartAIPrompt(id: string): Promise<{ generation: any; prompt: NewsAIPrompt }> { return (await this.client.post(`/api/v1/admin/news/ai-prompts/${id}/restart`)).data; }
-  async adminNewsAIReviewPrompt(id: string, payload: { action: 'approved' | 'needs_revision'; notes?: string }): Promise<any> { return (await this.client.patch(`/api/v1/admin/news/ai-prompts/${id}/review`, payload)).data; }
+  async adminNewsAIReviewPrompt(id: string, payload: { action: 'approve' | 'reject' | 'rebuild'; notes?: string }): Promise<any> { return (await this.client.patch(`/api/v1/admin/news/ai-prompts/${id}/review`, payload)).data; }
   async adminNewsDeleteAIPrompt(id: string): Promise<{ success: boolean }> { return (await this.client.delete(`/api/v1/admin/news/ai-prompts/${id}`)).data; }
 
   async adminNewsCalendar(params?: { year?: number; month?: number }) { return (await this.client.get('/api/v1/admin/news/calendar', { params })).data; }
