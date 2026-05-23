@@ -70,6 +70,11 @@
       }
     }
     </script>
+    <!-- SonnaLab Analytics Tracker (self-hosted) —
+         Le tracking démarre en mode minimal (consent_level=none).
+         window.SonnaAnalytics.setConsent() est appelé depuis CookieConsent.tsx
+         après le choix de l'utilisateur. -->
+    <script async src="https://analytics.sonnalab.com/tracker.js" data-site="sonnalab.com"></script>
   </head>
 
   <body>

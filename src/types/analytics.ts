@@ -1,5 +1,19 @@
 export type CookieCategory = 'essential' | 'analytics' | 'marketing';
 
+// API publique exposée par tracker.js (analytics.sonnalab.com)
+declare global {
+  interface Window {
+    SonnaAnalytics?: {
+      /** Mettre à jour le consentement RGPD après le choix du visiteur */
+      setConsent(level: 'none' | 'anonymous' | 'full', opts?: { analytics?: boolean; marketing?: boolean }): void;
+      /** Tracker un événement custom (ex: cta_click, form_submit) */
+      track(eventType: string, extra?: Record<string, unknown>): void;
+      /** ID visiteur unique (fingerprint-based) */
+      getVisitorId(): string | null;
+    };
+  }
+}
+
 export interface CookiePreferences {
   essential: boolean;
   analytics: boolean;

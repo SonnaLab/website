@@ -58,6 +58,7 @@ export function CookieConsent() {
       timestamp: new Date().toISOString(),
       version: '1.0.0'
     });
+    window.SonnaAnalytics?.setConsent('full', { analytics: true, marketing: true });
   };
 
   const rejectNonEssential = () => {
@@ -68,6 +69,7 @@ export function CookieConsent() {
       timestamp: new Date().toISOString(),
       version: '1.0.0'
     });
+    window.SonnaAnalytics?.setConsent('anonymous', { analytics: false, marketing: false });
   };
 
   const togglePreference = (id: 'analytics' | 'marketing') => {
@@ -322,7 +324,14 @@ export function CookieConsent() {
               {t('settings.cancel')}
             </Button>
             <Button
-              onClick={() => savePreferences(preferences)}
+              onClick={() => {
+                savePreferences(preferences);
+                const level = preferences.analytics ? 'full' : 'anonymous';
+                window.SonnaAnalytics?.setConsent(level, {
+                  analytics: preferences.analytics,
+                  marketing: preferences.marketing,
+                });
+              }}
               className="flex-1 py-3 bg-black text-white hover:bg-gray-800"
             >
               <Check className="w-4 h-4 mr-2" />
