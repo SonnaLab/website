@@ -4,6 +4,20 @@ import { toast } from 'sonner';
 
 import { apiService } from '@/services/api';
 import type { AICalendarItem, Article, ArticleImageOption, ArticleStatus, CalendarEntry, NewsAIPrompt, NewsStrategy, StrategicObjective, WeeklyObjective } from '@/services/api';
+
+// Fire-and-forget: régénère sitemap.xml sur le serveur après publication/dépublication
+async function triggerSitemapRefresh(): Promise<void> {
+  const token = import.meta.env.VITE_SITEMAP_REFRESH_TOKEN;
+  if (!token) return;
+  try {
+    await fetch('/sitemap/refresh', {
+      method: 'POST',
+      headers: { 'X-Sitemap-Token': token },
+    });
+  } catch {
+    // silencieux — le cron horaire prend le relai
+  }
+}
 import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
@@ -413,6 +427,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
       if (editing.id === article.id) setEditing(current => ({ ...current, ...(data.article ?? {}) }));
       await reload();
       onStatsChange?.();
+      triggerSitemapRefresh();
     } catch { toast.error(t('common.error')); }
     finally { setActionId(null); }
   };
