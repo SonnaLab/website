@@ -4245,12 +4245,12 @@
   flex-shrink: 0;
 }
 .trk-status--active {
-  background: color-mix(in srgb, #16a34a 12%, transparent);
-  color: #16a34a;
+  background: color-mix(in srgb, var(--brand, #2d3748) 10%, transparent);
+  color: var(--brand, #2d3748);
 }
 .trk-status--active .trk-status__dot {
-  background: #16a34a;
-  box-shadow: 0 0 0 2px color-mix(in srgb, #16a34a 25%, transparent);
+  background: var(--brand, #2d3748);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand, #2d3748) 20%, transparent);
   animation: trk-pulse 2s ease-in-out infinite;
 }
 .trk-status--ended {
