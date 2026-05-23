@@ -44,6 +44,9 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="https://sonnalab.com/" />
     
+    <!-- Analytics Tracker -->
+    <script async src="https://api.sonnalab.com/tracker.js" data-site="sonnalab.com"></script>
+
     <!-- Preconnect to external domains for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -70,11 +73,6 @@
       }
     }
     </script>
-    <!-- SonnaLab Analytics Tracker (self-hosted) —
-         Le tracking démarre en mode minimal (consent_level=none).
-         window.SonnaAnalytics.setConsent() est appelé depuis CookieConsent.tsx
-         après le choix de l'utilisateur. -->
-    <script async src="https://analytics.sonnalab.com/tracker.js" data-site="sonnalab.com"></script>
   </head>
 
   <body>
