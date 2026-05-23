@@ -456,7 +456,7 @@ class ApiService {
   async analyticsVisitors(site: string, params?: { page?: number; per_page?: number }) {
     return (await this._analyticsClient.get('/analytics/visitors', this.aC({ site, ...params }))).data;
   }
-  async analyticsSessions(site: string, params?: { page?: number; per_page?: number }) {
+  async analyticsSessions(site: string, params?: { page?: number; per_page?: number; active_only?: boolean }) {
     return (await this._analyticsClient.get('/analytics/sessions', this.aC({ site, ...params }))).data;
   }
   async analyticsPages(site: string, params?: { days?: number; limit?: number }) {

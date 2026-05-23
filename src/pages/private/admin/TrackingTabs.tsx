@@ -133,7 +133,6 @@ export function RealtimeTab() {
   const { t } = useTranslation('admin');
   const [overview, setOverview] = useState<any>(null);
   const [sessions, setSessions] = useState<any[]>([]);
-  const [page, setPage] = useState(1);
   const [err, setErr] = useState(false);
   const [selected, setSelected] = useState<any>(null);
 
@@ -141,12 +140,12 @@ export function RealtimeTab() {
     setErr(false);
     Promise.all([
       apiService.analyticsOverview(SITE),
-      apiService.analyticsSessions(SITE, { page, per_page: PER_PAGE }),
+      apiService.analyticsSessions(SITE, { active_only: true, per_page: 100 }),
     ]).then(([ov, d]) => {
       setOverview(ov);
       setSessions(Array.isArray(d) ? d : d.items ?? []);
     }).catch(() => setErr(true));
-  }, [page]);
+  }, []);
 
   useEffect(() => {
     reload();
@@ -165,7 +164,7 @@ export function RealtimeTab() {
         </div>
       )}
 
-      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Sessions récentes</p>
+      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Sessions actives</p>
 
       {sessions.length === 0 ? (
         <EmptyState message={t('tracking.noData')} />
@@ -174,47 +173,29 @@ export function RealtimeTab() {
           <DataTable>
             <DataTableHead>
               <DataTableRow>
-                <DataTableTh>Statut</DataTableTh>
                 <DataTableTh>{t('tracking.device')}</DataTableTh>
                 <DataTableTh>{t('tracking.country')}</DataTableTh>
-                <DataTableTh>{t('tracking.duration')}</DataTableTh>
                 <DataTableTh>Début</DataTableTh>
                 <DataTableTh>Actions</DataTableTh>
               </DataTableRow>
             </DataTableHead>
             <DataTableBody>
-              {sessions.map((s: any) => {
-                const active = s.duration_seconds == null;
-                return (
-                  <DataTableRow key={s.id}>
-                    <DataTableTd>
-                      <span className={active ? 'trk-status trk-status--active' : 'trk-status trk-status--ended'}>
-                        <span className="trk-status__dot" />
-                        {active ? 'Actif' : 'Terminé'}
-                      </span>
-                    </DataTableTd>
-                    <DataTableTd>{s.device_type ?? '—'}</DataTableTd>
-                    <DataTableTd>{s.country ?? '—'}</DataTableTd>
-                    <DataTableTd>{dur(s.duration_seconds)}</DataTableTd>
-                    <DataTableTd className="text-xs">{fmt(s.started_at)}</DataTableTd>
-                    <DataTableTd>
-                      <div className="adm-table__actions">
-                        <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(s)} title={t('tracking.viewDetails')}>
-                          <EyeIcon size={13} />
-                        </button>
-                      </div>
-                    </DataTableTd>
-                  </DataTableRow>
-                );
-              })}
+              {sessions.map((s: any) => (
+                <DataTableRow key={s.id}>
+                  <DataTableTd>{s.device_type ?? '—'}</DataTableTd>
+                  <DataTableTd>{s.country ?? '—'}</DataTableTd>
+                  <DataTableTd className="text-xs">{fmt(s.started_at)}</DataTableTd>
+                  <DataTableTd>
+                    <div className="adm-table__actions">
+                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(s)} title={t('tracking.viewDetails')}>
+                        <EyeIcon size={13} />
+                      </button>
+                    </div>
+                  </DataTableTd>
+                </DataTableRow>
+              ))}
             </DataTableBody>
           </DataTable>
-          <Pagination
-            page={page}
-            hasMore={sessions.length === PER_PAGE}
-            onPrev={() => setPage(p => p - 1)}
-            onNext={() => setPage(p => p + 1)}
-          />
         </Card>
       )}
 
