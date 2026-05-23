@@ -7,8 +7,8 @@ import { useTranslation } from 'react-i18next';
 import { apiService } from '@/services/api';
 import { Card } from '@/components/ui/card';
 import { Modal } from '@/components/common/Modal';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ChevronLeftIcon, ChevronRightIcon } from '@icons';
+import { DataTable, DataTableHead, DataTableBody, DataTableRow, DataTableTh, DataTableTd, DataTableEmpty } from '@/components/common/DataTable';
+import { ChevronLeftIcon, ChevronRightIcon, EyeIcon } from '@icons';
 
 const SITE = 'sonnalab.com';
 const PER_PAGE = 10;
@@ -75,26 +75,26 @@ export function GeoTab() {
         <EmptyState message={t('tracking.noData')} />
       ) : (
         <Card className="overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Code</TableHead>
-                <TableHead>{t('tracking.country')}</TableHead>
-                <TableHead>Sessions</TableHead>
-                <TableHead>%</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <DataTable>
+            <DataTableHead>
+              <DataTableRow>
+                <DataTableTh>Code</DataTableTh>
+                <DataTableTh>{t('tracking.country')}</DataTableTh>
+                <DataTableTh>Sessions</DataTableTh>
+                <DataTableTh>%</DataTableTh>
+              </DataTableRow>
+            </DataTableHead>
+            <DataTableBody>
               {slice.map((r: any) => (
-                <TableRow key={r.country ?? r.country_name}>
-                  <TableCell className="font-mono text-xs">{r.country ?? '—'}</TableCell>
-                  <TableCell>{r.country_name ?? r.country ?? '—'}</TableCell>
-                  <TableCell>{r.sessions}</TableCell>
-                  <TableCell>{r.pct}%</TableCell>
-                </TableRow>
+                <DataTableRow key={r.country ?? r.country_name}>
+                  <DataTableTd className="font-mono text-xs">{r.country ?? '—'}</DataTableTd>
+                  <DataTableTd>{r.country_name ?? r.country ?? '—'}</DataTableTd>
+                  <DataTableTd>{r.sessions}</DataTableTd>
+                  <DataTableTd>{r.pct}%</DataTableTd>
+                </DataTableRow>
               ))}
-            </TableBody>
-          </Table>
+            </DataTableBody>
+          </DataTable>
           <Pagination
             page={page}
             hasMore={page * PER_PAGE < data.length}
@@ -160,26 +160,26 @@ export function RealtimeTab() {
         <EmptyState message={t('tracking.noData')} />
       ) : (
         <Card className="overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('tracking.device')}</TableHead>
-                <TableHead>{t('tracking.country')}</TableHead>
-                <TableHead>{t('tracking.duration')}</TableHead>
-                <TableHead>Début</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <DataTable>
+            <DataTableHead>
+              <DataTableRow>
+                <DataTableTh>{t('tracking.device')}</DataTableTh>
+                <DataTableTh>{t('tracking.country')}</DataTableTh>
+                <DataTableTh>{t('tracking.duration')}</DataTableTh>
+                <DataTableTh>Début</DataTableTh>
+              </DataTableRow>
+            </DataTableHead>
+            <DataTableBody>
               {sessions.map((s: any) => (
-                <TableRow key={s.id}>
-                  <TableCell>{s.device_type ?? '—'}</TableCell>
-                  <TableCell>{s.country ?? '—'}</TableCell>
-                  <TableCell>{dur(s.duration_seconds)}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground">{fmt(s.started_at)}</TableCell>
-                </TableRow>
+                <DataTableRow key={s.id}>
+                  <DataTableTd>{s.device_type ?? '—'}</DataTableTd>
+                  <DataTableTd>{s.country ?? '—'}</DataTableTd>
+                  <DataTableTd>{dur(s.duration_seconds)}</DataTableTd>
+                  <DataTableTd className="text-xs">{fmt(s.started_at)}</DataTableTd>
+                </DataTableRow>
               ))}
-            </TableBody>
-          </Table>
+            </DataTableBody>
+          </DataTable>
         </Card>
       )}
     </div>
@@ -214,36 +214,38 @@ export function VisitorsTab() {
         <EmptyState message={t('tracking.noData')} />
       ) : (
         <Card className="overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>1ère visite</TableHead>
-                <TableHead>Dernière visite</TableHead>
-                <TableHead>Visites</TableHead>
-                <TableHead>{t('tracking.country')}</TableHead>
-                <TableHead>{t('tracking.device')}</TableHead>
-                <TableHead></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <DataTable>
+            <DataTableHead>
+              <DataTableRow>
+                <DataTableTh>ID</DataTableTh>
+                <DataTableTh>1ère visite</DataTableTh>
+                <DataTableTh>Dernière visite</DataTableTh>
+                <DataTableTh>Visites</DataTableTh>
+                <DataTableTh>{t('tracking.country')}</DataTableTh>
+                <DataTableTh>{t('tracking.device')}</DataTableTh>
+                <DataTableTh></DataTableTh>
+              </DataTableRow>
+            </DataTableHead>
+            <DataTableBody>
               {data.map((v: any) => (
-                <TableRow key={v.id}>
-                  <TableCell className="font-mono text-xs">{v.fingerprint_id}</TableCell>
-                  <TableCell className="text-xs">{fmt(v.first_seen_at)}</TableCell>
-                  <TableCell className="text-xs">{fmt(v.last_seen_at)}</TableCell>
-                  <TableCell>{v.visit_count}</TableCell>
-                  <TableCell>{v.country ?? '—'}</TableCell>
-                  <TableCell>{v.device_type ?? '—'}</TableCell>
-                  <TableCell>
-                    <button className="trk-detail-btn" onClick={() => setSelected(v)}>
-                      {t('tracking.viewDetails')}
-                    </button>
-                  </TableCell>
-                </TableRow>
+                <DataTableRow key={v.id}>
+                  <DataTableTd className="font-mono text-xs">{v.fingerprint_id}</DataTableTd>
+                  <DataTableTd className="text-xs">{fmt(v.first_seen_at)}</DataTableTd>
+                  <DataTableTd className="text-xs">{fmt(v.last_seen_at)}</DataTableTd>
+                  <DataTableTd>{v.visit_count}</DataTableTd>
+                  <DataTableTd>{v.country ?? '—'}</DataTableTd>
+                  <DataTableTd>{v.device_type ?? '—'}</DataTableTd>
+                  <DataTableTd>
+                    <div className="adm-table__actions">
+                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(v)} title={t('tracking.viewDetails')}>
+                        <EyeIcon size={13} />
+                      </button>
+                    </div>
+                  </DataTableTd>
+                </DataTableRow>
               ))}
-            </TableBody>
-          </Table>
+            </DataTableBody>
+          </DataTable>
           <Pagination
             page={page}
             hasMore={data.length === PER_PAGE}
@@ -321,36 +323,38 @@ export function BotsTab() {
         <EmptyState message={t('tracking.noData')} />
       ) : (
         <Card className="overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>IP</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Score</TableHead>
-                <TableHead>{t('tracking.country')}</TableHead>
-                <TableHead>Requêtes</TableHead>
-                <TableHead>Dernière vue</TableHead>
-                <TableHead></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <DataTable>
+            <DataTableHead>
+              <DataTableRow>
+                <DataTableTh>IP</DataTableTh>
+                <DataTableTh>Type</DataTableTh>
+                <DataTableTh>Score</DataTableTh>
+                <DataTableTh>{t('tracking.country')}</DataTableTh>
+                <DataTableTh>Requêtes</DataTableTh>
+                <DataTableTh>Dernière vue</DataTableTh>
+                <DataTableTh></DataTableTh>
+              </DataTableRow>
+            </DataTableHead>
+            <DataTableBody>
               {visits.map((v: any) => (
-                <TableRow key={v.id}>
-                  <TableCell className="font-mono text-xs">{v.ip_address ?? '—'}</TableCell>
-                  <TableCell>{v.bot_type ?? '—'}</TableCell>
-                  <TableCell>{v.confidence_score != null ? `${v.confidence_score}%` : '—'}</TableCell>
-                  <TableCell>{v.country ?? '—'}</TableCell>
-                  <TableCell>{v.request_count ?? 0}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground">{fmt(v.last_seen_at)}</TableCell>
-                  <TableCell>
-                    <button className="trk-detail-btn" onClick={() => setSelected(v)}>
-                      {t('tracking.viewDetails')}
-                    </button>
-                  </TableCell>
-                </TableRow>
+                <DataTableRow key={v.id}>
+                  <DataTableTd className="font-mono text-xs">{v.ip_address ?? '—'}</DataTableTd>
+                  <DataTableTd>{v.bot_type ?? '—'}</DataTableTd>
+                  <DataTableTd>{v.confidence_score != null ? `${v.confidence_score}%` : '—'}</DataTableTd>
+                  <DataTableTd>{v.country ?? '—'}</DataTableTd>
+                  <DataTableTd>{v.request_count ?? 0}</DataTableTd>
+                  <DataTableTd className="text-xs">{fmt(v.last_seen_at)}</DataTableTd>
+                  <DataTableTd>
+                    <div className="adm-table__actions">
+                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(v)} title={t('tracking.viewDetails')}>
+                        <EyeIcon size={13} />
+                      </button>
+                    </div>
+                  </DataTableTd>
+                </DataTableRow>
               ))}
-            </TableBody>
-          </Table>
+            </DataTableBody>
+          </DataTable>
           <Pagination
             page={page}
             hasMore={visits.length === PER_PAGE}
@@ -410,38 +414,40 @@ export function SessionsTab() {
         <EmptyState message={t('tracking.noData')} />
       ) : (
         <Card className="overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>{t('tracking.device')}</TableHead>
-                <TableHead>{t('tracking.country')}</TableHead>
-                <TableHead>Pages</TableHead>
-                <TableHead>{t('tracking.duration')}</TableHead>
-                <TableHead>Rebond</TableHead>
-                <TableHead>Début</TableHead>
-                <TableHead></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <DataTable>
+            <DataTableHead>
+              <DataTableRow>
+                <DataTableTh>ID</DataTableTh>
+                <DataTableTh>{t('tracking.device')}</DataTableTh>
+                <DataTableTh>{t('tracking.country')}</DataTableTh>
+                <DataTableTh>Pages</DataTableTh>
+                <DataTableTh>{t('tracking.duration')}</DataTableTh>
+                <DataTableTh>Rebond</DataTableTh>
+                <DataTableTh>Début</DataTableTh>
+                <DataTableTh></DataTableTh>
+              </DataTableRow>
+            </DataTableHead>
+            <DataTableBody>
               {data.map((s: any) => (
-                <TableRow key={s.id}>
-                  <TableCell className="font-mono text-xs">{s.id?.slice(0, 8)}…</TableCell>
-                  <TableCell>{s.device_type ?? '—'}</TableCell>
-                  <TableCell>{s.country ?? '—'}</TableCell>
-                  <TableCell>{s.page_count ?? 0}</TableCell>
-                  <TableCell>{dur(s.duration_seconds)}</TableCell>
-                  <TableCell>{s.is_bounce ? 'Oui' : 'Non'}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground">{fmt(s.started_at)}</TableCell>
-                  <TableCell>
-                    <button className="trk-detail-btn" onClick={() => setSelected(s)}>
-                      {t('tracking.viewDetails')}
-                    </button>
-                  </TableCell>
-                </TableRow>
+                <DataTableRow key={s.id}>
+                  <DataTableTd className="font-mono text-xs">{s.id?.slice(0, 8)}…</DataTableTd>
+                  <DataTableTd>{s.device_type ?? '—'}</DataTableTd>
+                  <DataTableTd>{s.country ?? '—'}</DataTableTd>
+                  <DataTableTd>{s.page_count ?? 0}</DataTableTd>
+                  <DataTableTd>{dur(s.duration_seconds)}</DataTableTd>
+                  <DataTableTd>{s.is_bounce ? 'Oui' : 'Non'}</DataTableTd>
+                  <DataTableTd className="text-xs">{fmt(s.started_at)}</DataTableTd>
+                  <DataTableTd>
+                    <div className="adm-table__actions">
+                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(s)} title={t('tracking.viewDetails')}>
+                        <EyeIcon size={13} />
+                      </button>
+                    </div>
+                  </DataTableTd>
+                </DataTableRow>
               ))}
-            </TableBody>
-          </Table>
+            </DataTableBody>
+          </DataTable>
           <Pagination
             page={page}
             hasMore={data.length === PER_PAGE}
@@ -482,7 +488,7 @@ export function PagesTab() {
 
   useEffect(() => {
     setErr(false);
-    apiService.analyticsPages(SITE, { days: 7, limit: 200 })
+    apiService.analyticsPages(SITE, { days: 7, limit: 100 })
       .then(setData).catch(() => setErr(true));
   }, []);
 
@@ -497,26 +503,26 @@ export function PagesTab() {
         <EmptyState message={t('tracking.noData')} />
       ) : (
         <Card className="overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Chemin</TableHead>
-                <TableHead>Vues</TableHead>
-                <TableHead>Visiteurs uniques</TableHead>
-                <TableHead>Temps moyen</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <DataTable>
+            <DataTableHead>
+              <DataTableRow>
+                <DataTableTh>Chemin</DataTableTh>
+                <DataTableTh>Vues</DataTableTh>
+                <DataTableTh>Visiteurs uniques</DataTableTh>
+                <DataTableTh>Temps moyen</DataTableTh>
+              </DataTableRow>
+            </DataTableHead>
+            <DataTableBody>
               {slice.map((r: any) => (
-                <TableRow key={r.url_path}>
-                  <TableCell className="font-mono text-xs max-w-xs truncate">{r.url_path}</TableCell>
-                  <TableCell>{r.views}</TableCell>
-                  <TableCell>{r.unique_visitors}</TableCell>
-                  <TableCell>{r.avg_time_on_page_ms != null ? `${Math.round(r.avg_time_on_page_ms / 1000)}s` : '—'}</TableCell>
-                </TableRow>
+                <DataTableRow key={r.url_path}>
+                  <DataTableTd className="font-mono text-xs">{r.url_path}</DataTableTd>
+                  <DataTableTd>{r.views}</DataTableTd>
+                  <DataTableTd>{r.unique_visitors}</DataTableTd>
+                  <DataTableTd>{r.avg_time_on_page_ms != null ? `${Math.round(r.avg_time_on_page_ms / 1000)}s` : '—'}</DataTableTd>
+                </DataTableRow>
               ))}
-            </TableBody>
-          </Table>
+            </DataTableBody>
+          </DataTable>
           <Pagination
             page={page}
             hasMore={page * PER_PAGE < data.length}
@@ -541,7 +547,7 @@ export function AcquisitionTab() {
   useEffect(() => {
     setErr(false);
     Promise.all([
-      apiService.analyticsReferrals(SITE, { days: 30, limit: 200 }),
+      apiService.analyticsReferrals(SITE, { days: 30, limit: 100 }),
       apiService.analyticsDevices(SITE, { days: 30 }),
     ]).then(([ref, dev]) => {
       setReferrals(Array.isArray(ref) ? ref : []);
@@ -573,24 +579,24 @@ export function AcquisitionTab() {
         <EmptyState message={t('tracking.noData')} />
       ) : (
         <Card className="overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Domaine référent</TableHead>
-                <TableHead>Sessions</TableHead>
-                <TableHead>%</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <DataTable>
+            <DataTableHead>
+              <DataTableRow>
+                <DataTableTh>Domaine référent</DataTableTh>
+                <DataTableTh>Sessions</DataTableTh>
+                <DataTableTh>%</DataTableTh>
+              </DataTableRow>
+            </DataTableHead>
+            <DataTableBody>
               {slice.map((r: any) => (
-                <TableRow key={r.referrer_domain}>
-                  <TableCell>{r.referrer_domain}</TableCell>
-                  <TableCell>{r.sessions}</TableCell>
-                  <TableCell>{r.pct}%</TableCell>
-                </TableRow>
+                <DataTableRow key={r.referrer_domain}>
+                  <DataTableTd>{r.referrer_domain}</DataTableTd>
+                  <DataTableTd>{r.sessions}</DataTableTd>
+                  <DataTableTd>{r.pct}%</DataTableTd>
+                </DataTableRow>
               ))}
-            </TableBody>
-          </Table>
+            </DataTableBody>
+          </DataTable>
           <Pagination
             page={page}
             hasMore={page * PER_PAGE < referrals.length}
@@ -649,36 +655,38 @@ export function ConsentsTab() {
         <EmptyState message={t('tracking.noData')} />
       ) : (
         <Card className="overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Visiteur</TableHead>
-                <TableHead>Niveau</TableHead>
-                <TableHead>Analytics</TableHead>
-                <TableHead>Marketing</TableHead>
-                <TableHead>Consenti le</TableHead>
-                <TableHead>Retiré</TableHead>
-                <TableHead></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <DataTable>
+            <DataTableHead>
+              <DataTableRow>
+                <DataTableTh>Visiteur</DataTableTh>
+                <DataTableTh>Niveau</DataTableTh>
+                <DataTableTh>Analytics</DataTableTh>
+                <DataTableTh>Marketing</DataTableTh>
+                <DataTableTh>Consenti le</DataTableTh>
+                <DataTableTh>Retiré</DataTableTh>
+                <DataTableTh></DataTableTh>
+              </DataTableRow>
+            </DataTableHead>
+            <DataTableBody>
               {items.map((c: any) => (
-                <TableRow key={c.id} className={c.withdrawn_at ? 'opacity-50' : ''}>
-                  <TableCell className="font-mono text-xs">{c.visitor_id}</TableCell>
-                  <TableCell>{c.consent_level}</TableCell>
-                  <TableCell>{c.analytics ? '✓' : '—'}</TableCell>
-                  <TableCell>{c.marketing ? '✓' : '—'}</TableCell>
-                  <TableCell className="text-xs">{fmt(c.consented_at)}</TableCell>
-                  <TableCell className="text-xs">{c.withdrawn_at ? fmt(c.withdrawn_at) : '—'}</TableCell>
-                  <TableCell>
-                    <button className="trk-detail-btn" onClick={() => setSelected(c)}>
-                      {t('tracking.viewDetails')}
-                    </button>
-                  </TableCell>
-                </TableRow>
+                <DataTableRow key={c.id} className={c.withdrawn_at ? 'opacity-50' : ''}>
+                  <DataTableTd className="font-mono text-xs">{c.visitor_id}</DataTableTd>
+                  <DataTableTd>{c.consent_level}</DataTableTd>
+                  <DataTableTd>{c.analytics ? '✓' : '—'}</DataTableTd>
+                  <DataTableTd>{c.marketing ? '✓' : '—'}</DataTableTd>
+                  <DataTableTd className="text-xs">{fmt(c.consented_at)}</DataTableTd>
+                  <DataTableTd className="text-xs">{c.withdrawn_at ? fmt(c.withdrawn_at) : '—'}</DataTableTd>
+                  <DataTableTd>
+                    <div className="adm-table__actions">
+                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(c)} title={t('tracking.viewDetails')}>
+                        <EyeIcon size={13} />
+                      </button>
+                    </div>
+                  </DataTableTd>
+                </DataTableRow>
               ))}
-            </TableBody>
-          </Table>
+            </DataTableBody>
+          </DataTable>
           <Pagination
             page={page}
             hasMore={items.length === PER_PAGE}
