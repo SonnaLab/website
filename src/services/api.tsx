@@ -438,41 +438,47 @@ class ApiService {
   }
 
   // ── Analytics microservice (direct via nginx proxy) ──
-  // No cookies needed — auth via X-API-Key header; withCredentials must be false
+  // Dedicated client — no auth interceptors, no credentials, no Authorization header
+  private readonly _analyticsClient = axios.create({
+    baseURL: API_BASE_URL,
+    timeout: 15000,
+    headers: { 'Content-Type': 'application/json' },
+    withCredentials: false,
+  });
   private get analyticsKey() { return import.meta.env.VITE_ANALYTICS_API_KEY ?? ''; }
   private aC(params?: Record<string, unknown>) {
-    return { params, headers: { 'X-API-Key': this.analyticsKey }, withCredentials: false as const };
+    return { params, headers: { 'X-API-Key': this.analyticsKey } };
   }
 
   async analyticsOverview(site: string) {
-    return (await this.client.get('/analytics/overview', this.aC({ site }))).data;
+    return (await this._analyticsClient.get('/analytics/overview', this.aC({ site }))).data;
   }
   async analyticsVisitors(site: string, params?: { page?: number; per_page?: number }) {
-    return (await this.client.get('/analytics/visitors', this.aC({ site, ...params }))).data;
+    return (await this._analyticsClient.get('/analytics/visitors', this.aC({ site, ...params }))).data;
   }
   async analyticsSessions(site: string, params?: { page?: number; per_page?: number }) {
-    return (await this.client.get('/analytics/sessions', this.aC({ site, ...params }))).data;
+    return (await this._analyticsClient.get('/analytics/sessions', this.aC({ site, ...params }))).data;
   }
   async analyticsPages(site: string, params?: { days?: number; limit?: number }) {
-    return (await this.client.get('/analytics/pages', this.aC({ site, ...params }))).data;
+    return (await this._analyticsClient.get('/analytics/pages', this.aC({ site, ...params }))).data;
   }
   async analyticsReferrals(site: string, params?: { days?: number; limit?: number }) {
-    return (await this.client.get('/analytics/referrals', this.aC({ site, ...params }))).data;
+    return (await this._analyticsClient.get('/analytics/referrals', this.aC({ site, ...params }))).data;
   }
   async analyticsGeo(site: string, params?: { days?: number; limit?: number }) {
-    return (await this.client.get('/analytics/geo', this.aC({ site, ...params }))).data;
+    return (await this._analyticsClient.get('/analytics/geo', this.aC({ site, ...params }))).data;
   }
   async analyticsDevices(site: string, params?: { days?: number }) {
-    return (await this.client.get('/analytics/devices', this.aC({ site, ...params }))).data;
+    return (await this._analyticsClient.get('/analytics/devices', this.aC({ site, ...params }))).data;
   }
   async botsOverview(site: string) {
-    return (await this.client.get('/bots/overview', this.aC({ site }))).data;
+    return (await this._analyticsClient.get('/bots/overview', this.aC({ site }))).data;
   }
   async botsVisits(site: string, params?: { page?: number; per_page?: number; bot_type?: string }) {
-    return (await this.client.get('/bots/visits', this.aC({ site, ...params }))).data;
+    return (await this._analyticsClient.get('/bots/visits', this.aC({ site, ...params }))).data;
   }
   async consentAdmin(site: string, params?: { page?: number; per_page?: number }) {
-    return (await this.client.get('/consent/admin', this.aC({ site, ...params }))).data;
+    return (await this._analyticsClient.get('/consent/admin', this.aC({ site, ...params }))).data;
   }
 
   async adminOuouConversations()                              { return (await this.client.get('/api/v1/admin/ouou/conversations')).data; }
