@@ -53,4 +53,5 @@ export {
   TrendingUpIcon,
   MegaphoneIcon,
   MegaphoneOffIcon,
+  CookieIcon,
 } from './icons';

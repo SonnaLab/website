@@ -2,7 +2,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "infrastructure": "Infraestructura",
-    "tracking": "Tracking",
+    "tracking": "Cookies",
     "ouou": "OUOU (IA)",
     "seo": "SEO",
     "news": "Noticias",
@@ -23,7 +23,7 @@
         "empty": "Sin actividad de infraestructura."
       },
       "tracking": {
-        "title": "Tracking",
+        "title": "Cookies",
         "empty": "Sin sesiones recientes."
       },
       "news": {

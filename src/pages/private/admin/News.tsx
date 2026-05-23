@@ -177,6 +177,8 @@ function OverviewTab({ setTab }: { setTab: (tab: string) => void }) {
   const [calendarItems, setCalendarItems]             = useState<AICalendarItem[]>([]);
   const [articles, setArticles]                       = useState<Article[]>([]);
   const [loading, setLoading]                         = useState(true);
+  const [showAllObj, setShowAllObj]                   = useState(false);
+  const OBJ_COLLAPSE = 4;
 
   const reload = async () => {
     try {
@@ -230,17 +232,28 @@ function OverviewTab({ setTab }: { setTab: (tab: string) => void }) {
           {strategicObjectives.length === 0 ? (
             <p className="admin-news-overview__objectives-empty">{t('news.articles.empty')}</p>
           ) : (
-            <ul className="admin-news-overview__objectives">
-              {coverage.map(({ obj, covered }) => (
-                <li key={obj.id} className={`admin-news-overview__obj${covered ? ' admin-news-overview__obj--covered' : ''}`}>
-                  <span className={`admin-news-overview__obj-check${covered ? ' admin-news-overview__obj-check--done' : ''}`}>
-                    {covered && <CheckIcon size={10} />}
-                  </span>
-                  <span className="admin-news-overview__obj-label">{obj.title}</span>
-                  <span className="admin-news-overview__obj-meta">{obj.success_metrics?.articles_per_month_target ?? 0} art/mois</span>
-                </li>
-              ))}
-            </ul>
+            <>
+              <ul className="admin-news-overview__objectives">
+                {(showAllObj ? coverage : coverage.slice(0, OBJ_COLLAPSE)).map(({ obj, covered }) => (
+                  <li key={obj.id} className={`admin-news-overview__obj${covered ? ' admin-news-overview__obj--covered' : ''}`}>
+                    <span className={`admin-news-overview__obj-check${covered ? ' admin-news-overview__obj-check--done' : ''}`}>
+                      {covered && <CheckIcon size={10} />}
+                    </span>
+                    <span className="admin-news-overview__obj-label">{obj.title}</span>
+                    <span className="admin-news-overview__obj-meta">{obj.success_metrics?.articles_per_month_target ?? 0} art/mois</span>
+                  </li>
+                ))}
+              </ul>
+              {coverage.length > OBJ_COLLAPSE && (
+                <button
+                  type="button"
+                  className="admin-news-overview__obj-toggle"
+                  onClick={() => setShowAllObj(v => !v)}
+                >
+                  {showAllObj ? 'Réduire' : `Voir plus (${coverage.length - OBJ_COLLAPSE})`}
+                </button>
+              )}
+            </>
           )}
         </div>
 

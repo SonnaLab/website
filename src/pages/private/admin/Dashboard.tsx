@@ -4,6 +4,7 @@ import type { ComponentType } from 'react';
 import {
   ServerIcon,
   LineChartIcon,
+  CookieIcon,
   BotIcon,
   SearchIcon,
   NewsIcon,
@@ -42,7 +43,7 @@ const latestItemsByWidget: Partial<Record<WidgetKey, LatestItem[]>> = {};
 const adminWidgetRows: AdminWidget[][] = [
   [
     { key: 'infrastructure', to: '/admin/infrastructure', icon: ServerIcon },
-    { key: 'tracking',       to: '/admin/tracking',       icon: LineChartIcon },
+    { key: 'tracking',       to: '/admin/tracking',       icon: CookieIcon },
     { key: 'news',           to: '/admin/news',           icon: NewsIcon },
   ],
   [

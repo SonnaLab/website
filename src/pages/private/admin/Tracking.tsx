@@ -4,11 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { apiService } from '@/services/api';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { TrendingUpIcon, ZapIcon, UsersIcon, LayersIcon, GlobeIcon } from '@icons';
 
 export default function AdminTracking() {
   const { t } = useTranslation('admin');
+  const [tab, setTab] = useState('overview');
 
   return (
     <div className="space-y-6">
@@ -17,13 +19,13 @@ export default function AdminTracking() {
         <p className="mt-1 text-muted-foreground text-sm">{t('tracking.subtitle')}</p>
       </header>
 
-      <Tabs defaultValue="overview">
+      <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
-          <TabsTrigger value="overview">{t('tracking.tabs.overview')}</TabsTrigger>
-          <TabsTrigger value="realtime">{t('tracking.tabs.realtime')}</TabsTrigger>
-          <TabsTrigger value="sessions">{t('tracking.tabs.sessions')}</TabsTrigger>
-          <TabsTrigger value="funnel">{t('tracking.tabs.funnel')}</TabsTrigger>
-          <TabsTrigger value="geo">{t('tracking.tabs.geo')}</TabsTrigger>
+          <TabsTrigger value="overview" icon={<TrendingUpIcon size={15} />}>{t('tracking.tabs.overview')}</TabsTrigger>
+          <TabsTrigger value="realtime" icon={<ZapIcon         size={15} />}>{t('tracking.tabs.realtime')}</TabsTrigger>
+          <TabsTrigger value="sessions" icon={<UsersIcon       size={15} />}>{t('tracking.tabs.sessions')}</TabsTrigger>
+          <TabsTrigger value="funnel"   icon={<LayersIcon      size={15} />}>{t('tracking.tabs.funnel')}</TabsTrigger>
+          <TabsTrigger value="geo"      icon={<GlobeIcon       size={15} />}>{t('tracking.tabs.geo')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="mt-4"><OverviewTab /></TabsContent>
