@@ -82,6 +82,8 @@ function normalizeNewsStats(payload: any): NewsStatsSummary {
 export default function AdminNews() {
   const { t } = useTranslation('admin');
   const [tab, setTab] = useState('overview');
+  const [kpiKey, setKpiKey] = useState(0);
+  const refreshKpis = () => setKpiKey(k => k + 1);
 
   return (
     <div className="admin-news">
@@ -93,7 +95,7 @@ export default function AdminNews() {
         <p className="admin-news__header-sub">{t('news.subtitle')}</p>
       </header>
 
-      <AdminNewsKpis />
+      <AdminNewsKpis refreshKey={kpiKey} />
 
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
@@ -105,8 +107,8 @@ export default function AdminNews() {
         </TabsList>
 
         <TabsContent value="overview"><OverviewTab setTab={setTab} /></TabsContent>
-        <TabsContent value="articles"><ArticlesTab /></TabsContent>
-        <TabsContent value="prompts"><PromptsTab /></TabsContent>
+        <TabsContent value="articles"><ArticlesTab onStatsChange={refreshKpis} /></TabsContent>
+        <TabsContent value="prompts"><PromptsTab onStatsChange={refreshKpis} /></TabsContent>
         <TabsContent value="calendar"><CalendarTab /></TabsContent>
         <TabsContent value="strategy"><StrategyTab /></TabsContent>
       </Tabs>
@@ -114,7 +116,7 @@ export default function AdminNews() {
   );
 }
 
-function AdminNewsKpis() {
+function AdminNewsKpis({ refreshKey }: { refreshKey: number }) {
   const { t } = useTranslation('admin');
   const [stats, setStats] = useState<NewsStatsSummary | null>(null);
 
@@ -130,7 +132,7 @@ function AdminNewsKpis() {
       });
 
     return () => { mounted = false; };
-  }, []);
+  }, [refreshKey]);
 
   const items = [
     { label: t('news.overview.stats.published'), value: stats?.published ?? '—' },
@@ -280,7 +282,7 @@ function articlePublicUrl(article: Partial<Article>) {
   return article.published_url || (article.slug ? `/blog/${article.slug}` : '');
 }
 
-function ArticlesTab() {
+function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
   const { t, i18n } = useTranslation('admin');
   const [articles, setArticles]   = useState<Article[]>([]);
   const [loading, setLoading]     = useState(true);
@@ -410,6 +412,7 @@ function ArticlesTab() {
         : await apiService.adminNewsPublishArticle(article.id);
       if (editing.id === article.id) setEditing(current => ({ ...current, ...(data.article ?? {}) }));
       await reload();
+      onStatsChange?.();
     } catch { toast.error(t('common.error')); }
     finally { setActionId(null); }
   };
@@ -426,6 +429,7 @@ function ArticlesTab() {
       setGenerationMessage(data.article ? t('news.articles.generation.successMessage') : t('news.articles.generation.successWithoutArticle'));
       toast.success(t('news.articles.generateSuccess'));
       await reload();
+      onStatsChange?.();
     } catch {
       setGenerationStatus('failed');
       setGenerationMessage(t('news.articles.generation.failedMessage'));
@@ -991,7 +995,7 @@ function promptReason(prompt: NewsAIPrompt, fallback: string) {
   return prompt.error_message || prompt.push_error_message || prompt.reason || fallback;
 }
 
-function PromptsTab() {
+function PromptsTab({ onStatsChange }: { onStatsChange?: () => void }) {
   const { t, i18n } = useTranslation('admin');
   const [prompts, setPrompts]     = useState<NewsAIPrompt[]>([]);
   const [loading, setLoading]     = useState(true);
@@ -1030,6 +1034,7 @@ function PromptsTab() {
       if (selectedPrompt?.id === id) setSelectedPrompt(data.prompt);
       toast.success(t('news.prompts.restartQueued'));
       await reload();
+      onStatsChange?.();
     } catch {
       toast.error(t('common.error'));
     } finally {
@@ -1045,6 +1050,7 @@ function PromptsTab() {
       toast.success(t('news.prompts.deleted'));
       if (selectedPrompt?.id === id) closeModal();
       await reload();
+      onStatsChange?.();
     } catch {
       toast.error(t('common.error'));
     } finally {
@@ -1076,8 +1082,30 @@ function PromptsTab() {
     [t('news.prompts.completedAt'), selectedPrompt.completed_at ? fmtDate(selectedPrompt.completed_at, i18n.language) : '—'],
   ] : [];
 
+  const errorCount    = prompts.filter(p => p.status === 'failed' || p.push_status === 'failed').length;
+  const runningCount  = prompts.filter(p => p.status === 'running' || p.status === 'pending').length;
+  const pushedCount   = prompts.filter(p => p.push_status === 'success').length;
+
   return (
     <div className="admin-news-prompts">
+      <div className="admin-news-prompts__kpis">
+        <div className="admin-news-overview__stat-card">
+          <span className="admin-news-overview__stat-value">{loading ? '—' : prompts.length}</span>
+          <span className="admin-news-overview__stat-label">{t('news.prompts.kpi.total')}</span>
+        </div>
+        <div className="admin-news-overview__stat-card admin-news-overview__stat-card--danger">
+          <span className="admin-news-overview__stat-value">{loading ? '—' : errorCount}</span>
+          <span className="admin-news-overview__stat-label">{t('news.prompts.kpi.errors')}</span>
+        </div>
+        <div className="admin-news-overview__stat-card">
+          <span className="admin-news-overview__stat-value">{loading ? '—' : runningCount}</span>
+          <span className="admin-news-overview__stat-label">{t('news.prompts.kpi.running')}</span>
+        </div>
+        <div className="admin-news-overview__stat-card">
+          <span className="admin-news-overview__stat-value">{loading ? '—' : pushedCount}</span>
+          <span className="admin-news-overview__stat-label">{t('news.prompts.kpi.pushed')}</span>
+        </div>
+      </div>
       <DataTable>
         <DataTableHead>
           <DataTableRow>
@@ -1723,6 +1751,8 @@ function CalendarTab() {
       return aiItems.filter(it => it.scheduled_for === dateStr);
     };
 
+    const MAX_VISIBLE = 5;
+
     return (
       <div className="admin-news-calendar__grid">
         {DAYS.map(d => <div key={d} className="admin-news-calendar__day-header">{d}</div>)}
@@ -1730,24 +1760,31 @@ function CalendarTab() {
           const isToday = day !== null && year === today.getFullYear() && month === today.getMonth() && day === today.getDate();
           const dayEntries = day ? entriesForDay(day) : [];
           const dayAI = day ? aiForDay(day) : [];
+          const allItems = [...dayEntries.map(e => ({ type: 'entry' as const, data: e })), ...dayAI.map(it => ({ type: 'ai' as const, data: it }))];
+          const visible = allItems.slice(0, MAX_VISIBLE);
+          const hiddenCount = allItems.length - visible.length;
           return (
             <div key={idx} className={['admin-news-calendar__cell', !day ? 'admin-news-calendar__cell--empty' : '', isToday ? 'admin-news-calendar__cell--today' : ''].filter(Boolean).join(' ')}>
               {day && <span className="admin-news-calendar__cell-day">{day}</span>}
-              {dayEntries.map(e => (
-                <span key={e.id} className={`admin-news-calendar__event admin-news-calendar__event--${e.status}`} title={e.title}>{e.title}</span>
-              ))}
-              {dayAI.map(it => (
-                <button
-                  key={`ai-${it.id}`}
-                  type="button"
-                  className={`admin-news-calendar__ai-chip admin-news-calendar__ai-chip--${aiStatusVariant(it.status)}`}
-                  title={it.keyword}
-                  onClick={() => openAIItem(it)}
-                >
-                  <span className="admin-news-calendar__locale-badge">{it.locale?.toUpperCase() || 'FR'}</span>
-                  <span>{it.keyword}</span>
-                </button>
-              ))}
+              {visible.map((item) =>
+                item.type === 'entry' ? (
+                  <span key={item.data.id} className={`admin-news-calendar__event admin-news-calendar__event--${item.data.status}`} title={item.data.title}>{item.data.title}</span>
+                ) : (
+                  <button
+                    key={`ai-${item.data.id}`}
+                    type="button"
+                    className={`admin-news-calendar__ai-chip admin-news-calendar__ai-chip--${aiStatusVariant(item.data.status)}`}
+                    title={item.data.keyword}
+                    onClick={() => openAIItem(item.data)}
+                  >
+                    <span className="admin-news-calendar__locale-badge">{item.data.locale?.toUpperCase() || 'FR'}</span>
+                    <span>{item.data.keyword}</span>
+                  </button>
+                )
+              )}
+              {hiddenCount > 0 && (
+                <span className="admin-news-calendar__cell-more">+{hiddenCount}</span>
+              )}
             </div>
           );
         })}

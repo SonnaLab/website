@@ -286,6 +286,12 @@
       "previousPage": "Pagina precedente",
       "nextPage": "Pagina successiva",
       "pageIndicator": "{{page}} / {{total}}",
+      "kpi": {
+        "total": "TOTALE PROMPT",
+        "errors": "ERRORI",
+        "running": "IN CORSO",
+        "pushed": "PUBBLICATI"
+      },
       "statuses": {
         "pending": "In attesa",
         "running": "In corso",
