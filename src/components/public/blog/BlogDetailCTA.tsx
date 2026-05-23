@@ -49,15 +49,15 @@ export function BlogDetailCTA({ variant, lang = 'fr' }: BlogDetailCTAProps) {
       <div className="blog-detail-cta__body">
         <p className="blog-detail-cta__title">{content.title}</p>
         <p className="blog-detail-cta__text">{content.text}</p>
-        <button
-          type="button"
-          className="blog-detail-cta__button"
-          onClick={() => openConsultationModal()}
-        >
-          <span>{content.action}</span>
-          <ArrowRight aria-hidden="true" />
-        </button>
       </div>
+      <button
+        type="button"
+        className="blog-detail-cta__button"
+        onClick={() => openConsultationModal()}
+      >
+        <span>{content.action}</span>
+        <ArrowRight aria-hidden="true" />
+      </button>
     </aside>
   );
 }

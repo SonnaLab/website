@@ -986,58 +986,70 @@
 
 .blog-detail-cta {
   --cta-bg: #ffffff;
-  --cta-border: #d9dee7;
+  --cta-border: #e2e8f0;
   --cta-ink: #111827;
-  --cta-muted: #4b5563;
+  --cta-muted: #6b7280;
   --cta-orbit: rgb(17 24 39 / 0.07);
-  --cta-icon-bg: #f8fafc;
-  --cta-icon-border: #e5e7eb;
-  --cta-icon-inner: #111111;
+  --cta-icon-bg: #f1f5f9;
+  --cta-icon-border: #e2e8f0;
   --cta-icon-ink: #111111;
   --cta-button-bg: #111111;
   --cta-button-border: #111111;
   --cta-button-ink: #ffffff;
   position: relative;
   isolation: isolate;
-  display: grid;
-  grid-template-columns: 3.75rem minmax(0, 1fr);
-  align-items: start;
-  gap: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
   overflow: hidden;
-  margin: 1.9rem 0;
-  padding: 1rem;
+  margin: 2rem 0;
+  padding: 1.25rem 1.5rem;
   border-color: var(--cta-border);
   background: var(--cta-bg);
   color: var(--cta-ink);
 }
 
+/* dot-grid decoration — top-right corner */
+.blog-detail-cta::before {
+  content: "";
+  position: absolute;
+  top: -1.5rem;
+  right: -1.5rem;
+  width: 11rem;
+  height: 11rem;
+  background-image: radial-gradient(circle, var(--cta-orbit) 1.5px, transparent 1.5px);
+  background-size: 14px 14px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* subtle gradient wash — light variant */
+.blog-detail-cta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, #f8fafc 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
 .blog-detail-cta--project {
   --cta-bg: #111111;
-  --cta-border: #111111;
-  --cta-ink: #ffffff;
-  --cta-muted: #d1d5db;
+  --cta-border: #222222;
+  --cta-ink: #f9fafb;
+  --cta-muted: #9ca3af;
   --cta-orbit: rgb(255 255 255 / 0.12);
-  --cta-icon-bg: rgb(255 255 255 / 0.1);
-  --cta-icon-border: rgb(255 255 255 / 0.16);
-  --cta-icon-inner: #ffffff;
+  --cta-icon-bg: rgb(255 255 255 / 0.08);
+  --cta-icon-border: rgb(255 255 255 / 0.14);
   --cta-icon-ink: #ffffff;
   --cta-button-bg: #ffffff;
   --cta-button-border: #ffffff;
   --cta-button-ink: #111111;
 }
 
-.blog-detail-cta::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 1rem;
-  z-index: -1;
-  width: 6.5rem;
-  height: 6.5rem;
-  border: 1px solid var(--cta-orbit);
-  border-radius: 999px;
-  transform: translate(-34%, -50%);
-  pointer-events: none;
+/* dark variant: right-side radial glow instead of left gradient */
+.blog-detail-cta--project::after {
+  background: radial-gradient(ellipse at 90% 50%, rgb(255 255 255 / 0.05) 0%, transparent 65%);
 }
 
 .blog-detail-cta__icon,
@@ -1048,79 +1060,69 @@
 }
 
 .blog-detail-cta__icon {
-  position: relative;
-  display: inline-flex;
-  width: 3.75rem;
-  height: 3.75rem;
+  flex-shrink: 0;
+  display: flex;
+  width: 3.25rem;
+  height: 3.25rem;
   align-items: center;
   justify-content: center;
   border: 1px solid var(--cta-icon-border);
-  border-radius: 8px;
+  border-radius: 10px;
   background: var(--cta-icon-bg);
   color: var(--cta-icon-ink);
 }
 
-.blog-detail-cta__icon::after {
-  content: "";
-  position: absolute;
-  inset: 0.46rem;
-  border: 1px solid var(--cta-icon-inner);
-  border-radius: 6px;
-  opacity: 0.18;
-  pointer-events: none;
-}
-
 .blog-detail-cta__icon svg {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.4rem;
+  height: 1.4rem;
 }
 
 .blog-detail-cta__body {
-  display: grid;
-  gap: 0.5rem;
+  flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
 }
 
 .blog-detail-cta__title {
   margin: 0;
   color: var(--cta-ink);
-  font-size: 1.08rem;
+  font-size: 1rem;
   font-weight: 850;
-  line-height: 1.22;
+  line-height: 1.25;
 }
 
 .blog-detail-cta__text {
-  max-width: 34rem;
   margin: 0;
   color: var(--cta-muted);
-  font-size: 0.9rem;
-  line-height: 1.46;
+  font-size: 0.875rem;
+  line-height: 1.5;
 }
 
 .blog-detail-cta__button {
+  flex-shrink: 0;
   display: inline-flex;
-  width: fit-content;
-  min-height: 2.35rem;
-  appearance: none;
   align-items: center;
   justify-content: center;
-  gap: 0.42rem;
+  gap: 0.45rem;
   border: 1px solid var(--cta-button-border);
   border-radius: 8px;
   background: var(--cta-button-bg);
-  padding: 0.56rem 0.72rem;
+  padding: 0.625rem 1rem;
   color: var(--cta-button-ink);
   cursor: pointer;
   font: inherit;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 800;
   line-height: 1.2;
   text-decoration: none;
   white-space: nowrap;
-  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  transition: opacity 0.15s ease, transform 0.15s ease;
 }
 
 .blog-detail-cta__button:hover {
+  opacity: 0.82;
   transform: translateY(-1px);
 }
 
@@ -1130,9 +1132,14 @@
 }
 
 .blog-detail-cta__button svg {
-  width: 0.95rem;
-  height: 0.95rem;
-  flex: 0 0 auto;
+  width: 0.9rem;
+  height: 0.9rem;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.blog-detail-cta__button:hover svg {
+  transform: translateX(3px);
 }
 
 .blog-related-shell {
@@ -1492,29 +1499,36 @@
   }
 
   .blog-detail-cta {
-    grid-template-columns: 3.25rem minmax(0, 1fr);
-    align-items: start;
-    gap: 0.8rem;
-    margin: 1.6rem 0;
-    padding: 0.9rem;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    margin: 1.5rem 0;
+    padding: 1rem 1.1rem;
   }
 
   .blog-detail-cta::before {
-    width: 5.5rem;
-    height: 5.5rem;
+    width: 8rem;
+    height: 8rem;
+    top: -1rem;
+    right: -1rem;
   }
 
   .blog-detail-cta__icon {
-    width: 3.25rem;
-    height: 3.25rem;
+    width: 2.75rem;
+    height: 2.75rem;
   }
 
   .blog-detail-cta__icon svg {
-    width: 1.32rem;
-    height: 1.32rem;
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  .blog-detail-cta__body {
+    flex: 1 1 60%;
   }
 
   .blog-detail-cta__button {
+    flex: 0 0 100%;
+    justify-content: center;
     white-space: normal;
   }
 
