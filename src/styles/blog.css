@@ -1037,7 +1037,7 @@
   --cta-bg: #111111;
   --cta-border: #222222;
   --cta-ink: #f9fafb;
-  --cta-muted: #9ca3af;
+  --cta-muted: #cbd5e1;
   --cta-orbit: rgb(255 255 255 / 0.12);
   --cta-icon-bg: rgb(255 255 255 / 0.08);
   --cta-icon-border: rgb(255 255 255 / 0.14);
@@ -1085,18 +1085,18 @@
   gap: 0.3rem;
 }
 
-.blog-detail-cta__title {
+.blog-detail-cta .blog-detail-cta__title {
   margin: 0;
   color: var(--cta-ink);
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 850;
   line-height: 1.25;
 }
 
-.blog-detail-cta__text {
+.blog-detail-cta .blog-detail-cta__text {
   margin: 0;
   color: var(--cta-muted);
-  font-size: 0.875rem;
+  font-size: 0.88rem;
   line-height: 1.5;
 }
 
