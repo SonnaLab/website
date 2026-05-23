@@ -57,8 +57,12 @@ export function SEO({
             <link key={alt.lang} rel="alternate" hrefLang={alt.lang} href={alt.href} />
           ))
         : <>
+            {/* Same URL serves all 5 languages via client-side i18n */}
             <link rel="alternate" hrefLang="fr"        href={fullUrl} />
             <link rel="alternate" hrefLang="en"        href={fullUrl} />
+            <link rel="alternate" hrefLang="es"        href={fullUrl} />
+            <link rel="alternate" hrefLang="it"        href={fullUrl} />
+            <link rel="alternate" hrefLang="de"        href={fullUrl} />
             <link rel="alternate" hrefLang="x-default" href={fullUrl} />
           </>
       }

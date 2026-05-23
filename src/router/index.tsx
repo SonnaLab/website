@@ -56,7 +56,7 @@ function PublicShell() {
   return <Layout><Outlet /></Layout>;
 }
 
-// Redirect /en/* → /* so old sitemap /en/ URLs don't 404
+// Redirect /en/*, /es/*, /it/*, /de/* → /* (lang-prefix URLs → canonical)
 function EnLangRedirect() {
   const { '*': wildcard = '' } = useParams();
   return <Navigate to={`/${wildcard}`} replace />;
@@ -91,8 +91,11 @@ export const router = createBrowserRouter([
       { path: '/reset-password',  element: <ResetPasswordPage /> },
       { path: '/confirm-email',   element: <ConfirmEmailPage /> },
 
-      // ---- EN language prefix redirect (/en/* → /*) ----
+      // ---- Language prefix redirects (/en/*, /es/*, /it/*, /de/* → /*) ----
       { path: '/en/*', element: <EnLangRedirect /> },
+      { path: '/es/*', element: <EnLangRedirect /> },
+      { path: '/it/*', element: <EnLangRedirect /> },
+      { path: '/de/*', element: <EnLangRedirect /> },
 
       // ---- Member (user) ----
       {
