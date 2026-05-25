@@ -30,6 +30,7 @@ export function CookieConsent() {
     typeof window !== 'undefined' ? window.innerWidth < 640 : false
   );
   const [hasConsent, setHasConsent] = useState(!!analytics.getPreferences());
+  const [hoveredSecondaryAction, setHoveredSecondaryAction] = useState<'reject' | 'settings' | null>(null);
   const [preferences, setPreferences] = useState<CookiePreferences>({
     essential: true,
     analytics: true,
@@ -164,33 +165,25 @@ export function CookieConsent() {
         backgroundColor: 'rgba(255, 255, 255, 0.98)',
       };
 
-  const secondaryActionStyle: React.CSSProperties = {
-    minHeight: '2.4rem',
-    borderRadius: '999px',
-    border: '1px solid #e2e8f0',
-    backgroundColor: '#ffffff',
-    color: '#374151',
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '0.5rem',
-    padding: '0 0.85rem',
-    fontSize: '0.875rem',
-    fontWeight: 500,
-    cursor: 'pointer',
-    transition: 'background-color 150ms ease, border-color 150ms ease, color 150ms ease',
-  };
+  const secondaryActionStyle = (action: 'reject' | 'settings'): React.CSSProperties => {
+    const isHovered = hoveredSecondaryAction === action;
 
-  const setSecondaryActionHover = (button: HTMLButtonElement) => {
-    button.style.backgroundColor = '#f8fafc';
-    button.style.borderColor = '#cbd5e1';
-    button.style.color = '#111827';
-  };
-
-  const resetSecondaryActionHover = (button: HTMLButtonElement) => {
-    button.style.backgroundColor = '#ffffff';
-    button.style.borderColor = '#e2e8f0';
-    button.style.color = '#374151';
+    return {
+      minHeight: '2.4rem',
+      borderRadius: '999px',
+      border: `1px solid ${isHovered ? '#cbd5e1' : '#e2e8f0'}`,
+      backgroundColor: isHovered ? '#f8fafc' : '#ffffff',
+      color: isHovered ? '#111827' : '#374151',
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '0.5rem',
+      padding: '0 0.85rem',
+      fontSize: '0.875rem',
+      fontWeight: 500,
+      cursor: 'pointer',
+      transition: 'background-color 150ms ease, border-color 150ms ease, color 150ms ease',
+    };
   };
 
   return (
@@ -290,11 +283,11 @@ export function CookieConsent() {
                 <button
                   type="button"
                   onClick={rejectNonEssential}
-                  onMouseEnter={event => setSecondaryActionHover(event.currentTarget)}
-                  onMouseLeave={event => resetSecondaryActionHover(event.currentTarget)}
-                  onFocus={event => setSecondaryActionHover(event.currentTarget)}
-                  onBlur={event => resetSecondaryActionHover(event.currentTarget)}
-                  style={secondaryActionStyle}
+                  onPointerEnter={() => setHoveredSecondaryAction('reject')}
+                  onPointerLeave={() => setHoveredSecondaryAction(null)}
+                  onFocus={() => setHoveredSecondaryAction('reject')}
+                  onBlur={() => setHoveredSecondaryAction(null)}
+                  style={secondaryActionStyle('reject')}
                 >
                   <X className="w-3.5 h-3.5 mr-2" />
                   {t('banner.reject')}
@@ -302,11 +295,11 @@ export function CookieConsent() {
                 <button
                   type="button"
                   onClick={openSettings}
-                  onMouseEnter={event => setSecondaryActionHover(event.currentTarget)}
-                  onMouseLeave={event => resetSecondaryActionHover(event.currentTarget)}
-                  onFocus={event => setSecondaryActionHover(event.currentTarget)}
-                  onBlur={event => resetSecondaryActionHover(event.currentTarget)}
-                  style={secondaryActionStyle}
+                  onPointerEnter={() => setHoveredSecondaryAction('settings')}
+                  onPointerLeave={() => setHoveredSecondaryAction(null)}
+                  onFocus={() => setHoveredSecondaryAction('settings')}
+                  onBlur={() => setHoveredSecondaryAction(null)}
+                  style={secondaryActionStyle('settings')}
                 >
                   <Settings className="w-3.5 h-3.5 mr-2" />
                   {t('banner.customize')}
