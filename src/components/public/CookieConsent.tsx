@@ -221,7 +221,7 @@ export function CookieConsent() {
 
       {/* Consent card */}
       <AnimatePresence>
-        {cardOpen && (
+        {cardOpen && !showSettings && (
           <motion.div
             initial={{ opacity: 0, y: 16, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
