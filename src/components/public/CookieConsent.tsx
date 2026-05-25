@@ -32,8 +32,8 @@ export function CookieConsent() {
   const [hasConsent, setHasConsent] = useState(!!analytics.getPreferences());
   const [preferences, setPreferences] = useState<CookiePreferences>({
     essential: true,
-    analytics: false,
-    marketing: false,
+    analytics: true,
+    marketing: true,
     timestamp: new Date().toISOString(),
     version: '1.0.0'
   });
@@ -55,7 +55,7 @@ export function CookieConsent() {
   }, []);
 
   useEffect(() => {
-    if (!cardOpen) return;
+    if (!cardOpen && !showSettings) return;
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -63,7 +63,7 @@ export function CookieConsent() {
     return () => {
       document.body.style.overflow = previousOverflow;
     };
-  }, [cardOpen]);
+  }, [cardOpen, showSettings]);
 
   const savePreferences = (prefs: CookiePreferences) => {
     analytics.setPreferences(prefs);
@@ -96,6 +96,27 @@ export function CookieConsent() {
 
   const togglePreference = (id: 'analytics' | 'marketing') => {
     setPreferences(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const openSettings = () => {
+    setCardOpen(false);
+    setShowSettings(true);
+  };
+
+  const closeSettings = () => {
+    setShowSettings(false);
+    if (!hasConsent) {
+      setCardOpen(true);
+    }
+  };
+
+  const handleSettingsOpenChange = (open: boolean) => {
+    if (open) {
+      setShowSettings(true);
+      return;
+    }
+
+    closeSettings();
   };
 
   const categories = [
@@ -141,8 +162,36 @@ export function CookieConsent() {
         padding: '1.125rem',
         borderRadius: '1.25rem',
         backgroundColor: 'rgba(255, 255, 255, 0.98)',
-        border: '2px dashed black',
       };
+
+  const secondaryActionStyle: React.CSSProperties = {
+    minHeight: '2.4rem',
+    borderRadius: '999px',
+    border: '1px solid #e2e8f0',
+    backgroundColor: '#ffffff',
+    color: '#374151',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '0.5rem',
+    padding: '0 0.85rem',
+    fontSize: '0.875rem',
+    fontWeight: 500,
+    cursor: 'pointer',
+    transition: 'background-color 150ms ease, border-color 150ms ease, color 150ms ease',
+  };
+
+  const setSecondaryActionHover = (button: HTMLButtonElement) => {
+    button.style.backgroundColor = '#f8fafc';
+    button.style.borderColor = '#cbd5e1';
+    button.style.color = '#111827';
+  };
+
+  const resetSecondaryActionHover = (button: HTMLButtonElement) => {
+    button.style.backgroundColor = '#ffffff';
+    button.style.borderColor = '#e2e8f0';
+    button.style.color = '#374151';
+  };
 
   return (
     <>
@@ -238,26 +287,30 @@ export function CookieConsent() {
                   gap: '0.5rem',
                 }}
               >
-                <Button
-                  size="sm"
-                  variant="outline"
+                <button
+                  type="button"
                   onClick={rejectNonEssential}
-                  className="w-full"
-                  style={{ minHeight: '2.4rem', borderRadius: '999px' }}
+                  onMouseEnter={event => setSecondaryActionHover(event.currentTarget)}
+                  onMouseLeave={event => resetSecondaryActionHover(event.currentTarget)}
+                  onFocus={event => setSecondaryActionHover(event.currentTarget)}
+                  onBlur={event => resetSecondaryActionHover(event.currentTarget)}
+                  style={secondaryActionStyle}
                 >
                   <X className="w-3.5 h-3.5 mr-2" />
                   {t('banner.reject')}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => { setCardOpen(false); setShowSettings(true); }}
-                  className="w-full text-gray-700 hover:text-gray-900"
-                  style={{ minHeight: '2.4rem', borderRadius: '999px' }}
+                </button>
+                <button
+                  type="button"
+                  onClick={openSettings}
+                  onMouseEnter={event => setSecondaryActionHover(event.currentTarget)}
+                  onMouseLeave={event => resetSecondaryActionHover(event.currentTarget)}
+                  onFocus={event => setSecondaryActionHover(event.currentTarget)}
+                  onBlur={event => resetSecondaryActionHover(event.currentTarget)}
+                  style={secondaryActionStyle}
                 >
                   <Settings className="w-3.5 h-3.5 mr-2" />
                   {t('banner.customize')}
-                </Button>
+                </button>
               </div>
             </div>
           </motion.div>
@@ -301,7 +354,7 @@ export function CookieConsent() {
       </motion.button>
 
       {/* ── Settings Modal ── */}
-      <Dialog open={showSettings} onOpenChange={setShowSettings}>
+      <Dialog open={showSettings} onOpenChange={handleSettingsOpenChange}>
         <DialogContent className="max-w-2xl w-full p-8 rounded-2xl max-h-[90vh] overflow-auto">
           <DialogHeader className="space-y-3 p-4">
             <div className="flex items-center gap-3">
@@ -459,7 +512,7 @@ export function CookieConsent() {
           <DialogFooter className="mt-8 flex gap-4">
             <Button
               variant="outline"
-              onClick={() => setShowSettings(false)}
+              onClick={closeSettings}
               className="flex-1 py-3"
             >
               {t('settings.cancel')}
