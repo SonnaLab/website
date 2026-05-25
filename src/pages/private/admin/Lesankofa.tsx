@@ -47,7 +47,7 @@ interface AIStatsRow {
 }
 
 interface AIClientRow {
-  id: number;
+  id: string;
   name: string;
   slug: string;
   is_active: boolean;
