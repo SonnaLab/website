@@ -108,24 +108,33 @@ export function CookieConsent() {
     }
   ];
 
+  const bannerTitle = t('banner.title').replace(/^[^\p{L}\p{N}]+/u, '').trim();
+
+  const cardStyle: React.CSSProperties = isMobile
+    ? {
+        zIndex: 9999,
+        bottom: '4.75rem',
+        left: '0.75rem',
+        right: '0.75rem',
+        padding: '1rem',
+        borderRadius: '1.25rem',
+        backgroundColor: 'rgba(255, 255, 255, 0.98)',
+        maxHeight: 'calc(100vh - 6rem)',
+        overflowY: 'auto',
+      }
+    : {
+        zIndex: 9999,
+        bottom: '6rem',
+        right: '1.5rem',
+        width: 'min(390px, calc(100vw - 2rem))',
+        padding: '1.125rem',
+        borderRadius: '1.25rem',
+        backgroundColor: 'rgba(255, 255, 255, 0.98)',
+      };
+
   return (
     <>
-      {/* ── Blur backdrop (visible when card is open) ── */}
-      <AnimatePresence>
-        {cardOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 backdrop-blur-sm bg-black/10"
-            style={{ zIndex: 9998 }}
-            onClick={() => setCardOpen(false)}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* ── Consent card — anchored above the FAB ── */}
+      {/* Consent card */}
       <AnimatePresence>
         {cardOpen && (
           <motion.div
@@ -133,24 +142,32 @@ export function CookieConsent() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-            className="fixed bg-white rounded-2xl shadow-2xl border border-gray-100 p-5"
-            style={
-              isMobile
-                ? { zIndex: 9999, bottom: '4.5rem', left: '0.75rem', right: '0.75rem' }
-                : { zIndex: 9999, bottom: '6rem', right: '1.5rem', width: '320px' }
-            }
+            className="fixed border border-gray-100"
+            style={cardStyle}
           >
             {/* Header */}
-            <div className="flex items-center gap-3 mb-3">
-              <div className="p-2 bg-primary rounded-xl flex-shrink-0">
-                <Cookie className="w-4 h-4 text-primary-foreground" />
+            <div
+              className="flex items-start"
+              style={{ gap: '0.75rem', marginBottom: '0.75rem' }}
+            >
+              <div
+                className="bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0"
+                style={{ width: '2.25rem', height: '2.25rem', borderRadius: '0.875rem' }}
+              >
+                <Cookie style={{ width: '1rem', height: '1rem' }} />
               </div>
-              <h3 className="font-bold text-sm flex-1 leading-tight">
-                {t('banner.title')}
-              </h3>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <h3
+                  className="font-bold text-gray-900"
+                  style={{ fontSize: '0.95rem', lineHeight: 1.25 }}
+                >
+                  {bannerTitle}
+                </h3>
+              </div>
               <button
                 onClick={() => setCardOpen(false)}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors flex items-center justify-center"
+                style={{ width: '1.75rem', height: '1.75rem', borderRadius: '999px' }}
                 aria-label="Close"
               >
                 <X className="w-4 h-4" />
@@ -158,44 +175,58 @@ export function CookieConsent() {
             </div>
 
             {/* Description */}
-            <p className="text-xs text-gray-500 mb-4 leading-relaxed">
+            <p
+              className="text-gray-600"
+              style={{ fontSize: '0.82rem', lineHeight: 1.55, marginBottom: '1rem' }}
+            >
               {t('banner.description')}
             </p>
 
             {/* Actions */}
-            <div className="flex flex-col gap-2">
+            <div style={{ display: 'grid', gap: '0.5rem' }}>
               <Button
                 size="sm"
                 onClick={acceptAll}
                 className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                style={{ minHeight: '2.65rem', borderRadius: '999px' }}
               >
                 <Check className="w-3.5 h-3.5 mr-2" />
                 {t('banner.acceptAll')}
               </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={rejectNonEssential}
-                className="w-full"
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+                  gap: '0.5rem',
+                }}
               >
-                <X className="w-3.5 h-3.5 mr-2" />
-                {t('banner.reject')}
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => { setCardOpen(false); setShowSettings(true); }}
-                className="w-full text-gray-500 hover:text-gray-700"
-              >
-                <Settings className="w-3.5 h-3.5 mr-2" />
-                {t('banner.customize')}
-              </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={rejectNonEssential}
+                  className="w-full"
+                  style={{ minHeight: '2.4rem', borderRadius: '999px' }}
+                >
+                  <X className="w-3.5 h-3.5 mr-2" />
+                  {t('banner.reject')}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => { setCardOpen(false); setShowSettings(true); }}
+                  className="w-full text-gray-700 hover:text-gray-900"
+                  style={{ minHeight: '2.4rem', borderRadius: '999px' }}
+                >
+                  <Settings className="w-3.5 h-3.5 mr-2" />
+                  {t('banner.customize')}
+                </Button>
+              </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* ── FAB ── */}
+      {/* FAB */}
       <motion.button
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -203,7 +234,7 @@ export function CookieConsent() {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.92 }}
         onClick={() => setCardOpen(prev => !prev)}
-        className="fixed rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        className="fixed rounded-full bg-primary text-primary-foreground flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         style={{
           zIndex: 9999,
           bottom: isMobile ? '1rem' : '1.5rem',
