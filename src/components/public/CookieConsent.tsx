@@ -151,6 +151,7 @@ export function CookieConsent() {
         right: '0.75rem',
         padding: '1rem',
         borderRadius: '1.25rem',
+        border: '2px dashed #000000',
         backgroundColor: 'rgba(255, 255, 255, 0.98)',
         maxHeight: 'calc(100vh - 6rem)',
         overflowY: 'auto',
@@ -162,6 +163,7 @@ export function CookieConsent() {
         width: 'min(390px, calc(100vw - 2rem))',
         padding: '1.125rem',
         borderRadius: '1.25rem',
+        border: '2px dashed #000000',
         backgroundColor: 'rgba(255, 255, 255, 0.98)',
       };
 
