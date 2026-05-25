@@ -188,6 +188,17 @@ export function CookieConsent() {
 
   return (
     <>
+      <style>
+        {`
+          .cookie-secondary-action:hover,
+          .cookie-secondary-action:focus-visible {
+            background-color: #f8fafc !important;
+            border-color: #cbd5e1 !important;
+            color: #111827 !important;
+          }
+        `}
+      </style>
+
       {/* Blocking blur backdrop */}
       <AnimatePresence>
         {cardOpen && (
@@ -282,6 +293,7 @@ export function CookieConsent() {
               >
                 <button
                   type="button"
+                  className="cookie-secondary-action"
                   onClick={rejectNonEssential}
                   onPointerEnter={() => setHoveredSecondaryAction('reject')}
                   onPointerLeave={() => setHoveredSecondaryAction(null)}
@@ -294,6 +306,7 @@ export function CookieConsent() {
                 </button>
                 <button
                   type="button"
+                  className="cookie-secondary-action"
                   onClick={openSettings}
                   onPointerEnter={() => setHoveredSecondaryAction('settings')}
                   onPointerLeave={() => setHoveredSecondaryAction(null)}
