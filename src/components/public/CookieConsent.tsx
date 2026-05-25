@@ -224,16 +224,14 @@ export function CookieConsent() {
       </AnimatePresence>
 
       {/* Consent card */}
-      <AnimatePresence>
-        {cardOpen && !showSettings && (
-          <motion.div
-            initial={{ opacity: 0, y: 16, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 16, scale: 0.96 }}
-            transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-            className="fixed border border-gray-100"
-            style={cardStyle}
-          >
+      {cardOpen && !showSettings && (
+        <motion.div
+          initial={{ opacity: 0, y: 16, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+          className="fixed border border-gray-100"
+          style={cardStyle}
+        >
             {/* Header */}
             <div
               className="flex items-start"
@@ -319,9 +317,8 @@ export function CookieConsent() {
                 </button>
               </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        </motion.div>
+      )}
 
       {/* FAB */}
       <motion.button
