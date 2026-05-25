@@ -19,7 +19,6 @@ createRoot(document.getElementById("root")!).render(
       {/* Modals & Overlays globaux (hors Router) */}
       <ConsultationModal />
       <CookieConsent />
-      <CookieWidget />
       <Toaster richColors closeButton position="top-right" />
     </ModalProvider>
   </HelmetProvider>

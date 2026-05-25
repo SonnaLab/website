@@ -24,7 +24,7 @@ import {
 
 export function CookieConsent() {
   const { t } = useTranslation('cookies');
-  const [showBanner, setShowBanner] = useState(false);
+  const [cardOpen, setCardOpen] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [preferences, setPreferences] = useState<CookiePreferences>({
     essential: true,
@@ -36,9 +36,9 @@ export function CookieConsent() {
 
   useEffect(() => {
     const consent = analytics.getPreferences();
-    
     if (!consent) {
-      setTimeout(() => setShowBanner(true), 1000);
+      // First visit: auto-open the card
+      setTimeout(() => setCardOpen(true), 800);
     } else {
       setPreferences(consent);
     }
@@ -46,7 +46,7 @@ export function CookieConsent() {
 
   const savePreferences = (prefs: CookiePreferences) => {
     analytics.setPreferences(prefs);
-    setShowBanner(false);
+    setCardOpen(false);
     setShowSettings(false);
   };
 
@@ -99,67 +99,97 @@ export function CookieConsent() {
 
   return (
     <>
-      {/* Banner */}
+      {/* ── Blur backdrop (visible when card is open) ── */}
       <AnimatePresence>
-        {showBanner && (
+        {cardOpen && (
           <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            transition={{ type: 'spring', damping: 25 }}
-            className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-black shadow-2xl z-[200]"
-          >
-            <div className="container mx-auto px-4 py-6 max-w-7xl">
-              <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
-                <div className="flex items-start gap-4 flex-1">
-                  <div className="p-3 bg-black rounded-xl flex-shrink-0">
-                    <Cookie className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-lg mb-2">
-                      {t('banner.title')}
-                    </h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                      {t('banner.description')}
-                    </p>
-                  </div>
-                </div>
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 backdrop-blur-sm bg-black/10 z-[199]"
+            onClick={() => setCardOpen(false)}
+          />
+        )}
+      </AnimatePresence>
 
-                <div className="flex flex-wrap gap-3 w-full lg:w-auto">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowSettings(true)}
-                    className="flex-1 lg:flex-none min-w-[140px]"
-                  >
-                    <Settings className="w-4 h-4 mr-2" />
-                    {t('banner.customize')}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={rejectNonEssential}
-                    className="flex-1 lg:flex-none min-w-[140px]"
-                  >
-                    <X className="w-4 h-4 mr-2" />
-                    {t('banner.reject')}
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={acceptAll}
-                    className="flex-1 lg:flex-none min-w-[140px] bg-black text-white hover:bg-gray-800"
-                  >
-                    <Check className="w-4 h-4 mr-2" />
-                    {t('banner.acceptAll')}
-                  </Button>
-                </div>
+      {/* ── Consent card — anchored above the FAB ── */}
+      <AnimatePresence>
+        {cardOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 16, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 16, scale: 0.96 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+            className="fixed bottom-24 right-6 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 z-[200]"
+          >
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 bg-primary rounded-xl flex-shrink-0">
+                <Cookie className="w-4 h-4 text-primary-foreground" />
               </div>
+              <h3 className="font-bold text-sm flex-1 leading-tight">
+                {t('banner.title')}
+              </h3>
+              <button
+                onClick={() => setCardOpen(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+                aria-label="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Description */}
+            <p className="text-xs text-gray-500 mb-4 leading-relaxed">
+              {t('banner.description')}
+            </p>
+
+            {/* Actions */}
+            <div className="flex flex-col gap-2">
+              <Button
+                size="sm"
+                onClick={acceptAll}
+                className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                <Check className="w-3.5 h-3.5 mr-2" />
+                {t('banner.acceptAll')}
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={rejectNonEssential}
+                className="w-full"
+              >
+                <X className="w-3.5 h-3.5 mr-2" />
+                {t('banner.reject')}
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => { setCardOpen(false); setShowSettings(true); }}
+                className="w-full text-gray-500 hover:text-gray-700"
+              >
+                <Settings className="w-3.5 h-3.5 mr-2" />
+                {t('banner.customize')}
+              </Button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Settings Modal */}
+      {/* ── FAB ── */}
+      <motion.button
+        whileHover={{ scale: 1.08 }}
+        whileTap={{ scale: 0.93 }}
+        onClick={() => setCardOpen(prev => !prev)}
+        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center z-[201] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        aria-label="Cookie preferences"
+      >
+        <Cookie className="w-6 h-6" />
+      </motion.button>
+
+      {/* ── Settings Modal ── */}
       <Dialog open={showSettings} onOpenChange={setShowSettings}>
         <DialogContent className="max-w-2xl w-full p-8 rounded-2xl max-h-[90vh] overflow-auto">
           <DialogHeader className="space-y-3 p-4">
