@@ -55,4 +55,5 @@ export {
   MegaphoneOffIcon,
   AlertTriangleIcon,
   CookieIcon,
+  BrainIcon,
 } from './icons';

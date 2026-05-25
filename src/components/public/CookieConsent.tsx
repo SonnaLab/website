@@ -322,8 +322,8 @@ export function CookieConsent() {
         </motion.div>
       )}
 
-      {/* FAB */}
-      <motion.button
+      {/* FAB — hidden once consent is validated */}
+      {!hasConsent && <motion.button
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 280, damping: 22, delay: 0.4 }}
@@ -356,7 +356,7 @@ export function CookieConsent() {
             border: '2px solid white'
           }} />
         )}
-      </motion.button>
+      </motion.button>}
 
       {/* ── Settings Modal ── */}
       <Dialog open={showSettings} onOpenChange={handleSettingsOpenChange}>

@@ -17,6 +17,7 @@ import {
   XIcon,
   NewsIcon,
   UsersIcon,
+  BrainIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
 } from '@icons';
@@ -65,6 +66,7 @@ export function MemberLayout() {
     { to: '/admin/tracking',                  label: tA('nav.tracking'),       icon: <CookieIcon          size={16} /> },
     { to: '/admin/news',                      label: tA('nav.news'),           icon: <NewsIcon            size={16} /> },
     { to: '/admin/users',                     label: tA('nav.users'),          icon: <UsersIcon           size={16} /> },
+    { to: '/admin/lesankofa',                  label: tA('nav.lesankofa'),      icon: <BrainIcon           size={16} /> },
     { to: '/dashboard/billing',               label: tA('nav.billing'),        icon: <ReceiptIcon         size={16} /> },
     { to: '/dashboard/projects',              label: tA('nav.projects'),       icon: <FolderKanbanIcon    size={16} /> },
   ];
