@@ -134,6 +134,27 @@ export function CookieConsent() {
 
   return (
     <>
+      {/* Blocking blur backdrop */}
+      <AnimatePresence>
+        {cardOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed"
+            style={{
+              zIndex: 9998,
+              inset: 0,
+              backgroundColor: 'rgba(255, 255, 255, 0.34)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              pointerEvents: 'auto',
+            }}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Consent card */}
       <AnimatePresence>
         {cardOpen && (
@@ -164,14 +185,16 @@ export function CookieConsent() {
                   {bannerTitle}
                 </h3>
               </div>
-              <button
-                onClick={() => setCardOpen(false)}
-                className="text-gray-400 hover:text-gray-600 transition-colors flex items-center justify-center"
-                style={{ width: '1.75rem', height: '1.75rem', borderRadius: '999px' }}
-                aria-label="Close"
-              >
-                <X className="w-4 h-4" />
-              </button>
+              {hasConsent && (
+                <button
+                  onClick={() => setCardOpen(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors flex items-center justify-center"
+                  style={{ width: '1.75rem', height: '1.75rem', borderRadius: '999px' }}
+                  aria-label="Close"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
             </div>
 
             {/* Description */}
@@ -233,7 +256,10 @@ export function CookieConsent() {
         transition={{ type: 'spring', stiffness: 280, damping: 22, delay: 0.4 }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.92 }}
-        onClick={() => setCardOpen(prev => !prev)}
+        onClick={() => {
+          if (!hasConsent && cardOpen) return;
+          setCardOpen(prev => !prev);
+        }}
         className="fixed rounded-full bg-primary text-primary-foreground flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         style={{
           zIndex: 9999,
