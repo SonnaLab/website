@@ -54,6 +54,17 @@ export function CookieConsent() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!cardOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [cardOpen]);
+
   const savePreferences = (prefs: CookiePreferences) => {
     analytics.setPreferences(prefs);
     setHasConsent(true);
@@ -130,6 +141,7 @@ export function CookieConsent() {
         padding: '1.125rem',
         borderRadius: '1.25rem',
         backgroundColor: 'rgba(255, 255, 255, 0.98)',
+        border: '2px dashed black',
       };
 
   return (
@@ -145,7 +157,10 @@ export function CookieConsent() {
             className="fixed"
             style={{
               zIndex: 9998,
-              inset: 0,
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
               backgroundColor: 'rgba(255, 255, 255, 0.34)',
               backdropFilter: 'blur(8px)',
               WebkitBackdropFilter: 'blur(8px)',
