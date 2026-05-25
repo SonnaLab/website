@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import { apiService } from '@/services/api';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
 import { DataTable, DataTableHead, DataTableBody, DataTableRow, DataTableTh, DataTableTd, DataTableEmpty } from '@/components/common/DataTable';
 import { Badge } from '@/components/ui/badge';
@@ -17,21 +18,6 @@ import {
   ServerIcon,
   TrendingUpIcon,
 } from '@icons';
-
-// ─────────────────────────────────────────────
-// AI Backend config
-// ─────────────────────────────────────────────
-
-const AI_BASE = 'https://ai.sonnalab.com';
-const AI_KEY  = import.meta.env.VITE_AI_API_KEY as string | undefined;
-
-async function aiFetch<T>(path: string): Promise<T> {
-  const res = await fetch(`${AI_BASE}${path}`, {
-    headers: AI_KEY ? { Authorization: `Bearer ${AI_KEY}` } : {},
-  });
-  if (!res.ok) throw new Error(`AI API ${res.status}`);
-  return res.json() as Promise<T>;
-}
 
 // ─────────────────────────────────────────────
 // Types
@@ -60,8 +46,20 @@ interface AIStatsRow {
   total_tokens_today: number;
 }
 
+interface AIClientRow {
+  id: number;
+  name: string;
+  slug: string;
+  is_active: boolean;
+  articles_total: number;
+  articles_success: number;
+  articles_failed: number;
+  articles_pending: number;
+  last_generation: string | null;
+}
+
 // ─────────────────────────────────────────────
-// Mock data (replace with real AI endpoints when available)
+// Mock data (Tasks + Infrastructure — brancher sur endpoints à créer)
 // ─────────────────────────────────────────────
 
 const MOCK_TASKS = [
@@ -79,13 +77,6 @@ const MOCK_CONTAINERS = [
   { id: 'ai-celery-beat', image: 'ai.sonnalab.com:latest', status: 'running', started: '2026-05-24T10:01:00Z', cpu: '0.1%',  mem: '95 MiB'  },
   { id: 'ai-redis',       image: 'redis:7-alpine',         status: 'running', started: '2026-05-24T09:58:00Z', cpu: '0.05%', mem: '28 MiB'  },
   { id: 'ai-postgres',    image: 'postgres:16-alpine',     status: 'running', started: '2026-05-24T09:57:00Z', cpu: '0.8%',  mem: '410 MiB' },
-];
-
-const MOCK_CLIENTS = [
-  { id: 1, name: 'LeBocheur',  slug: 'lebocheur',  articles_total: 142, articles_published: 118, articles_draft: 24, last_generation: '2026-05-25T08:00:00Z', active: true  },
-  { id: 2, name: 'LesCopr',    slug: 'lescopr',    articles_total: 87,  articles_published: 72,  articles_draft: 15, last_generation: '2026-05-24T20:00:00Z', active: true  },
-  { id: 3, name: 'LeColt',     slug: 'lecolt',     articles_total: 63,  articles_published: 48,  articles_draft: 15, last_generation: '2026-05-23T12:00:00Z', active: true  },
-  { id: 4, name: 'SonnaLab',   slug: 'sonnalab',   articles_total: 28,  articles_published: 21,  articles_draft: 7,  last_generation: '2026-05-20T09:00:00Z', active: false },
 ];
 
 // ─────────────────────────────────────────────
@@ -128,8 +119,8 @@ function OverviewTab() {
     setLoading(true);
     setError(null);
     Promise.all([
-      aiFetch<AIModelRow[]>('/api/v1/models/'),
-      aiFetch<AIStatsRow>('/api/v1/models/stats'),
+      apiService.adminLesankofaModels(),
+      apiService.adminLesankofaModelStats(),
     ])
       .then(([m, s]) => { setModels(m); setStats(s); })
       .catch(e => setError(e.message))
@@ -145,7 +136,7 @@ function OverviewTab() {
         <KpiCard label="Modèles actifs"      value={stats ? String(stats.active_models)          : '—'} icon={<BrainIcon size={16} />}       />
         <KpiCard label="Requêtes aujourd'hui" value={stats ? String(stats.total_requests_today)  : '—'} icon={<ZapIcon   size={16} />}       />
         <KpiCard label="Tokens aujourd'hui"  value={stats ? fmtNum(stats.total_tokens_today)     : '—'} icon={<LayersIcon size={16} />}      />
-        <KpiCard label="Clients actifs"      value={String(MOCK_CLIENTS.filter(c => c.active).length)} icon={<UsersIcon  size={16} />}       />
+        <KpiCard label="Clients actifs"      value={String(stats ? (stats.active_clients ?? '—') : '—')} icon={<UsersIcon  size={16} />}       />
       </div>
 
       {/* Actions row */}
@@ -159,7 +150,6 @@ function OverviewTab() {
       {error && (
         <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-4 py-3">
           Erreur API AI : {error}
-          {!AI_KEY && ' — VITE_AI_API_KEY manquant dans .env'}
         </p>
       )}
 
@@ -211,24 +201,29 @@ function OverviewTab() {
         </DataTable>
       </div>
 
-      {/* Recent activity */}
-      <div>
-        <h3 className="text-sm font-semibold text-foreground mb-3">Activité récente</h3>
-        <div className="space-y-2">
-          {MOCK_CLIENTS.slice(0, 3).map(c => (
-            <div
-              key={c.id}
-              className="flex items-center justify-between rounded-lg border border-border px-4 py-3"
-            >
-              <div>
-                <span className="font-medium text-sm">{c.name}</span>
-                <span className="text-xs text-muted-foreground ml-2">article généré</span>
+      {/* Recent activity — derived from models */}
+      {models && models.length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold text-foreground mb-3">Modèles récemment actifs</h3>
+          <div className="space-y-2">
+            {models.filter(m => m.requests_today > 0).slice(0, 4).map(m => (
+              <div
+                key={m.id}
+                className="flex items-center justify-between rounded-lg border border-border px-4 py-3"
+              >
+                <div>
+                  <span className="font-medium text-sm">{m.name}</span>
+                  <span className="text-xs text-muted-foreground ml-2">{m.provider}</span>
+                </div>
+                <span className="text-xs text-muted-foreground">{m.requests_today} req. aujourd'hui</span>
               </div>
-              <span className="text-xs text-muted-foreground">{fmtDate(c.last_generation)}</span>
-            </div>
-          ))}
+            ))}
+            {models.every(m => m.requests_today === 0) && (
+              <p className="text-sm text-muted-foreground">Aucune requête aujourd'hui.</p>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -437,35 +432,52 @@ function ContainerLogPanel({ containerId, onClose }: { containerId: string; onCl
 // ─────────────────────────────────────────────
 
 function ClientsTab() {
+  const [clients,  setClients]  = useState<AIClientRow[] | null>(null);
+  const [loading,  setLoading]  = useState(true);
+  const [error,    setError]    = useState<string | null>(null);
+
+  useEffect(() => {
+    apiService.adminLesankofaClients()
+      .then(data => setClients(data.clients ?? data))
+      .catch(e => setError(e.message))
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <div className="space-y-4">
+      {error && (
+        <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-4 py-3">Erreur : {error}</p>
+      )}
       <DataTable>
         <DataTableHead>
           <DataTableRow>
             <DataTableTh>Client</DataTableTh>
             <DataTableTh>Total articles</DataTableTh>
-            <DataTableTh>Publiés</DataTableTh>
-            <DataTableTh>Brouillons</DataTableTh>
+            <DataTableTh>Succès</DataTableTh>
+            <DataTableTh>Échecs</DataTableTh>
+            <DataTableTh>En cours</DataTableTh>
             <DataTableTh>Dernière génération</DataTableTh>
             <DataTableTh>Statut</DataTableTh>
           </DataTableRow>
         </DataTableHead>
         <DataTableBody>
-          {MOCK_CLIENTS.map(c => (
+          {!clients && !error && <DataTableEmpty label="Chargement…" />}
+          {clients && clients.length === 0 && <DataTableEmpty label="Aucun client" />}
+          {clients?.map(c => (
             <DataTableRow key={c.id}>
               <DataTableTd>
                 <div className="font-medium text-foreground">{c.name}</div>
                 <div className="text-xs text-muted-foreground">{c.slug}</div>
               </DataTableTd>
-              <DataTableTd>
-                <span className="font-semibold">{c.articles_total}</span>
+              <DataTableTd><span className="font-semibold">{c.articles_total}</span></DataTableTd>
+              <DataTableTd>{c.articles_success}</DataTableTd>
+              <DataTableTd>{c.articles_failed > 0
+                ? <span className="text-destructive font-medium">{c.articles_failed}</span>
+                : 0}
               </DataTableTd>
-              <DataTableTd>{c.articles_published}</DataTableTd>
-              <DataTableTd>{c.articles_draft}</DataTableTd>
+              <DataTableTd>{c.articles_pending}</DataTableTd>
               <DataTableTd>{fmtDate(c.last_generation)}</DataTableTd>
-              <DataTableTd>
-                <StatusBadgeLocal status={c.active ? 'active' : 'paused'} />
-              </DataTableTd>
+              <DataTableTd><StatusBadgeLocal status={c.is_active ? 'active' : 'paused'} /></DataTableTd>
             </DataTableRow>
           ))}
         </DataTableBody>
