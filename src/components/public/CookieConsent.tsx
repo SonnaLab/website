@@ -26,6 +26,10 @@ export function CookieConsent() {
   const { t } = useTranslation('cookies');
   const [cardOpen, setCardOpen] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.innerWidth < 640 : false
+  );
+  const [hasConsent, setHasConsent] = useState(!!analytics.getPreferences());
   const [preferences, setPreferences] = useState<CookiePreferences>({
     essential: true,
     analytics: false,
@@ -33,6 +37,12 @@ export function CookieConsent() {
     timestamp: new Date().toISOString(),
     version: '1.0.0'
   });
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const consent = analytics.getPreferences();
@@ -46,6 +56,7 @@ export function CookieConsent() {
 
   const savePreferences = (prefs: CookiePreferences) => {
     analytics.setPreferences(prefs);
+    setHasConsent(true);
     setCardOpen(false);
     setShowSettings(false);
   };
@@ -123,7 +134,11 @@ export function CookieConsent() {
             exit={{ opacity: 0, y: 16, scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 380, damping: 28 }}
             className="fixed bg-white rounded-2xl shadow-2xl border border-gray-100 p-5"
-            style={{ zIndex: 9999, bottom: '6rem', right: '1.5rem', width: '320px' }}
+            style={
+              isMobile
+                ? { zIndex: 9999, bottom: '4.5rem', left: '0.75rem', right: '0.75rem' }
+                : { zIndex: 9999, bottom: '6rem', right: '1.5rem', width: '320px' }
+            }
           >
             {/* Header */}
             <div className="flex items-center gap-3 mb-3">
@@ -181,14 +196,37 @@ export function CookieConsent() {
       </AnimatePresence>
 
       {/* ── FAB ── */}
-      <button
+      <motion.button
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: 'spring', stiffness: 280, damping: 22, delay: 0.4 }}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.92 }}
         onClick={() => setCardOpen(prev => !prev)}
-        className="fixed rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center transition-transform hover:scale-110 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-        style={{ zIndex: 9999, bottom: '1.5rem', right: '1.5rem', width: '3.5rem', height: '3.5rem' }}
+        className="fixed rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        style={{
+          zIndex: 9999,
+          bottom: isMobile ? '1rem' : '1.5rem',
+          right: isMobile ? '1rem' : '1.5rem',
+          width: isMobile ? '3rem' : '3.5rem',
+          height: isMobile ? '3rem' : '3.5rem',
+        }}
         aria-label="Cookie preferences"
       >
-        <Cookie className="w-6 h-6" />
-      </button>
+        <Cookie style={{ width: isMobile ? '1.1rem' : '1.35rem', height: isMobile ? '1.1rem' : '1.35rem' }} />
+        {!hasConsent && (
+          <span style={{
+            position: 'absolute',
+            top: '-3px',
+            right: '-3px',
+            width: '11px',
+            height: '11px',
+            borderRadius: '50%',
+            backgroundColor: '#ef4444',
+            border: '2px solid white'
+          }} />
+        )}
+      </motion.button>
 
       {/* ── Settings Modal ── */}
       <Dialog open={showSettings} onOpenChange={setShowSettings}>
