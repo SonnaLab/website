@@ -22,6 +22,7 @@ import {
   CheckCircle2Icon,
   AlertTriangleIcon,
   XCircleIcon,
+  InfoIcon,
 } from '@icons';
 
 // ─────────────────────────────────────────────
@@ -373,10 +374,16 @@ function TasksTab() {
 
   return (
     <div className="space-y-4">
-      <p className="text-xs text-muted-foreground">
-        Tâches Celery périodiques. Les données ci-dessous sont statiques — brancher sur{' '}
-        <code>GET /api/v1/admin/tasks</code> une fois l'endpoint créé côté AI.
-      </p>
+      <div className="flex items-start gap-2 rounded-lg bg-zinc-100 px-3 py-2.5 text-xs text-zinc-600">
+        <InfoIcon size={13} className="mt-0.5 shrink-0 text-zinc-400" />
+        <span>
+          Tâches Celery périodiques. Données statiques — connecter{' '}
+          <code className="rounded bg-zinc-900 px-1.5 py-0.5 font-mono text-[11px] text-white">
+            GET /api/v1/admin/tasks
+          </code>{' '}
+          une fois l'endpoint créé côté AI.
+        </span>
+      </div>
 
       <DataTable>
         <DataTableHead>
@@ -451,10 +458,16 @@ function InfraTab() {
 
   return (
     <div className="space-y-4">
-      <p className="text-xs text-muted-foreground">
-        Conteneurs Docker actifs sur <strong>ai.sonnalab.com</strong>. Données statiques — brancher sur{' '}
-        <code>GET /api/v1/admin/containers</code> pour les valeurs en temps réel.
-      </p>
+      <div className="flex items-start gap-2 rounded-lg bg-zinc-100 px-3 py-2.5 text-xs text-zinc-600">
+        <InfoIcon size={13} className="mt-0.5 shrink-0 text-zinc-400" />
+        <span>
+          Conteneurs Docker actifs sur <strong className="text-zinc-800">ai.sonnalab.com</strong>. Données statiques — connecter{' '}
+          <code className="rounded bg-zinc-900 px-1.5 py-0.5 font-mono text-[11px] text-white">
+            GET /api/v1/admin/containers
+          </code>{' '}
+          pour les valeurs en temps réel.
+        </span>
+      </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {MOCK_CONTAINERS.map(c => (

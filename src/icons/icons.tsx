@@ -438,6 +438,16 @@ export function MegaphoneOffIcon(p: IconProps) {
   );
 }
 
+export function InfoIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 16v-4" />
+      <path d="M12 8h.01" />
+    </svg>
+  );
+}
+
 export function AlertTriangleIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>

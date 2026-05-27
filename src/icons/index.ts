@@ -56,4 +56,5 @@ export {
   AlertTriangleIcon,
   CookieIcon,
   BrainIcon,
+  InfoIcon,
 } from './icons';
