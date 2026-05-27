@@ -229,6 +229,9 @@ export function VisitorsTab() {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState(false);
   const [selected, setSelected] = useState<any>(null);
+  const [visitorSessions, setVisitorSessions] = useState<any[]>([]);
+  const [visitorPages, setVisitorPages] = useState<any[]>([]);
+  const [detailLoading, setDetailLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -242,6 +245,18 @@ export function VisitorsTab() {
   useEffect(() => {
     if (!loading && data.length === 0 && page > 1) setPage(p => p - 1);
   }, [loading, data, page]);
+
+  useEffect(() => {
+    if (!selected) { setVisitorSessions([]); setVisitorPages([]); return; }
+    setDetailLoading(true);
+    Promise.all([
+      apiService.analyticsVisitorSessions(SITE, selected.id, { per_page: 5 }).catch(() => []),
+      apiService.analyticsVisitorPages(SITE, selected.id, { limit: 10 }).catch(() => []),
+    ]).then(([sessions, pages]) => {
+      setVisitorSessions(Array.isArray(sessions) ? sessions : []);
+      setVisitorPages(Array.isArray(pages) ? pages : []);
+    }).finally(() => setDetailLoading(false));
+  }, [selected]);
 
   if (err) return <EmptyState message={t('tracking.loadError')} />;
   if (loading) return <LoadingState />;
@@ -295,16 +310,56 @@ export function VisitorsTab() {
 
       <Modal open={!!selected} onClose={() => setSelected(null)} title="Détails visiteur" size="md">
         {selected && (
-          <dl className="trk-modal-dl">
-            <dt>ID</dt><dd className="font-mono">{selected.fingerprint_id}</dd>
-            <dt>1ère visite</dt><dd>{fmt(selected.first_seen_at)}</dd>
-            <dt>Dernière visite</dt><dd>{fmt(selected.last_seen_at)}</dd>
-            <dt>Nb visites</dt><dd>{selected.visit_count}</dd>
-            <dt>{t('tracking.country')}</dt><dd>{countryName(selected.country)}</dd>
-            <dt>{t('tracking.device')}</dt><dd>{selected.device_type ?? '—'}</dd>
-            <dt>Navigateur</dt><dd>{selected.browser ?? '—'}</dd>
-            <dt>Bot</dt><dd>{selected.is_bot ? 'Oui' : 'Non'}</dd>
-          </dl>
+          <>
+            <dl className="trk-modal-dl">
+              <dt>ID</dt><dd className="font-mono">{selected.fingerprint_id}</dd>
+              <dt>1ère visite</dt><dd>{fmt(selected.first_seen_at)}</dd>
+              <dt>Dernière visite</dt><dd>{fmt(selected.last_seen_at)}</dd>
+              <dt>Nb visites</dt><dd>{selected.visit_count}</dd>
+              <dt>{t('tracking.country')}</dt><dd>{countryName(selected.country)}</dd>
+              <dt>{t('tracking.device')}</dt><dd>{selected.device_type ?? '—'}</dd>
+              <dt>Navigateur</dt><dd>{selected.browser ?? '—'}</dd>
+            </dl>
+
+            {detailLoading ? (
+              <p className="trk-modal-loading">Chargement…</p>
+            ) : (
+              <>
+                {visitorSessions.length > 0 && (
+                  <div className="trk-modal-section">
+                    <h4 className="trk-modal-section__title">Sessions récentes</h4>
+                    <ul className="trk-modal-list">
+                      {visitorSessions.map((s: any) => (
+                        <li key={s.id} className="trk-modal-list__item">
+                          <span className="trk-modal-list__date">{fmt(s.started_at)}</span>
+                          <span className="trk-modal-list__meta">
+                            {s.landing_page ?? '/'} · {dur(s.duration_seconds)} · {s.page_count} page{s.page_count !== 1 ? 's' : ''}
+                            {s.is_bounce ? ' · rebond' : ''}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {visitorPages.length > 0 && (
+                  <div className="trk-modal-section">
+                    <h4 className="trk-modal-section__title">Pages consultées</h4>
+                    <ul className="trk-modal-list">
+                      {visitorPages.map((p: any, i: number) => (
+                        <li key={i} className="trk-modal-list__item">
+                          <span className="trk-modal-list__date">{p.entered_at ? fmt(p.entered_at) : '—'}</span>
+                          <span className="trk-modal-list__meta trk-modal-list__meta--url" title={p.url_path}>
+                            {p.url_path}
+                            {p.time_on_page_ms != null ? ` · ${Math.round(p.time_on_page_ms / 1000)}s` : ''}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </>
+            )}
+          </>
         )}
       </Modal>
     </div>

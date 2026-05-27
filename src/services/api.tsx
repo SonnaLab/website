@@ -456,8 +456,14 @@ class ApiService {
   async analyticsVisitors(site: string, params?: { page?: number; per_page?: number }) {
     return (await this._analyticsClient.get('/analytics/visitors', this.aC({ site, ...params }))).data;
   }
-  async analyticsSessions(site: string, params?: { page?: number; per_page?: number; active_only?: boolean }) {
+  async analyticsSessions(site: string, params?: { page?: number; per_page?: number; active_only?: boolean; visitor_id?: string }) {
     return (await this._analyticsClient.get('/analytics/sessions', this.aC({ site, ...params }))).data;
+  }
+  async analyticsVisitorPages(site: string, visitorId: string, params?: { limit?: number }) {
+    return (await this._analyticsClient.get(`/analytics/visitors/${visitorId}/pages`, this.aC({ site, ...params }))).data;
+  }
+  async analyticsVisitorSessions(site: string, visitorId: string, params?: { per_page?: number }) {
+    return (await this._analyticsClient.get('/analytics/sessions', this.aC({ site, visitor_id: visitorId, ...params }))).data;
   }
   async analyticsPages(site: string, params?: { days?: number; limit?: number }) {
     return (await this._analyticsClient.get('/analytics/pages', this.aC({ site, ...params }))).data;

@@ -4304,6 +4304,54 @@
   word-break: break-word;
   margin: 0;
 }
+.trk-modal-loading {
+  font-size: 12px;
+  color: var(--muted-foreground, #64748b);
+  text-align: center;
+  padding: 12px 0;
+}
+.trk-modal-section {
+  margin-top: 18px;
+}
+.trk-modal-section__title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted-foreground, #64748b);
+  margin: 0 0 8px;
+}
+.trk-modal-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.trk-modal-list__item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 6px 8px;
+  background: var(--muted, #f1f5f9);
+  border-radius: 6px;
+}
+.trk-modal-list__date {
+  font-size: 11px;
+  color: var(--muted-foreground, #64748b);
+}
+.trk-modal-list__meta {
+  font-size: 12px;
+  color: var(--foreground, #1e293b);
+}
+.trk-modal-list__meta--url {
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 @media (max-width: 640px) {
   .trk-kpi-row {
