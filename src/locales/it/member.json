@@ -122,6 +122,7 @@
   },
   "billing": {
     "title": "Fatturazione",
+    "subtitle": "Le tue fatture e preventivi",
     "quotes": "Preventivi",
     "invoices": "Fatture",
     "number": "Numero",

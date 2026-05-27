@@ -122,6 +122,7 @@
   },
   "billing": {
     "title": "Abrechnung",
+    "subtitle": "Ihre Rechnungen und Angebote",
     "quotes": "Angebote",
     "invoices": "Rechnungen",
     "number": "Nummer",

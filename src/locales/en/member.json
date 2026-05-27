@@ -122,6 +122,7 @@
   },
   "billing": {
     "title": "Billing",
+    "subtitle": "Your invoices and quotes",
     "quotes": "Quotes",
     "invoices": "Invoices",
     "number": "Number",

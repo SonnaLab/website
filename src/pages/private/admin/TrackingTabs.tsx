@@ -50,6 +50,16 @@ function dur(s: number | null | undefined) {
   return `${Math.floor(s / 60)}m${s % 60}s`;
 }
 
+function timeAgo(date: string | null | undefined): string {
+  if (!date) return '—';
+  const diffMs = Date.now() - new Date(date).getTime();
+  const diffS  = Math.floor(diffMs / 1000);
+  if (diffS < 60)  return `il y a ${diffS}s`;
+  const diffM = Math.floor(diffS / 60);
+  if (diffM < 60)  return `il y a ${diffM}m`;
+  return `il y a ${Math.floor(diffM / 60)}h`;
+}
+
 const _regionNames = new Intl.DisplayNames(['fr'], { type: 'region' });
 function countryName(code: string | null | undefined): string {
   if (!code) return '—';
@@ -141,6 +151,7 @@ export function RealtimeTab() {
   const [sessions, setSessions] = useState<any[]>([]);
   const [err, setErr] = useState(false);
   const [selected, setSelected] = useState<any>(null);
+  const [tick, setTick] = useState(0); // force re-render for timeAgo
 
   const reload = useCallback(() => {
     setErr(false);
@@ -155,22 +166,28 @@ export function RealtimeTab() {
 
   useEffect(() => {
     reload();
-    const id = setInterval(reload, 15_000);
-    return () => clearInterval(id);
+    const pollId  = setInterval(reload, 15_000);
+    const tickId  = setInterval(() => setTick(n => n + 1), 10_000); // refresh timeAgo
+    return () => { clearInterval(pollId); clearInterval(tickId); };
   }, [reload]);
 
   if (err) return <EmptyState message={t('tracking.loadError')} />;
+
+  const activeCount = overview?.realtime_active ?? 0;
 
   return (
     <div className="trk-tab space-y-4">
       {overview != null && (
         <div className="trk-realtime-active">
-          <span className="trk-realtime-count">{overview.realtime_active ?? 0}</span>
-          <span className="trk-realtime-label">visiteur(s) actif(s) en ce moment</span>
+          <span className={`trk-realtime-pulse${activeCount > 0 ? ' trk-realtime-pulse--live' : ''}`} />
+          <span className="trk-realtime-count">{activeCount}</span>
+          <span className="trk-realtime-label">visiteur{activeCount !== 1 ? 's' : ''} actif{activeCount !== 1 ? 's' : ''} en ce moment</span>
         </div>
       )}
 
-      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Sessions actives</p>
+      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+        Sessions actives (30 dernières minutes)
+      </p>
 
       {sessions.length === 0 ? (
         <EmptyState message={t('tracking.noData')} />
@@ -179,18 +196,24 @@ export function RealtimeTab() {
           <DataTable>
             <DataTableHead>
               <DataTableRow>
+                <DataTableTh>Landing page</DataTableTh>
                 <DataTableTh>{t('tracking.device')}</DataTableTh>
                 <DataTableTh>{t('tracking.country')}</DataTableTh>
-                <DataTableTh>Début</DataTableTh>
+                <DataTableTh>Pages</DataTableTh>
+                <DataTableTh>Dernière activité</DataTableTh>
                 <DataTableTh>Actions</DataTableTh>
               </DataTableRow>
             </DataTableHead>
             <DataTableBody>
               {sessions.map((s: any) => (
                 <DataTableRow key={s.id}>
+                  <DataTableTd className="font-mono text-xs max-w-[180px] truncate" title={s.landing_page ?? '/'}>
+                    {s.landing_page ? s.landing_page.replace('https://sonnalab.com', '') || '/' : '/'}
+                  </DataTableTd>
                   <DataTableTd>{s.device_type ?? '—'}</DataTableTd>
                   <DataTableTd>{countryName(s.country)}</DataTableTd>
-                  <DataTableTd className="text-xs">{fmt(s.started_at)}</DataTableTd>
+                  <DataTableTd>{s.page_count ?? 0}</DataTableTd>
+                  <DataTableTd className="text-xs tabular-nums">{timeAgo(s.last_activity_at)}</DataTableTd>
                   <DataTableTd>
                     <div className="adm-table__actions">
                       <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(s)} title={t('tracking.viewDetails')}>
@@ -208,10 +231,13 @@ export function RealtimeTab() {
       <Modal open={!!selected} onClose={() => setSelected(null)} title="Détails session" size="sm">
         {selected && (
           <dl className="trk-modal-dl">
-            <dt>Statut</dt><dd>{selected.duration_seconds == null ? 'Actif' : 'Terminé'}</dd>
+            <dt>Statut</dt><dd>{selected.duration_seconds == null ? '🟢 Active' : '⚫ Terminée'}</dd>
+            <dt>Landing page</dt><dd className="font-mono text-xs break-all">{selected.landing_page ?? '/'}</dd>
             <dt>{t('tracking.device')}</dt><dd>{selected.device_type ?? '—'}</dd>
+            <dt>Navigateur</dt><dd>{selected.browser ?? '—'}</dd>
             <dt>{t('tracking.country')}</dt><dd>{countryName(selected.country)}</dd>
-            <dt>{t('tracking.duration')}</dt><dd>{dur(selected.duration_seconds)}</dd>
+            <dt>Pages visitées</dt><dd>{selected.page_count ?? 0}</dd>
+            <dt>Dernière activité</dt><dd>{fmt(selected.last_activity_at)}</dd>
             <dt>Début</dt><dd>{fmt(selected.started_at)}</dd>
           </dl>
         )}
