@@ -342,12 +342,13 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
   });
   const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage]           = useState(1);
+  const [total, setTotal]         = useState(0);
   const PER_PAGE = 10;
 
-  const reload = (q = search, status = statusFilter) => {
+  const reload = (q = search, status = statusFilter, pg = page) => {
     setLoading(true);
-    return apiService.adminNewsArticles({ ...(q ? { q } : {}), ...(status ? { status } : {}) })
-      .then(d => setArticles(d.articles ?? []))
+    return apiService.adminNewsArticles({ ...(q ? { q } : {}), ...(status ? { status } : {}), page: pg, per_page: PER_PAGE })
+      .then(d => { setArticles(d.articles ?? []); setTotal(d.total ?? 0); })
       .catch(() => toast.error(t('common.error')))
       .finally(() => setLoading(false));
   };
@@ -514,12 +515,8 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
     if (url) window.open(url, '_blank', 'noopener,noreferrer');
   };
 
-  const filtered = articles.filter(a =>
-    (!search || a.title.toLowerCase().includes(search.toLowerCase())) &&
-    (!statusFilter || a.status === statusFilter)
-  );
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
-  const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+  const paginated = articles;
   const localeOptions = Array.from(new Set([...ARTICLE_LOCALES, editing.locale].filter(Boolean) as string[]));
 
   return (
@@ -533,13 +530,13 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
               className="adm-search__input"
               placeholder={t('news.articles.searchPlaceholder')}
               value={search}
-              onChange={e => { setSearch(e.target.value); setPage(1); reload(e.target.value); }}
+              onChange={e => { setSearch(e.target.value); setPage(1); reload(e.target.value, statusFilter, 1); }}
             />
           </div>
           <select
             className="adm-select adm-select--sm"
             value={statusFilter}
-            onChange={e => { const v = e.target.value; setStatusFilter(v); setPage(1); reload(search, v); }}
+            onChange={e => { const v = e.target.value; setStatusFilter(v); setPage(1); reload(search, v, 1); }}
             aria-label={t('news.articles.allStatuses')}
           >
             <option value="">{t('news.articles.allStatuses')}</option>
@@ -570,7 +567,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
             <DataTableRow>
               <DataTableTd className="adm-table__loading">{t('common.loading')}</DataTableTd>
             </DataTableRow>
-          ) : filtered.length === 0 ? (
+          ) : articles.length === 0 ? (
             <DataTableEmpty label={t('news.articles.empty')} />
           ) : paginated.map(a => (
             <DataTableRow key={a.id}>
@@ -651,14 +648,14 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
       {totalPages > 1 && (
         <div className="adm-pagination">
           <span className="adm-pagination__info">
-            {filtered.length} &middot; {page} / {totalPages}
+            {total} &middot; {page} / {totalPages}
           </span>
           <div className="adm-pagination__nav">
             <button
               type="button"
               className="adm-btn adm-btn--ghost adm-btn--xs"
               disabled={page <= 1}
-              onClick={() => setPage(p => p - 1)}
+              onClick={() => { const p = page - 1; setPage(p); reload(search, statusFilter, p); }}
             >
               <ChevronLeftIcon size={13} />
             </button>
@@ -666,7 +663,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
               type="button"
               className="adm-btn adm-btn--ghost adm-btn--xs"
               disabled={page >= totalPages}
-              onClick={() => setPage(p => p + 1)}
+              onClick={() => { const p = page + 1; setPage(p); reload(search, statusFilter, p); }}
             >
               <ChevronRightIcon size={13} />
             </button>
