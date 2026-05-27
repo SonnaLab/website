@@ -1,18 +1,17 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# sonnalab.com — robots.txt
+# Site multilingue : FR · EN · ES · IT · DE
+# Tous les grands moteurs de recherche sont les bienvenus.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Règles générales (tout bot non listé ci-dessous) ─────────────────────────
 User-agent: *
 Allow: /
-Allow: /projects
-Allow: /contact
 Allow: /blog
 Allow: /blog/*
+Allow: /projects
+Allow: /contact
 Allow: /legal/*
-
-# Sitemap
-Sitemap: https://sonnalab.com/sitemap.xml
-
-# Crawl-delay
-Crawl-delay: 2
-
-# Disallow private/auth sections
 Disallow: /admin/
 Disallow: /staff/
 Disallow: /dashboard/
@@ -22,23 +21,230 @@ Disallow: /sign-up
 Disallow: /forgot-password
 Disallow: /reset-password
 Disallow: /confirm-email
-
-# Disallow internal assets
 Disallow: /api/
-Disallow: /*.json$
 Disallow: /locales/
 Disallow: /src/
-
-# Disallow language-prefixed duplicates (canonical is without prefix)
+Disallow: /*.json$
+Disallow: /search
+Disallow: /*?*
+# Pas de préfixes de langue (canonical = URL sans préfixe)
 Disallow: /fr/
 Disallow: /en/
 Disallow: /es/
 Disallow: /it/
 Disallow: /de/
+Crawl-delay: 2
 
-# Disallow search & query strings
+# ── Google ────────────────────────────────────────────────────────────────────
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /staff/
+Disallow: /dashboard/
+Disallow: /member/
+Disallow: /sign-in
+Disallow: /sign-up
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /confirm-email
+Disallow: /api/
+Disallow: /locales/
+Disallow: /src/
+Disallow: /*.json$
 Disallow: /search
 Disallow: /*?*
+Disallow: /fr/
+Disallow: /en/
+Disallow: /es/
+Disallow: /it/
+Disallow: /de/
+# Googlebot gère son propre rythme — pas de Crawl-delay
 
-# Allow specific JSON files
-Allow: /site.webmanifest
+User-agent: Googlebot-Image
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: Googlebot-News
+Allow: /
+Allow: /blog/*
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: AdsBot-Google
+Disallow: /admin/
+Disallow: /api/
+
+# ── Bing / Microsoft ──────────────────────────────────────────────────────────
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /staff/
+Disallow: /dashboard/
+Disallow: /member/
+Disallow: /sign-in
+Disallow: /sign-up
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /confirm-email
+Disallow: /api/
+Disallow: /locales/
+Disallow: /src/
+Disallow: /*.json$
+Disallow: /search
+Disallow: /*?*
+Disallow: /fr/
+Disallow: /en/
+Disallow: /es/
+Disallow: /it/
+Disallow: /de/
+Crawl-delay: 1
+
+User-agent: MSNBot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+User-agent: MSNBot-Media
+Allow: /
+Disallow: /admin/
+
+User-agent: AdIdxBot
+Allow: /
+Disallow: /admin/
+
+# ── Yandex ────────────────────────────────────────────────────────────────────
+User-agent: YandexBot
+Allow: /
+Disallow: /admin/
+Disallow: /staff/
+Disallow: /dashboard/
+Disallow: /member/
+Disallow: /sign-in
+Disallow: /sign-up
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /confirm-email
+Disallow: /api/
+Disallow: /locales/
+Disallow: /src/
+Disallow: /*.json$
+Disallow: /search
+Disallow: /*?*
+Disallow: /fr/
+Disallow: /en/
+Disallow: /es/
+Disallow: /it/
+Disallow: /de/
+Crawl-delay: 2
+# Directive Yandex : URL canonique du site
+Host: sonnalab.com
+
+User-agent: YandexImages
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Crawl-delay: 2
+
+User-agent: YandexRenderResourcesBot
+Allow: /
+Disallow: /admin/
+
+User-agent: YandexMobileBot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+# ── Baidu ─────────────────────────────────────────────────────────────────────
+User-agent: Baiduspider
+Allow: /
+Disallow: /admin/
+Disallow: /staff/
+Disallow: /dashboard/
+Disallow: /member/
+Disallow: /sign-in
+Disallow: /sign-up
+Disallow: /api/
+Disallow: /locales/
+Disallow: /src/
+Disallow: /*.json$
+Disallow: /search
+Disallow: /*?*
+Disallow: /fr/
+Disallow: /en/
+Disallow: /es/
+Disallow: /it/
+Disallow: /de/
+Crawl-delay: 2
+
+User-agent: Baiduspider-image
+Allow: /
+Disallow: /admin/
+
+# ── DuckDuckGo ────────────────────────────────────────────────────────────────
+User-agent: DuckDuckBot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /dashboard/
+Crawl-delay: 1
+
+# ── Apple (Spotlight / Siri) ──────────────────────────────────────────────────
+User-agent: Applebot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /dashboard/
+
+# ── Naver (Corée du Sud) ──────────────────────────────────────────────────────
+User-agent: Naverbot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Crawl-delay: 2
+
+User-agent: Yeti
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Crawl-delay: 2
+
+# ── Sogou (Chine) ─────────────────────────────────────────────────────────────
+User-agent: Sogou web spider
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Crawl-delay: 2
+
+User-agent: Sogou inst spider
+Allow: /
+Disallow: /admin/
+
+# ── Outils SEO (accès limité au blog) ────────────────────────────────────────
+User-agent: SemrushBot
+Allow: /blog/
+Allow: /projects
+Allow: /contact
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+Crawl-delay: 10
+
+User-agent: AhrefsBot
+Allow: /blog/
+Allow: /projects
+Allow: /contact
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+Crawl-delay: 10
+
+User-agent: MJ12bot
+Allow: /blog/
+Disallow: /admin/
+Disallow: /api/
+Crawl-delay: 10
+
+# ── Sitemaps ──────────────────────────────────────────────────────────────────
+Sitemap: https://sonnalab.com/sitemap.xml
+
