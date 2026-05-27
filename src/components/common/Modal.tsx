@@ -6,13 +6,14 @@ interface ModalProps {
   open: boolean;
   onClose: () => void;
   title: string;
+  subtitle?: ReactNode;
   children: ReactNode;
   footer?: ReactNode;
   size?: 'sm' | 'md' | 'lg';
   badge?: ReactNode;
 }
 
-export function Modal({ open, onClose, title, children, footer, size = 'md', badge }: ModalProps) {
+export function Modal({ open, onClose, title, subtitle, children, footer, size = 'md', badge }: ModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
 
   /* Close on Escape */
@@ -42,6 +43,7 @@ export function Modal({ open, onClose, title, children, footer, size = 'md', bad
           <div className="adm-modal__heading">
             {badge && <div className="adm-modal__badge">{badge}</div>}
             <h2 className="adm-modal__title">{title}</h2>
+            {subtitle && <p className="adm-modal__subtitle">{subtitle}</p>}
           </div>
           <button type="button" className="adm-modal__close" onClick={onClose} aria-label="Fermer">
             <XIcon size={18} />

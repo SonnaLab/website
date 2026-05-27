@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 import { apiService } from '@/services/api';
+import { Modal } from '@/components/common/Modal';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
 import { DataTable, DataTableHead, DataTableBody, DataTableRow, DataTableTh, DataTableTd, DataTableEmpty } from '@/components/common/DataTable';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +12,7 @@ import { Card } from '@/components/ui/card';
 import {
   BrainIcon,
   EyeIcon,
+  PenLineIcon,
   RefreshCwIcon,
   ZapIcon,
   LayersIcon,
@@ -280,64 +282,35 @@ function OverviewTab() {
       )}
 
       {/* Model detail modal */}
-      <AnimatePresence>
-        {selectedModel && (
-          <ModelDetailModal model={selectedModel} onClose={() => setSelectedModel(null)} />
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
-function ModelDetailModal({ model, onClose }: { model: AIModelRow; onClose: () => void }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: 'rgba(0,0,0,0.45)' }}
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ opacity: 0, y: 10, scale: 0.97 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 10, scale: 0.97 }}
-        transition={{ duration: 0.18 }}
-        className="bg-background rounded-xl border border-border w-full max-w-md p-6 space-y-5"
-        onClick={e => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <h3 className="font-semibold text-foreground">{model.name}</h3>
-            <code className="text-xs text-muted-foreground">{model.model_identifier}</code>
-          </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            {model.is_available
+      <Modal
+        open={!!selectedModel}
+        onClose={() => setSelectedModel(null)}
+        title={selectedModel?.name ?? ''}
+        subtitle={selectedModel ? <code className="text-xs">{selectedModel.model_identifier}</code> : undefined}
+        badge={selectedModel
+          ? (selectedModel.is_available
               ? <Badge variant="default">Disponible</Badge>
-              : model.is_active
+              : selectedModel.is_active
                 ? <Badge variant="outline">Quota épuisé</Badge>
-                : <Badge variant="destructive">Inactif</Badge>}
+                : <Badge variant="destructive">Inactif</Badge>)
+          : undefined}
+        size="sm"
+      >
+        {selectedModel && (
+          <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
+            <Field label="Provider"         value={selectedModel.provider} />
+            <Field label="Tier"             value={<Badge variant={selectedModel.tier === 'free' ? 'secondary' : 'default'}>{selectedModel.tier}</Badge>} />
+            <Field label="Priorité"         value={String(selectedModel.priority)} />
+            <Field label="Req. aujourd'hui" value={String(selectedModel.requests_today)} />
+            <Field label="Tokens / jour"    value={fmtNum(selectedModel.tokens_today)} />
+            <Field label="Quota restant"    value={selectedModel.quota_remaining != null ? String(selectedModel.quota_remaining) : '∞'} />
+            {selectedModel.max_tokens_per_request != null && (
+              <Field label="Max tokens/req" value={fmtNum(selectedModel.max_tokens_per_request)} />
+            )}
           </div>
-        </div>
-
-        {/* Meta grid */}
-        <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
-          <Field label="Provider"   value={model.provider} />
-          <Field label="Tier"       value={<Badge variant={model.tier === 'free' ? 'secondary' : 'default'}>{model.tier}</Badge>} />
-          <Field label="Priorité"   value={String(model.priority)} />
-          <Field label="Req. aujourd'hui" value={String(model.requests_today)} />
-          <Field label="Tokens / jour"    value={fmtNum(model.tokens_today)} />
-          <Field label="Quota restant"    value={model.quota_remaining != null ? String(model.quota_remaining) : '∞'} />
-          {model.max_tokens_per_request != null && (
-            <Field label="Max tokens/req" value={fmtNum(model.max_tokens_per_request)} />
-          )}
-        </div>
-
-        <Button variant="outline" size="sm" className="w-full" onClick={onClose}>Fermer</Button>
-      </motion.div>
-    </motion.div>
+        )}
+      </Modal>
+    </div>
   );
 }
 
@@ -377,12 +350,14 @@ function TasksTab() {
               <DataTableTd>{fmtDate(t.last_run)}</DataTableTd>
               <DataTableTd><StatusBadgeLocal status={t.status} /></DataTableTd>
               <DataTableTd>
-                <button
-                  className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
-                  onClick={() => setSelected(t)}
-                >
-                  <EyeIcon size={14} /> Voir
-                </button>
+                <div className="adm-table__actions">
+                  <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(t)} title="Détails">
+                    <EyeIcon size={13} />
+                  </button>
+                  <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title="Modifier (à venir)" disabled>
+                    <PenLineIcon size={13} />
+                  </button>
+                </div>
               </DataTableTd>
             </DataTableRow>
           ))}
@@ -390,49 +365,30 @@ function TasksTab() {
       </DataTable>
 
       {/* Task detail modal */}
-      <AnimatePresence>
-        {selected && (
-          <TaskDetailPanel task={selected} onClose={() => setSelected(null)} />
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
-function TaskDetailPanel({ task, onClose }: { task: typeof MOCK_TASKS[0]; onClose: () => void }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 8 }}
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
-      style={{ background: 'rgba(0,0,0,0.35)' }}
-      onClick={onClose}
-    >
-      <motion.div
-        className="bg-background rounded-xl border border-border w-full max-w-lg p-6 space-y-4"
-        onClick={e => e.stopPropagation()}
+      <Modal
+        open={!!selected}
+        onClose={() => setSelected(null)}
+        title={selected?.name ?? ''}
+        subtitle={selected
+          ? <span>Horaire : <code>{selected.schedule}</code> &nbsp;·&nbsp; Dernier run : {fmtDate(selected.last_run)}</span>
+          : undefined}
+        badge={selected ? <StatusBadgeLocal status={selected.status} /> : undefined}
+        size="md"
       >
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <h3 className="font-semibold text-foreground">{task.name}</h3>
-            <p className="text-xs text-muted-foreground mt-0.5">Planification : <code>{task.schedule}</code></p>
+        {selected && (
+          <div className="rounded-lg bg-zinc-950 text-zinc-200 font-mono text-xs p-4 space-y-0.5 overflow-y-auto max-h-60 overflow-x-hidden">
+            <div>[INFO] Task {selected.name} — last run {fmtDate(selected.last_run)}</div>
+            <div>[INFO] Status : {selected.status}</div>
+            {selected.status === 'error' && (
+              <div className="text-red-400">[ERROR] Connexion refusée au service de nettoyage d'assets</div>
+            )}
+            {selected.status === 'running' && (
+              <div className="text-green-400">[INFO] En cours d'exécution…</div>
+            )}
           </div>
-          <StatusBadgeLocal status={task.status} />
-        </div>
-        <div className="rounded-lg bg-muted p-4 text-xs font-mono space-y-1 max-h-48 overflow-auto">
-          <div className="text-muted-foreground">[INFO] Task {task.name} — last run {fmtDate(task.last_run)}</div>
-          <div className="text-muted-foreground">[INFO] Status : {task.status}</div>
-          {task.status === 'error' && (
-            <div className="text-destructive">[ERROR] Connexion refusée au service de nettoyage d'assets</div>
-          )}
-          {task.status === 'running' && (
-            <div className="text-green-600">[INFO] En cours d'exécution…</div>
-          )}
-        </div>
-        <Button variant="outline" size="sm" onClick={onClose} className="w-full">Fermer</Button>
-      </motion.div>
-    </motion.div>
+        )}
+      </Modal>
+    </div>
   );
 }
 
@@ -475,11 +431,9 @@ function InfraTab() {
         ))}
       </div>
 
-      <AnimatePresence>
-        {logContainer && (
-          <ContainerLogPanel container={logContainer} onClose={() => setLogContainer(null)} />
-        )}
-      </AnimatePresence>
+      {logContainer && (
+        <ContainerLogPanel container={logContainer} onClose={() => setLogContainer(null)} />
+      )}
     </div>
   );
 }
@@ -511,50 +465,31 @@ function ContainerLogPanel({ container, onClose }: { container: typeof MOCK_CONT
   }, []);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: 'rgba(0,0,0,0.45)' }}
-      onClick={onClose}
+    <Modal
+      open
+      onClose={onClose}
+      title={container.id}
+      subtitle={container.image}
+      badge={<StatusBadgeLocal status={container.status} />}
+      size="lg"
     >
-      <motion.div
-        initial={{ opacity: 0, y: 10, scale: 0.97 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 10, scale: 0.97 }}
-        transition={{ duration: 0.18 }}
-        className="bg-background rounded-xl border border-border w-full max-w-2xl overflow-hidden"
-        onClick={e => e.stopPropagation()}
-      >
-        {/* Modal header — container details */}
-        <div className="px-6 py-4 border-b border-border flex items-start justify-between gap-4">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <h3 className="font-semibold text-foreground text-sm">{container.id}</h3>
-              <StatusBadgeLocal status={container.status} />
-            </div>
-            <p className="text-xs text-muted-foreground mt-0.5 truncate">{container.image}</p>
-            <div className="flex gap-4 mt-2 text-xs text-muted-foreground">
-              <span>CPU <span className="font-mono text-foreground">{container.cpu}</span></span>
-              <span>Mem <span className="font-mono text-foreground">{container.mem}</span></span>
-              <span>Démarré {fmtDateShort(container.started)}</span>
-            </div>
-          </div>
-          <Button variant="outline" size="sm" onClick={onClose} className="flex-shrink-0">Fermer</Button>
-        </div>
+      {/* Container metrics */}
+      <div className="flex flex-wrap gap-5 text-sm text-muted-foreground mb-4">
+        <span>CPU <code className="font-mono text-foreground">{container.cpu}</code></span>
+        <span>Mémoire <code className="font-mono text-foreground">{container.mem}</code></span>
+        <span>Démarré {fmtDateShort(container.started)}</span>
+      </div>
 
-        {/* Log body — fixed height, no horizontal overflow */}
-        <div className="bg-zinc-950 text-zinc-200 font-mono text-xs p-4 h-72 overflow-y-auto overflow-x-hidden">
-          <div className="space-y-0.5">
-            {lines.map((l, i) => (
-              <div key={i} className="break-all whitespace-pre-wrap">{l}</div>
-            ))}
-            <div ref={endRef} />
-          </div>
+      {/* Log stream */}
+      <div className="rounded-lg bg-zinc-950 text-zinc-200 font-mono text-xs p-4 h-64 overflow-y-auto overflow-x-hidden">
+        <div className="space-y-0.5">
+          {lines.map((l, i) => (
+            <div key={i} className="break-all whitespace-pre-wrap">{l}</div>
+          ))}
+          <div ref={endRef} />
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </Modal>
   );
 }
 
@@ -624,14 +559,14 @@ function ClientsTab() {
               <DataTableTd>{fmtDate(c.last_generation)}</DataTableTd>
               <DataTableTd><StatusBadgeLocal status={c.is_active ? 'active' : 'paused'} /></DataTableTd>
               <DataTableTd>
-                <button
-                  type="button"
-                  className="adm-btn adm-btn--ghost adm-btn--xs"
-                  onClick={() => setSelectedClient(c)}
-                  title="Détails client"
-                >
-                  <EyeIcon size={13} />
-                </button>
+                <div className="adm-table__actions">
+                  <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelectedClient(c)} title="Détails">
+                    <EyeIcon size={13} />
+                  </button>
+                  <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title="Modifier (à venir)" disabled>
+                    <PenLineIcon size={13} />
+                  </button>
+                </div>
               </DataTableTd>
             </DataTableRow>
           ))}
@@ -639,16 +574,14 @@ function ClientsTab() {
       </DataTable>
 
       {/* Client detail modal */}
-      <AnimatePresence>
-        {selectedClient && (
-          <ClientDetailModal
-            client={selectedClient}
-            detail={clientDetail}
-            loading={detailLoading}
-            onClose={() => setSelectedClient(null)}
-          />
-        )}
-      </AnimatePresence>
+      {selectedClient && (
+        <ClientDetailModal
+          client={selectedClient}
+          detail={clientDetail}
+          loading={detailLoading}
+          onClose={() => setSelectedClient(null)}
+        />
+      )}
     </div>
   );
 }
@@ -663,38 +596,15 @@ function ClientDetailModal({
 }) {
   const d = detail ?? client;
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: 'rgba(0,0,0,0.45)' }}
-      onClick={onClose}
+    <Modal
+      open
+      onClose={onClose}
+      title={d.name}
+      subtitle={(d as AIClientDetail).tagline}
+      badge={<StatusBadgeLocal status={d.is_active ? 'active' : 'paused'} />}
+      size="lg"
     >
-      <motion.div
-        initial={{ opacity: 0, y: 10, scale: 0.97 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 10, scale: 0.97 }}
-        transition={{ duration: 0.18 }}
-        className="bg-background rounded-xl border border-border w-full max-w-2xl overflow-hidden"
-        onClick={e => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-border flex items-start justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="font-semibold text-foreground">{d.name}</h3>
-              <StatusBadgeLocal status={d.is_active ? 'active' : 'paused'} />
-            </div>
-            {(d as AIClientDetail).tagline && (
-              <p className="text-xs text-muted-foreground mt-0.5">{(d as AIClientDetail).tagline}</p>
-            )}
-          </div>
-          <Button variant="outline" size="sm" onClick={onClose} className="flex-shrink-0">Fermer</Button>
-        </div>
-
-        {/* Scrollable body */}
-        <div className="overflow-y-auto max-h-[60vh] p-6 space-y-6">
+      <div className="space-y-6">
           {loading && (
             <p className="text-sm text-muted-foreground text-center py-4">Chargement…</p>
           )}
@@ -800,8 +710,7 @@ function ClientDetailModal({
             <p className="text-xs text-muted-foreground">Créé le {fmtDate((d as AIClientDetail).created_at)}</p>
           )}
         </div>
-      </motion.div>
-    </motion.div>
+    </Modal>
   );
 }
 
