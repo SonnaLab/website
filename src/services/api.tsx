@@ -234,6 +234,17 @@ export function clearStoredAuth() {
   localStorage.removeItem(AUTH_STORAGE_KEYS.user);
 }
 
+// Endpoints that create/rotate tokens — never retry on 401 for these
+function isTokenEndpoint(url?: string): boolean {
+  if (!url) return false;
+  return (
+    url.includes('/auth/refresh') ||
+    url.includes('/auth/sign_in') ||
+    url.includes('/auth/sign_up') ||
+    url.includes('/auth/sign_out')
+  );
+}
+
 class ApiService {
   private client: AxiosInstance;
   private refreshPromise: Promise<string> | null = null;
@@ -280,7 +291,7 @@ class ApiService {
         const original = error.config as (InternalAxiosRequestConfig & { _retried?: boolean }) | undefined;
         const status   = error.response?.status;
 
-        if (status === 401 && original && !original._retried && !original.url?.includes('/auth/')) {
+        if (status === 401 && original && !original._retried && !isTokenEndpoint(original.url)) {
           original._retried = true;
           try {
             const newToken = await this.refreshAccessToken();
@@ -325,9 +336,15 @@ class ApiService {
       })
       .then((res) => {
         const { access_token, refresh_token, user } = res.data as {
-          access_token: string; refresh_token: string; user: AuthUser;
+          access_token: string; refresh_token: string; user?: AuthUser;
         };
-        persistAuth({ access_token, refresh_token, user });
+        if (user) {
+          persistAuth({ access_token, refresh_token, user });
+        } else {
+          // Backend didn't return user — only rotate the tokens, keep existing user
+          localStorage.setItem(AUTH_STORAGE_KEYS.access,  access_token);
+          localStorage.setItem(AUTH_STORAGE_KEYS.refresh, refresh_token);
+        }
         return access_token;
       })
       .finally(() => { this.refreshPromise = null; });
