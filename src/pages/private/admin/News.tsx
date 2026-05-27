@@ -346,7 +346,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
 
   const reload = (q = search, status = statusFilter) => {
     setLoading(true);
-    return apiService.adminNewsArticles({ generated: true, ...(q ? { q } : {}), ...(status ? { status } : {}) })
+    return apiService.adminNewsArticles({ ...(q ? { q } : {}), ...(status ? { status } : {}) })
       .then(d => setArticles(d.articles ?? []))
       .catch(() => toast.error(t('common.error')))
       .finally(() => setLoading(false));

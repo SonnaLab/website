@@ -19,6 +19,9 @@ import {
   UsersIcon,
   ServerIcon,
   TrendingUpIcon,
+  CheckCircle2Icon,
+  AlertTriangleIcon,
+  XCircleIcon,
 } from '@icons';
 
 // ─────────────────────────────────────────────
@@ -116,6 +119,32 @@ function fmtDateShort(iso?: string | null) {
   return new Intl.DateTimeFormat('fr', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(iso));
 }
 
+// Returns a plain icon + label for use inside adm-modal__badge (already black bg, white text)
+function ModalStatusTag({ status }: { status: string }) {
+  const map: Record<string, { icon: React.ReactNode; label: string }> = {
+    running:  { icon: <ZapIcon          size={9} />, label: 'En cours'       },
+    idle:     { icon: <ServerIcon       size={9} />, label: 'Idle'            },
+    error:    { icon: <AlertTriangleIcon size={9} />, label: 'Erreur'         },
+    active:   { icon: <CheckCircle2Icon  size={9} />, label: 'Actif'          },
+    paused:   { icon: <XCircleIcon       size={9} />, label: 'Inactif'        },
+  };
+  const m = map[status] ?? { icon: <ServerIcon size={9} />, label: status };
+  return <span className="flex items-center gap-1">{m.icon}{m.label}</span>;
+}
+
+// Simple cron expression → plain French description
+function describeCron(expr: string): string {
+  const [min, hour, dom, , dow] = expr.trim().split(/\s+/);
+  const h = (s: string) => s.padStart(2, '0');
+  const DAYS = ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'];
+  if (min === '0' && hour === '*')           return 'Toutes les heures';
+  if (min === '0' && hour.startsWith('*/'))  return `Toutes les ${hour.slice(2)}h`;
+  if (min.startsWith('*/'))                  return `Toutes les ${min.slice(2)} min`;
+  if (dow !== '*' && !isNaN(+dow))           return `Tous les ${DAYS[+dow] ?? dow} à ${h(hour)}h${h(min)}`;
+  if (dom !== '*' && !isNaN(+dom))           return `Le ${dom} de chaque mois à ${h(hour)}h${h(min)}`;
+  return `Tous les jours à ${h(hour)}h${h(min)}`;
+}
+
 function StatusBadgeLocal({ status }: { status: string }) {
   const map: Record<string, { variant: 'default' | 'destructive' | 'outline' | 'secondary'; label: string }> = {
     running: { variant: 'default',     label: 'En cours'   },
@@ -137,6 +166,7 @@ const MODEL_PER_PAGE = 10;
 function OverviewTab() {
   const [models,        setModels]        = useState<AIModelRow[] | null>(null);
   const [stats,         setStats]         = useState<AIStatsRow  | null>(null);
+  const [clientCount,   setClientCount]   = useState<number | null>(null);
   const [loading,       setLoading]       = useState(true);
   const [error,         setError]         = useState<string | null>(null);
   const [modelPage,     setModelPage]     = useState(1);
@@ -148,8 +178,14 @@ function OverviewTab() {
     Promise.all([
       apiService.adminLesankofaModels(),
       apiService.adminLesankofaModelStats(),
+      apiService.adminLesankofaClients().catch(() => null),
     ])
-      .then(([m, s]) => { setModels(m); setStats(s); })
+      .then(([m, s, c]) => {
+        setModels(m);
+        setStats(s);
+        const clients: AIClientRow[] = c?.clients ?? c ?? [];
+        setClientCount(clients.filter((cl: AIClientRow) => cl.is_active).length);
+      })
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
   };
@@ -161,12 +197,12 @@ function OverviewTab() {
 
   return (
     <div className="space-y-6">
-      {/* KPI strip */}
-      <div className="grid gap-4 grid-cols-2 sm:grid-cols-4">
+      {/* KPI strip — inline row */}
+      <div className="flex items-stretch gap-3 overflow-x-auto">
         <KpiCard label="Modèles actifs"      value={stats ? String(stats.active_models)         : '—'} icon={<BrainIcon  size={16} />} />
         <KpiCard label="Requêtes aujourd'hui" value={stats ? String(stats.total_requests_today) : '—'} icon={<ZapIcon    size={16} />} />
         <KpiCard label="Tokens aujourd'hui"  value={stats ? fmtNum(stats.total_tokens_today)    : '—'} icon={<LayersIcon size={16} />} />
-        <KpiCard label="Clients actifs"      value={String(stats ? ((stats as any).active_clients ?? '—') : '—')} icon={<UsersIcon  size={16} />} />
+        <KpiCard label="Clients actifs"      value={clientCount !== null ? String(clientCount) : '—'}  icon={<UsersIcon  size={16} />} />
       </div>
 
       {/* Actions row */}
@@ -256,30 +292,44 @@ function OverviewTab() {
         )}
       </div>
 
-      {/* Recent activity */}
-      {models && models.length > 0 && (
-        <div>
-          <h3 className="text-sm font-semibold text-foreground mb-3">Modèles récemment actifs</h3>
-          <div className="space-y-2">
-            {models.filter(m => m.requests_today > 0).slice(0, 4).map(m => (
-              <div
-                key={m.id}
-                className="flex items-center justify-between rounded-lg border border-border px-4 py-3 cursor-pointer hover:bg-muted/50 transition-colors"
-                onClick={() => setSelectedModel(m)}
-              >
-                <div>
-                  <span className="font-medium text-sm">{m.name}</span>
-                  <span className="text-xs text-muted-foreground ml-2">{m.provider}</span>
+      {/* Recent activity — improved */}
+      {models && models.length > 0 && (() => {
+        const active = models.filter(m => m.requests_today > 0).slice(0, 4);
+        if (active.length === 0) return <p className="text-sm text-muted-foreground">Aucune requête aujourd'hui.</p>;
+        const maxReq = Math.max(...active.map(m => m.requests_today), 1);
+        return (
+          <div>
+            <h3 className="text-sm font-semibold text-foreground mb-3">Modèles récemment actifs</h3>
+            <div className="divide-y divide-border rounded-xl border border-border overflow-hidden">
+              {active.map(m => (
+                <div
+                  key={m.id}
+                  className="flex items-center gap-4 px-4 py-3 bg-background hover:bg-muted/40 cursor-pointer transition-colors group"
+                  onClick={() => setSelectedModel(m)}
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm text-foreground truncate">{m.name}</p>
+                    <p className="text-xs text-muted-foreground">{m.provider}</p>
+                  </div>
+                  {/* Mini usage bar */}
+                  <div className="w-20 flex-shrink-0">
+                    <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-foreground/70"
+                        style={{ width: `${Math.round((m.requests_today / maxReq) * 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                  <div className="text-right flex-shrink-0 w-16">
+                    <p className="text-sm font-bold text-foreground tabular-nums">{m.requests_today}</p>
+                    <p className="text-xs text-muted-foreground">req.</p>
+                  </div>
                 </div>
-                <span className="text-xs text-muted-foreground">{m.requests_today} req. aujourd'hui</span>
-              </div>
-            ))}
-            {models.every(m => m.requests_today === 0) && (
-              <p className="text-sm text-muted-foreground">Aucune requête aujourd'hui.</p>
-            )}
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Model detail modal */}
       <Modal
@@ -289,10 +339,10 @@ function OverviewTab() {
         subtitle={selectedModel ? <code className="text-xs">{selectedModel.model_identifier}</code> : undefined}
         badge={selectedModel
           ? (selectedModel.is_available
-              ? <Badge variant="default">Disponible</Badge>
+              ? <span className="flex items-center gap-1"><CheckCircle2Icon size={9} /> Disponible</span>
               : selectedModel.is_active
-                ? <Badge variant="outline">Quota épuisé</Badge>
-                : <Badge variant="destructive">Inactif</Badge>)
+                ? <span className="flex items-center gap-1"><AlertTriangleIcon size={9} /> Quota épuisé</span>
+                : <span className="flex items-center gap-1"><XCircleIcon size={9} /> Inactif</span>)
           : undefined}
         size="sm"
       >
@@ -370,9 +420,9 @@ function TasksTab() {
         onClose={() => setSelected(null)}
         title={selected?.name ?? ''}
         subtitle={selected
-          ? <span>Horaire : <code>{selected.schedule}</code> &nbsp;·&nbsp; Dernier run : {fmtDate(selected.last_run)}</span>
+          ? <span><code className="font-mono">{selected.schedule}</code> — {describeCron(selected.schedule)} · Dernier run : {fmtDate(selected.last_run)}</span>
           : undefined}
-        badge={selected ? <StatusBadgeLocal status={selected.status} /> : undefined}
+        badge={selected ? <ModalStatusTag status={selected.status} /> : undefined}
         size="md"
       >
         {selected && (
@@ -470,7 +520,7 @@ function ContainerLogPanel({ container, onClose }: { container: typeof MOCK_CONT
       onClose={onClose}
       title={container.id}
       subtitle={container.image}
-      badge={<StatusBadgeLocal status={container.status} />}
+      badge={<ModalStatusTag status={container.status} />}
       size="lg"
     >
       {/* Container metrics */}
@@ -601,7 +651,7 @@ function ClientDetailModal({
       onClose={onClose}
       title={d.name}
       subtitle={(d as AIClientDetail).tagline}
-      badge={<StatusBadgeLocal status={d.is_active ? 'active' : 'paused'} />}
+      badge={<span className="flex items-center gap-1">{d.is_active ? <CheckCircle2Icon size={9} /> : <XCircleIcon size={9} />}{d.is_active ? 'Actif' : 'Inactif'}</span>}
       size="lg"
     >
       <div className="space-y-6">
@@ -855,7 +905,7 @@ function ModelTab() {
 
 function KpiCard({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) {
   return (
-    <Card className="p-4 space-y-1">
+    <Card className="flex-1 min-w-0 p-4 space-y-1">
       <div className="flex items-center gap-2 text-muted-foreground text-xs">
         {icon}
         <span>{label}</span>
