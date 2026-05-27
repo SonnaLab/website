@@ -58,6 +58,27 @@ interface AIClientRow {
   last_generation: string | null;
 }
 
+interface AIClientDetail extends AIClientRow {
+  tagline?: string;
+  description_short?: string;
+  industry?: string;
+  website_url?: string;
+  primary_locale?: string;
+  languages?: string[];
+  geographic_zones?: string[];
+  tone_of_voice?: string;
+  objectives?: string[];
+  target_audience?: Array<{ persona: string; pain_points?: string[] }>;
+  content_pillars?: string[];
+  brand_keywords?: string[];
+  competitor_keywords?: string[];
+  key_features?: string[];
+  integrations?: string[];
+  pricing_tiers?: Array<{ name: string; price: number; currency?: string; billing?: string }>;
+  push_endpoint?: string;
+  created_at?: string;
+}
+
 // ─────────────────────────────────────────────
 // Mock data (Tasks + Infrastructure — brancher sur endpoints à créer)
 // ─────────────────────────────────────────────
@@ -109,11 +130,15 @@ function StatusBadgeLocal({ status }: { status: string }) {
 // Overview Tab
 // ─────────────────────────────────────────────
 
+const MODEL_PER_PAGE = 10;
+
 function OverviewTab() {
-  const [models,  setModels]  = useState<AIModelRow[] | null>(null);
-  const [stats,   setStats]   = useState<AIStatsRow  | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error,   setError]   = useState<string | null>(null);
+  const [models,        setModels]        = useState<AIModelRow[] | null>(null);
+  const [stats,         setStats]         = useState<AIStatsRow  | null>(null);
+  const [loading,       setLoading]       = useState(true);
+  const [error,         setError]         = useState<string | null>(null);
+  const [modelPage,     setModelPage]     = useState(1);
+  const [selectedModel, setSelectedModel] = useState<AIModelRow | null>(null);
 
   const load = () => {
     setLoading(true);
@@ -129,14 +154,17 @@ function OverviewTab() {
 
   useEffect(() => { load(); }, []);
 
+  const pagedModels = models?.slice((modelPage - 1) * MODEL_PER_PAGE, modelPage * MODEL_PER_PAGE);
+  const totalPages  = models ? Math.ceil(models.length / MODEL_PER_PAGE) : 1;
+
   return (
     <div className="space-y-6">
       {/* KPI strip */}
       <div className="grid gap-4 grid-cols-2 sm:grid-cols-4">
-        <KpiCard label="Modèles actifs"      value={stats ? String(stats.active_models)          : '—'} icon={<BrainIcon size={16} />}       />
-        <KpiCard label="Requêtes aujourd'hui" value={stats ? String(stats.total_requests_today)  : '—'} icon={<ZapIcon   size={16} />}       />
-        <KpiCard label="Tokens aujourd'hui"  value={stats ? fmtNum(stats.total_tokens_today)     : '—'} icon={<LayersIcon size={16} />}      />
-        <KpiCard label="Clients actifs"      value={String(stats ? (stats.active_clients ?? '—') : '—')} icon={<UsersIcon  size={16} />}       />
+        <KpiCard label="Modèles actifs"      value={stats ? String(stats.active_models)         : '—'} icon={<BrainIcon  size={16} />} />
+        <KpiCard label="Requêtes aujourd'hui" value={stats ? String(stats.total_requests_today) : '—'} icon={<ZapIcon    size={16} />} />
+        <KpiCard label="Tokens aujourd'hui"  value={stats ? fmtNum(stats.total_tokens_today)    : '—'} icon={<LayersIcon size={16} />} />
+        <KpiCard label="Clients actifs"      value={String(stats ? ((stats as any).active_clients ?? '—') : '—')} icon={<UsersIcon  size={16} />} />
       </div>
 
       {/* Actions row */}
@@ -155,7 +183,12 @@ function OverviewTab() {
 
       {/* Models table */}
       <div>
-        <h3 className="text-sm font-semibold text-foreground mb-3">Modèles IA</h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-semibold text-foreground">Modèles IA</h3>
+          {models && models.length > MODEL_PER_PAGE && (
+            <span className="text-xs text-muted-foreground">{models.length} modèles</span>
+          )}
+        </div>
         <DataTable>
           <DataTableHead>
             <DataTableRow>
@@ -166,16 +199,13 @@ function OverviewTab() {
               <DataTableTh>Req. aujourd'hui</DataTableTh>
               <DataTableTh>Tokens</DataTableTh>
               <DataTableTh>Quota restant</DataTableTh>
+              <DataTableTh>Actions</DataTableTh>
             </DataTableRow>
           </DataTableHead>
           <DataTableBody>
-            {!models && !error && (
-              <DataTableEmpty label="Chargement…" />
-            )}
-            {models && models.length === 0 && (
-              <DataTableEmpty label="Aucun modèle trouvé" />
-            )}
-            {models?.map(m => (
+            {!models && !error && <DataTableEmpty label="Chargement…" />}
+            {models && models.length === 0 && <DataTableEmpty label="Aucun modèle trouvé" />}
+            {pagedModels?.map(m => (
               <DataTableRow key={m.id}>
                 <DataTableTd>
                   <div className="font-medium text-foreground">{m.name}</div>
@@ -195,13 +225,36 @@ function OverviewTab() {
                 <DataTableTd>{m.requests_today}</DataTableTd>
                 <DataTableTd>{fmtNum(m.tokens_today)}</DataTableTd>
                 <DataTableTd>{m.quota_remaining ?? '∞'}</DataTableTd>
+                <DataTableTd>
+                  <button
+                    type="button"
+                    className="adm-btn adm-btn--ghost adm-btn--xs"
+                    onClick={() => setSelectedModel(m)}
+                    title="Détails du modèle"
+                  >
+                    <EyeIcon size={13} />
+                  </button>
+                </DataTableTd>
               </DataTableRow>
             ))}
           </DataTableBody>
         </DataTable>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-2 py-3 border-t border-border">
+            <span className="text-xs text-muted-foreground">
+              Page {modelPage} / {totalPages}
+            </span>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" disabled={modelPage === 1} onClick={() => setModelPage(p => p - 1)}>←</Button>
+              <Button variant="outline" size="sm" disabled={modelPage === totalPages} onClick={() => setModelPage(p => p + 1)}>→</Button>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Recent activity — derived from models */}
+      {/* Recent activity */}
       {models && models.length > 0 && (
         <div>
           <h3 className="text-sm font-semibold text-foreground mb-3">Modèles récemment actifs</h3>
@@ -209,7 +262,8 @@ function OverviewTab() {
             {models.filter(m => m.requests_today > 0).slice(0, 4).map(m => (
               <div
                 key={m.id}
-                className="flex items-center justify-between rounded-lg border border-border px-4 py-3"
+                className="flex items-center justify-between rounded-lg border border-border px-4 py-3 cursor-pointer hover:bg-muted/50 transition-colors"
+                onClick={() => setSelectedModel(m)}
               >
                 <div>
                   <span className="font-medium text-sm">{m.name}</span>
@@ -224,7 +278,66 @@ function OverviewTab() {
           </div>
         </div>
       )}
+
+      {/* Model detail modal */}
+      <AnimatePresence>
+        {selectedModel && (
+          <ModelDetailModal model={selectedModel} onClose={() => setSelectedModel(null)} />
+        )}
+      </AnimatePresence>
     </div>
+  );
+}
+
+function ModelDetailModal({ model, onClose }: { model: AIModelRow; onClose: () => void }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: 'rgba(0,0,0,0.45)' }}
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 10, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 10, scale: 0.97 }}
+        transition={{ duration: 0.18 }}
+        className="bg-background rounded-xl border border-border w-full max-w-md p-6 space-y-5"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h3 className="font-semibold text-foreground">{model.name}</h3>
+            <code className="text-xs text-muted-foreground">{model.model_identifier}</code>
+          </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {model.is_available
+              ? <Badge variant="default">Disponible</Badge>
+              : model.is_active
+                ? <Badge variant="outline">Quota épuisé</Badge>
+                : <Badge variant="destructive">Inactif</Badge>}
+          </div>
+        </div>
+
+        {/* Meta grid */}
+        <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
+          <Field label="Provider"   value={model.provider} />
+          <Field label="Tier"       value={<Badge variant={model.tier === 'free' ? 'secondary' : 'default'}>{model.tier}</Badge>} />
+          <Field label="Priorité"   value={String(model.priority)} />
+          <Field label="Req. aujourd'hui" value={String(model.requests_today)} />
+          <Field label="Tokens / jour"    value={fmtNum(model.tokens_today)} />
+          <Field label="Quota restant"    value={model.quota_remaining != null ? String(model.quota_remaining) : '∞'} />
+          {model.max_tokens_per_request != null && (
+            <Field label="Max tokens/req" value={fmtNum(model.max_tokens_per_request)} />
+          )}
+        </div>
+
+        <Button variant="outline" size="sm" className="w-full" onClick={onClose}>Fermer</Button>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -328,7 +441,7 @@ function TaskDetailPanel({ task, onClose }: { task: typeof MOCK_TASKS[0]; onClos
 // ─────────────────────────────────────────────
 
 function InfraTab() {
-  const [logTarget, setLogTarget] = useState<string | null>(null);
+  const [logContainer, setLogContainer] = useState<typeof MOCK_CONTAINERS[0] | null>(null);
 
   return (
     <div className="space-y-4">
@@ -348,13 +461,13 @@ function InfraTab() {
               <StatusBadgeLocal status={c.status} />
             </div>
             <div className="grid grid-cols-2 gap-1 text-xs text-muted-foreground">
-              <span>CPU</span>   <span className="text-right font-mono">{c.cpu}</span>
+              <span>CPU</span>     <span className="text-right font-mono">{c.cpu}</span>
               <span>Mémoire</span> <span className="text-right font-mono">{c.mem}</span>
               <span>Démarré</span> <span className="text-right">{fmtDateShort(c.started)}</span>
             </div>
             <button
               className="w-full flex items-center justify-center gap-1.5 text-xs text-muted-foreground hover:text-foreground border border-border rounded-lg py-1.5 transition-colors"
-              onClick={() => setLogTarget(c.id)}
+              onClick={() => setLogContainer(c)}
             >
               <EyeIcon size={13} /> Logs en temps réel
             </button>
@@ -363,17 +476,17 @@ function InfraTab() {
       </div>
 
       <AnimatePresence>
-        {logTarget && (
-          <ContainerLogPanel containerId={logTarget} onClose={() => setLogTarget(null)} />
+        {logContainer && (
+          <ContainerLogPanel container={logContainer} onClose={() => setLogContainer(null)} />
         )}
       </AnimatePresence>
     </div>
   );
 }
 
-function ContainerLogPanel({ containerId, onClose }: { containerId: string; onClose: () => void }) {
+function ContainerLogPanel({ container, onClose }: { container: typeof MOCK_CONTAINERS[0]; onClose: () => void }) {
   const [lines, setLines] = useState<string[]>([
-    `[INFO]  Attaching to ${containerId}…`,
+    `[INFO]  Attaching to ${container.id}…`,
     `[INFO]  Worker prêt`,
   ]);
   const endRef = useRef<HTMLDivElement>(null);
@@ -399,28 +512,46 @@ function ContainerLogPanel({ containerId, onClose }: { containerId: string; onCl
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 8 }}
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ background: 'rgba(0,0,0,0.45)' }}
       onClick={onClose}
     >
       <motion.div
-        className="bg-background rounded-xl border border-border w-full max-w-2xl p-6 space-y-3"
+        initial={{ opacity: 0, y: 10, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 10, scale: 0.97 }}
+        transition={{ duration: 0.18 }}
+        className="bg-background rounded-xl border border-border w-full max-w-2xl overflow-hidden"
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-foreground text-sm">
-            Logs — <code className="text-xs">{containerId}</code>
-          </h3>
-          <Button variant="outline" size="sm" onClick={onClose}>Fermer</Button>
+        {/* Modal header — container details */}
+        <div className="px-6 py-4 border-b border-border flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <h3 className="font-semibold text-foreground text-sm">{container.id}</h3>
+              <StatusBadgeLocal status={container.status} />
+            </div>
+            <p className="text-xs text-muted-foreground mt-0.5 truncate">{container.image}</p>
+            <div className="flex gap-4 mt-2 text-xs text-muted-foreground">
+              <span>CPU <span className="font-mono text-foreground">{container.cpu}</span></span>
+              <span>Mem <span className="font-mono text-foreground">{container.mem}</span></span>
+              <span>Démarré {fmtDateShort(container.started)}</span>
+            </div>
+          </div>
+          <Button variant="outline" size="sm" onClick={onClose} className="flex-shrink-0">Fermer</Button>
         </div>
-        <div className="rounded-lg bg-zinc-950 text-zinc-200 font-mono text-xs p-4 h-64 overflow-y-auto space-y-0.5">
-          {lines.map((l, i) => (
-            <div key={i}>{l}</div>
-          ))}
-          <div ref={endRef} />
+
+        {/* Log body — fixed height, no horizontal overflow */}
+        <div className="bg-zinc-950 text-zinc-200 font-mono text-xs p-4 h-72 overflow-y-auto overflow-x-hidden">
+          <div className="space-y-0.5">
+            {lines.map((l, i) => (
+              <div key={i} className="break-all whitespace-pre-wrap">{l}</div>
+            ))}
+            <div ref={endRef} />
+          </div>
         </div>
       </motion.div>
     </motion.div>
@@ -432,9 +563,12 @@ function ContainerLogPanel({ containerId, onClose }: { containerId: string; onCl
 // ─────────────────────────────────────────────
 
 function ClientsTab() {
-  const [clients,  setClients]  = useState<AIClientRow[] | null>(null);
-  const [loading,  setLoading]  = useState(true);
-  const [error,    setError]    = useState<string | null>(null);
+  const [clients,            setClients]            = useState<AIClientRow[] | null>(null);
+  const [loading,            setLoading]            = useState(true);
+  const [error,              setError]              = useState<string | null>(null);
+  const [selectedClient,     setSelectedClient]     = useState<AIClientRow | null>(null);
+  const [clientDetail,       setClientDetail]       = useState<AIClientDetail | null>(null);
+  const [detailLoading,      setDetailLoading]      = useState(false);
 
   useEffect(() => {
     apiService.adminLesankofaClients()
@@ -442,6 +576,16 @@ function ClientsTab() {
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (!selectedClient) { setClientDetail(null); return; }
+    setDetailLoading(true);
+    setClientDetail(null);
+    apiService.adminLesankofaClientDetail(selectedClient.id)
+      .then(setClientDetail)
+      .catch(() => setClientDetail(selectedClient as AIClientDetail))
+      .finally(() => setDetailLoading(false));
+  }, [selectedClient]);
 
   return (
     <div className="space-y-4">
@@ -458,6 +602,7 @@ function ClientsTab() {
             <DataTableTh>En cours</DataTableTh>
             <DataTableTh>Dernière génération</DataTableTh>
             <DataTableTh>Statut</DataTableTh>
+            <DataTableTh>Actions</DataTableTh>
           </DataTableRow>
         </DataTableHead>
         <DataTableBody>
@@ -478,10 +623,211 @@ function ClientsTab() {
               <DataTableTd>{c.articles_pending}</DataTableTd>
               <DataTableTd>{fmtDate(c.last_generation)}</DataTableTd>
               <DataTableTd><StatusBadgeLocal status={c.is_active ? 'active' : 'paused'} /></DataTableTd>
+              <DataTableTd>
+                <button
+                  type="button"
+                  className="adm-btn adm-btn--ghost adm-btn--xs"
+                  onClick={() => setSelectedClient(c)}
+                  title="Détails client"
+                >
+                  <EyeIcon size={13} />
+                </button>
+              </DataTableTd>
             </DataTableRow>
           ))}
         </DataTableBody>
       </DataTable>
+
+      {/* Client detail modal */}
+      <AnimatePresence>
+        {selectedClient && (
+          <ClientDetailModal
+            client={selectedClient}
+            detail={clientDetail}
+            loading={detailLoading}
+            onClose={() => setSelectedClient(null)}
+          />
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function ClientDetailModal({
+  client, detail, loading, onClose
+}: {
+  client: AIClientRow;
+  detail: AIClientDetail | null;
+  loading: boolean;
+  onClose: () => void;
+}) {
+  const d = detail ?? client;
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: 'rgba(0,0,0,0.45)' }}
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 10, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 10, scale: 0.97 }}
+        transition={{ duration: 0.18 }}
+        className="bg-background rounded-xl border border-border w-full max-w-2xl overflow-hidden"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="px-6 py-4 border-b border-border flex items-start justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="font-semibold text-foreground">{d.name}</h3>
+              <StatusBadgeLocal status={d.is_active ? 'active' : 'paused'} />
+            </div>
+            {(d as AIClientDetail).tagline && (
+              <p className="text-xs text-muted-foreground mt-0.5">{(d as AIClientDetail).tagline}</p>
+            )}
+          </div>
+          <Button variant="outline" size="sm" onClick={onClose} className="flex-shrink-0">Fermer</Button>
+        </div>
+
+        {/* Scrollable body */}
+        <div className="overflow-y-auto max-h-[60vh] p-6 space-y-6">
+          {loading && (
+            <p className="text-sm text-muted-foreground text-center py-4">Chargement…</p>
+          )}
+
+          {/* Identité */}
+          <Section title="Identité">
+            <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+              <Field label="Slug"      value={d.slug} />
+              <Field label="Industrie" value={(d as AIClientDetail).industry ?? '—'} />
+              <Field label="Locale"    value={(d as AIClientDetail).primary_locale ?? '—'} />
+              <Field label="Langues"   value={((d as AIClientDetail).languages ?? []).join(', ') || '—'} />
+              {(d as AIClientDetail).website_url && (
+                <Field label="Site" value={
+                  <a href={(d as AIClientDetail).website_url!} target="_blank" rel="noreferrer"
+                     className="text-primary hover:underline text-xs">{(d as AIClientDetail).website_url}</a>
+                } />
+              )}
+              {(d as AIClientDetail).push_endpoint && (
+                <Field label="Push endpoint" value={
+                  <span className="font-mono text-xs break-all">{(d as AIClientDetail).push_endpoint}</span>
+                } />
+              )}
+            </div>
+            {(d as AIClientDetail).description_short && (
+              <p className="mt-2 text-sm text-muted-foreground">{(d as AIClientDetail).description_short}</p>
+            )}
+          </Section>
+
+          {/* Stats articles */}
+          <Section title="Articles générés">
+            <div className="grid grid-cols-4 gap-3">
+              {[
+                { label: 'Total',    value: d.articles_total,   variant: '' },
+                { label: 'Succès',   value: d.articles_success, variant: 'text-green-600' },
+                { label: 'Échecs',   value: d.articles_failed,  variant: d.articles_failed > 0 ? 'text-destructive' : '' },
+                { label: 'En cours', value: d.articles_pending, variant: '' },
+              ].map(({ label, value, variant }) => (
+                <div key={label} className="rounded-lg border border-border p-3 text-center">
+                  <p className={`text-xl font-bold ${variant}`}>{value}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{label}</p>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">Dernière génération : {fmtDate(d.last_generation)}</p>
+          </Section>
+
+          {/* Stratégie éditoriale */}
+          {((d as AIClientDetail).content_pillars?.length ?? 0) > 0 && (
+            <Section title="Piliers de contenu">
+              <TagList items={(d as AIClientDetail).content_pillars!} />
+            </Section>
+          )}
+          {((d as AIClientDetail).objectives?.length ?? 0) > 0 && (
+            <Section title="Objectifs">
+              <ul className="list-disc list-inside text-sm text-muted-foreground space-y-0.5">
+                {(d as AIClientDetail).objectives!.map((o, i) => <li key={i}>{o}</li>)}
+              </ul>
+            </Section>
+          )}
+          {((d as AIClientDetail).brand_keywords?.length ?? 0) > 0 && (
+            <Section title="Mots-clés marque">
+              <TagList items={(d as AIClientDetail).brand_keywords!} />
+            </Section>
+          )}
+          {((d as AIClientDetail).competitor_keywords?.length ?? 0) > 0 && (
+            <Section title="Mots-clés concurrents">
+              <TagList items={(d as AIClientDetail).competitor_keywords!} />
+            </Section>
+          )}
+          {((d as AIClientDetail).key_features?.length ?? 0) > 0 && (
+            <Section title="Fonctionnalités clés">
+              <TagList items={(d as AIClientDetail).key_features!} />
+            </Section>
+          )}
+          {((d as AIClientDetail).integrations?.length ?? 0) > 0 && (
+            <Section title="Intégrations">
+              <TagList items={(d as AIClientDetail).integrations!} />
+            </Section>
+          )}
+          {((d as AIClientDetail).geographic_zones?.length ?? 0) > 0 && (
+            <Section title="Zones géographiques">
+              <TagList items={(d as AIClientDetail).geographic_zones!} />
+            </Section>
+          )}
+          {(d as AIClientDetail).tone_of_voice && (
+            <Section title="Tonalité">
+              <p className="text-sm">{(d as AIClientDetail).tone_of_voice}</p>
+            </Section>
+          )}
+          {((d as AIClientDetail).pricing_tiers?.length ?? 0) > 0 && (
+            <Section title="Offres tarifaires">
+              <div className="space-y-1">
+                {(d as AIClientDetail).pricing_tiers!.map((t, i) => (
+                  <div key={i} className="flex items-center justify-between text-sm">
+                    <span>{t.name}</span>
+                    <span className="font-mono text-muted-foreground">{t.price === 0 ? 'Gratuit' : `${t.price} ${t.currency ?? '€'} / ${t.billing ?? 'mois'}`}</span>
+                  </div>
+                ))}
+              </div>
+            </Section>
+          )}
+          {(d as AIClientDetail).created_at && (
+            <p className="text-xs text-muted-foreground">Créé le {fmtDate((d as AIClientDetail).created_at)}</p>
+          )}
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// ─── Small reusable pieces for detail modals ─
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{title}</h4>
+      {children}
+    </div>
+  );
+}
+function TagList({ items }: { items: string[] }) {
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {items.map((t, i) => (
+        <span key={i} className="rounded-md bg-muted border border-border px-2 py-0.5 text-xs">{t}</span>
+      ))}
+    </div>
+  );
+}
+function Field({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-0.5">
+      <span className="text-xs text-muted-foreground">{label}</span>
+      <span className="text-sm font-medium text-foreground">{value}</span>
     </div>
   );
 }

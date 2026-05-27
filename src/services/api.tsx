@@ -645,9 +645,11 @@ class ApiService {
   // Lesankofa AI — proxy via api.sonnalab.com/admin
   // Le frontend ne contacte JAMAIS ai.sonnalab.com directement.
   // ──────────────────────────────────────────────────
-  async adminLesankofaModels()     { return (await this.client.get('/api/v1/admin/lesankofa/models')).data; }
-  async adminLesankofaModelStats() { return (await this.client.get('/api/v1/admin/lesankofa/models/stats')).data; }
-  async adminLesankofaClients()    { return (await this.client.get('/api/v1/admin/lesankofa/clients')).data; }
+  async adminLesankofaModels()            { return (await this.client.get('/api/v1/admin/lesankofa/models')).data; }
+  async adminLesankofaModelStats()        { return (await this.client.get('/api/v1/admin/lesankofa/models/stats')).data; }
+  async adminLesankofaModel(id: string)   { return (await this.client.get(`/api/v1/admin/lesankofa/models/${id}`)).data; }
+  async adminLesankofaClients()           { return (await this.client.get('/api/v1/admin/lesankofa/clients')).data; }
+  async adminLesankofaClientDetail(id: string) { return (await this.client.get(`/api/v1/admin/lesankofa/clients/${id}`)).data; }
 
   getBaseUrl(): string {
     return API_BASE_URL;
