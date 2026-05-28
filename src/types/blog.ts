@@ -1,3 +1,10 @@
+export interface UnsplashCredit {
+  provider: 'unsplash';
+  photographer?: string;
+  photographerUrl?: string;
+  sourceUrl?: string;
+}
+
 export interface BlogPost {
   id: string;
   slug: string;
@@ -10,6 +17,7 @@ export interface BlogPost {
   publishedAt: string;
   updatedAt?: string;
   coverImage: string;
+  coverImageCredit?: UnsplashCredit | null;
   category: string;
   tags: string[];
   readTime: number;

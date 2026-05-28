@@ -178,6 +178,26 @@ export default function BlogPost() {
             <figcaption className="blog-post-hero-caption" itemProp="description">
               {post.excerpt}
             </figcaption>
+            {post.coverImageCredit?.provider === 'unsplash' && (
+              <p className="blog-post-hero-photo-credit">
+                {t('photoBy')}{' '}
+                <a
+                  href={post.coverImageCredit.photographerUrl ?? `https://unsplash.com/?utm_source=sonnalab&utm_medium=referral`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {post.coverImageCredit.photographer ?? 'Unsplash'}
+                </a>
+                {' '}{t('on')}{' '}
+                <a
+                  href={post.coverImageCredit.sourceUrl ?? `https://unsplash.com/?utm_source=sonnalab&utm_medium=referral`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Unsplash
+                </a>
+              </p>
+            )}
           </figure>
         </section>
 

@@ -72,5 +72,7 @@
     "category": "Catégorie",
     "readLabel": "Lecture",
     "detailsLabel": "Détails de l'article"
-  }
+  },
+  "photoBy": "Photo de",
+  "on": "sur"
 }

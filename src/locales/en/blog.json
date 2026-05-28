@@ -80,5 +80,7 @@
     "category": "Category",
     "readLabel": "Reading",
     "detailsLabel": "Article details"
-  }
+  },
+  "photoBy": "Photo by",
+  "on": "on"
 }

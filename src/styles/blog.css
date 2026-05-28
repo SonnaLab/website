@@ -652,6 +652,23 @@
   text-align: center;
 }
 
+.blog-post-hero-photo-credit {
+  margin: 0.35rem auto 0;
+  color: #9ba8b5;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.blog-post-hero-photo-credit a {
+  color: #9ba8b5;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.blog-post-hero-photo-credit a:hover {
+  color: #667085;
+}
+
 .blog-post-content-shell {
   margin-top: 0;
 }
