@@ -2,6 +2,7 @@ export interface UnsplashCredit {
   provider: 'unsplash';
   photographer?: string;
   photographerUrl?: string;
+  photographerAvatar?: string;
   sourceUrl?: string;
 }
 

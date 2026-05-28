@@ -176,28 +176,28 @@ export default function BlogPost() {
               itemProp="image"
             />
             <figcaption className="blog-post-hero-caption" itemProp="description">
-              {post.excerpt}
+              <span>{post.excerpt}</span>
+              {post.coverImageCredit?.provider === 'unsplash' && (
+                <span className="blog-post-hero-photo-credit">
+                  {t('photoBy')}{' '}
+                  <a
+                    href={post.coverImageCredit.photographerUrl ?? `https://unsplash.com/?utm_source=sonnalab&utm_medium=referral`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {post.coverImageCredit.photographer ?? 'Unsplash'}
+                  </a>
+                  {' · '}
+                  <a
+                    href={`https://unsplash.com/?utm_source=sonnalab&utm_medium=referral`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Unsplash
+                  </a>
+                </span>
+              )}
             </figcaption>
-            {post.coverImageCredit?.provider === 'unsplash' && (
-              <p className="blog-post-hero-photo-credit">
-                {t('photoBy')}{' '}
-                <a
-                  href={post.coverImageCredit.photographerUrl ?? `https://unsplash.com/?utm_source=sonnalab&utm_medium=referral`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {post.coverImageCredit.photographer ?? 'Unsplash'}
-                </a>
-                {' '}{t('on')}{' '}
-                <a
-                  href={post.coverImageCredit.sourceUrl ?? `https://unsplash.com/?utm_source=sonnalab&utm_medium=referral`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Unsplash
-                </a>
-              </p>
-            )}
           </figure>
         </section>
 
@@ -270,6 +270,38 @@ export default function BlogPost() {
                   title={post.title}
                   excerpt={post.excerpt}
                 />
+                {post.coverImageCredit?.provider === 'unsplash' && (
+                  <div className="blog-unsplash-card">
+                    <a
+                      href={post.coverImageCredit.photographerUrl ?? `https://unsplash.com/?utm_source=sonnalab&utm_medium=referral`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="blog-unsplash-photographer"
+                    >
+                      {post.coverImageCredit.photographerAvatar ? (
+                        <img
+                          src={post.coverImageCredit.photographerAvatar}
+                          alt={post.coverImageCredit.photographer ?? ''}
+                          className="blog-unsplash-avatar"
+                        />
+                      ) : (
+                        <span className="blog-unsplash-avatar-initial" aria-hidden="true">
+                          {(post.coverImageCredit.photographer ?? 'U')[0].toUpperCase()}
+                        </span>
+                      )}
+                      <span>{post.coverImageCredit.photographer ?? 'Photographer'}</span>
+                    </a>
+                    <a
+                      href={`https://unsplash.com/?utm_source=sonnalab&utm_medium=referral`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="blog-unsplash-brand"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M10 9V0h12v9H10zm12 5h10v18H0V14h10v9h12v-9z"/></svg>
+                      <span>Unsplash</span>
+                    </a>
+                  </div>
+                )}
               </div>
             </aside>
           </div>

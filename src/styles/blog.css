@@ -643,20 +643,23 @@
 }
 
 .blog-post-hero-caption {
-  max-width: 760px;
-  margin: 0.85rem auto 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0.7rem 0 0;
   color: #667085;
-  font-size: 0.86rem;
+  font-size: 0.82rem;
   font-weight: 700;
-  line-height: 1.65;
-  text-align: center;
+  line-height: 1.55;
 }
 
 .blog-post-hero-photo-credit {
-  margin: 0.35rem auto 0;
+  flex-shrink: 0;
+  white-space: nowrap;
   color: #9ba8b5;
   font-size: 0.75rem;
-  text-align: center;
+  font-weight: 400;
 }
 
 .blog-post-hero-photo-credit a {
@@ -667,6 +670,77 @@
 
 .blog-post-hero-photo-credit a:hover {
   color: #667085;
+}
+
+/* ── Unsplash sidebar card ──────────────────────────────────── */
+.blog-unsplash-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 0.8rem;
+}
+
+.blog-unsplash-photographer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #374151;
+  font-weight: 600;
+  text-decoration: none;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.blog-unsplash-photographer:hover {
+  color: #111827;
+}
+
+.blog-unsplash-photographer span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.blog-unsplash-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid #e2e8f0;
+}
+
+.blog-unsplash-avatar-initial {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #111827;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.blog-unsplash-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #6b7280;
+  font-weight: 500;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.blog-unsplash-brand:hover {
+  color: #111827;
 }
 
 .blog-post-content-shell {
