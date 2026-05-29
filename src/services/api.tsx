@@ -668,6 +668,8 @@ class ApiService {
   async adminLesankofaClients()           { return (await this.client.get('/api/v1/admin/lesankofa/clients')).data; }
   async adminLesankofaClientDetail(id: string) { return (await this.client.get(`/api/v1/admin/lesankofa/clients/${id}`)).data; }
   async adminLesankofaTasks()             { return (await this.client.get('/api/v1/admin/lesankofa/tasks')).data; }
+  async adminLesankofaContainers()        { return (await this.client.get('/api/v1/admin/lesankofa/containers')).data; }
+  async adminLesankofaContainerLogs(id: string, lines = 100) { return (await this.client.get(`/api/v1/admin/lesankofa/containers/${id}/logs`, { params: { lines } })).data; }
 
   getBaseUrl(): string {
     return API_BASE_URL;

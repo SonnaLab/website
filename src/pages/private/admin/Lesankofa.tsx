@@ -94,17 +94,14 @@ interface AIClientDetail extends AIClientRow {
   created_at?: string;
 }
 
-// ─────────────────────────────────────────────
-// Mock data (Infrastructure — containers)
-// ─────────────────────────────────────────────
-
-const MOCK_CONTAINERS = [
-  { id: 'ai-web',         image: 'ai.sonnalab.com:latest', status: 'running', started: '2026-05-24T10:00:00Z', cpu: '1.2%',  mem: '320 MiB' },
-  { id: 'ai-celery',      image: 'ai.sonnalab.com:latest', status: 'running', started: '2026-05-24T10:01:00Z', cpu: '0.4%',  mem: '180 MiB' },
-  { id: 'ai-celery-beat', image: 'ai.sonnalab.com:latest', status: 'running', started: '2026-05-24T10:01:00Z', cpu: '0.1%',  mem: '95 MiB'  },
-  { id: 'ai-redis',       image: 'redis:7-alpine',         status: 'running', started: '2026-05-24T09:58:00Z', cpu: '0.05%', mem: '28 MiB'  },
-  { id: 'ai-postgres',    image: 'postgres:16-alpine',     status: 'running', started: '2026-05-24T09:57:00Z', cpu: '0.8%',  mem: '410 MiB' },
-];
+interface ContainerRow {
+  id: string;
+  name: string;
+  image: string;
+  status: string;
+  state: string;
+  created: number | null;
+}
 
 // ─────────────────────────────────────────────
 // Helpers
@@ -467,97 +464,118 @@ function TasksTab() {
 // ─────────────────────────────────────────────
 
 function InfraTab() {
-  const [logContainer, setLogContainer] = useState<typeof MOCK_CONTAINERS[0] | null>(null);
+  const [containers, setContainers] = useState<ContainerRow[] | null>(null);
+  const [loading,    setLoading]    = useState(true);
+  const [error,      setError]      = useState<string | null>(null);
+  const [logTarget,  setLogTarget]  = useState<ContainerRow | null>(null);
+
+  const load = () => {
+    setLoading(true);
+    setError(null);
+    apiService.adminLesankofaContainers()
+      .then(d => setContainers(d.containers ?? []))
+      .catch(e => setError(e.message))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => { load(); }, []);
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-start gap-2 rounded-lg bg-zinc-100 px-3 py-2.5 text-xs text-zinc-600">
-        <InfoIcon size={13} className="mt-0.5 shrink-0 text-zinc-400" />
-        <span>
-          Conteneurs Docker actifs sur <strong className="text-zinc-800">ai.sonnalab.com</strong>. Données statiques — connecter{' '}
-          <code className="rounded bg-zinc-900 px-1.5 py-0.5 font-mono text-[11px] text-white">
-            GET /api/v1/admin/containers
-          </code>{' '}
-          pour les valeurs en temps réel.
-        </span>
-      </div>
+    <BaseTab loading={loading} error={error} onRetry={load}>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-muted-foreground">
+            Conteneurs Docker actifs sur <strong className="text-foreground">ai.sonnalab.com</strong>
+          </p>
+          <button
+            onClick={load}
+            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <RefreshCwIcon size={12} /> Rafraîchir
+          </button>
+        </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {MOCK_CONTAINERS.map(c => (
-          <Card key={c.id} className="p-4 space-y-3">
-            <div className="flex items-start justify-between gap-2">
-              <div>
-                <p className="font-medium text-sm text-foreground">{c.id}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">{c.image}</p>
+        {containers && containers.length === 0 && (
+          <p className="text-sm text-muted-foreground text-center py-8">Aucun conteneur trouvé.</p>
+        )}
+
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {(containers ?? []).map(c => (
+            <Card key={c.id} className="p-4 space-y-3">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="font-medium text-sm text-foreground truncate">{c.name}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 truncate">{c.image}</p>
+                </div>
+                <StatusBadgeLocal status={c.state} />
               </div>
-              <StatusBadgeLocal status={c.status} />
-            </div>
-            <div className="grid grid-cols-2 gap-1 text-xs text-muted-foreground">
-              <span>CPU</span>     <span className="text-right font-mono">{c.cpu}</span>
-              <span>Mémoire</span> <span className="text-right font-mono">{c.mem}</span>
-              <span>Démarré</span> <span className="text-right">{fmtDateShort(c.started)}</span>
-            </div>
-            <button
-              className="w-full flex items-center justify-center gap-1.5 text-xs text-muted-foreground hover:text-foreground border border-border rounded-lg py-1.5 transition-colors"
-              onClick={() => setLogContainer(c)}
-            >
-              <EyeIcon size={13} /> Logs en temps réel
-            </button>
-          </Card>
-        ))}
-      </div>
+              <div className="text-xs text-muted-foreground">
+                <span className="font-mono">{c.status}</span>
+              </div>
+              <button
+                className="w-full flex items-center justify-center gap-1.5 text-xs text-muted-foreground hover:text-foreground border border-border rounded-lg py-1.5 transition-colors"
+                onClick={() => setLogTarget(c)}
+              >
+                <EyeIcon size={13} /> Voir les logs
+              </button>
+            </Card>
+          ))}
+        </div>
 
-      {logContainer && (
-        <ContainerLogPanel container={logContainer} onClose={() => setLogContainer(null)} />
-      )}
-    </div>
+        {logTarget && (
+          <ContainerLogPanel container={logTarget} onClose={() => setLogTarget(null)} />
+        )}
+      </div>
+    </BaseTab>
   );
 }
 
-function ContainerLogPanel({ container, onClose }: { container: typeof MOCK_CONTAINERS[0]; onClose: () => void }) {
-  const [lines, setLines] = useState<string[]>([
-    `[INFO]  Attaching to ${container.id}…`,
-    `[INFO]  Worker prêt`,
-  ]);
+function ContainerLogPanel({ container, onClose }: { container: ContainerRow; onClose: () => void }) {
+  const [lines,   setLines]   = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error,   setError]   = useState<string | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
-  // Simulate log streaming
   useEffect(() => {
-    const msgs = [
-      `[INFO]  Heartbeat OK`,
-      `[DEBUG] Queue vide`,
-      `[INFO]  Connexion DB établie`,
-      `[INFO]  Requête traitée en 38ms`,
-      `[DEBUG] Cache hit`,
-      `[INFO]  Token usage: 1240 tokens`,
-    ];
-    let i = 0;
-    const id = setInterval(() => {
-      setLines(prev => [...prev.slice(-200), msgs[i % msgs.length]]);
-      i++;
-      endRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, 1200);
-    return () => clearInterval(id);
-  }, []);
+    setLoading(true);
+    setError(null);
+    apiService.adminLesankofaContainerLogs(container.name, 150)
+      .then(d => {
+        setLines(d.lines ?? []);
+        if (d.error) setError(d.error);
+      })
+      .catch(e => setError(e.message))
+      .finally(() => setLoading(false));
+  }, [container.name]);
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [lines]);
 
   return (
     <Modal
       open
       onClose={onClose}
-      title={container.id}
+      title={container.name}
       subtitle={container.image}
-      badge={<ModalStatusTag status={container.status} />}
+      badge={<ModalStatusTag status={container.state} />}
       size="lg"
     >
-      {/* Container metrics */}
       <div className="flex flex-wrap gap-5 text-sm text-muted-foreground mb-4">
-        <span>CPU <code className="font-mono text-foreground">{container.cpu}</code></span>
-        <span>Mémoire <code className="font-mono text-foreground">{container.mem}</code></span>
-        <span>Démarré {fmtDateShort(container.started)}</span>
+        <span>ID <code className="font-mono text-foreground">{container.id}</code></span>
+        <span>{container.status}</span>
       </div>
 
-      {/* Log stream */}
-      <div className="rounded-lg bg-zinc-950 text-zinc-200 font-mono text-xs p-4 h-64 overflow-y-auto overflow-x-hidden">
+      <div className="rounded-lg bg-zinc-950 text-zinc-200 font-mono text-xs p-4 h-72 overflow-y-auto overflow-x-hidden">
+        {loading && (
+          <p className="text-zinc-400 animate-pulse">Chargement des logs…</p>
+        )}
+        {error && (
+          <p className="text-red-400">[ERROR] {error}</p>
+        )}
+        {!loading && lines.length === 0 && !error && (
+          <p className="text-zinc-500">Aucun log disponible.</p>
+        )}
         <div className="space-y-0.5">
           {lines.map((l, i) => (
             <div key={i} className="break-all whitespace-pre-wrap">{l}</div>
@@ -949,8 +967,27 @@ function fmtNum(n: number) {
 // Page root
 // ─────────────────────────────────────────────
 
+const VALID_TABS = ['overview', 'tasks', 'infrastructure', 'clients', 'model'] as const;
+type TabValue = typeof VALID_TABS[number];
+
+function readHashTab(): TabValue {
+  const hash = window.location.hash.replace('#tab-', '');
+  return (VALID_TABS as readonly string[]).includes(hash) ? (hash as TabValue) : 'overview';
+}
+
 export default function AdminLesankofa() {
-  const [tab, setTab] = useState('overview');
+  const [tab, setTab] = useState<TabValue>(readHashTab);
+
+  useEffect(() => {
+    const onPop = () => setTab(readHashTab());
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+
+  const handleTabChange = (v: string) => {
+    setTab(v as TabValue);
+    history.replaceState(null, '', `#tab-${v}`);
+  };
 
   return (
     <div className="admin-news">
@@ -962,7 +999,7 @@ export default function AdminLesankofa() {
         <p className="admin-news__header-sub">Tableau de bord IA — modèles, tâches, infrastructure, clients</p>
       </header>
 
-      <Tabs value={tab} onValueChange={setTab}>
+      <Tabs value={tab} onValueChange={handleTabChange}>
         <TabsList>
           <TabsTrigger value="overview"       icon={<TrendingUpIcon   size={14} />}>Overview</TabsTrigger>
           <TabsTrigger value="tasks"          icon={<ZapIcon          size={14} />}>Tasks</TabsTrigger>
