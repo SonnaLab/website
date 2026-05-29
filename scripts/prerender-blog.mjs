@@ -43,6 +43,26 @@ function jsonSafe(value) {
   return JSON.stringify(value).replace(/</g, '\\u003c').replace(/>/g, '\\u003e');
 }
 
+function buildHreflangLinks(article) {
+  const selfUrl = `${BASE_URL}/blog/${article.slug}`;
+  const alternates = Array.isArray(article.hreflang_alternates) ? article.hreflang_alternates : [];
+  const map = new Map();
+  // Always include self
+  map.set(article.locale, selfUrl);
+  for (const alt of alternates) {
+    if (alt && alt.locale && alt.slug) {
+      map.set(alt.locale, `${BASE_URL}/blog/${alt.slug}`);
+    }
+  }
+  const links = [...map.entries()].map(([loc, href]) =>
+    `<link rel="alternate" hreflang="${loc}" href="${href}" />`
+  );
+  // x-default = FR if present, else self
+  const xDefault = map.get('fr') || selfUrl;
+  links.push(`<link rel="alternate" hreflang="x-default" href="${xDefault}" />`);
+  return links;
+}
+
 async function fetchArticles(locale) {
   const url = `${API_URL}/api/v1/seo/articles?locale=${locale}`;
   const res = await fetch(url, { signal: AbortSignal.timeout(TIMEOUT) });
@@ -123,8 +143,7 @@ function buildArticleHead(article, template) {
     `<meta property="article:published_time" content="${article.published_at}" />`,
     `<meta property="article:modified_time" content="${article.updated_at}" />`,
     `<meta property="og:image:alt" content="${escapeHtml(imageAlt)}" />`,
-    `<link rel="alternate" hreflang="${article.locale}" href="${url}" />`,
-    `<link rel="alternate" hreflang="x-default" href="${url}" />`,
+    ...buildHreflangLinks(article),
     `<script type="application/ld+json">${jsonSafe(articleLd)}</script>`
   ].join('\n    ');
 
