@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 
 import { apiService } from '@/services/api';
+import { BaseTab } from '@/components/common/BaseTab';
 import { Modal } from '@/components/common/Modal';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
 import { DataTable, DataTableHead, DataTableBody, DataTableRow, DataTableTh, DataTableTd, DataTableEmpty } from '@/components/common/DataTable';
@@ -22,12 +23,20 @@ import {
   CheckCircle2Icon,
   AlertTriangleIcon,
   XCircleIcon,
-  InfoIcon,
 } from '@icons';
 
 // ─────────────────────────────────────────────
 // Types
 // ─────────────────────────────────────────────
+
+interface TaskRow {
+  name: string;
+  task: string;
+  schedule: string | null;
+  kwargs: Record<string, unknown>;
+  last_run_at: string | null;
+  status: string;
+}
 
 interface AIModelRow {
   id: number;
@@ -86,17 +95,8 @@ interface AIClientDetail extends AIClientRow {
 }
 
 // ─────────────────────────────────────────────
-// Mock data (Tasks + Infrastructure — brancher sur endpoints à créer)
+// Mock data (Infrastructure — containers)
 // ─────────────────────────────────────────────
-
-const MOCK_TASKS = [
-  { id: 1, name: 'article_generation',   schedule: '0 */2 * * *',  last_run: '2026-05-25T08:00:00Z', status: 'idle'    },
-  { id: 2, name: 'seo_scraping',         schedule: '0 3 * * *',    last_run: '2026-05-25T03:00:00Z', status: 'idle'    },
-  { id: 3, name: 'keyword_analysis',     schedule: '30 4 * * 1',   last_run: '2026-05-19T04:30:00Z', status: 'idle'    },
-  { id: 4, name: 'sitemap_refresh',      schedule: '0 * * * *',    last_run: '2026-05-25T09:00:00Z', status: 'running' },
-  { id: 5, name: 'quota_reset',          schedule: '0 0 * * *',    last_run: '2026-05-25T00:00:00Z', status: 'idle'    },
-  { id: 6, name: 'image_asset_cleanup',  schedule: '0 2 * * 0',    last_run: '2026-05-18T02:00:00Z', status: 'error'   },
-];
 
 const MOCK_CONTAINERS = [
   { id: 'ai-web',         image: 'ai.sonnalab.com:latest', status: 'running', started: '2026-05-24T10:00:00Z', cpu: '1.2%',  mem: '320 MiB' },
@@ -370,56 +370,64 @@ function OverviewTab() {
 // ─────────────────────────────────────────────
 
 function TasksTab() {
-  const [selected, setSelected] = useState<typeof MOCK_TASKS[0] | null>(null);
+  const [tasks,    setTasks]    = useState<TaskRow[]>([]);
+  const [loading,  setLoading]  = useState(true);
+  const [error,    setError]    = useState<string | null>(null);
+  const [selected, setSelected] = useState<TaskRow | null>(null);
+
+  const load = () => {
+    setLoading(true);
+    setError(null);
+    apiService.adminLesankofaTasks()
+      .then((data: { tasks: TaskRow[] }) => { setTasks(data.tasks ?? []); })
+      .catch(() => { setError('Impossible de charger les tâches Celery.'); })
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => { load(); }, []);
 
   return (
     <div className="space-y-4">
-      <div className="flex items-start gap-2 rounded-lg bg-zinc-100 px-3 py-2.5 text-xs text-zinc-600">
-        <InfoIcon size={13} className="mt-0.5 shrink-0 text-zinc-400" />
-        <span>
-          Tâches Celery périodiques. Données statiques — connecter{' '}
-          <code className="rounded bg-zinc-900 px-1.5 py-0.5 font-mono text-[11px] text-white">
-            GET /api/v1/admin/tasks
-          </code>{' '}
-          une fois l'endpoint créé côté AI.
-        </span>
-      </div>
-
-      <DataTable>
-        <DataTableHead>
-          <DataTableRow>
-            <DataTableTh>Tâche</DataTableTh>
-            <DataTableTh>Planification (cron)</DataTableTh>
-            <DataTableTh>Dernier déclenchement</DataTableTh>
-            <DataTableTh>Statut</DataTableTh>
-            <DataTableTh>Action</DataTableTh>
-          </DataTableRow>
-        </DataTableHead>
-        <DataTableBody>
-          {MOCK_TASKS.map(t => (
-            <DataTableRow key={t.id}>
-              <DataTableTd>
-                <code className="text-xs bg-muted px-1.5 py-0.5 rounded">{t.name}</code>
-              </DataTableTd>
-              <DataTableTd>
-                <code className="text-xs text-muted-foreground">{t.schedule}</code>
-              </DataTableTd>
-              <DataTableTd>{fmtDate(t.last_run)}</DataTableTd>
-              <DataTableTd><StatusBadgeLocal status={t.status} /></DataTableTd>
-              <DataTableTd>
-                <div className="adm-table__actions">
-                  <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(t)} title="Détails">
-                    <EyeIcon size={13} />
-                  </button>
-                  <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title="Modifier (à venir)" disabled>
-                    <PenLineIcon size={13} />
-                  </button>
-                </div>
-              </DataTableTd>
+      <BaseTab loading={loading} error={error} onRetry={load}>
+        <DataTable>
+          <DataTableHead>
+            <DataTableRow>
+              <DataTableTh>Tâche</DataTableTh>
+              <DataTableTh>Planification (cron)</DataTableTh>
+              <DataTableTh>Dernier déclenchement</DataTableTh>
+              <DataTableTh>Statut</DataTableTh>
+              <DataTableTh>Action</DataTableTh>
             </DataTableRow>
-          ))}
-        </DataTableBody>
-      </DataTable>
+          </DataTableHead>
+          <DataTableBody>
+            {tasks.length === 0 && (
+              <DataTableEmpty colSpan={5} message="Aucune tâche trouvée." />
+            )}
+            {tasks.map(t => (
+              <DataTableRow key={t.name}>
+                <DataTableTd>
+                  <code className="text-xs bg-muted px-1.5 py-0.5 rounded">{t.name}</code>
+                </DataTableTd>
+                <DataTableTd>
+                  <code className="text-xs text-muted-foreground">{t.schedule ?? '—'}</code>
+                </DataTableTd>
+                <DataTableTd>{fmtDate(t.last_run_at)}</DataTableTd>
+                <DataTableTd><StatusBadgeLocal status={t.status} /></DataTableTd>
+                <DataTableTd>
+                  <div className="adm-table__actions">
+                    <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(t)} title="Détails">
+                      <EyeIcon size={13} />
+                    </button>
+                    <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title="Modifier (à venir)" disabled>
+                      <PenLineIcon size={13} />
+                    </button>
+                  </div>
+                </DataTableTd>
+              </DataTableRow>
+            ))}
+          </DataTableBody>
+        </DataTable>
+      </BaseTab>
 
       {/* Task detail modal */}
       <Modal
@@ -427,17 +435,22 @@ function TasksTab() {
         onClose={() => setSelected(null)}
         title={selected?.name ?? ''}
         subtitle={selected
-          ? <span><code className="font-mono">{selected.schedule}</code> — {describeCron(selected.schedule)} · Dernier run : {fmtDate(selected.last_run)}</span>
+          ? <span><code className="font-mono">{selected.schedule ?? '—'}</code>{selected.schedule ? ` — ${describeCron(selected.schedule)}` : ''} · Dernier run : {fmtDate(selected.last_run_at)}</span>
           : undefined}
         badge={selected ? <ModalStatusTag status={selected.status} /> : undefined}
         size="md"
       >
         {selected && (
           <div className="rounded-lg bg-zinc-950 text-zinc-200 font-mono text-xs p-4 space-y-0.5 overflow-y-auto max-h-60 overflow-x-hidden">
-            <div>[INFO] Task {selected.name} — last run {fmtDate(selected.last_run)}</div>
-            <div>[INFO] Status : {selected.status}</div>
+            <div>[INFO] Task: {selected.task}</div>
+            <div>[INFO] Entry: {selected.name}</div>
+            <div>[INFO] Last run: {fmtDate(selected.last_run_at)}</div>
+            <div>[INFO] Status: {selected.status}</div>
+            {Object.keys(selected.kwargs).length > 0 && (
+              <div>[INFO] kwargs: {JSON.stringify(selected.kwargs)}</div>
+            )}
             {selected.status === 'error' && (
-              <div className="text-red-400">[ERROR] Connexion refusée au service de nettoyage d'assets</div>
+              <div className="text-red-400">[ERROR] La dernière exécution a échoué.</div>
             )}
             {selected.status === 'running' && (
               <div className="text-green-400">[INFO] En cours d'exécution…</div>
