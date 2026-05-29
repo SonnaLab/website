@@ -147,6 +147,14 @@ function buildArticleHead(article, template) {
     `<script type="application/ld+json">${jsonSafe(articleLd)}</script>`
   ].join('\n    ');
 
+  if (article.noindex) {
+    html = html.replace(/<meta name="robots" content="[^"]*"\s*\/>/,
+      `<meta name="robots" content="noindex,follow" />`);
+    if (!/name="robots"/.test(html)) {
+      html = html.replace('</head>', `    <meta name="robots" content="noindex,follow" />\n  </head>`);
+    }
+  }
+
   html = html.replace('</head>', `    ${articleExtras}\n  </head>`);
 
   return html;
