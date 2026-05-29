@@ -166,6 +166,7 @@ async function run() {
   let written = 0;
   let redirects = 0;
   let failures = 0;
+  const redirectMap = [];
 
   for (const locale of LOCALES) {
     let articles;
@@ -188,11 +189,26 @@ async function run() {
         : buildArticleHead(article, template);
 
       await writeFile(join(targetDir, 'index.html'), html, 'utf-8');
-      if (article.redirected_to_slug) redirects++; else written++;
+      if (article.redirected_to_slug) {
+        redirects++;
+        redirectMap.push(`/blog/${article.slug} /blog/${article.redirected_to_slug};`);
+      } else {
+        written++;
+      }
     }
   }
 
+  const mapPath = join(BUILD_DIR, 'blog-redirects.map');
+  await writeFile(
+    mapPath,
+    redirectMap.length
+      ? redirectMap.join('\n') + '\n'
+      : '# (no redirects)\n',
+    'utf-8'
+  );
+
   warn(`Done: ${written} article pages, ${redirects} redirect stubs, ${failures} locale failures.`);
+  warn(`Wrote ${mapPath} (${redirectMap.length} entries)`);
   if (failures === LOCALES.length) process.exit(1);
 }
 
