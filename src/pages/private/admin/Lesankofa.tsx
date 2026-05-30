@@ -26,6 +26,21 @@ import {
 } from '@icons';
 
 // ─────────────────────────────────────────────
+// Additional types
+// ─────────────────────────────────────────────
+
+interface LesankofaEvent {
+  id: string;
+  event_type: string;   // 'task_run' | 'article_generated' | 'push_success' | 'push_failed'
+  client_id: string | null;
+  entity_type: string | null;
+  entity_name: string | null;
+  status: string | null;
+  meta: Record<string, unknown> | null;
+  created_at: string | null;
+}
+
+// ─────────────────────────────────────────────
 // Types
 // ─────────────────────────────────────────────
 
@@ -161,25 +176,24 @@ function StatusBadgeLocal({ status }: { status: string }) {
 
 const MODEL_PER_PAGE = 10;
 
+// ─────────────────────────────────────────────
+// Overview Tab (KPIs only)
+// ─────────────────────────────────────────────
+
 function OverviewTab() {
-  const [models,        setModels]        = useState<AIModelRow[] | null>(null);
-  const [stats,         setStats]         = useState<AIStatsRow  | null>(null);
-  const [clientCount,   setClientCount]   = useState<number | null>(null);
-  const [loading,       setLoading]       = useState(true);
-  const [error,         setError]         = useState<string | null>(null);
-  const [modelPage,     setModelPage]     = useState(1);
-  const [selectedModel, setSelectedModel] = useState<AIModelRow | null>(null);
+  const [stats,       setStats]       = useState<AIStatsRow | null>(null);
+  const [clientCount, setClientCount] = useState<number | null>(null);
+  const [loading,     setLoading]     = useState(true);
+  const [error,       setError]       = useState<string | null>(null);
 
   const load = () => {
     setLoading(true);
     setError(null);
     Promise.all([
-      apiService.adminLesankofaModels(),
       apiService.adminLesankofaModelStats(),
       apiService.adminLesankofaClients().catch(() => null),
     ])
-      .then(([m, s, c]) => {
-        setModels(m);
+      .then(([s, c]) => {
         setStats(s);
         const clients: AIClientRow[] = c?.clients ?? c ?? [];
         setClientCount(clients.filter((cl: AIClientRow) => cl.is_active).length);
@@ -190,25 +204,13 @@ function OverviewTab() {
 
   useEffect(() => { load(); }, []);
 
-  const pagedModels = models?.slice((modelPage - 1) * MODEL_PER_PAGE, modelPage * MODEL_PER_PAGE);
-  const totalPages  = models ? Math.ceil(models.length / MODEL_PER_PAGE) : 1;
-
   return (
     <div className="space-y-6">
-      {/* KPI strip — inline row */}
       <div className="flex items-stretch gap-3 overflow-x-auto">
-        <KpiCard label="Modèles actifs"      value={stats ? String(stats.active_models)         : '—'} icon={<BrainIcon  size={16} />} />
-        <KpiCard label="Requêtes aujourd'hui" value={stats ? String(stats.total_requests_today) : '—'} icon={<ZapIcon    size={16} />} />
-        <KpiCard label="Tokens aujourd'hui"  value={stats ? fmtNum(stats.total_tokens_today)    : '—'} icon={<LayersIcon size={16} />} />
-        <KpiCard label="Clients actifs"      value={clientCount !== null ? String(clientCount) : '—'}  icon={<UsersIcon  size={16} />} />
-      </div>
-
-      {/* Actions row */}
-      <div className="flex justify-end">
-        <Button variant="outline" size="sm" onClick={load} disabled={loading}>
-          <RefreshCwIcon className={`size-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-          Actualiser
-        </Button>
+        <KpiCard label="Modèles actifs"       value={stats ? String(stats.active_models)         : '—'} icon={<BrainIcon  size={16} />} />
+        <KpiCard label="Requêtes aujourd'hui" value={stats ? String(stats.total_requests_today)  : '—'} icon={<ZapIcon    size={16} />} />
+        <KpiCard label="Tokens aujourd'hui"   value={stats ? fmtNum(stats.total_tokens_today)    : '—'} icon={<LayersIcon size={16} />} />
+        <KpiCard label="Clients actifs"       value={clientCount !== null ? String(clientCount) : '—'} icon={<UsersIcon  size={16} />} />
       </div>
 
       {error && (
@@ -217,99 +219,207 @@ function OverviewTab() {
         </p>
       )}
 
-      {/* Models table */}
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-semibold text-foreground">Modèles IA</h3>
-          {models && models.length > MODEL_PER_PAGE && (
-            <span className="text-xs text-muted-foreground">{models.length} modèles</span>
-          )}
-        </div>
-        <DataTable>
-          <DataTableHead>
-            <DataTableRow>
-              <DataTableTh>Modèle</DataTableTh>
-              <DataTableTh>Provider</DataTableTh>
-              <DataTableTh>Tier</DataTableTh>
-              <DataTableTh>Statut</DataTableTh>
-              <DataTableTh>Req. aujourd'hui</DataTableTh>
-              <DataTableTh>Tokens</DataTableTh>
-              <DataTableTh>Quota restant</DataTableTh>
-              <DataTableTh>Actions</DataTableTh>
-            </DataTableRow>
-          </DataTableHead>
-          <DataTableBody>
-            {!models && !error && <DataTableEmpty label="Chargement…" />}
-            {models && models.length === 0 && <DataTableEmpty label="Aucun modèle trouvé" />}
-            {pagedModels?.map(m => (
-              <DataTableRow key={m.id}>
-                <DataTableTd>
-                  <div className="font-medium text-foreground">{m.name}</div>
-                  <div className="text-xs text-muted-foreground">{m.model_identifier}</div>
-                </DataTableTd>
-                <DataTableTd>{m.provider}</DataTableTd>
-                <DataTableTd>
-                  <Badge variant={m.tier === 'free' ? 'secondary' : 'default'}>{m.tier}</Badge>
-                </DataTableTd>
-                <DataTableTd>
-                  {m.is_available
-                    ? <Badge variant="default">Disponible</Badge>
-                    : m.is_active
-                      ? <Badge variant="outline">Quota épuisé</Badge>
-                      : <Badge variant="destructive">Inactif</Badge>}
-                </DataTableTd>
-                <DataTableTd>{m.requests_today}</DataTableTd>
-                <DataTableTd>{fmtNum(m.tokens_today)}</DataTableTd>
-                <DataTableTd>{m.quota_remaining ?? '∞'}</DataTableTd>
-                <DataTableTd>
-                  <button
-                    type="button"
-                    className="adm-btn adm-btn--ghost adm-btn--xs"
-                    onClick={() => setSelectedModel(m)}
-                    title="Détails du modèle"
-                  >
-                    <EyeIcon size={13} />
-                  </button>
-                </DataTableTd>
-              </DataTableRow>
-            ))}
-          </DataTableBody>
-        </DataTable>
+      <RecentActivityCard />
+    </div>
+  );
+}
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between px-2 py-3 border-t border-border">
-            <span className="text-xs text-muted-foreground">
-              Page {modelPage} / {totalPages}
-            </span>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" disabled={modelPage === 1} onClick={() => setModelPage(p => p - 1)}>←</Button>
-              <Button variant="outline" size="sm" disabled={modelPage === totalPages} onClick={() => setModelPage(p => p + 1)}>→</Button>
+// ─────────────────────────────────────────────
+// Recent Activity Card
+// ─────────────────────────────────────────────
+
+function eventLabel(e: LesankofaEvent): string {
+  const client = e.client_id ? ` · ${e.client_id}` : '';
+  switch (e.event_type) {
+    case 'task_run':          return `Tâche ${e.entity_name ?? ''}${client}`;
+    case 'article_generated': return `Article généré${client}${e.entity_name ? ` — ${e.entity_name}` : ''}`;
+    case 'push_success':      return `Push réussi${client}${e.entity_name ? ` — ${e.entity_name}` : ''}`;
+    case 'push_failed':       return `Push échoué${client}${e.entity_name ? ` — ${e.entity_name}` : ''}`;
+    default:                  return e.entity_name ?? e.event_type;
+  }
+}
+
+function eventIcon(e: LesankofaEvent) {
+  if (e.status === 'error' || e.event_type === 'push_failed')
+    return <XCircleIcon size={13} className="text-destructive flex-shrink-0" />;
+  if (e.status === 'success' || e.event_type === 'push_success')
+    return <CheckCircle2Icon size={13} className="text-green-500 flex-shrink-0" />;
+  return <ZapIcon size={13} className="text-muted-foreground flex-shrink-0" />;
+}
+
+function RecentActivityCard() {
+  const [events,  setEvents]  = useState<LesankofaEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error,   setError]   = useState<string | null>(null);
+
+  const load = () => {
+    setLoading(true);
+    setError(null);
+    apiService.adminLesankofaHistory(10)
+      .then((d: { events: LesankofaEvent[] }) => setEvents(d.events ?? []))
+      .catch((e: Error) => setError(e.message))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => { load(); }, []);
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-semibold text-foreground">Activité récente</h3>
+        <button
+          onClick={load}
+          className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <RefreshCwIcon size={11} className={loading ? 'animate-spin' : ''} /> Actualiser
+        </button>
+      </div>
+      {error && (
+        <p className="text-xs text-destructive">{error}</p>
+      )}
+      {!error && events.length === 0 && !loading && (
+        <p className="text-xs text-muted-foreground py-2">Aucune activité enregistrée.</p>
+      )}
+      {events.length > 0 && (
+        <div className="divide-y divide-border rounded-xl border border-border overflow-hidden">
+          {events.slice(0, 10).map(e => (
+            <div key={e.id} className="flex items-center gap-3 px-4 py-2.5 bg-background hover:bg-muted/30 transition-colors">
+              {eventIcon(e)}
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-foreground truncate">{eventLabel(e)}</p>
+              </div>
+              <span className="text-xs text-muted-foreground flex-shrink-0">{fmtDate(e.created_at)}</span>
             </div>
-          </div>
-        )}
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
+// Modèles Tab
+// ─────────────────────────────────────────────
+
+function ModelsTab() {
+  const [models,        setModels]        = useState<AIModelRow[] | null>(null);
+  const [loading,       setLoading]       = useState(true);
+  const [error,         setError]         = useState<string | null>(null);
+  const [modelPage,     setModelPage]     = useState(1);
+  const [selectedModel, setSelectedModel] = useState<AIModelRow | null>(null);
+
+  const load = () => {
+    setLoading(true);
+    setError(null);
+    apiService.adminLesankofaModels()
+      .then(m => setModels(m))
+      .catch(e => setError(e.message))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const pagedModels = models?.slice((modelPage - 1) * MODEL_PER_PAGE, modelPage * MODEL_PER_PAGE);
+  const totalPages  = models ? Math.ceil(models.length / MODEL_PER_PAGE) : 1;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <span className="text-xs text-muted-foreground">
+          {models ? `${models.length} modèles` : ''}
+        </span>
+        <Button variant="outline" size="sm" onClick={load} disabled={loading}>
+          <RefreshCwIcon className={`size-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+          Actualiser
+        </Button>
       </div>
 
-      {/* Recent activity — improved */}
+      {error && (
+        <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-4 py-3">
+          Erreur : {error}
+        </p>
+      )}
+
+      <DataTable>
+        <DataTableHead>
+          <DataTableRow>
+            <DataTableTh>Modèle</DataTableTh>
+            <DataTableTh>Provider</DataTableTh>
+            <DataTableTh>Tier</DataTableTh>
+            <DataTableTh>Statut</DataTableTh>
+            <DataTableTh>Req. aujourd'hui</DataTableTh>
+            <DataTableTh>Tokens</DataTableTh>
+            <DataTableTh>Quota restant</DataTableTh>
+            <DataTableTh>Actions</DataTableTh>
+          </DataTableRow>
+        </DataTableHead>
+        <DataTableBody>
+          {!models && !error && <DataTableEmpty label="Chargement…" />}
+          {models && models.length === 0 && <DataTableEmpty label="Aucun modèle trouvé" />}
+          {pagedModels?.map(m => (
+            <DataTableRow key={m.id}>
+              <DataTableTd>
+                <div className="font-medium text-foreground">{m.name}</div>
+                <div className="text-xs text-muted-foreground">{m.model_identifier}</div>
+              </DataTableTd>
+              <DataTableTd>{m.provider}</DataTableTd>
+              <DataTableTd>
+                <Badge variant={m.tier === 'free' ? 'secondary' : 'default'}>{m.tier}</Badge>
+              </DataTableTd>
+              <DataTableTd>
+                {m.is_available
+                  ? <Badge variant="default">Disponible</Badge>
+                  : m.is_active
+                    ? <Badge variant="outline">Quota épuisé</Badge>
+                    : <Badge variant="destructive">Inactif</Badge>}
+              </DataTableTd>
+              <DataTableTd>{m.requests_today}</DataTableTd>
+              <DataTableTd>{fmtNum(m.tokens_today)}</DataTableTd>
+              <DataTableTd>{m.quota_remaining ?? '∞'}</DataTableTd>
+              <DataTableTd>
+                <button
+                  type="button"
+                  className="adm-btn adm-btn--ghost adm-btn--xs"
+                  onClick={() => setSelectedModel(m)}
+                  title="Détails du modèle"
+                >
+                  <EyeIcon size={13} />
+                </button>
+              </DataTableTd>
+            </DataTableRow>
+          ))}
+        </DataTableBody>
+      </DataTable>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between px-2 py-3 border-t border-border">
+          <span className="text-xs text-muted-foreground">Page {modelPage} / {totalPages}</span>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" disabled={modelPage === 1} onClick={() => setModelPage(p => p - 1)}>←</Button>
+            <Button variant="outline" size="sm" disabled={modelPage === totalPages} onClick={() => setModelPage(p => p + 1)}>→</Button>
+          </div>
+        </div>
+      )}
+
+      {/* Recent activity */}
       {models && models.length > 0 && (() => {
         const active = models.filter(m => m.requests_today > 0).slice(0, 4);
-        if (active.length === 0) return <p className="text-sm text-muted-foreground">Aucune requête aujourd'hui.</p>;
+        if (active.length === 0) return null;
         const maxReq = Math.max(...active.map(m => m.requests_today), 1);
         return (
-          <div>
+          <div className="mt-6">
             <h3 className="text-sm font-semibold text-foreground mb-3">Modèles récemment actifs</h3>
             <div className="divide-y divide-border rounded-xl border border-border overflow-hidden">
               {active.map(m => (
                 <div
                   key={m.id}
-                  className="flex items-center gap-4 px-4 py-3 bg-background hover:bg-muted/40 cursor-pointer transition-colors group"
+                  className="flex items-center gap-4 px-4 py-3 bg-background hover:bg-muted/40 cursor-pointer transition-colors"
                   onClick={() => setSelectedModel(m)}
                 >
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-sm text-foreground truncate">{m.name}</p>
                     <p className="text-xs text-muted-foreground">{m.provider}</p>
                   </div>
-                  {/* Mini usage bar */}
                   <div className="w-20 flex-shrink-0">
                     <div className="h-1.5 rounded-full bg-muted overflow-hidden">
                       <div
@@ -398,7 +508,7 @@ function TasksTab() {
           </DataTableHead>
           <DataTableBody>
             {tasks.length === 0 && (
-              <DataTableEmpty colSpan={5} message="Aucune tâche trouvée." />
+              <DataTableEmpty label="Aucune tâche trouvée." />
             )}
             {tasks.map(t => (
               <DataTableRow key={t.name}>
@@ -967,7 +1077,7 @@ function fmtNum(n: number) {
 // Page root
 // ─────────────────────────────────────────────
 
-const VALID_TABS = ['overview', 'tasks', 'infrastructure', 'clients', 'model'] as const;
+const VALID_TABS = ['overview', 'tasks', 'models', 'infrastructure', 'clients', 'model'] as const;
 type TabValue = typeof VALID_TABS[number];
 
 function readHashTab(): TabValue {
@@ -1003,9 +1113,10 @@ export default function AdminLesankofa() {
         <TabsList>
           <TabsTrigger value="overview"       icon={<TrendingUpIcon   size={14} />}>Overview</TabsTrigger>
           <TabsTrigger value="tasks"          icon={<ZapIcon          size={14} />}>Tasks</TabsTrigger>
+          <TabsTrigger value="models"         icon={<BrainIcon        size={14} />}>Modèles</TabsTrigger>
           <TabsTrigger value="infrastructure" icon={<ServerIcon       size={14} />}>Infrastructure</TabsTrigger>
           <TabsTrigger value="clients"        icon={<UsersIcon        size={14} />}>Clients</TabsTrigger>
-          <TabsTrigger value="model"          icon={<LayersIcon       size={14} />}>Model</TabsTrigger>
+          <TabsTrigger value="model"          icon={<LayersIcon       size={14} />}>Schéma</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview">
@@ -1013,6 +1124,9 @@ export default function AdminLesankofa() {
         </TabsContent>
         <TabsContent value="tasks">
           <TasksTab />
+        </TabsContent>
+        <TabsContent value="models">
+          <ModelsTab />
         </TabsContent>
         <TabsContent value="infrastructure">
           <InfraTab />
