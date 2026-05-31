@@ -149,7 +149,7 @@ export function ConsultationModal() {
 
   return (
     <Dialog open={isConsultationModalOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden p-0 gap-0">
+      <DialogContent hideClose className="max-w-4xl max-h-[90vh] overflow-hidden p-0 gap-0">
         {/* Accessibility - Hidden Title & Description */}
         <VisuallyHidden>
           <DialogTitle>

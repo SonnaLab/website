@@ -11,6 +11,7 @@ import { RelatedArticles } from '@/components/public/blog/RelatedArticles';
 import { BlogPost as BlogPostType } from '@/types/blog';
 import { Button } from '@/components/ui/button';
 import { useBlogTracking } from '@/hooks/useAnalytics';
+import { useAutoConsultationTrigger } from '@/hooks/useAutoConsultationTrigger';
 import { apiService } from '@/services/api';
 
 function getArticleBodyContent(content: string): string {
@@ -30,6 +31,10 @@ export default function BlogPost() {
 
   // ✅ Hook appelé AVANT toute condition
   useBlogTracking(slug || '', post?.category);
+
+  // Invitation stratégique à nous contacter : s'arme une fois l'article chargé,
+  // se déclenche au plus une fois par session sur les lecteurs engagés.
+  useAutoConsultationTrigger({ enabled: !!post && !loading });
 
   useEffect(() => {
     const SUPPORTED_LOCALES = ['fr', 'en', 'es', 'it', 'de'];
