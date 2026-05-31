@@ -288,39 +288,49 @@ function fmtRelative(iso?: string | null): string {
   return fmtDateShort(iso);
 }
 
-function eventIcon(e: LesankofaEvent) {
+// Status tone → tinted icon badge (no left bars / shadows, brand-color variants only).
+function eventTone(e: LesankofaEvent) {
   if (e.status === 'error' || e.event_type === 'push_failed')
-    return <XCircleIcon size={15} className="text-destructive" />;
+    return { icon: <XCircleIcon size={14} />,      ring: 'text-destructive bg-destructive/10 ring-destructive/20' };
   if (e.status === 'success' || e.event_type === 'push_success')
-    return <CheckCircle2Icon size={15} className="text-green-500" />;
+    return { icon: <CheckCircle2Icon size={14} />, ring: 'text-green-600 bg-green-500/10 ring-green-500/20' };
   if (e.event_type === 'article_generated')
-    return <PenLineIcon size={15} className="text-primary" />;
-  return <ZapIcon size={15} className="text-muted-foreground" />;
+    return { icon: <PenLineIcon size={14} />,      ring: 'text-primary bg-primary/10 ring-primary/20' };
+  return { icon: <ZapIcon size={14} />,            ring: 'text-muted-foreground bg-muted ring-border' };
 }
 
-function ActivityRow({ e }: { e: LesankofaEvent }) {
+function ActivityRow({ e, last }: { e: LesankofaEvent; last?: boolean }) {
+  const tone = eventTone(e);
   return (
-    <div className="flex items-center gap-3 px-4 py-2.5 hover:bg-muted/40 transition-colors">
-      <span className="flex items-center justify-center size-7 rounded-full bg-muted/60 flex-shrink-0">
-        {eventIcon(e)}
-      </span>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <p className="text-xs font-semibold text-foreground truncate">{eventLabel(e)}</p>
-          {e.client_id && (
-            <span className="text-[10px] font-medium uppercase tracking-wide text-primary bg-primary/10 rounded px-1.5 py-0.5 flex-shrink-0">
-              {e.client_id}
-            </span>
-          )}
-        </div>
-        <p className="text-[11px] text-muted-foreground truncate">{eventKind(e)}</p>
+    <div className="group relative flex gap-3 px-4">
+      {/* Timeline rail */}
+      <div className="relative flex flex-col items-center">
+        <span className={`relative z-10 mt-2.5 flex items-center justify-center size-7 rounded-full ring-1 ${tone.ring} flex-shrink-0 transition-transform group-hover:scale-110`}>
+          {tone.icon}
+        </span>
+        {!last && <span className="w-px flex-1 bg-border" />}
       </div>
-      <span
-        className="text-[11px] text-muted-foreground flex-shrink-0 tabular-nums"
-        title={fmtDate(e.created_at)}
-      >
-        {fmtRelative(e.created_at)}
-      </span>
+
+      {/* Content */}
+      <div className="flex-1 min-w-0 flex items-start justify-between gap-3 py-2.5 group-hover:bg-muted/30 -mx-1 px-1 rounded-md transition-colors">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <p className="text-xs font-semibold text-foreground truncate">{eventLabel(e)}</p>
+            {e.client_id && (
+              <span className="text-[10px] font-medium uppercase tracking-wide text-primary bg-primary/10 rounded px-1.5 py-0.5 flex-shrink-0">
+                {e.client_id}
+              </span>
+            )}
+          </div>
+          <p className="text-[11px] text-muted-foreground truncate mt-0.5">{eventKind(e)}</p>
+        </div>
+        <span
+          className="text-[11px] text-muted-foreground flex-shrink-0 tabular-nums whitespace-nowrap pt-0.5"
+          title={fmtDate(e.created_at)}
+        >
+          {fmtRelative(e.created_at)}
+        </span>
+      </div>
     </div>
   );
 }
@@ -375,10 +385,10 @@ function RecentActivityCard() {
       )}
 
       {!error && events.length === 0 && loading && (
-        <div className="divide-y divide-border">
+        <div className="px-4 py-1">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex items-center gap-3 px-4 py-3">
-              <div className="size-7 rounded-full bg-muted animate-pulse" />
+            <div key={i} className="flex items-center gap-3 py-2.5">
+              <div className="size-7 rounded-full bg-muted animate-pulse flex-shrink-0" />
               <div className="flex-1 space-y-1.5">
                 <div className="h-3 w-1/3 rounded bg-muted animate-pulse" />
                 <div className="h-2.5 w-1/4 rounded bg-muted/60 animate-pulse" />
@@ -395,8 +405,10 @@ function RecentActivityCard() {
 
       {events.length > 0 && (
         <>
-          <div className="divide-y divide-border">
-            {visible.map(e => <ActivityRow key={e.id} e={e} />)}
+          <div className="py-1">
+            {visible.map((e, i) => (
+              <ActivityRow key={e.id} e={e} last={i === visible.length - 1 && older.length === 0} />
+            ))}
           </div>
 
           {older.length > 0 && (
@@ -407,8 +419,10 @@ function RecentActivityCard() {
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
                 className="overflow-hidden"
               >
-                <div className="divide-y divide-border border-t border-border bg-muted/20">
-                  {older.map(e => <ActivityRow key={e.id} e={e} />)}
+                <div className="py-1 bg-muted/20">
+                  {older.map((e, i) => (
+                    <ActivityRow key={e.id} e={e} last={i === older.length - 1} />
+                  ))}
                 </div>
               </motion.div>
 
