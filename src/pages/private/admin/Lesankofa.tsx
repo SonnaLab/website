@@ -228,23 +228,68 @@ function OverviewTab() {
 // Recent Activity Card
 // ─────────────────────────────────────────────
 
+// Humanize technical Celery task names into readable French labels.
+const TASK_LABELS: Record<string, string> = {
+  generate_due_articles_task: 'Génération d’articles',
+  retry_failed_pushes_task:   'Relance des pushs échoués',
+  refresh_search_trends_task: 'Rafraîchissement des tendances',
+  cleanup_old_data_task:      'Nettoyage des données',
+};
+
+function humanizeTask(name?: string | null): string {
+  if (!name) return 'Tâche';
+  if (TASK_LABELS[name]) return TASK_LABELS[name];
+  // Fallback: strip _task suffix, replace underscores, capitalize.
+  const cleaned = name.replace(/_task$/, '').replace(/_/g, ' ').trim();
+  return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+}
+
+// Primary label for an event (no client — that's shown as a separate pill).
 function eventLabel(e: LesankofaEvent): string {
-  const client = e.client_id ? ` · ${e.client_id}` : '';
   switch (e.event_type) {
-    case 'task_run':          return `Tâche ${e.entity_name ?? ''}${client}`;
-    case 'article_generated': return `Article généré${client}${e.entity_name ? ` — ${e.entity_name}` : ''}`;
-    case 'push_success':      return `Push réussi${client}${e.entity_name ? ` — ${e.entity_name}` : ''}`;
-    case 'push_failed':       return `Push échoué${client}${e.entity_name ? ` — ${e.entity_name}` : ''}`;
+    case 'task_run':          return humanizeTask(e.entity_name);
+    case 'article_generated': return e.entity_name ? `Article — ${e.entity_name}` : 'Article généré';
+    case 'push_success':      return e.entity_name ? `Push — ${e.entity_name}`    : 'Push réussi';
+    case 'push_failed':       return e.entity_name ? `Push — ${e.entity_name}`    : 'Push échoué';
     default:                  return e.entity_name ?? e.event_type;
   }
 }
 
+// Short status verb shown as the row subtitle.
+function eventKind(e: LesankofaEvent): string {
+  switch (e.event_type) {
+    case 'task_run':          return 'Tâche planifiée';
+    case 'article_generated': return 'Génération';
+    case 'push_success':      return 'Publication réussie';
+    case 'push_failed':       return 'Publication échouée';
+    default:                  return e.event_type;
+  }
+}
+
+// Relative time ("il y a 5 min", "il y a 2 h", "hier"…) for compact display.
+function fmtRelative(iso?: string | null): string {
+  if (!iso) return '—';
+  const then = new Date(iso).getTime();
+  const diff = Date.now() - then;
+  const min  = Math.round(diff / 60000);
+  if (min < 1)   return 'à l’instant';
+  if (min < 60)  return `il y a ${min} min`;
+  const h = Math.round(min / 60);
+  if (h < 24)    return `il y a ${h} h`;
+  const d = Math.round(h / 24);
+  if (d === 1)   return 'hier';
+  if (d < 7)     return `il y a ${d} j`;
+  return fmtDateShort(iso);
+}
+
 function eventIcon(e: LesankofaEvent) {
   if (e.status === 'error' || e.event_type === 'push_failed')
-    return <XCircleIcon size={13} className="text-destructive flex-shrink-0" />;
+    return <XCircleIcon size={15} className="text-destructive" />;
   if (e.status === 'success' || e.event_type === 'push_success')
-    return <CheckCircle2Icon size={13} className="text-green-500 flex-shrink-0" />;
-  return <ZapIcon size={13} className="text-muted-foreground flex-shrink-0" />;
+    return <CheckCircle2Icon size={15} className="text-green-500" />;
+  if (e.event_type === 'article_generated')
+    return <PenLineIcon size={15} className="text-primary" />;
+  return <ZapIcon size={15} className="text-muted-foreground" />;
 }
 
 function RecentActivityCard() {
@@ -264,36 +309,81 @@ function RecentActivityCard() {
   useEffect(() => { load(); }, []);
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-foreground">Activité récente</h3>
+    <Card className="overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+        <div className="flex items-center gap-2">
+          <ZapIcon size={15} className="text-primary" />
+          <h3 className="text-sm font-semibold text-foreground">Activité récente</h3>
+          {events.length > 0 && (
+            <span className="text-[11px] font-medium text-muted-foreground bg-muted rounded-full px-2 py-0.5">
+              {events.length}
+            </span>
+          )}
+        </div>
         <button
           onClick={load}
-          className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+          disabled={loading}
+          className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
         >
-          <RefreshCwIcon size={11} className={loading ? 'animate-spin' : ''} /> Actualiser
+          <RefreshCwIcon size={12} className={loading ? 'animate-spin' : ''} /> Actualiser
         </button>
       </div>
+
       {error && (
-        <p className="text-xs text-destructive">{error}</p>
+        <p className="text-xs text-destructive px-4 py-3">{error}</p>
       )}
-      {!error && events.length === 0 && !loading && (
-        <p className="text-xs text-muted-foreground py-2">Aucune activité enregistrée.</p>
-      )}
-      {events.length > 0 && (
-        <div className="divide-y divide-border rounded-xl border border-border overflow-hidden">
-          {events.slice(0, 10).map(e => (
-            <div key={e.id} className="flex items-center gap-3 px-4 py-2.5 bg-background hover:bg-muted/30 transition-colors">
-              {eventIcon(e)}
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-foreground truncate">{eventLabel(e)}</p>
+
+      {!error && events.length === 0 && loading && (
+        <div className="divide-y divide-border">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-3 px-4 py-3">
+              <div className="size-7 rounded-full bg-muted animate-pulse" />
+              <div className="flex-1 space-y-1.5">
+                <div className="h-3 w-1/3 rounded bg-muted animate-pulse" />
+                <div className="h-2.5 w-1/4 rounded bg-muted/60 animate-pulse" />
               </div>
-              <span className="text-xs text-muted-foreground flex-shrink-0">{fmtDate(e.created_at)}</span>
+              <div className="h-2.5 w-16 rounded bg-muted animate-pulse" />
             </div>
           ))}
         </div>
       )}
-    </div>
+
+      {!error && events.length === 0 && !loading && (
+        <p className="text-xs text-muted-foreground px-4 py-6 text-center">Aucune activité enregistrée.</p>
+      )}
+
+      {events.length > 0 && (
+        <div className="divide-y divide-border">
+          {events.slice(0, 10).map(e => (
+            <div
+              key={e.id}
+              className="flex items-center gap-3 px-4 py-2.5 hover:bg-muted/40 transition-colors"
+            >
+              <span className="flex items-center justify-center size-7 rounded-full bg-muted/60 flex-shrink-0">
+                {eventIcon(e)}
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <p className="text-xs font-semibold text-foreground truncate">{eventLabel(e)}</p>
+                  {e.client_id && (
+                    <span className="text-[10px] font-medium uppercase tracking-wide text-primary bg-primary/10 rounded px-1.5 py-0.5 flex-shrink-0">
+                      {e.client_id}
+                    </span>
+                  )}
+                </div>
+                <p className="text-[11px] text-muted-foreground truncate">{eventKind(e)}</p>
+              </div>
+              <span
+                className="text-[11px] text-muted-foreground flex-shrink-0 tabular-nums"
+                title={fmtDate(e.created_at)}
+              >
+                {fmtRelative(e.created_at)}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </Card>
   );
 }
 
