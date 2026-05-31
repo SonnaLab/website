@@ -23,6 +23,12 @@ import {
   CheckCircle2Icon,
   AlertTriangleIcon,
   XCircleIcon,
+  ChevronDownIcon,
+  CalendarDaysIcon,
+  GlobeIcon,
+  TargetIcon,
+  FileTextIcon,
+  ChevronRightIcon,
 } from '@icons';
 
 // ─────────────────────────────────────────────
@@ -292,21 +298,56 @@ function eventIcon(e: LesankofaEvent) {
   return <ZapIcon size={15} className="text-muted-foreground" />;
 }
 
+function ActivityRow({ e }: { e: LesankofaEvent }) {
+  return (
+    <div className="flex items-center gap-3 px-4 py-2.5 hover:bg-muted/40 transition-colors">
+      <span className="flex items-center justify-center size-7 rounded-full bg-muted/60 flex-shrink-0">
+        {eventIcon(e)}
+      </span>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <p className="text-xs font-semibold text-foreground truncate">{eventLabel(e)}</p>
+          {e.client_id && (
+            <span className="text-[10px] font-medium uppercase tracking-wide text-primary bg-primary/10 rounded px-1.5 py-0.5 flex-shrink-0">
+              {e.client_id}
+            </span>
+          )}
+        </div>
+        <p className="text-[11px] text-muted-foreground truncate">{eventKind(e)}</p>
+      </div>
+      <span
+        className="text-[11px] text-muted-foreground flex-shrink-0 tabular-nums"
+        title={fmtDate(e.created_at)}
+      >
+        {fmtRelative(e.created_at)}
+      </span>
+    </div>
+  );
+}
+
 function RecentActivityCard() {
   const [events,  setEvents]  = useState<LesankofaEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error,   setError]   = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
 
   const load = () => {
     setLoading(true);
     setError(null);
-    apiService.adminLesankofaHistory(10)
+    apiService.adminLesankofaHistory(15)
       .then((d: { events: LesankofaEvent[] }) => setEvents(d.events ?? []))
       .catch((e: Error) => setError(e.message))
       .finally(() => setLoading(false));
   };
 
   useEffect(() => { load(); }, []);
+
+  // Ensure newest → oldest, then split into the 10 visible + the older collapsed rest.
+  const sorted  = [...events].sort(
+    (a, b) => new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime(),
+  );
+  const visible = sorted.slice(0, 10);
+  const older   = sorted.slice(10);
 
   return (
     <Card className="overflow-hidden">
@@ -353,35 +394,37 @@ function RecentActivityCard() {
       )}
 
       {events.length > 0 && (
-        <div className="divide-y divide-border">
-          {events.slice(0, 10).map(e => (
-            <div
-              key={e.id}
-              className="flex items-center gap-3 px-4 py-2.5 hover:bg-muted/40 transition-colors"
-            >
-              <span className="flex items-center justify-center size-7 rounded-full bg-muted/60 flex-shrink-0">
-                {eventIcon(e)}
-              </span>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <p className="text-xs font-semibold text-foreground truncate">{eventLabel(e)}</p>
-                  {e.client_id && (
-                    <span className="text-[10px] font-medium uppercase tracking-wide text-primary bg-primary/10 rounded px-1.5 py-0.5 flex-shrink-0">
-                      {e.client_id}
-                    </span>
-                  )}
-                </div>
-                <p className="text-[11px] text-muted-foreground truncate">{eventKind(e)}</p>
-              </div>
-              <span
-                className="text-[11px] text-muted-foreground flex-shrink-0 tabular-nums"
-                title={fmtDate(e.created_at)}
+        <>
+          <div className="divide-y divide-border">
+            {visible.map(e => <ActivityRow key={e.id} e={e} />)}
+          </div>
+
+          {older.length > 0 && (
+            <>
+              <motion.div
+                initial={false}
+                animate={{ height: showAll ? 'auto' : 0, opacity: showAll ? 1 : 0 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="overflow-hidden"
               >
-                {fmtRelative(e.created_at)}
-              </span>
-            </div>
-          ))}
-        </div>
+                <div className="divide-y divide-border border-t border-border bg-muted/20">
+                  {older.map(e => <ActivityRow key={e.id} e={e} />)}
+                </div>
+              </motion.div>
+
+              <button
+                onClick={() => setShowAll(v => !v)}
+                className="flex items-center justify-center gap-1.5 w-full px-4 py-2.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/40 border-t border-border transition-colors"
+              >
+                <ChevronDownIcon
+                  size={14}
+                  className={`transition-transform duration-300 ${showAll ? 'rotate-180' : ''}`}
+                />
+                {showAll ? 'Réduire' : `Voir ${older.length} plus anciennes`}
+              </button>
+            </>
+          )}
+        </>
       )}
     </Card>
   );
@@ -929,16 +972,21 @@ function ClientDetailModal({
 
           {/* Stats articles */}
           <Section title="Articles générés">
-            <div className="grid grid-cols-4 gap-3">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
               {[
-                { label: 'Total',    value: d.articles_total,   variant: '' },
-                { label: 'Succès',   value: d.articles_success, variant: 'text-green-600' },
-                { label: 'Échecs',   value: d.articles_failed,  variant: d.articles_failed > 0 ? 'text-destructive' : '' },
-                { label: 'En cours', value: d.articles_pending, variant: '' },
-              ].map(({ label, value, variant }) => (
-                <div key={label} className="rounded-lg border border-border p-3 text-center">
-                  <p className={`text-xl font-bold ${variant}`}>{value}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{label}</p>
+                { label: 'Total',    value: d.articles_total,   icon: <LayersIcon       size={16} />, color: 'text-foreground' },
+                { label: 'Succès',   value: d.articles_success, icon: <CheckCircle2Icon size={16} />, color: 'text-green-600' },
+                { label: 'Échecs',   value: d.articles_failed,  icon: <XCircleIcon      size={16} />, color: d.articles_failed > 0 ? 'text-destructive' : 'text-foreground' },
+                { label: 'En cours', value: d.articles_pending, icon: <ZapIcon          size={16} />, color: 'text-foreground' },
+              ].map(({ label, value, icon, color }) => (
+                <div key={label} className="flex items-center gap-2">
+                  <span className={`flex items-center justify-center size-8 rounded-lg bg-muted/60 ${color}`}>
+                    {icon}
+                  </span>
+                  <div className="leading-tight whitespace-nowrap">
+                    <span className={`text-lg font-bold ${color}`}>{value}</span>
+                    <span className="ml-1.5 text-xs text-muted-foreground">{label}</span>
+                  </div>
                 </div>
               ))}
             </div>
@@ -1060,6 +1108,239 @@ const ER_EDGES = [
   { from: 'ArticleGeneration', to: 'AIModel', label: 'n:1'   },
 ];
 
+const ER_ACCENT = '#0891b2';
+
+// ─── Table schema metadata (mirrors src/models/*.py on ai.sonnalab) ───
+type SchemaColumn = { name: string; type: string; tag?: 'PK' | 'FK' | 'idx' };
+interface EntitySchema {
+  table: string;
+  icon: React.ReactNode;
+  description: string;
+  columns: SchemaColumn[];
+}
+
+const TABLE_SCHEMAS: Record<string, EntitySchema> = {
+  Client: {
+    table: 'clients',
+    icon: <UsersIcon size={16} />,
+    description: 'Fiche complète d’un client : identité, stratégie éditoriale, audience et configuration de publication.',
+    columns: [
+      { name: 'id',                  type: 'String(64)', tag: 'PK' },
+      { name: 'slug',                type: 'String(64)', tag: 'idx' },
+      { name: 'name',                type: 'String(100)' },
+      { name: 'tagline',             type: 'String(255)' },
+      { name: 'description_short',   type: 'Text' },
+      { name: 'description_full',    type: 'Text' },
+      { name: 'industry',            type: 'String(100)' },
+      { name: 'website_url',         type: 'String(255)' },
+      { name: 'push_endpoint',       type: 'String(512)' },
+      { name: 'objectives',          type: 'JSON' },
+      { name: 'target_audience',     type: 'JSON' },
+      { name: 'languages',           type: 'JSON' },
+      { name: 'geographic_zones',    type: 'JSON' },
+      { name: 'primary_locale',      type: 'String' },
+      { name: 'content_pillars',     type: 'JSON' },
+      { name: 'brand_keywords',      type: 'JSON' },
+      { name: 'competitor_keywords', type: 'JSON' },
+      { name: 'tone_of_voice',       type: 'String(50)' },
+      { name: 'key_features',        type: 'JSON' },
+      { name: 'integrations',        type: 'JSON' },
+      { name: 'pricing_tiers',       type: 'JSON' },
+      { name: 'is_active',           type: 'Boolean' },
+      { name: 'unsplash_access_key', type: 'String(128)' },
+      { name: 'created_at',          type: 'DateTime' },
+      { name: 'updated_at',          type: 'DateTime' },
+    ],
+  },
+  APIKey: {
+    table: 'api_keys',
+    icon: <ServerIcon size={16} />,
+    description: 'Clés d’API d’accès à la plateforme, avec domaines autorisés, permissions et quota de débit.',
+    columns: [
+      { name: 'api_key',            type: 'String(128)', tag: 'PK' },
+      { name: 'client_name',        type: 'String(100)', tag: 'idx' },
+      { name: 'client_description', type: 'Text' },
+      { name: 'domains',            type: 'JSON' },
+      { name: 'permissions',        type: 'JSON' },
+      { name: 'rate_limit',         type: 'Integer' },
+      { name: 'is_active',          type: 'Boolean', tag: 'idx' },
+      { name: 'usage_count',        type: 'Integer' },
+      { name: 'last_used_at',       type: 'DateTime' },
+      { name: 'last_ip',            type: 'String(45)' },
+      { name: 'last_domain',        type: 'String(255)' },
+      { name: 'created_at',         type: 'DateTime' },
+      { name: 'updated_at',         type: 'DateTime' },
+    ],
+  },
+  AIModel: {
+    table: 'ai_models',
+    icon: <BrainIcon size={16} />,
+    description: 'Catalogue des modèles IA disponibles, leurs quotas, priorités et compteurs d’usage temps réel.',
+    columns: [
+      { name: 'id',                      type: 'String(64)', tag: 'PK' },
+      { name: 'name',                    type: 'String(100)' },
+      { name: 'provider',                type: 'String(20)' },
+      { name: 'model_identifier',        type: 'String(100)' },
+      { name: 'endpoint_url',            type: 'String(500)' },
+      { name: 'tier',                    type: 'String(10)' },
+      { name: 'priority',                type: 'Integer' },
+      { name: 'max_requests_per_minute', type: 'Integer' },
+      { name: 'max_requests_per_day',    type: 'Integer' },
+      { name: 'max_tokens_per_request',  type: 'Integer' },
+      { name: 'total_requests',          type: 'Integer' },
+      { name: 'total_tokens_used',       type: 'Integer' },
+      { name: 'requests_today',          type: 'Integer' },
+      { name: 'tokens_today',            type: 'Integer' },
+      { name: 'consecutive_errors',      type: 'Integer' },
+      { name: 'is_active',               type: 'Boolean' },
+      { name: 'is_available',            type: 'Boolean' },
+      { name: 'last_request_at',         type: 'DateTime' },
+      { name: 'created_at',              type: 'DateTime' },
+      { name: 'updated_at',              type: 'DateTime' },
+    ],
+  },
+  ArticleGeneration: {
+    table: 'article_generations',
+    icon: <FileTextIcon size={16} />,
+    description: 'Trace de chaque génération d’article : prompts, contenu produit, métadonnées SEO et coûts de tokens.',
+    columns: [
+      { name: 'id',                       type: 'Integer', tag: 'PK' },
+      { name: 'client_id',                type: 'String',  tag: 'FK' },
+      { name: 'client_trend_id',          type: 'Integer', tag: 'FK' },
+      { name: 'search_trend_id',          type: 'Integer', tag: 'FK' },
+      { name: 'editorial_calendar_id',    type: 'Integer', tag: 'FK' },
+      { name: 'keyword',                  type: 'String(255)', tag: 'idx' },
+      { name: 'country_id',               type: 'String(10)' },
+      { name: 'locale',                   type: 'String(10)' },
+      { name: 'prompt_system',            type: 'Text' },
+      { name: 'prompt_user',              type: 'Text' },
+      { name: 'seo_rules_snapshot',       type: 'JSON' },
+      { name: 'generated_title',          type: 'Text' },
+      { name: 'generated_content',        type: 'Text' },
+      { name: 'generated_slug',           type: 'String(255)' },
+      { name: 'article_format',           type: 'String(50)' },
+      { name: 'generated_meta_description', type: 'Text' },
+      { name: 'generated_feature_image_url', type: 'String(512)' },
+      { name: 'reading_time_minutes',     type: 'Integer' },
+      { name: 'word_count',               type: 'Integer' },
+      { name: 'status',                   type: 'String(20)', tag: 'idx' },
+      { name: 'model_used',               type: 'String(64)' },
+      { name: 'provider',                 type: 'String(32)' },
+      { name: 'total_tokens',             type: 'Integer' },
+      { name: 'generation_time_ms',       type: 'Float' },
+    ],
+  },
+  EditorialCalendar: {
+    table: 'editorial_calendar',
+    icon: <CalendarDaysIcon size={16} />,
+    description: 'Planning éditorial : chaque entrée est un article programmé pour un client, une locale et une date.',
+    columns: [
+      { name: 'id',                  type: 'Integer', tag: 'PK' },
+      { name: 'client_id',           type: 'String',  tag: 'FK' },
+      { name: 'weekly_objective_id', type: 'Integer', tag: 'FK' },
+      { name: 'seo_opportunity_id',  type: 'Integer', tag: 'FK' },
+      { name: 'client_trend_id',     type: 'Integer', tag: 'FK' },
+      { name: 'search_trend_id',     type: 'Integer', tag: 'FK' },
+      { name: 'keyword',             type: 'String(255)', tag: 'idx' },
+      { name: 'locale',              type: 'String(10)', tag: 'idx' },
+      { name: 'country_id',          type: 'String',  tag: 'FK' },
+      { name: 'topic_cluster',       type: 'String(160)' },
+      { name: 'article_format',      type: 'String(50)' },
+      { name: 'generation_mode',     type: 'String(40)' },
+      { name: 'content_angle',       type: 'Text' },
+      { name: 'suggested_title',     type: 'Text' },
+      { name: 'priority',            type: 'Integer' },
+      { name: 'scheduled_for',       type: 'Date', tag: 'idx' },
+      { name: 'status',              type: 'String(30)', tag: 'idx' },
+      { name: 'rationale',           type: 'Text' },
+      { name: 'reviewer_notes',      type: 'Text' },
+      { name: 'planning_metadata',   type: 'JSON' },
+      { name: 'created_at',          type: 'DateTime' },
+      { name: 'updated_at',          type: 'DateTime' },
+    ],
+  },
+  SearchTrend: {
+    table: 'search_trends',
+    icon: <TrendingUpIcon size={16} />,
+    description: 'Tendances de recherche consolidées par pays et par période : volumes, score et intention.',
+    columns: [
+      { name: 'id',                type: 'Integer', tag: 'PK' },
+      { name: 'country_id',        type: 'String(10)', tag: 'FK' },
+      { name: 'keyword',           type: 'String(255)', tag: 'idx' },
+      { name: 'related_keywords',  type: 'JSON' },
+      { name: 'search_volume',     type: 'Integer' },
+      { name: 'volume_avg',        type: 'Float' },
+      { name: 'volume_min',        type: 'Float' },
+      { name: 'volume_max',        type: 'Float' },
+      { name: 'volume_peak_date',  type: 'Date' },
+      { name: 'trend_score',       type: 'Float' },
+      { name: 'trend_direction',   type: 'String' },
+      { name: 'competition_level', type: 'String(20)' },
+      { name: 'cpc_estimate',      type: 'Float' },
+      { name: 'period_type',       type: 'String' },
+      { name: 'period_start',      type: 'Date' },
+      { name: 'period_end',        type: 'Date' },
+      { name: 'source',            type: 'String(50)' },
+      { name: 'search_intent',     type: 'String(30)' },
+      { name: 'is_active',         type: 'Boolean' },
+      { name: 'created_at',        type: 'DateTime' },
+      { name: 'updated_at',        type: 'DateTime' },
+    ],
+  },
+  SeoOpportunity: {
+    table: 'seo_opportunities',
+    icon: <TargetIcon size={16} />,
+    description: 'Opportunités SEO scorées par semaine : croisement tendance × objectif × cluster pour prioriser les contenus.',
+    columns: [
+      { name: 'id',                       type: 'Integer', tag: 'PK' },
+      { name: 'client_id',                type: 'String',  tag: 'FK' },
+      { name: 'client_trend_id',          type: 'Integer', tag: 'FK' },
+      { name: 'search_trend_id',          type: 'Integer', tag: 'FK' },
+      { name: 'strategic_objective_id',   type: 'Integer', tag: 'FK' },
+      { name: 'topic_phase_id',           type: 'Integer', tag: 'FK' },
+      { name: 'week_start_date',          type: 'Date', tag: 'idx' },
+      { name: 'keyword',                  type: 'String(255)', tag: 'idx' },
+      { name: 'locale',                   type: 'String(10)', tag: 'idx' },
+      { name: 'country_id',               type: 'String',  tag: 'FK' },
+      { name: 'topic_cluster',            type: 'String(160)' },
+      { name: 'suggested_format',         type: 'String(50)' },
+      { name: 'objective_type',           type: 'String(50)', tag: 'idx' },
+      { name: 'source',                   type: 'String(40)' },
+      { name: 'trend_score',              type: 'Float' },
+      { name: 'strategic_fit_score',      type: 'Float' },
+      { name: 'content_gap_score',        type: 'Float' },
+      { name: 'conversion_score',         type: 'Float' },
+      { name: 'total_score',              type: 'Float', tag: 'idx' },
+      { name: 'recommendation',           type: 'Text' },
+      { name: 'score_snapshot',           type: 'JSON' },
+      { name: 'status',                   type: 'String(30)', tag: 'idx' },
+      { name: 'created_at',               type: 'DateTime' },
+      { name: 'updated_at',               type: 'DateTime' },
+    ],
+  },
+  Country: {
+    table: 'countries',
+    icon: <GlobeIcon size={16} />,
+    description: 'Référentiel des pays ciblés : langue, devise, fuseau et configuration de scraping des tendances.',
+    columns: [
+      { name: 'id',                      type: 'String(10)', tag: 'PK' },
+      { name: 'name',                    type: 'String(100)' },
+      { name: 'language',                type: 'String(10)' },
+      { name: 'timezone',                type: 'String(50)' },
+      { name: 'currency',                type: 'String(10)' },
+      { name: 'google_trends_geo',       type: 'String(20)' },
+      { name: 'scrape_enabled',          type: 'Boolean' },
+      { name: 'scrape_sources',          type: 'JSON' },
+      { name: 'last_scraped_daily_at',   type: 'DateTime' },
+      { name: 'last_scraped_weekly_at',  type: 'DateTime' },
+      { name: 'last_scraped_monthly_at', type: 'DateTime' },
+      { name: 'last_scraped_annual_at',  type: 'DateTime' },
+      { name: 'created_at',              type: 'DateTime' },
+      { name: 'updated_at',              type: 'DateTime' },
+    ],
+  },
+};
+
 function getCenter(id: string) {
   const n = ER_NODES.find(n => n.id === id);
   if (!n) return { x: 0, y: 0 };
@@ -1067,7 +1348,7 @@ function getCenter(id: string) {
   return { x: n.x + W / 2, y: n.y + 18 };
 }
 
-function EREdge({ from, to, label, delay }: { from: string; to: string; label: string; delay: number }) {
+function EREdge({ from, to, label, delay, active }: { from: string; to: string; label: string; delay: number; active: boolean }) {
   const s = getCenter(from);
   const e = getCenter(to);
   // Midpoint for label
@@ -1081,28 +1362,64 @@ function EREdge({ from, to, label, delay }: { from: string; to: string; label: s
     <g>
       <motion.line
         x1={s.x} y1={s.y} x2={e.x} y2={e.y}
-        stroke="#94a3b8"
-        strokeWidth={1.5}
-        markerEnd="url(#arrow)"
+        stroke={active ? ER_ACCENT : '#cbd5e1'}
+        strokeWidth={active ? 2 : 1.5}
+        markerEnd={active ? 'url(#arrow-active)' : 'url(#arrow)'}
         initial={{ pathLength: 0, opacity: 0 }}
         animate={{ pathLength: 1, opacity: 1 }}
         transition={{ duration: 0.6, delay, ease: 'easeOut' }}
         style={{ strokeDasharray: len, strokeDashoffset: len }}
       />
-      <text x={mx} y={my - 5} fill="#64748b" fontSize={9} textAnchor="middle">{label}</text>
+      {/* Flowing dash overlay highlighting the active relation */}
+      {active && (
+        <motion.line
+          x1={s.x} y1={s.y} x2={e.x} y2={e.y}
+          stroke={ER_ACCENT}
+          strokeWidth={2}
+          strokeLinecap="round"
+          style={{ strokeDasharray: '3 9' }}
+          animate={{ strokeDashoffset: [0, -24] }}
+          transition={{ duration: 0.7, repeat: Infinity, ease: 'linear' }}
+        />
+      )}
+      <text
+        x={mx} y={my - 5}
+        fill={active ? ER_ACCENT : '#94a3b8'}
+        fontSize={9}
+        fontWeight={active ? 700 : 400}
+        textAnchor="middle"
+      >
+        {label}
+      </text>
     </g>
   );
 }
 
-function ERNode({ id, x, y, color, delay }: { id: string; x: number; y: number; color: string; delay: number }) {
+function ERNode({
+  node, delay, active, dimmed, onHover, onSelect,
+}: {
+  node: { id: string; x: number; y: number; color: string };
+  delay: number;
+  active: boolean;
+  dimmed: boolean;
+  onHover: (id: string | null) => void;
+  onSelect: (id: string) => void;
+}) {
+  const { id, x, y, color } = node;
   const W = id.length * 6.5 + 24;
   return (
     <motion.g
       initial={{ opacity: 0, scale: 0.7 }}
-      animate={{ opacity: 1, scale: 1 }}
+      animate={{ opacity: dimmed ? 0.4 : 1, scale: active ? 1.08 : 1 }}
       transition={{ duration: 0.4, delay, type: 'spring', stiffness: 280, damping: 22 }}
-      style={{ transformOrigin: `${x + W / 2}px ${y + 18}px` }}
+      style={{ transformOrigin: `${x + W / 2}px ${y + 18}px`, cursor: 'pointer' }}
+      onMouseEnter={() => onHover(id)}
+      onMouseLeave={() => onHover(null)}
+      onClick={() => onSelect(id)}
     >
+      {active && (
+        <rect x={x - 3} y={y - 3} width={W + 6} height={42} rx={11} fill="none" stroke={ER_ACCENT} strokeWidth={2} />
+      )}
       <rect x={x} y={y} width={W} height={36} rx={8} fill={color} />
       <text x={x + W / 2} y={y + 23} fill="#fff" fontSize={11} textAnchor="middle" fontFamily="monospace" fontWeight="600">
         {id}
@@ -1111,34 +1428,146 @@ function ERNode({ id, x, y, color, delay }: { id: string; x: number; y: number; 
   );
 }
 
+function SchemaModal({ entity, onClose }: { entity: string | null; onClose: () => void }) {
+  const schema = entity ? TABLE_SCHEMAS[entity] : null;
+  const relations = entity
+    ? ER_EDGES
+        .filter(e => e.from === entity || e.to === entity)
+        .map(e => ({
+          target: e.from === entity ? e.to : e.from,
+          label: e.label,
+          dir: e.from === entity ? 'sortante' : 'entrante',
+        }))
+    : [];
+
+  const TAG_STYLE: Record<string, string> = {
+    PK:  'bg-primary text-primary-foreground',
+    FK:  'bg-cyan-100 text-cyan-700',
+    idx: 'bg-muted text-muted-foreground',
+  };
+
+  return (
+    <Modal
+      open={!!entity}
+      onClose={onClose}
+      size="lg"
+      title={entity ?? ''}
+      subtitle={schema && <span className="font-mono text-xs">{schema.table}</span>}
+      badge={schema?.icon}
+    >
+      {schema && (
+        <div className="space-y-6">
+          <p className="text-sm text-muted-foreground">{schema.description}</p>
+
+          <Section title={`Colonnes · ${schema.columns.length}`}>
+            <div className="rounded-lg border border-border overflow-hidden">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-muted/50 text-xs text-muted-foreground">
+                    <th className="text-left font-medium px-3 py-2">Colonne</th>
+                    <th className="text-left font-medium px-3 py-2">Type</th>
+                    <th className="text-left font-medium px-3 py-2 w-20">Clé</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {schema.columns.map(c => (
+                    <tr key={c.name} className="hover:bg-muted/30 transition-colors">
+                      <td className="px-3 py-1.5 font-mono text-xs text-foreground">{c.name}</td>
+                      <td className="px-3 py-1.5 font-mono text-xs text-muted-foreground">{c.type}</td>
+                      <td className="px-3 py-1.5">
+                        {c.tag && (
+                          <span className={`inline-block rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase ${TAG_STYLE[c.tag]}`}>
+                            {c.tag}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Section>
+
+          {relations.length > 0 && (
+            <Section title={`Relations · ${relations.length}`}>
+              <div className="flex flex-wrap gap-2">
+                {relations.map((r, i) => (
+                  <span
+                    key={i}
+                    className="inline-flex items-center gap-1.5 rounded-md border border-border bg-muted/40 px-2.5 py-1 text-xs"
+                  >
+                    <span className="font-mono font-semibold text-cyan-700">{r.label}</span>
+                    <ChevronRightIcon size={12} className="text-muted-foreground" />
+                    <span className="font-medium text-foreground">{r.target}</span>
+                  </span>
+                ))}
+              </div>
+            </Section>
+          )}
+        </div>
+      )}
+    </Modal>
+  );
+}
+
 function ModelTab() {
+  const [hovered,  setHovered]  = useState<string | null>(null);
+  const [selected, setSelected] = useState<string | null>(null);
+  const focus = hovered ?? selected;
+
+  const isEdgeActive = (from: string, to: string) =>
+    focus !== null && (from === focus || to === focus);
+  const isNodeActive = (id: string) =>
+    focus !== null && (id === focus || ER_EDGES.some(e =>
+      (e.from === focus && e.to === id) || (e.to === focus && e.from === id)));
+
   return (
     <div className="space-y-4">
-      <p className="text-xs text-muted-foreground">
-        Diagramme des relations entre les entités principales de la base de données AI.
-      </p>
+      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <LayersIcon size={14} className="text-primary" />
+        <span>Survolez une entité pour voir ses relations, cliquez pour ouvrir sa structure de table.</span>
+      </div>
+
       <div className="rounded-xl border border-border bg-muted/30 overflow-x-auto">
         <svg viewBox="0 0 740 490" className="w-full min-w-[480px]" style={{ maxHeight: 480 }}>
           <defs>
             <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-              <path d="M0,0 L0,6 L8,3 z" fill="#94a3b8" />
+              <path d="M0,0 L0,6 L8,3 z" fill="#cbd5e1" />
+            </marker>
+            <marker id="arrow-active" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L8,3 z" fill={ER_ACCENT} />
             </marker>
           </defs>
 
           {/* Edges first (behind nodes) */}
           {ER_EDGES.map((e, i) => (
-            <EREdge key={`${e.from}-${e.to}`} from={e.from} to={e.to} label={e.label} delay={0.5 + i * 0.1} />
+            <EREdge
+              key={`${e.from}-${e.to}`}
+              from={e.from} to={e.to} label={e.label}
+              delay={0.5 + i * 0.1}
+              active={isEdgeActive(e.from, e.to)}
+            />
           ))}
 
           {/* Nodes */}
           {ER_NODES.map((n, i) => (
-            <ERNode key={n.id} id={n.id} x={n.x} y={n.y} color={n.color} delay={i * 0.07} />
+            <ERNode
+              key={n.id}
+              node={n}
+              delay={i * 0.07}
+              active={focus === n.id || isNodeActive(n.id)}
+              dimmed={focus !== null && focus !== n.id && !isNodeActive(n.id)}
+              onHover={setHovered}
+              onSelect={setSelected}
+            />
           ))}
 
           {/* Legend */}
           <text x={10} y={478} fill="#94a3b8" fontSize={9}>1:n = un à plusieurs  ·  n:n = plusieurs à plusieurs  ·  n:1 = plusieurs à un</text>
         </svg>
       </div>
+
+      <SchemaModal entity={selected} onClose={() => setSelected(null)} />
     </div>
   );
 }
