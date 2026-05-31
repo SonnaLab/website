@@ -11,62 +11,62 @@ interface BlogDetailCTAProps {
 const copy = {
   fr: {
     diagnostic: {
-      title: 'Clarifier les choix techniques',
-      text: 'Un diagnostic court pour valider stack, UX et roadmap.',
-      action: 'Lancer le diagnostic',
+      title: 'Sécurisez vos décisions techniques',
+      text: 'Validez votre stack, votre UX et votre roadmap en un diagnostic court et actionnable.',
+      action: 'Démarrer mon diagnostic',
     },
     project: {
-      title: 'Construire une app performante',
-      text: 'On cadre et développe votre produit web avec une trajectoire nette.',
-      action: 'Ouvrir le brief',
+      title: 'Lancez une app vraiment performante',
+      text: 'Cadrons et développons votre produit web avec une trajectoire claire et mesurable.',
+      action: 'Décrire mon projet',
     },
   },
   en: {
     diagnostic: {
-      title: 'Clarify technical choices',
-      text: 'A short diagnostic to validate stack, UX, and roadmap.',
-      action: 'Start the diagnostic',
+      title: 'Secure your technical decisions',
+      text: 'Validate your stack, UX and roadmap with a short, actionable diagnostic.',
+      action: 'Start my diagnostic',
     },
     project: {
-      title: 'Build a performant app',
-      text: 'We frame and develop your web product with a clear trajectory.',
-      action: 'Open the brief',
+      title: 'Launch a truly performant app',
+      text: "Let's frame and build your web product with a clear, measurable trajectory.",
+      action: 'Describe my project',
     },
   },
   es: {
     diagnostic: {
-      title: 'Aclarar las decisiones técnicas',
-      text: 'Un diagnóstico breve para validar stack, UX y roadmap.',
-      action: 'Iniciar el diagnóstico',
+      title: 'Asegura tus decisiones técnicas',
+      text: 'Valida tu stack, UX y roadmap con un diagnóstico breve y accionable.',
+      action: 'Iniciar mi diagnóstico',
     },
     project: {
-      title: 'Crear una app de alto rendimiento',
-      text: 'Encuadramos y desarrollamos tu producto web con una trayectoria clara.',
-      action: 'Abrir el brief',
+      title: 'Lanza una app de alto rendimiento',
+      text: 'Definamos y construyamos tu producto web con una trayectoria clara y medible.',
+      action: 'Describir mi proyecto',
     },
   },
   it: {
     diagnostic: {
-      title: 'Chiarire le scelte tecniche',
-      text: 'Una breve diagnosi per validare stack, UX e roadmap.',
-      action: 'Avvia la diagnosi',
+      title: 'Metti al sicuro le tue scelte tecniche',
+      text: 'Valida stack, UX e roadmap con una diagnosi breve e concreta.',
+      action: 'Avvia la mia diagnosi',
     },
     project: {
-      title: 'Costruire un\'app performante',
-      text: 'Inquadriamo e sviluppiamo il tuo prodotto web con una traiettoria chiara.',
-      action: 'Apri il brief',
+      title: "Lancia un'app davvero performante",
+      text: 'Inquadriamo e sviluppiamo il tuo prodotto web con una traiettoria chiara e misurabile.',
+      action: 'Descrivi il mio progetto',
     },
   },
   de: {
     diagnostic: {
-      title: 'Technische Entscheidungen klären',
-      text: 'Eine kurze Diagnose, um Stack, UX und Roadmap zu validieren.',
+      title: 'Sichern Sie Ihre technischen Entscheidungen',
+      text: 'Validieren Sie Stack, UX und Roadmap mit einer kurzen, umsetzbaren Diagnose.',
       action: 'Diagnose starten',
     },
     project: {
-      title: 'Eine performante App bauen',
-      text: 'Wir strukturieren und entwickeln Ihr Webprodukt mit klarer Ausrichtung.',
-      action: 'Brief öffnen',
+      title: 'Starten Sie eine wirklich performante App',
+      text: 'Wir strukturieren und entwickeln Ihr Webprodukt mit klarer, messbarer Ausrichtung.',
+      action: 'Projekt beschreiben',
     },
   },
 } as const;

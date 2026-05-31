@@ -39,6 +39,15 @@ export function SEO({
 
   const finalTitle = title ? `${title} | SonnaLab` : defaultTitle;
 
+  const OG_LOCALES: Record<string, string> = {
+    fr: 'fr_FR',
+    en: 'en_US',
+    es: 'es_ES',
+    it: 'it_IT',
+    de: 'de_DE',
+  };
+  const ogLocale = OG_LOCALES[currentLang] ?? 'en_US';
+
   return (
     <Helmet>
       {/* Base */}
@@ -74,7 +83,7 @@ export function SEO({
       <meta property="og:image"        content={fullImageUrl}                                />
       <meta property="og:url"          content={fullUrl}                                     />
       <meta property="og:site_name"    content="SonnaLab"                                   />
-      <meta property="og:locale"       content={currentLang === 'fr' ? 'fr_FR' : 'en_US'}   />
+      <meta property="og:locale"       content={ogLocale}                                   />
 
       {/* Twitter Card */}
       <meta name="twitter:card"    content="summary_large_image" />
