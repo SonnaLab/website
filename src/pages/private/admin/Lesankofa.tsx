@@ -315,17 +315,17 @@ function ActivityRow({ e, last }: { e: LesankofaEvent; last?: boolean }) {
       <div className="flex-1 min-w-0 flex items-start justify-between gap-3 py-2.5 group-hover:bg-muted/30 -mx-1 px-1 rounded-md transition-colors">
         <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <p className="text-xs font-semibold text-foreground truncate">{eventLabel(e)}</p>
+            <p className="text-sm font-semibold text-foreground truncate">{eventLabel(e)}</p>
             {e.client_id && (
-              <span className="text-[10px] font-medium uppercase tracking-wide text-primary bg-primary/10 rounded px-1.5 py-0.5 flex-shrink-0">
+              <span className="text-[11px] font-semibold uppercase tracking-wide text-white bg-black rounded px-1.5 py-0.5 flex-shrink-0">
                 {e.client_id}
               </span>
             )}
           </div>
-          <p className="text-[11px] text-muted-foreground truncate mt-0.5">{eventKind(e)}</p>
+          <p className="text-xs text-muted-foreground truncate mt-0.5">{eventKind(e)}</p>
         </div>
         <span
-          className="text-[11px] text-muted-foreground flex-shrink-0 tabular-nums whitespace-nowrap pt-0.5"
+          className="text-xs text-muted-foreground flex-shrink-0 tabular-nums whitespace-nowrap pt-0.5"
           title={fmtDate(e.created_at)}
         >
           {fmtRelative(e.created_at)}
@@ -1368,9 +1368,6 @@ function EREdge({ from, to, label, delay, active }: { from: string; to: string; 
   // Midpoint for label
   const mx = (s.x + e.x) / 2;
   const my = (s.y + e.y) / 2;
-  const dx = e.x - s.x;
-  const dy = e.y - s.y;
-  const len = Math.sqrt(dx * dx + dy * dy);
 
   return (
     <g>
@@ -1382,7 +1379,6 @@ function EREdge({ from, to, label, delay, active }: { from: string; to: string; 
         initial={{ pathLength: 0, opacity: 0 }}
         animate={{ pathLength: 1, opacity: 1 }}
         transition={{ duration: 0.6, delay, ease: 'easeOut' }}
-        style={{ strokeDasharray: len, strokeDashoffset: len }}
       />
       {/* Flowing dash overlay highlighting the active relation */}
       {active && (
@@ -1529,8 +1525,12 @@ function ModelTab() {
   const [selected, setSelected] = useState<string | null>(null);
   const focus = hovered ?? selected;
 
+  // Network is fully deployed by default: with no focus every relation is
+  // active (drawn + animated) so the whole graph shows without hovering.
+  // Hovering an entity narrows the focus to it and its direct relations.
+  const allActive = focus === null;
   const isEdgeActive = (from: string, to: string) =>
-    focus !== null && (from === focus || to === focus);
+    allActive || from === focus || to === focus;
   const isNodeActive = (id: string) =>
     focus !== null && (id === focus || ER_EDGES.some(e =>
       (e.from === focus && e.to === id) || (e.to === focus && e.from === id)));
