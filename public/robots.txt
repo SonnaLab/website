@@ -33,7 +33,6 @@ Disallow: /en/
 Disallow: /es/
 Disallow: /it/
 Disallow: /de/
-Crawl-delay: 2
 
 # ── Google ────────────────────────────────────────────────────────────────────
 User-agent: Googlebot
@@ -98,7 +97,6 @@ Disallow: /en/
 Disallow: /es/
 Disallow: /it/
 Disallow: /de/
-Crawl-delay: 1
 
 User-agent: MSNBot
 Allow: /
@@ -136,15 +134,11 @@ Disallow: /en/
 Disallow: /es/
 Disallow: /it/
 Disallow: /de/
-Crawl-delay: 2
-# Directive Yandex : URL canonique du site
-Host: sonnalab.com
 
 User-agent: YandexImages
 Allow: /
 Disallow: /admin/
 Disallow: /api/
-Crawl-delay: 2
 
 User-agent: YandexRenderResourcesBot
 Allow: /
@@ -175,7 +169,6 @@ Disallow: /en/
 Disallow: /es/
 Disallow: /it/
 Disallow: /de/
-Crawl-delay: 2
 
 User-agent: Baiduspider-image
 Allow: /
@@ -187,7 +180,6 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 Disallow: /dashboard/
-Crawl-delay: 1
 
 # ── Apple (Spotlight / Siri) ──────────────────────────────────────────────────
 User-agent: Applebot
@@ -201,20 +193,17 @@ User-agent: Naverbot
 Allow: /
 Disallow: /admin/
 Disallow: /api/
-Crawl-delay: 2
 
 User-agent: Yeti
 Allow: /
 Disallow: /admin/
 Disallow: /api/
-Crawl-delay: 2
 
 # ── Sogou (Chine) ─────────────────────────────────────────────────────────────
 User-agent: Sogou web spider
 Allow: /
 Disallow: /admin/
 Disallow: /api/
-Crawl-delay: 2
 
 User-agent: Sogou inst spider
 Allow: /
@@ -228,7 +217,6 @@ Allow: /contact
 Disallow: /admin/
 Disallow: /dashboard/
 Disallow: /api/
-Crawl-delay: 10
 
 User-agent: AhrefsBot
 Allow: /blog/
@@ -237,13 +225,11 @@ Allow: /contact
 Disallow: /admin/
 Disallow: /dashboard/
 Disallow: /api/
-Crawl-delay: 10
 
 User-agent: MJ12bot
 Allow: /blog/
 Disallow: /admin/
 Disallow: /api/
-Crawl-delay: 10
 
 # ── Sitemaps ──────────────────────────────────────────────────────────────────
 Sitemap: https://sonnalab.com/sitemap.xml
