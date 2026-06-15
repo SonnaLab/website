@@ -1,19 +1,13 @@
-name: Deploy sonnalab.com
+name: SonnaLab Frontend | CI/CD
 
 on:
   push:
     branches: ["main"]
-  workflow_dispatch:
-
-concurrency:
-  group: sonnalab-frontend-prod
-  cancel-in-progress: false
 
 jobs:
-  deploy:
+  build-and-deploy:
     name: Build & Deploy
     runs-on: ubuntu-latest
-    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -58,12 +52,12 @@ jobs:
               DEPLOY_OK=1
               break
             fi
-            echo "⚠️ rsync attempt $ATTEMPT/3 failed"
+            echo "rsync attempt $ATTEMPT/3 failed"
             [ "$ATTEMPT" -lt 3 ] && sleep 15
           done
 
-          [ "$DEPLOY_OK" -ne 1 ] && { echo "❌ Deployment failed after 3 attempts"; exit 1; }
+          [ "$DEPLOY_OK" -ne 1 ] && { echo "Deployment failed after 3 attempts"; exit 1; }
 
           ssh $SSH_OPTS ${{ secrets.DEPLOY_SSH_USER }}@${{ secrets.DEPLOY_SSH_HOST }} \
             "chmod -R 775 /var/www/sonnalab.com/build/"
-          echo "✅ sonnalab.com deployed — $(date -u '+%Y-%m-%d %H:%M UTC')"
+          echo "Frontend deployed"
