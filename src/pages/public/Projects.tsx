@@ -255,12 +255,14 @@ export default function Projects() {
                       {project.website ? (
                         <>
                           <Button
+                            asChild
                             size="lg"
                             className="bg-black text-white hover:bg-gray-800 hover:scale-105 transition-all shadow-lg group"
-                            onClick={() => window.open(project.website!, '_blank')}
                           >
-                            <ExternalLink className="w-5 h-5 mr-2 group-hover:translate-x-1 transition-transform" />
-                            {t(`${project.id}.cta.visit`)}
+                            <a href={project.website} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="w-5 h-5 mr-2 group-hover:translate-x-1 transition-transform" />
+                              {t(`${project.id}.cta.visit`)}
+                            </a>
                           </Button>
                           <Button
                             size="lg"
@@ -308,7 +310,14 @@ export default function Projects() {
                           <div className="w-3 h-3 rounded-full bg-green-400" />
                         </div>
                         <div className="flex-1 h-6 bg-gray-100 rounded-lg ml-4 flex items-center px-3 justify-center">
-                          <span className="text-xs text-gray-400">{project.website}</span>
+                          <a
+                            href={project.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+                          >
+                            {project.website}
+                          </a>
                         </div>
                       </div>
                       
