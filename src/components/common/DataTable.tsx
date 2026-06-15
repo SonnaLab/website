@@ -42,8 +42,8 @@ export function DataTableTh({ children, className }: { children: ReactNode; clas
 }
 
 /* ── Data cell ── */
-export function DataTableTd({ children, className }: { children: ReactNode; className?: string }) {
-  return <td className={['adm-table__td', className].filter(Boolean).join(' ')}>{children}</td>;
+export function DataTableTd({ children, className, title }: { children: ReactNode; className?: string; title?: string }) {
+  return <td className={['adm-table__td', className].filter(Boolean).join(' ')} title={title}>{children}</td>;
 }
 
 /* ── Empty state ── */
