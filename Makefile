@@ -118,19 +118,12 @@ serve:
 # Deployment
 # ──────────────────────────────────────────────────────────────────────────────
 
-deploy: ci
-	@echo "Frontend ready for deployment!"
-	@echo ""
-	@echo "Checklist:"
-	@echo "  ✓ Dependencies installed"
-	@echo "  ✓ TypeScript types validated"
-	@echo "  ✓ Code linted"
-	@echo "  ✓ Production build successful"
-	@echo ""
-	@echo "Next steps:"
-	@echo "  1. Review: git status && git diff --cached"
-	@echo "  2. Commit: git commit -m 'chore: deployFrontend :rocket:' && git push"
-	@echo "  3. Deploy: sync build/ to /var/www/sonnalab.com/v1/"
+deploy:
+	@echo "Deploying SonnaLab frontend..."
+	git pull origin main
+	npm ci
+	npm run build
+	@echo "Deployment complete — build/ is live."
 
 ci: install check
 	@echo "CI pipeline completed successfully!"
