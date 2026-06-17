@@ -4,7 +4,7 @@ import type { AnalyticsEvent, ConsentPayload } from '@/types/analytics';
 import type { BlogPost } from '@/types/blog';
 import type { Budget, ProjectType, Timeline } from '@/types/consultation';
 
-const API_BASE_URL = import.meta.env.PROD 
+const API_BASE_URL = import.meta.env.PROD
   ? import.meta.env.VITE_API_BASE_PROD_URL || 'https://api.sonnalab.com'
   : import.meta.env.VITE_API_BASE_DEV_URL || 'http://localhost:4000';
 
@@ -454,54 +454,42 @@ class ApiService {
     return (await this.client.get('/api/v1/admin/tracking/geo', { params })).data;
   }
 
-  // ── Analytics microservice (direct via nginx proxy) ──
-  // Dedicated client — no auth interceptors, no credentials, no Authorization header
-  private readonly _analyticsClient = axios.create({
-    baseURL: API_BASE_URL,
-    timeout: 15000,
-    headers: { 'Content-Type': 'application/json' },
-    withCredentials: false,
-  });
-  private get analyticsKey() { return import.meta.env.VITE_ANALYTICS_API_KEY ?? ''; }
-  private aC(params?: Record<string, unknown>) {
-    return { params, headers: { 'X-API-Key': this.analyticsKey } };
+  // ── Cookies / Tracking (app/cookies dans api.sonnalab.com) ──
+  async analyticsOverview(_site: string) {
+    return (await this.client.get('/api/v1/admin/cookies/overview')).data;
   }
-
-  async analyticsOverview(site: string) {
-    return (await this._analyticsClient.get('/analytics/overview', this.aC({ site }))).data;
+  async analyticsVisitors(_site: string, params?: { page?: number; per_page?: number }) {
+    return (await this.client.get('/api/v1/admin/cookies/visitors', { params })).data;
   }
-  async analyticsVisitors(site: string, params?: { page?: number; per_page?: number }) {
-    return (await this._analyticsClient.get('/analytics/visitors', this.aC({ site, ...params }))).data;
+  async analyticsSessions(_site: string, params?: { page?: number; per_page?: number; active_only?: boolean; visitor_id?: string }) {
+    return (await this.client.get('/api/v1/admin/cookies/sessions', { params })).data;
   }
-  async analyticsSessions(site: string, params?: { page?: number; per_page?: number; active_only?: boolean; visitor_id?: string }) {
-    return (await this._analyticsClient.get('/analytics/sessions', this.aC({ site, ...params }))).data;
+  async analyticsVisitorPages(_site: string, visitorId: string, params?: { limit?: number }) {
+    return (await this.client.get(`/api/v1/admin/cookies/visitors/${visitorId}/pages`, { params })).data;
   }
-  async analyticsVisitorPages(site: string, visitorId: string, params?: { limit?: number }) {
-    return (await this._analyticsClient.get(`/analytics/visitors/${visitorId}/pages`, this.aC({ site, ...params }))).data;
+  async analyticsVisitorSessions(_site: string, visitorId: string, params?: { per_page?: number }) {
+    return (await this.client.get('/api/v1/admin/cookies/sessions', { params: { visitor_id: visitorId, ...params } })).data;
   }
-  async analyticsVisitorSessions(site: string, visitorId: string, params?: { per_page?: number }) {
-    return (await this._analyticsClient.get('/analytics/sessions', this.aC({ site, visitor_id: visitorId, ...params }))).data;
+  async analyticsPages(_site: string, params?: { days?: number; limit?: number }) {
+    return (await this.client.get('/api/v1/admin/cookies/pages', { params })).data;
   }
-  async analyticsPages(site: string, params?: { days?: number; limit?: number }) {
-    return (await this._analyticsClient.get('/analytics/pages', this.aC({ site, ...params }))).data;
+  async analyticsReferrals(_site: string, params?: { days?: number; limit?: number }) {
+    return (await this.client.get('/api/v1/admin/cookies/referrals', { params })).data;
   }
-  async analyticsReferrals(site: string, params?: { days?: number; limit?: number }) {
-    return (await this._analyticsClient.get('/analytics/referrals', this.aC({ site, ...params }))).data;
+  async analyticsGeo(_site: string, params?: { days?: number; limit?: number }) {
+    return (await this.client.get('/api/v1/admin/cookies/geo', { params })).data;
   }
-  async analyticsGeo(site: string, params?: { days?: number; limit?: number }) {
-    return (await this._analyticsClient.get('/analytics/geo', this.aC({ site, ...params }))).data;
+  async analyticsDevices(_site: string, params?: { days?: number }) {
+    return (await this.client.get('/api/v1/admin/cookies/overview', { params })).data;
   }
-  async analyticsDevices(site: string, params?: { days?: number }) {
-    return (await this._analyticsClient.get('/analytics/devices', this.aC({ site, ...params }))).data;
+  async botsOverview(_site: string) {
+    return (await this.client.get('/api/v1/admin/cookies/bots/overview')).data;
   }
-  async botsOverview(site: string) {
-    return (await this._analyticsClient.get('/bots/overview', this.aC({ site }))).data;
+  async botsVisits(_site: string, params?: { page?: number; per_page?: number; bot_type?: string }) {
+    return (await this.client.get('/api/v1/admin/cookies/bots/visits', { params })).data;
   }
-  async botsVisits(site: string, params?: { page?: number; per_page?: number; bot_type?: string }) {
-    return (await this._analyticsClient.get('/bots/visits', this.aC({ site, ...params }))).data;
-  }
-  async consentAdmin(site: string, params?: { page?: number; per_page?: number }) {
-    return (await this._analyticsClient.get('/consent/admin', this.aC({ site, ...params }))).data;
+  async consentAdmin(_site: string, params?: { page?: number; per_page?: number }) {
+    return (await this.client.get('/api/v1/admin/cookies/consent', { params })).data;
   }
 
   async adminOuouConversations()                              { return (await this.client.get('/api/v1/admin/ouou/conversations')).data; }
