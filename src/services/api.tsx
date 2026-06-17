@@ -439,21 +439,6 @@ class ApiService {
   async adminInfrastructure()       { return (await this.client.get('/api/v1/admin/infrastructure')).data; }
   async adminInfrastructureHealth() { return (await this.client.get('/api/v1/admin/infrastructure/health')).data; }
 
-  async adminTrackingOverview(params?: { start_date?: string; end_date?: string }) {
-    return (await this.client.get('/api/v1/admin/tracking/overview', { params })).data;
-  }
-  async adminTrackingRealtime() { return (await this.client.get('/api/v1/admin/tracking/realtime')).data; }
-  async adminTrackingSessions(params?: { page?: number; per_page?: number; consented?: 'true'; device?: string }) {
-    return (await this.client.get('/api/v1/admin/tracking/sessions', { params })).data;
-  }
-  async adminTrackingSession(id: string) { return (await this.client.get(`/api/v1/admin/tracking/sessions/${id}`)).data; }
-  async adminTrackingFunnel(params?: { start_date?: string; end_date?: string }) {
-    return (await this.client.get('/api/v1/admin/tracking/funnel', { params })).data;
-  }
-  async adminTrackingGeo(params?: { start_date?: string; end_date?: string }) {
-    return (await this.client.get('/api/v1/admin/tracking/geo', { params })).data;
-  }
-
   // ── Cookies / Tracking (app/cookies dans api.sonnalab.com) ──
   async analyticsOverview(_site: string) {
     return (await this.client.get('/api/v1/admin/cookies/overview')).data;

@@ -34,7 +34,7 @@ import MemberBilling from '@/pages/private/member/Billing';
 // Admin
 import AdminDashboard from '@/pages/private/admin/Dashboard';
 import AdminInfrastructure from '@/pages/private/admin/Infrastructure';
-import AdminTracking from '@/pages/private/admin/Tracking';
+import AdminCookies from '@/pages/private/admin/Cookies';
 import AdminOuou from '@/pages/private/admin/Ouou';
 import AdminSeo from '@/pages/private/admin/Seo';
 import AdminNews from '@/pages/private/admin/News';
@@ -134,7 +134,7 @@ export const router = createBrowserRouter([
           { index: true,            element: <Navigate to="/admin/dashboard" replace /> },
           { path: 'dashboard',      element: <AdminDashboard /> },
           { path: 'infrastructure', element: <AdminInfrastructure /> },
-          { path: 'tracking',       element: <AdminTracking /> },
+          { path: 'cookies',        element: <AdminCookies /> },
           { path: 'ouou',           element: <AdminOuou /> },
           { path: 'seo',            element: <AdminSeo /> },
           { path: 'news',           element: <AdminNews /> },

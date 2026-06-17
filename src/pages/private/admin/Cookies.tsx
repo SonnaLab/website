@@ -19,7 +19,7 @@ function fmt_dur(s: number | null | undefined) {
   return `${Math.floor(s / 60)}m${Math.round(s % 60)}s`;
 }
 
-export default function AdminTracking() {
+export default function AdminCookies() {
   const { t } = useTranslation('admin');
   const [tab, setTab] = useState('geo');
   const [kpis, setKpis] = useState<any>(null);

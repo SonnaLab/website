@@ -63,7 +63,7 @@ export function MemberLayout() {
   const adminNav: NavItem[] = [
     { to: '/admin/dashboard',      end: true, label: tA('nav.dashboard'),      icon: <LayoutDashboardIcon size={16} /> },
     { to: '/admin/infrastructure',            label: tA('nav.infrastructure'), icon: <ServerIcon          size={16} /> },
-    { to: '/admin/tracking',                  label: tA('nav.tracking'),       icon: <CookieIcon          size={16} /> },
+    { to: '/admin/cookies',                   label: tA('nav.tracking'),       icon: <CookieIcon          size={16} /> },
     { to: '/admin/news',                      label: tA('nav.news'),           icon: <NewsIcon            size={16} /> },
     { to: '/admin/users',                     label: tA('nav.users'),          icon: <UsersIcon           size={16} /> },
     { to: '/admin/lesankofa',                  label: tA('nav.lesankofa'),      icon: <BrainIcon           size={16} /> },
