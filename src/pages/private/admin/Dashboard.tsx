@@ -43,7 +43,7 @@ const latestItemsByWidget: Partial<Record<WidgetKey, LatestItem[]>> = {};
 const adminWidgetRows: AdminWidget[][] = [
   [
     { key: 'infrastructure', to: '/admin/infrastructure', icon: ServerIcon },
-    { key: 'tracking',       to: '/admin/cookies',        icon: CookieIcon },
+    { key: 'cookies',        to: '/admin/cookies',        icon: CookieIcon },
     { key: 'news',           to: '/admin/news',           icon: NewsIcon },
   ],
   [
