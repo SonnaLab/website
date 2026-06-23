@@ -52,6 +52,7 @@ import {
   ChevronRightIcon,
   MegaphoneIcon,
   MegaphoneOffIcon,
+  TerminalIcon,
 } from '@icons';
 
 // ─────────────────────────────────────────────
@@ -94,11 +95,30 @@ function normalizeNewsStats(payload: any): NewsStatsSummary {
 // Page root
 // ─────────────────────────────────────────────
 
+const NEWS_VALID_TABS = ['overview', 'articles', 'prompts', 'calendar', 'strategy'] as const;
+type NewsTabValue = typeof NEWS_VALID_TABS[number];
+
+function readNewsHashTab(): NewsTabValue {
+  const hash = window.location.hash.replace('#tab-', '');
+  return (NEWS_VALID_TABS as readonly string[]).includes(hash) ? (hash as NewsTabValue) : 'overview';
+}
+
 export default function AdminNews() {
   const { t } = useTranslation('admin');
-  const [tab, setTab] = useState('overview');
+  const [tab, setTab] = useState<NewsTabValue>(readNewsHashTab);
   const [kpiKey, setKpiKey] = useState(0);
   const refreshKpis = () => setKpiKey(k => k + 1);
+
+  useEffect(() => {
+    const onPop = () => setTab(readNewsHashTab());
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+
+  const handleTabChange = (v: string) => {
+    setTab(v as NewsTabValue);
+    history.replaceState(null, '', `#tab-${v}`);
+  };
 
   return (
     <div className="admin-news">
@@ -112,7 +132,7 @@ export default function AdminNews() {
 
       <AdminNewsKpis refreshKey={kpiKey} />
 
-      <Tabs value={tab} onValueChange={setTab}>
+      <Tabs value={tab} onValueChange={handleTabChange}>
         <TabsList>
           <TabsTrigger value="overview" icon={<EyeIcon size={14} />}>{t('news.tabs.overview')}</TabsTrigger>
           <TabsTrigger value="articles" icon={<PenLineIcon size={14} />}>{t('news.tabs.articles')}</TabsTrigger>
@@ -121,7 +141,7 @@ export default function AdminNews() {
           <TabsTrigger value="strategy" icon={<TargetIcon size={14} />}>{t('news.tabs.strategy')}</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview"><OverviewTab setTab={setTab} /></TabsContent>
+        <TabsContent value="overview"><OverviewTab setTab={handleTabChange} /></TabsContent>
         <TabsContent value="articles"><ArticlesTab onStatsChange={refreshKpis} /></TabsContent>
         <TabsContent value="prompts"><PromptsTab onStatsChange={refreshKpis} /></TabsContent>
         <TabsContent value="calendar"><CalendarTab /></TabsContent>
@@ -340,6 +360,10 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
   const [reviewModal, setReviewModal] = useState<ReviewModalState>({
     open: false, article: null, action: null, notes: '', status: 'idle', errorMsg: '',
   });
+  const [articleGeneration, setArticleGeneration] = useState<NewsAIPrompt | null>(null);
+  const [promptModalOpen, setPromptModalOpen] = useState(false);
+  const [promptModalData, setPromptModalData] = useState<NewsAIPrompt | null>(null);
+  const [promptModalLoading, setPromptModalLoading] = useState(false);
   const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage]           = useState(1);
   const [total, setTotal]         = useState(0);
@@ -359,9 +383,19 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
     setModalMode(mode);
     setEditing(article);
     setModalOpen(true);
+    setArticleGeneration(null);
     try {
       const data = await apiService.adminNewsArticle(article.id);
       setEditing(data.article ?? article);
+      const transactionId = (data.article ?? article).lesankofa_transaction_id;
+      if (transactionId) {
+        try {
+          const genData = await apiService.adminNewsAIPrompt(String(transactionId));
+          setArticleGeneration(genData.prompt ?? null);
+        } catch {
+          // non-critique, on ignore silencieusement
+        }
+      }
     } catch {
       toast.error(t('common.error'));
     }
@@ -371,6 +405,22 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
     setModalOpen(false);
     setImagePickerOpen(false);
     setEditing(ARTICLE_FORM_DEFAULTS);
+    setArticleGeneration(null);
+  };
+
+  const openPromptModal = async (a: Article) => {
+    if (!a.lesankofa_transaction_id) return;
+    setPromptModalData(null);
+    setPromptModalOpen(true);
+    setPromptModalLoading(true);
+    try {
+      const data = await apiService.adminNewsAIPrompt(String(a.lesankofa_transaction_id));
+      setPromptModalData(data.prompt ?? null);
+    } catch {
+      toast.error(t('common.error'));
+    } finally {
+      setPromptModalLoading(false);
+    }
   };
 
   const closeGenerationModal = () => {
@@ -627,6 +677,17 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                       <RefreshCwIcon size={13} />
                     </button>
                   )}
+                  {!!a.lesankofa_transaction_id && (
+                    <button
+                      type="button"
+                      className="adm-btn adm-btn--ghost adm-btn--xs"
+                      onClick={e => { e.stopPropagation(); openPromptModal(a); }}
+                      aria-label="Détails du prompt"
+                      title="Détails du prompt"
+                    >
+                      <TerminalIcon size={13} />
+                    </button>
+                  )}
                   {a.status === 'published' && (
                     <button
                       type="button"
@@ -726,6 +787,15 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
             {!!editing.tags?.length && (
               <div className="admin-news-articles__tags">
                 {editing.tags.map(tag => <span key={tag}>{tag}</span>)}
+              </div>
+            )}
+            {articleGeneration?.push_status === 'failed' && (
+              <div className="admin-news-articles__push-error">
+                <AlertTriangleIcon size={15} />
+                <div>
+                  <strong>Push échoué</strong>
+                  <p>{articleGeneration.push_error_message || articleGeneration.error_message || 'Erreur inconnue'}</p>
+                </div>
               </div>
             )}
             <div className="admin-news-articles__markdown">
@@ -1046,6 +1116,94 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
             </>
           )}
         </div>
+      </Modal>
+
+      <Modal
+        open={promptModalOpen}
+        onClose={() => { setPromptModalOpen(false); setPromptModalData(null); }}
+        title={promptModalData ? `Prompt #${promptModalData.generation_id}` : 'Prompt details'}
+        size="lg"
+        footer={
+          <button type="button" className="adm-btn adm-btn--ghost" onClick={() => { setPromptModalOpen(false); setPromptModalData(null); }}>
+            {t('common.cancel')}
+          </button>
+        }
+      >
+        {promptModalLoading && <p className="adm-loading">{t('common.loading')}</p>}
+        {!promptModalLoading && promptModalData && (
+          <div className="admin-news-prompts__modal">
+            <div className="admin-news-prompts__modal-head">
+              <div>
+                <h3>{promptModalData.title || promptModalData.keyword || t('news.prompts.noPrompt')}</h3>
+                <p>{formatOptional(promptModalData.keyword)} · {formatOptional(promptModalData.locale).toUpperCase()} · {formatOptional(promptModalData.article_format)}</p>
+              </div>
+              {(() => {
+                const si = aiPromptStatusInfo(promptModalData);
+                return (
+                  <div className="admin-news-prompts__status">
+                    <StatusBadge label={t(si.labelKey, { defaultValue: si.fallback })} variant={si.variant} />
+                    {si.detailKey && <span className="admin-news-prompts__status-detail">{t(si.detailKey)}</span>}
+                  </div>
+                );
+              })()}
+            </div>
+
+            <div className="admin-news-prompts__reason-box">
+              <span>{t('news.prompts.reason')}</span>
+              <p>{promptReason(promptModalData, t('news.prompts.noReason'))}</p>
+            </div>
+
+            <div className="admin-news-prompts__details">
+              {([
+                [t('news.prompts.client'),          formatOptional(promptModalData.client_id)],
+                [t('news.prompts.generationStatus'), t(`news.prompts.statuses.${promptModalData.status}`, { defaultValue: promptModalData.status })],
+                [t('news.prompts.pushStatus'),       t(`news.prompts.pushStatuses.${promptModalData.push_status || 'unknown'}`, { defaultValue: formatOptional(promptModalData.push_status) })],
+                [t('news.prompts.pushEndpoint'),     formatOptional(promptModalData.push_endpoint)],
+                [t('news.prompts.model'),            formatOptional(promptModalData.model_used)],
+                [t('news.prompts.provider'),         formatOptional(promptModalData.provider)],
+                [t('news.prompts.temperature'),      formatOptional(promptModalData.temperature)],
+                [t('news.prompts.tokens'),           formatOptional(promptModalData.total_tokens)],
+                [t('news.prompts.duration'),         formatDuration(promptModalData.generation_time_ms)],
+                [t('news.prompts.createdAt'),        fmtDate(promptModalData.created_at, i18n.language)],
+                [t('news.prompts.completedAt'),      promptModalData.completed_at ? fmtDate(promptModalData.completed_at, i18n.language) : '—'],
+              ] as [string, string][]).map(([label, value]) => (
+                <div key={label} className="admin-news-prompts__detail">
+                  <span>{label}</span>
+                  <strong>{value}</strong>
+                </div>
+              ))}
+            </div>
+
+            <div className="admin-news-prompts__prompt-grid">
+              <section className="admin-news-prompts__prompt-block">
+                <h4>{t('news.prompts.systemPrompt')}</h4>
+                <pre>{promptModalData.prompt_system || t('news.prompts.noPrompt')}</pre>
+              </section>
+              <section className="admin-news-prompts__prompt-block">
+                <h4>{t('news.prompts.userPrompt')}</h4>
+                <pre>{promptModalData.prompt_user || t('news.prompts.noPrompt')}</pre>
+              </section>
+            </div>
+
+            <div className="admin-news-prompts__prompt-grid">
+              <section className="admin-news-prompts__prompt-block">
+                <h4>{t('news.prompts.seoRules')}</h4>
+                <pre>{formatJson(promptModalData.seo_rules_snapshot)}</pre>
+              </section>
+              <section className="admin-news-prompts__prompt-block">
+                <h4>{t('news.prompts.payload')}</h4>
+                <pre>{formatJson(promptModalData.generation_payload)}</pre>
+              </section>
+            </div>
+
+            {promptModalData.push_response && (
+              <section className="admin-news-prompts__prompt-block">
+                <h4>{t('news.prompts.pushResponse')}</h4>
+                <pre>{formatJson(promptModalData.push_response)}</pre>
+              </section>
+            )}
+          </div>
+        )}
       </Modal>
 
       <Modal

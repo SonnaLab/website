@@ -57,4 +57,5 @@ export {
   CookieIcon,
   BrainIcon,
   InfoIcon,
+  TerminalIcon,
 } from './icons';
