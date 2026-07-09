@@ -58,4 +58,6 @@ export {
   BrainIcon,
   InfoIcon,
   TerminalIcon,
+  LinkedinIcon,
+  Share2Icon,
 } from './icons';

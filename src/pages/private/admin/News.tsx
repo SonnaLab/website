@@ -53,6 +53,8 @@ import {
   MegaphoneIcon,
   MegaphoneOffIcon,
   TerminalIcon,
+  LinkedinIcon,
+  Share2Icon,
 } from '@icons';
 
 // ─────────────────────────────────────────────
@@ -368,6 +370,10 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
   const [page, setPage]           = useState(1);
   const [total, setTotal]         = useState(0);
   const PER_PAGE = 10;
+  const [previewTab, setPreviewTab] = useState<'web' | 'social'>('web');
+  const [publishModal, setPublishModal] = useState<{ open: boolean; article: Article | null; tab: 'web' | 'social' }>({ open: false, article: null, tab: 'web' });
+  const [socialStatus, setSocialStatus] = useState<{ linkedin: { status: string; posted_at?: string; platform_post_id?: string; error?: string } | null } | null>(null);
+  const [socialPublishing, setSocialPublishing] = useState(false);
 
   const reload = (q = search, status = statusFilter, pg = page) => {
     setLoading(true);
@@ -565,6 +571,30 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
     if (url) window.open(url, '_blank', 'noopener,noreferrer');
   };
 
+  const openPublishModal = async (article: Article, tab: 'web' | 'social' = 'web') => {
+    setPublishModal({ open: true, article, tab });
+    setSocialStatus(null);
+    try {
+      const data = await apiService.adminSocialArticleStatus(article.id);
+      setSocialStatus(data);
+    } catch { /* non-critique */ }
+  };
+
+  const publishToLinkedin = async () => {
+    if (!publishModal.article) return;
+    setSocialPublishing(true);
+    try {
+      await apiService.adminSocialPublishLinkedin(publishModal.article.id);
+      toast.success('Publication LinkedIn en cours…');
+      const data = await apiService.adminSocialArticleStatus(publishModal.article.id);
+      setSocialStatus(data);
+    } catch (e: any) {
+      toast.error(e?.response?.data?.error || 'Erreur publication LinkedIn');
+    } finally {
+      setSocialPublishing(false);
+    }
+  };
+
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
   const paginated = articles;
   const localeOptions = Array.from(new Set([...ARTICLE_LOCALES, editing.locale].filter(Boolean) as string[]));
@@ -604,6 +634,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
       <DataTable>
         <DataTableHead>
           <DataTableRow>
+            <DataTableTh>ID</DataTableTh>
             <DataTableTh>{t('news.articles.title')}</DataTableTh>
             <DataTableTh>{t('news.articles.status')}</DataTableTh>
             <DataTableTh>{t('news.articles.locale')}</DataTableTh>
@@ -622,9 +653,12 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
           ) : paginated.map(a => (
             <DataTableRow key={a.id}>
               <DataTableTd>
+                <span className="adm-table__id-cell" title={a.id}>{a.id.slice(0, 8)}</span>
+              </DataTableTd>
+              <DataTableTd>
                 <div className="admin-news-articles__title-cell">
-                  <button type="button" className="adm-table__title-btn" onClick={() => openArticle(a, 'preview')}>
-                    {a.title}
+                  <button type="button" className="adm-table__title-btn" onClick={() => { setPreviewTab('web'); openArticle(a, 'preview'); }}>
+                    {a.title.length > 60 ? `${a.title.slice(0, 60)}…` : a.title}
                   </button>
                   <span>{a.lesankofa_transaction_id ? `#${a.lesankofa_transaction_id}` : articleMetadataValue(a, 'keyword') || '—'}</span>
                 </div>
@@ -649,10 +683,9 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                   <button
                     type="button"
                     className="adm-btn adm-btn--ghost adm-btn--xs"
-                    onClick={() => togglePublish(a)}
-                    disabled={actionId === `publish-${a.id}`}
-                    aria-label={a.status === 'published' ? t('news.articles.unpublish') : t('news.articles.publish')}
-                    title={a.status === 'published' ? t('news.articles.unpublish') : t('news.articles.publish')}
+                    onClick={() => openPublishModal(a, 'web')}
+                    aria-label="Publier"
+                    title="Publier"
                   >
                     {a.status === 'published' ? <MegaphoneOffIcon size={13} /> : <MegaphoneIcon size={13} />}
                   </button>
@@ -765,43 +798,118 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
         }
       >
         {modalMode === 'preview' ? (
-          <article className="admin-news-articles__preview">
-            {editing.feature_image && (
-              <img className="admin-news-articles__preview-image" src={editing.feature_image} alt={editing.feature_image_alt || editing.title || ''} />
-            )}
-            <div className="admin-news-articles__preview-head">
-              <div>
-                <h3>{editing.title}</h3>
-                {editing.excerpt && <p>{editing.excerpt}</p>}
-              </div>
-              {editing.status && (
-                <StatusBadge label={t(`news.articles.statuses.${editing.status}`)} variant={articleStatusVariant(editing.status)} />
-              )}
+          <div>
+            <div className="adm-tabs__list" style={{ marginBottom: 16 }}>
+              <button type="button" role="tab" aria-selected={previewTab === 'web'} className={`adm-tabs__trigger${previewTab === 'web' ? ' adm-tabs__trigger--active' : ''}`} onClick={() => setPreviewTab('web')}>
+                <GlobeIcon size={13} /> Web
+              </button>
+              <button type="button" role="tab" aria-selected={previewTab === 'social'} className={`adm-tabs__trigger${previewTab === 'social' ? ' adm-tabs__trigger--active' : ''}`} onClick={() => setPreviewTab('social')}>
+                <Share2Icon size={13} /> Social
+              </button>
             </div>
-            <div className="admin-news-articles__preview-meta">
-              <span>{formatOptional(editing.locale).toUpperCase()}</span>
-              <span>{articleMetadataValue(editing, 'article_format') || t('news.articles.generated')}</span>
-              <span>{editing.reading_time_minutes ? `${editing.reading_time_minutes} min` : '—'}</span>
-              <span>{fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
-            </div>
-            {!!editing.tags?.length && (
-              <div className="admin-news-articles__tags">
-                {editing.tags.map(tag => <span key={tag}>{tag}</span>)}
-              </div>
-            )}
-            {articleGeneration?.push_status === 'failed' && (
-              <div className="admin-news-articles__push-error">
-                <AlertTriangleIcon size={15} />
-                <div>
-                  <strong>Push échoué</strong>
-                  <p>{articleGeneration.push_error_message || articleGeneration.error_message || 'Erreur inconnue'}</p>
+            {previewTab === 'web' ? (
+              <article className="admin-news-articles__preview">
+                {editing.feature_image && (
+                  <img className="admin-news-articles__preview-image" src={editing.feature_image} alt={editing.feature_image_alt || editing.title || ''} />
+                )}
+                <div className="admin-news-articles__preview-head">
+                  <div>
+                    <h3>{editing.title}</h3>
+                    {editing.excerpt && <p>{editing.excerpt}</p>}
+                  </div>
+                  {editing.status && (
+                    <StatusBadge label={t(`news.articles.statuses.${editing.status}`)} variant={articleStatusVariant(editing.status)} />
+                  )}
+                </div>
+                <div className="admin-news-articles__preview-meta">
+                  <span>{formatOptional(editing.locale).toUpperCase()}</span>
+                  <span>{articleMetadataValue(editing, 'article_format') || t('news.articles.generated')}</span>
+                  <span>{editing.reading_time_minutes ? `${editing.reading_time_minutes} min` : '—'}</span>
+                  <span>{fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
+                </div>
+                {!!editing.tags?.length && (
+                  <div className="admin-news-articles__tags">
+                    {editing.tags.map(tag => <span key={tag}>{tag}</span>)}
+                  </div>
+                )}
+                {articleGeneration?.push_status === 'failed' && (
+                  <div className="admin-news-articles__push-error">
+                    <AlertTriangleIcon size={15} />
+                    <div>
+                      <strong>Push échoué</strong>
+                      <p>{articleGeneration.push_error_message || articleGeneration.error_message || 'Erreur inconnue'}</p>
+                    </div>
+                  </div>
+                )}
+                <div className="admin-news-articles__markdown">
+                  {editing.content_markdown ? <MarkdownRenderer content={editing.content_markdown} /> : <p>{t('news.articles.noContent')}</p>}
+                </div>
+              </article>
+            ) : (
+              <div className="admin-news-articles__social-preview">
+                {/* LinkedIn card */}
+                <div className="social-preview-card social-preview-card--linkedin">
+                  <div className="social-preview-card__header">
+                    <LinkedinIcon size={16} className="social-preview-card__logo social-preview-card__logo--linkedin" />
+                    <span className="social-preview-card__platform">LinkedIn</span>
+                  </div>
+                  <div className="social-preview-card__post">
+                    <div className="social-preview-card__author">
+                      <div className="social-preview-card__avatar">S</div>
+                      <div>
+                        <strong>SonnaLab</strong>
+                        <span>Page · {fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
+                      </div>
+                    </div>
+                    <p className="social-preview-card__excerpt">{editing.excerpt ? (editing.excerpt.length > 200 ? `${editing.excerpt.slice(0, 200)}…` : editing.excerpt) : editing.title}</p>
+                    {editing.feature_image && (
+                      <img className="social-preview-card__image" src={editing.feature_image} alt={editing.title || ''} />
+                    )}
+                    <div className="social-preview-card__link-box">
+                      <span className="social-preview-card__link-domain">sonnalab.com</span>
+                      <strong className="social-preview-card__link-title">{editing.title}</strong>
+                      {editing.excerpt && <p className="social-preview-card__link-desc">{editing.excerpt.length > 120 ? `${editing.excerpt.slice(0, 120)}…` : editing.excerpt}</p>}
+                    </div>
+                    <div className="social-preview-card__reactions">
+                      <span>👍 J'aime</span>
+                      <span>💬 Commenter</span>
+                      <span>↗ Partager</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Facebook card */}
+                <div className="social-preview-card social-preview-card--facebook">
+                  <div className="social-preview-card__header">
+                    <svg className="social-preview-card__logo social-preview-card__logo--facebook" viewBox="0 0 24 24" width="16" height="16" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    <span className="social-preview-card__platform">Facebook</span>
+                  </div>
+                  <div className="social-preview-card__post">
+                    <div className="social-preview-card__author">
+                      <div className="social-preview-card__avatar">S</div>
+                      <div>
+                        <strong>SonnaLab</strong>
+                        <span>Page · {fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
+                      </div>
+                    </div>
+                    {editing.feature_image && (
+                      <img className="social-preview-card__image" src={editing.feature_image} alt={editing.title || ''} />
+                    )}
+                    <div className="social-preview-card__link-box">
+                      <span className="social-preview-card__link-domain">SONNALAB.COM</span>
+                      <strong className="social-preview-card__link-title">{editing.title}</strong>
+                      {editing.excerpt && <p className="social-preview-card__link-desc">{editing.excerpt.length > 120 ? `${editing.excerpt.slice(0, 120)}…` : editing.excerpt}</p>}
+                    </div>
+                    <div className="social-preview-card__reactions">
+                      <span>👍 J'aime</span>
+                      <span>💬 Commenter</span>
+                      <span>↗ Partager</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
-            <div className="admin-news-articles__markdown">
-              {editing.content_markdown ? <MarkdownRenderer content={editing.content_markdown} /> : <p>{t('news.articles.noContent')}</p>}
-            </div>
-          </article>
+          </div>
         ) : (
           <div className="adm-form">
           <div className="adm-form__field">
@@ -1204,6 +1312,105 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
             )}
           </div>
         )}
+      </Modal>
+
+      <Modal
+        open={publishModal.open}
+        onClose={() => setPublishModal(v => ({ ...v, open: false }))}
+        title="Publier"
+        size="sm"
+        footer={
+          <button type="button" className="adm-btn adm-btn--ghost" onClick={() => setPublishModal(v => ({ ...v, open: false }))}>
+            {t('common.cancel')}
+          </button>
+        }
+      >
+        <div>
+          <div className="adm-tabs__list" style={{ marginBottom: 16 }}>
+            <button type="button" role="tab" aria-selected={publishModal.tab === 'web'} className={`adm-tabs__trigger${publishModal.tab === 'web' ? ' adm-tabs__trigger--active' : ''}`} onClick={() => setPublishModal(v => ({ ...v, tab: 'web' }))}>
+              <GlobeIcon size={13} /> Web
+            </button>
+            <button type="button" role="tab" aria-selected={publishModal.tab === 'social'} className={`adm-tabs__trigger${publishModal.tab === 'social' ? ' adm-tabs__trigger--active' : ''}`} onClick={() => setPublishModal(v => ({ ...v, tab: 'social' }))}>
+              <Share2Icon size={13} /> Réseaux sociaux
+            </button>
+          </div>
+
+          {publishModal.tab === 'web' ? (
+            <div className="admin-news-publish-modal__web">
+              <p className="admin-news-publish-modal__article-title">{publishModal.article?.title}</p>
+              <div className="admin-news-publish-modal__status">
+                <StatusBadge
+                  label={publishModal.article ? t(`news.articles.statuses.${publishModal.article.status}`) : '—'}
+                  variant={publishModal.article ? articleStatusVariant(publishModal.article.status) : 'default'}
+                />
+              </div>
+              <div className="admin-news-publish-modal__actions">
+                <button
+                  type="button"
+                  className={`adm-btn ${publishModal.article?.status === 'published' ? 'adm-btn--ghost' : 'adm-btn--primary'}`}
+                  disabled={!publishModal.article || actionId === `publish-${publishModal.article?.id}`}
+                  onClick={async () => {
+                    if (!publishModal.article) return;
+                    await togglePublish(publishModal.article);
+                    setPublishModal(v => ({ ...v, open: false }));
+                  }}
+                >
+                  {actionId === `publish-${publishModal.article?.id}` ? <RefreshCwIcon size={14} className="adm-spin" /> : null}
+                  {publishModal.article?.status === 'published' ? t('news.articles.unpublish') : t('news.articles.publish')}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="admin-news-publish-modal__social">
+              <p className="admin-news-publish-modal__article-title">{publishModal.article?.title}</p>
+
+              {publishModal.article?.status !== 'published' && (
+                <div className="admin-news-publish-modal__warn">
+                  <AlertTriangleIcon size={14} />
+                  L'article doit être publié sur le web avant d'être partagé sur les réseaux.
+                </div>
+              )}
+
+              <div className="admin-news-publish-modal__platform">
+                <div className="admin-news-publish-modal__platform-head">
+                  <LinkedinIcon size={16} />
+                  <strong>LinkedIn</strong>
+                  {socialStatus === null && <RefreshCwIcon size={12} className="adm-spin" />}
+                  {socialStatus?.linkedin && (
+                    <StatusBadge
+                      label={socialStatus.linkedin.status === 'posted' ? 'Publié' : socialStatus.linkedin.status === 'pending' ? 'En attente' : socialStatus.linkedin.status === 'failed' ? 'Échec' : socialStatus.linkedin.status}
+                      variant={socialStatus.linkedin.status === 'posted' ? 'success' : socialStatus.linkedin.status === 'pending' ? 'info' : 'danger'}
+                    />
+                  )}
+                  {socialStatus !== null && !socialStatus.linkedin && (
+                    <StatusBadge label="Non publié" variant="default" />
+                  )}
+                </div>
+                {socialStatus?.linkedin?.posted_at && (
+                  <p className="admin-news-publish-modal__platform-detail">
+                    Publié le {fmtDate(socialStatus.linkedin.posted_at, i18n.language)}
+                    {socialStatus.linkedin.platform_post_id && ` · ${socialStatus.linkedin.platform_post_id}`}
+                  </p>
+                )}
+                {socialStatus?.linkedin?.error && (
+                  <p className="admin-news-publish-modal__platform-error">{socialStatus.linkedin.error}</p>
+                )}
+                {publishModal.article?.status === 'published' && (
+                  <button
+                    type="button"
+                    className="adm-btn adm-btn--primary adm-btn--sm"
+                    disabled={socialPublishing || socialStatus?.linkedin?.status === 'posted' || socialStatus?.linkedin?.status === 'pending'}
+                    onClick={publishToLinkedin}
+                    style={{ marginTop: 10 }}
+                  >
+                    {socialPublishing ? <RefreshCwIcon size={13} className="adm-spin" /> : <LinkedinIcon size={13} />}
+                    {socialPublishing ? 'Publication…' : socialStatus?.linkedin?.status === 'posted' ? 'Déjà publié ✓' : 'Publier sur LinkedIn'}
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
       </Modal>
 
       <Modal

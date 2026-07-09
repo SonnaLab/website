@@ -541,6 +541,10 @@ class ApiService {
 
   async adminNewsStats() { return (await this.client.get('/api/v1/admin/news/stats')).data; }
 
+  async adminSocialArticleStatus(articleId: string) { return (await this.client.get(`/api/v1/admin/social/articles/${articleId}/status`)).data; }
+  async adminSocialPublishLinkedin(articleId: string) { return (await this.client.post(`/api/v1/admin/social/articles/${articleId}/publish_linkedin`)).data; }
+  async adminLinkedinStatus() { return (await this.client.get('/api/v1/admin/social/linkedin/status')).data; }
+
   // ==================== Contact ====================
   
   async submitContactForm(data: ContactFormInputs) {
