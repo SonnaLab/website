@@ -2548,8 +2548,8 @@
 
 .spc__feed--facebook .spc__author,
 .spc__feed--facebook .spc__text,
-.spc__feed--facebook .spc__reactions--facebook,
-.spc__feed--facebook .spc__actions--facebook {
+.spc__feed--facebook .spc__reactions,
+.spc__feed--facebook .spc__actions {
   padding-left: 14px;
   padding-right: 14px;
 }
@@ -2697,22 +2697,43 @@
   border-top: 1px solid #d0d4dc;
 }
 
-/* ── Facebook link card ── */
-.spc__link-card--facebook {
-  margin-top: 10px;
-  border-top: 1px solid #e5e7eb;
+/* ── Facebook Desktop + Mobile grid ── */
+.spc__fb-previews {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  background: #f0f2f5;
+  padding: 10px;
 }
 
-.spc__link-img--facebook {
+/* Desktop: 1.91:1 full-width image + info strip */
+.spc__link-card--fb-desktop {
+  border-top: 1px solid #ccd0d5;
+  margin-top: 10px;
+}
+
+.spc__link-img--fb-desktop {
   width: 100%;
   display: block;
   aspect-ratio: 1.91 / 1;
-  object-fit: contain;
-  background: #000;
+  object-fit: cover;
+}
+
+/* Mobile: 1:1 square image + info strip */
+.spc__link-card--fb-mobile {
+  border-top: 1px solid #ccd0d5;
+  margin-top: 10px;
+}
+
+.spc__link-img--fb-mobile {
+  width: 100%;
+  display: block;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
 }
 
 .spc__link-info--facebook {
-  padding: 10px 12px 12px;
+  padding: 8px 12px 10px;
   background: #f0f2f5;
   display: flex;
   flex-direction: column;

@@ -968,36 +968,79 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                     <span>Aperçu Facebook</span>
                   </div>
-                  <div className="spc__feed spc__feed--facebook">
-                    <div className="spc__post">
-                      <div className="spc__author">
-                        <img className="spc__favicon spc__favicon--fb" src="/favicon/favicon-32x32.png" alt="SonnaLab" />
-                        <div className="spc__author-info">
-                          <strong>SonnaLab <span className="spc__verified">v</span></strong>
-                          <span>{fmtDate(editing.published_at ?? editing.created_at, i18n.language)} · Public</span>
+                  <div className="spc__fb-previews">
+
+                    {/* Desktop — 1.91:1, image full-width + info strip */}
+                    <div className="spc__li-col">
+                      <span className="spc__preview-label">Desktop</span>
+                      <div className="spc__feed spc__feed--facebook">
+                        <div className="spc__post">
+                          <div className="spc__author">
+                            <img className="spc__favicon spc__favicon--fb" src="/favicon/favicon-32x32.png" alt="SonnaLab" />
+                            <div className="spc__author-info">
+                              <strong>SonnaLab <span className="spc__verified">v</span></strong>
+                              <span>{fmtDate(editing.published_at ?? editing.created_at, i18n.language)} · Public</span>
+                            </div>
+                          </div>
+                          <p className="spc__text">{editing.excerpt ? (editing.excerpt.length > 240 ? `${editing.excerpt.slice(0, 240)}…` : editing.excerpt) : editing.title}</p>
+                          <div className="spc__link-card spc__link-card--fb-desktop">
+                            {editing.feature_image && (
+                              <img className="spc__link-img--fb-desktop" src={editing.feature_image} alt="" />
+                            )}
+                            <div className="spc__link-info spc__link-info--facebook">
+                              <span className="spc__link-domain">SONNALAB.COM</span>
+                              <strong className="spc__link-title">{editing.title}</strong>
+                              {editing.excerpt && <p className="spc__link-desc">{editing.excerpt.length > 100 ? `${editing.excerpt.slice(0, 100)}…` : editing.excerpt}</p>}
+                            </div>
+                          </div>
+                          <div className="spc__reactions spc__reactions--facebook">
+                            <em>118 réactions</em>
+                            <span>34 commentaires · 21 partages</span>
+                          </div>
+                          <div className="spc__actions spc__actions--facebook">
+                            <button type="button">J'aime</button>
+                            <button type="button">Commenter</button>
+                            <button type="button">Partager</button>
+                          </div>
                         </div>
-                      </div>
-                      <p className="spc__text">{editing.excerpt ? (editing.excerpt.length > 240 ? `${editing.excerpt.slice(0, 240)}…` : editing.excerpt) : editing.title}</p>
-                      <div className="spc__link-card spc__link-card--facebook">
-                        {editing.feature_image && (
-                          <img className="spc__link-img spc__link-img--facebook" src={editing.feature_image} alt="" />
-                        )}
-                        <div className="spc__link-info spc__link-info--facebook">
-                          <span className="spc__link-domain">SONNALAB.COM</span>
-                          <strong className="spc__link-title">{editing.title}</strong>
-                          {editing.excerpt && <p className="spc__link-desc">{editing.excerpt.length > 100 ? `${editing.excerpt.slice(0, 100)}…` : editing.excerpt}</p>}
-                        </div>
-                      </div>
-                      <div className="spc__reactions spc__reactions--facebook">
-                        <em>118 réactions</em>
-                        <span>34 commentaires · 21 partages</span>
-                      </div>
-                      <div className="spc__actions spc__actions--facebook">
-                        <button type="button">J'aime</button>
-                        <button type="button">Commenter</button>
-                        <button type="button">Partager</button>
                       </div>
                     </div>
+
+                    {/* Mobile — 1:1 square crop, narrower card */}
+                    <div className="spc__li-col">
+                      <span className="spc__preview-label">Mobile</span>
+                      <div className="spc__feed spc__feed--facebook">
+                        <div className="spc__post">
+                          <div className="spc__author">
+                            <img className="spc__favicon spc__favicon--fb" src="/favicon/favicon-32x32.png" alt="SonnaLab" />
+                            <div className="spc__author-info">
+                              <strong>SonnaLab <span className="spc__verified">v</span></strong>
+                              <span>{fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
+                            </div>
+                          </div>
+                          <p className="spc__text">{editing.excerpt ? (editing.excerpt.length > 120 ? `${editing.excerpt.slice(0, 120)}…` : editing.excerpt) : editing.title}</p>
+                          <div className="spc__link-card spc__link-card--fb-mobile">
+                            {editing.feature_image && (
+                              <img className="spc__link-img--fb-mobile" src={editing.feature_image} alt="" />
+                            )}
+                            <div className="spc__link-info spc__link-info--facebook">
+                              <span className="spc__link-domain">SONNALAB.COM</span>
+                              <strong className="spc__link-title">{editing.title}</strong>
+                            </div>
+                          </div>
+                          <div className="spc__reactions spc__reactions--facebook">
+                            <em>118 réactions</em>
+                            <span>34 commentaires</span>
+                          </div>
+                          <div className="spc__actions spc__actions--facebook">
+                            <button type="button">J'aime</button>
+                            <button type="button">Commenter</button>
+                            <button type="button">Partager</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
 
