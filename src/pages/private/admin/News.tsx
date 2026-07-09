@@ -880,39 +880,85 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                     <LinkedinIcon size={14} />
                     <span>Aperçu LinkedIn</span>
                   </div>
-                  <div className="spc__feed spc__feed--linkedin">
-                    <div className="spc__post">
-                      <div className="spc__author">
-                        <img className="spc__favicon" src="/favicon/favicon-32x32.png" alt="SonnaLab" />
-                        <div className="spc__author-info">
-                          <strong>SonnaLab</strong>
-                          <span>Page entreprise · <span className="spc__globe">🌐</span> {fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
+                  <div className="spc__li-previews">
+
+                    {/* Desktop */}
+                    <div className="spc__li-col">
+                      <span className="spc__preview-label">Desktop</span>
+                      <div className="spc__feed spc__feed--linkedin">
+                        <div className="spc__post">
+                          <div className="spc__author">
+                            <img className="spc__favicon" src="/favicon/favicon-32x32.png" alt="SonnaLab" />
+                            <div className="spc__author-info">
+                              <strong>SonnaLab</strong>
+                              <span>Page entreprise · {fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
+                            </div>
+                          </div>
+                          <p className="spc__text">{editing.excerpt ? (editing.excerpt.length > 280 ? `${editing.excerpt.slice(0, 280)}…` : editing.excerpt) : editing.title}</p>
+                          {!!editing.tags?.length && (
+                            <p className="spc__hashtags">{editing.tags.slice(0, 4).map(tag => `#${tag}`).join(' ')}</p>
+                          )}
+                          <div className="spc__link-card spc__link-card--li-desktop">
+                            {editing.feature_image && (
+                              <img className="spc__link-thumb" src={editing.feature_image} alt="" />
+                            )}
+                            <div className="spc__link-info spc__link-info--li-desktop">
+                              <strong className="spc__link-title">{editing.title}</strong>
+                              <span className="spc__link-domain">sonnalab.com</span>
+                            </div>
+                          </div>
+                          <div className="spc__reactions">
+                            <em>42 réactions</em>
+                            <span>12 commentaires · 5 partages</span>
+                          </div>
+                          <div className="spc__actions spc__actions--linkedin">
+                            <button type="button">J'aime</button>
+                            <button type="button">Commenter</button>
+                            <button type="button">Envoyer</button>
+                            <button type="button">Partager</button>
+                          </div>
                         </div>
-                      </div>
-                      <p className="spc__text">{editing.excerpt ? (editing.excerpt.length > 280 ? `${editing.excerpt.slice(0, 280)}…` : editing.excerpt) : editing.title}</p>
-                      {!!editing.tags?.length && (
-                        <p className="spc__hashtags">{editing.tags.slice(0, 4).map(t => `#${t}`).join(' ')}</p>
-                      )}
-                      <div className="spc__link-card spc__link-card--linkedin">
-                        {editing.feature_image && (
-                          <img className="spc__link-img spc__link-img--linkedin" src={editing.feature_image} alt={editing.title || ''} />
-                        )}
-                        <div className="spc__link-info spc__link-info--linkedin">
-                          <span className="spc__link-domain">sonnalab.com</span>
-                          <strong className="spc__link-title">{editing.title}</strong>
-                        </div>
-                      </div>
-                      <div className="spc__reactions spc__reactions--linkedin">
-                        <span className="spc__react-count">👍 ❤️ <em>42</em></span>
-                        <span>12 commentaires · 5 partages</span>
-                      </div>
-                      <div className="spc__actions spc__actions--linkedin">
-                        <button type="button">👍 J'aime</button>
-                        <button type="button">💬 Commenter</button>
-                        <button type="button">↗ Envoyer</button>
-                        <button type="button">⟳ Partager</button>
                       </div>
                     </div>
+
+                    {/* Mobile */}
+                    <div className="spc__li-col">
+                      <span className="spc__preview-label">Mobile</span>
+                      <div className="spc__feed spc__feed--linkedin">
+                        <div className="spc__post">
+                          <div className="spc__author">
+                            <img className="spc__favicon" src="/favicon/favicon-32x32.png" alt="SonnaLab" />
+                            <div className="spc__author-info">
+                              <strong>SonnaLab</strong>
+                              <span>Page entreprise · {fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
+                            </div>
+                          </div>
+                          <p className="spc__text">{editing.excerpt ? (editing.excerpt.length > 160 ? `${editing.excerpt.slice(0, 160)}…` : editing.excerpt) : editing.title}</p>
+                          {!!editing.tags?.length && (
+                            <p className="spc__hashtags">{editing.tags.slice(0, 3).map(tag => `#${tag}`).join(' ')}</p>
+                          )}
+                          <div className="spc__link-card spc__link-card--li-mobile">
+                            {editing.feature_image && (
+                              <img className="spc__link-img--li-mobile" src={editing.feature_image} alt="" />
+                            )}
+                            <div className="spc__link-info spc__link-info--li-mobile">
+                              <strong className="spc__link-title">{editing.title}</strong>
+                              <span className="spc__link-domain">sonnalab.com</span>
+                            </div>
+                          </div>
+                          <div className="spc__reactions">
+                            <em>42 réactions</em>
+                            <span>12 commentaires</span>
+                          </div>
+                          <div className="spc__actions spc__actions--linkedin">
+                            <button type="button">J'aime</button>
+                            <button type="button">Commenter</button>
+                            <button type="button">Envoyer</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
 
@@ -927,14 +973,14 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                       <div className="spc__author">
                         <img className="spc__favicon spc__favicon--fb" src="/favicon/favicon-32x32.png" alt="SonnaLab" />
                         <div className="spc__author-info">
-                          <strong>SonnaLab <span className="spc__verified">✓</span></strong>
-                          <span>{fmtDate(editing.published_at ?? editing.created_at, i18n.language)} · 🌐</span>
+                          <strong>SonnaLab <span className="spc__verified">v</span></strong>
+                          <span>{fmtDate(editing.published_at ?? editing.created_at, i18n.language)} · Public</span>
                         </div>
                       </div>
                       <p className="spc__text">{editing.excerpt ? (editing.excerpt.length > 240 ? `${editing.excerpt.slice(0, 240)}…` : editing.excerpt) : editing.title}</p>
                       <div className="spc__link-card spc__link-card--facebook">
                         {editing.feature_image && (
-                          <img className="spc__link-img spc__link-img--facebook" src={editing.feature_image} alt={editing.title || ''} />
+                          <img className="spc__link-img spc__link-img--facebook" src={editing.feature_image} alt="" />
                         )}
                         <div className="spc__link-info spc__link-info--facebook">
                           <span className="spc__link-domain">SONNALAB.COM</span>
@@ -943,13 +989,13 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                         </div>
                       </div>
                       <div className="spc__reactions spc__reactions--facebook">
-                        <span>👍 ❤️ 😮 <em>118</em></span>
+                        <em>118 réactions</em>
                         <span>34 commentaires · 21 partages</span>
                       </div>
                       <div className="spc__actions spc__actions--facebook">
-                        <button type="button">👍 J'aime</button>
-                        <button type="button">💬 Commenter</button>
-                        <button type="button">↗ Partager</button>
+                        <button type="button">J'aime</button>
+                        <button type="button">Commenter</button>
+                        <button type="button">Partager</button>
                       </div>
                     </div>
                   </div>

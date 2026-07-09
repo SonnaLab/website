@@ -2305,8 +2305,6 @@
   border: 1px solid #e8eaed;
   border-radius: 8px;
   background: #ffffff;
-  max-height: 560px;
-  overflow: auto;
 }
 
 .admin-news-articles__markdown h1,
@@ -2609,41 +2607,90 @@
   vertical-align: middle;
 }
 
-.spc__globe { font-size: 10px; }
-
 .spc__text {
-  font-size: 13.5px;
+  font-size: 13px;
   line-height: 1.55;
   color: #111827;
   margin: 0;
-  padding-top: 6px;
+  padding-top: 4px;
 }
 
 .spc__hashtags {
   margin: 0;
-  font-size: 12.5px;
+  font-size: 12px;
   color: #0a66c2;
   font-weight: 600;
 }
 
-/* ── LinkedIn link card ── */
-.spc__link-card--linkedin {
-  border: 1px solid #d0d4dc;
-  border-radius: 6px;
-  overflow: hidden;
-  background: #f9fafb;
+/* ── LinkedIn Desktop + Mobile grid ── */
+.spc__li-previews {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  background: #f3f2ef;
+  padding: 10px;
 }
 
-.spc__link-img--linkedin {
+.spc__li-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.spc__preview-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6b7280;
+  padding-left: 2px;
+}
+
+/* Desktop: horizontal thumbnail card (3:2 thumb left, title/domain right) */
+.spc__link-card--li-desktop {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid #d0d4dc;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #eef3f8;
+}
+
+.spc__link-thumb {
+  width: 100px;
+  min-width: 100px;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  display: block;
+  flex-shrink: 0;
+}
+
+.spc__link-info--li-desktop {
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  min-width: 0;
+}
+
+/* Mobile: stacked card — 1.91:1 image top, info below (LinkedIn guideline) */
+.spc__link-card--li-mobile {
+  border: 1px solid #d0d4dc;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #eef3f8;
+}
+
+.spc__link-img--li-mobile {
   width: 100%;
   display: block;
-  aspect-ratio: 16 / 9;
-  object-fit: contain;
-  background: #000;
+  aspect-ratio: 1.91 / 1;
+  object-fit: cover;
 }
 
-.spc__link-info--linkedin {
-  padding: 10px 12px;
+.spc__link-info--li-mobile {
+  padding: 8px 10px;
   display: flex;
   flex-direction: column;
   gap: 3px;
