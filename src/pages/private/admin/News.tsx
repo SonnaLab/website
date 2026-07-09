@@ -634,7 +634,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
       <DataTable>
         <DataTableHead>
           <DataTableRow>
-            <DataTableTh>ID</DataTableTh>
+            <DataTableTh>N°</DataTableTh>
             <DataTableTh>{t('news.articles.title')}</DataTableTh>
             <DataTableTh>{t('news.articles.status')}</DataTableTh>
             <DataTableTh>{t('news.articles.locale')}</DataTableTh>
@@ -653,14 +653,13 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
           ) : paginated.map(a => (
             <DataTableRow key={a.id}>
               <DataTableTd>
-                <span className="adm-table__id-cell" title={a.id}>{a.id.slice(0, 8)}</span>
+                <span className="adm-table__id-cell">{a.lesankofa_transaction_id ? `#${a.lesankofa_transaction_id}` : '—'}</span>
               </DataTableTd>
               <DataTableTd>
                 <div className="admin-news-articles__title-cell">
                   <button type="button" className="adm-table__title-btn" onClick={() => { setPreviewTab('web'); openArticle(a, 'preview'); }}>
                     {a.title.length > 60 ? `${a.title.slice(0, 60)}…` : a.title}
                   </button>
-                  <span>{a.lesankofa_transaction_id ? `#${a.lesankofa_transaction_id}` : articleMetadataValue(a, 'keyword') || '—'}</span>
                 </div>
               </DataTableTd>
               <DataTableTd>
@@ -809,104 +808,153 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
             </div>
             {previewTab === 'web' ? (
               <article className="admin-news-articles__preview">
-                {editing.feature_image && (
-                  <img className="admin-news-articles__preview-image" src={editing.feature_image} alt={editing.feature_image_alt || editing.title || ''} />
-                )}
-                <div className="admin-news-articles__preview-head">
-                  <div>
-                    <h3>{editing.title}</h3>
-                    {editing.excerpt && <p>{editing.excerpt}</p>}
+                {editing.feature_image ? (
+                  <div className="admin-news-articles__preview-hero">
+                    <img src={editing.feature_image} alt={editing.feature_image_alt || editing.title || ''} />
+                    {editing.feature_image_alt && (
+                      <span className="admin-news-articles__preview-hero-credit">{articleMetadataValue(editing, 'feature_image_credit') || editing.feature_image_alt}</span>
+                    )}
                   </div>
-                  {editing.status && (
-                    <StatusBadge label={t(`news.articles.statuses.${editing.status}`)} variant={articleStatusVariant(editing.status)} />
-                  )}
-                </div>
-                <div className="admin-news-articles__preview-meta">
-                  <span>{formatOptional(editing.locale).toUpperCase()}</span>
-                  <span>{articleMetadataValue(editing, 'article_format') || t('news.articles.generated')}</span>
-                  <span>{editing.reading_time_minutes ? `${editing.reading_time_minutes} min` : '—'}</span>
-                  <span>{fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
-                </div>
-                {!!editing.tags?.length && (
-                  <div className="admin-news-articles__tags">
-                    {editing.tags.map(tag => <span key={tag}>{tag}</span>)}
+                ) : (
+                  <div className="admin-news-articles__preview-hero admin-news-articles__preview-hero--empty">
+                    <CameraIcon size={28} />
+                    <span>Pas d'image</span>
                   </div>
                 )}
-                {articleGeneration?.push_status === 'failed' && (
-                  <div className="admin-news-articles__push-error">
-                    <AlertTriangleIcon size={15} />
-                    <div>
-                      <strong>Push échoué</strong>
-                      <p>{articleGeneration.push_error_message || articleGeneration.error_message || 'Erreur inconnue'}</p>
+
+                <div className="admin-news-articles__preview-body">
+                  <div className="admin-news-articles__preview-topbar">
+                    <div className="admin-news-articles__preview-badges">
+                      {editing.category && <span className="preview-badge preview-badge--category">{editing.category}</span>}
+                      <span className="preview-badge">{formatOptional(editing.locale).toUpperCase()}</span>
+                      {articleMetadataValue(editing, 'article_format') && (
+                        <span className="preview-badge preview-badge--format">{articleMetadataValue(editing, 'article_format')}</span>
+                      )}
                     </div>
+                    {editing.status && (
+                      <StatusBadge label={t(`news.articles.statuses.${editing.status}`)} variant={articleStatusVariant(editing.status)} />
+                    )}
                   </div>
-                )}
-                <div className="admin-news-articles__markdown">
-                  {editing.content_markdown ? <MarkdownRenderer content={editing.content_markdown} /> : <p>{t('news.articles.noContent')}</p>}
+
+                  <h2 className="admin-news-articles__preview-title">{editing.title || t('news.articles.noContent')}</h2>
+
+                  {editing.excerpt && (
+                    <p className="admin-news-articles__preview-excerpt">{editing.excerpt}</p>
+                  )}
+
+                  <div className="admin-news-articles__preview-datebar">
+                    {editing.reading_time_minutes && <span>{editing.reading_time_minutes} min de lecture</span>}
+                    <span>{fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
+                    {editing.lesankofa_transaction_id && <span className="preview-badge--number">#{editing.lesankofa_transaction_id}</span>}
+                  </div>
+
+                  {!!editing.tags?.length && (
+                    <div className="admin-news-articles__tags">
+                      {editing.tags.map(tag => <span key={tag}>#{tag}</span>)}
+                    </div>
+                  )}
+
+                  {articleGeneration?.push_status === 'failed' && (
+                    <div className="admin-news-articles__push-error">
+                      <AlertTriangleIcon size={15} />
+                      <div>
+                        <strong>Push échoué</strong>
+                        <p>{articleGeneration.push_error_message || articleGeneration.error_message || 'Erreur inconnue'}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="admin-news-articles__preview-divider" />
+
+                  <div className="admin-news-articles__markdown">
+                    {editing.content_markdown ? <MarkdownRenderer content={editing.content_markdown} /> : <p className="preview-no-content">{t('news.articles.noContent')}</p>}
+                  </div>
                 </div>
               </article>
             ) : (
               <div className="admin-news-articles__social-preview">
-                {/* LinkedIn card */}
-                <div className="social-preview-card social-preview-card--linkedin">
-                  <div className="social-preview-card__header">
-                    <LinkedinIcon size={16} className="social-preview-card__logo social-preview-card__logo--linkedin" />
-                    <span className="social-preview-card__platform">LinkedIn</span>
+
+                {/* ── LinkedIn ── */}
+                <div className="spc spc--linkedin">
+                  <div className="spc__bar spc__bar--linkedin">
+                    <LinkedinIcon size={14} />
+                    <span>Aperçu LinkedIn</span>
                   </div>
-                  <div className="social-preview-card__post">
-                    <div className="social-preview-card__author">
-                      <div className="social-preview-card__avatar">S</div>
-                      <div>
-                        <strong>SonnaLab</strong>
-                        <span>Page · {fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
+                  <div className="spc__feed spc__feed--linkedin">
+                    <div className="spc__post">
+                      <div className="spc__author">
+                        <img className="spc__favicon" src="/favicon/favicon-32x32.png" alt="SonnaLab" />
+                        <div className="spc__author-info">
+                          <strong>SonnaLab</strong>
+                          <span>Page entreprise · <span className="spc__globe">🌐</span> {fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
+                        </div>
                       </div>
-                    </div>
-                    <p className="social-preview-card__excerpt">{editing.excerpt ? (editing.excerpt.length > 200 ? `${editing.excerpt.slice(0, 200)}…` : editing.excerpt) : editing.title}</p>
-                    {editing.feature_image && (
-                      <img className="social-preview-card__image" src={editing.feature_image} alt={editing.title || ''} />
-                    )}
-                    <div className="social-preview-card__link-box">
-                      <span className="social-preview-card__link-domain">sonnalab.com</span>
-                      <strong className="social-preview-card__link-title">{editing.title}</strong>
-                      {editing.excerpt && <p className="social-preview-card__link-desc">{editing.excerpt.length > 120 ? `${editing.excerpt.slice(0, 120)}…` : editing.excerpt}</p>}
-                    </div>
-                    <div className="social-preview-card__reactions">
-                      <span>👍 J'aime</span>
-                      <span>💬 Commenter</span>
-                      <span>↗ Partager</span>
+                      <p className="spc__text">{editing.excerpt ? (editing.excerpt.length > 280 ? `${editing.excerpt.slice(0, 280)}…` : editing.excerpt) : editing.title}</p>
+                      {!!editing.tags?.length && (
+                        <p className="spc__hashtags">{editing.tags.slice(0, 4).map(t => `#${t}`).join(' ')}</p>
+                      )}
+                      <div className="spc__link-card spc__link-card--linkedin">
+                        {editing.feature_image && (
+                          <img className="spc__link-img spc__link-img--linkedin" src={editing.feature_image} alt={editing.title || ''} />
+                        )}
+                        <div className="spc__link-info spc__link-info--linkedin">
+                          <span className="spc__link-domain">sonnalab.com</span>
+                          <strong className="spc__link-title">{editing.title}</strong>
+                        </div>
+                      </div>
+                      <div className="spc__reactions spc__reactions--linkedin">
+                        <span className="spc__react-count">👍 ❤️ <em>42</em></span>
+                        <span>12 commentaires · 5 partages</span>
+                      </div>
+                      <div className="spc__actions spc__actions--linkedin">
+                        <button type="button">👍 J'aime</button>
+                        <button type="button">💬 Commenter</button>
+                        <button type="button">↗ Envoyer</button>
+                        <button type="button">⟳ Partager</button>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Facebook card */}
-                <div className="social-preview-card social-preview-card--facebook">
-                  <div className="social-preview-card__header">
-                    <svg className="social-preview-card__logo social-preview-card__logo--facebook" viewBox="0 0 24 24" width="16" height="16" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                    <span className="social-preview-card__platform">Facebook</span>
+                {/* ── Facebook ── */}
+                <div className="spc spc--facebook">
+                  <div className="spc__bar spc__bar--facebook">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    <span>Aperçu Facebook</span>
                   </div>
-                  <div className="social-preview-card__post">
-                    <div className="social-preview-card__author">
-                      <div className="social-preview-card__avatar">S</div>
-                      <div>
-                        <strong>SonnaLab</strong>
-                        <span>Page · {fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
+                  <div className="spc__feed spc__feed--facebook">
+                    <div className="spc__post">
+                      <div className="spc__author">
+                        <img className="spc__favicon spc__favicon--fb" src="/favicon/favicon-32x32.png" alt="SonnaLab" />
+                        <div className="spc__author-info">
+                          <strong>SonnaLab <span className="spc__verified">✓</span></strong>
+                          <span>{fmtDate(editing.published_at ?? editing.created_at, i18n.language)} · 🌐</span>
+                        </div>
                       </div>
-                    </div>
-                    {editing.feature_image && (
-                      <img className="social-preview-card__image" src={editing.feature_image} alt={editing.title || ''} />
-                    )}
-                    <div className="social-preview-card__link-box">
-                      <span className="social-preview-card__link-domain">SONNALAB.COM</span>
-                      <strong className="social-preview-card__link-title">{editing.title}</strong>
-                      {editing.excerpt && <p className="social-preview-card__link-desc">{editing.excerpt.length > 120 ? `${editing.excerpt.slice(0, 120)}…` : editing.excerpt}</p>}
-                    </div>
-                    <div className="social-preview-card__reactions">
-                      <span>👍 J'aime</span>
-                      <span>💬 Commenter</span>
-                      <span>↗ Partager</span>
+                      <p className="spc__text">{editing.excerpt ? (editing.excerpt.length > 240 ? `${editing.excerpt.slice(0, 240)}…` : editing.excerpt) : editing.title}</p>
+                      <div className="spc__link-card spc__link-card--facebook">
+                        {editing.feature_image && (
+                          <img className="spc__link-img spc__link-img--facebook" src={editing.feature_image} alt={editing.title || ''} />
+                        )}
+                        <div className="spc__link-info spc__link-info--facebook">
+                          <span className="spc__link-domain">SONNALAB.COM</span>
+                          <strong className="spc__link-title">{editing.title}</strong>
+                          {editing.excerpt && <p className="spc__link-desc">{editing.excerpt.length > 100 ? `${editing.excerpt.slice(0, 100)}…` : editing.excerpt}</p>}
+                        </div>
+                      </div>
+                      <div className="spc__reactions spc__reactions--facebook">
+                        <span>👍 ❤️ 😮 <em>118</em></span>
+                        <span>34 commentaires · 21 partages</span>
+                      </div>
+                      <div className="spc__actions spc__actions--facebook">
+                        <button type="button">👍 J'aime</button>
+                        <button type="button">💬 Commenter</button>
+                        <button type="button">↗ Partager</button>
+                      </div>
                     </div>
                   </div>
                 </div>
+
               </div>
             )}
           </div>
