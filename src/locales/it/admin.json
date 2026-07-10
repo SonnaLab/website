@@ -175,7 +175,8 @@
         "published": "Pubblicati",
         "drafts": "Bozze",
         "thisWeek": "Questa settimana",
-        "total": "Totale"
+        "total": "Totale articoli",
+        "failed": "Generazione fallita"
       }
     },
     "articles": {

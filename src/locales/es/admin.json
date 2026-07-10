@@ -175,7 +175,8 @@
         "published": "Publicados",
         "drafts": "Borradores",
         "thisWeek": "Esta semana",
-        "total": "Total"
+        "total": "Total artículos",
+        "failed": "Generación fallida"
       }
     },
     "articles": {

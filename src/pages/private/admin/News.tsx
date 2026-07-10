@@ -80,6 +80,7 @@ interface NewsStatsSummary {
   drafts?: number;
   this_week?: number;
   total?: number;
+  failed?: number;
 }
 
 function normalizeNewsStats(payload: any): NewsStatsSummary {
@@ -90,6 +91,7 @@ function normalizeNewsStats(payload: any): NewsStatsSummary {
     drafts: stats.drafts ?? stats.draft_articles,
     this_week: stats.this_week,
     total: stats.total ?? stats.total_articles,
+    failed: stats.failed_generations,
   };
 }
 
@@ -176,12 +178,13 @@ function AdminNewsKpis({ refreshKey }: { refreshKey: number }) {
     { label: t('news.overview.stats.drafts'), value: stats?.drafts ?? '—' },
     { label: t('news.overview.stats.thisWeek'), value: stats?.this_week ?? '—' },
     { label: t('news.overview.stats.total'), value: stats?.total ?? '—' },
+    { label: t('news.overview.stats.failed'), value: stats?.failed ?? '—', danger: true },
   ];
 
   return (
     <div className="admin-news-overview__stats">
-      {items.map(({ label, value }) => (
-        <div key={label} className="admin-news-overview__stat-card">
+      {items.map(({ label, value, danger }) => (
+        <div key={label} className={`admin-news-overview__stat-card${danger ? ' admin-news-overview__stat-card--danger' : ''}`}>
           <span className="admin-news-overview__stat-value">{value}</span>
           <span className="admin-news-overview__stat-label">{label}</span>
         </div>
@@ -1751,30 +1754,30 @@ function PromptsTab({ onStatsChange }: { onStatsChange?: () => void }) {
     [t('news.prompts.completedAt'), selectedPrompt.completed_at ? fmtDate(selectedPrompt.completed_at, i18n.language) : '—'],
   ] : [];
 
-  const errorCount    = prompts.filter(p => p.status === 'failed' || p.push_status === 'failed').length;
-  const runningCount  = prompts.filter(p => p.status === 'running' || p.status === 'pending').length;
-  const pushedCount   = prompts.filter(p => p.push_status === 'success').length;
+  const failedCount = prompts.filter(p => p.status === 'failed').length;
+
+  const purgeFailed = async () => {
+    if (!confirm(`Supprimer les ${failedCount} générations échouées ?`)) return;
+    try {
+      await apiService.adminNewsDeleteFailedPrompts();
+      toast.success('Générations échouées supprimées');
+      await reload();
+      onStatsChange?.();
+    } catch {
+      toast.error(t('common.error'));
+    }
+  };
 
   return (
     <div className="admin-news-prompts">
-      <div className="admin-news-prompts__kpis">
-        <div className="admin-news-overview__stat-card">
-          <span className="admin-news-overview__stat-value">{loading ? '—' : prompts.length}</span>
-          <span className="admin-news-overview__stat-label">{t('news.prompts.kpi.total')}</span>
+      {failedCount > 0 && (
+        <div className="admin-news-prompts__toolbar">
+          <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={purgeFailed}>
+            <Trash2Icon size={13} />
+            Purger les échecs ({failedCount})
+          </button>
         </div>
-        <div className="admin-news-overview__stat-card admin-news-overview__stat-card--danger">
-          <span className="admin-news-overview__stat-value">{loading ? '—' : errorCount}</span>
-          <span className="admin-news-overview__stat-label">{t('news.prompts.kpi.errors')}</span>
-        </div>
-        <div className="admin-news-overview__stat-card">
-          <span className="admin-news-overview__stat-value">{loading ? '—' : runningCount}</span>
-          <span className="admin-news-overview__stat-label">{t('news.prompts.kpi.running')}</span>
-        </div>
-        <div className="admin-news-overview__stat-card">
-          <span className="admin-news-overview__stat-value">{loading ? '—' : pushedCount}</span>
-          <span className="admin-news-overview__stat-label">{t('news.prompts.kpi.pushed')}</span>
-        </div>
-      </div>
+      )}
       <DataTable>
         <DataTableHead>
           <DataTableRow>

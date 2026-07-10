@@ -540,6 +540,7 @@ class ApiService {
   async adminNewsDeleteObjective(id: string) { return (await this.client.delete(`/api/v1/admin/news/objectives/${id}`)).data; }
 
   async adminNewsStats() { return (await this.client.get('/api/v1/admin/news/stats')).data; }
+  async adminNewsDeleteFailedPrompts() { return (await this.client.delete('/api/v1/admin/news/ai-prompts/failed')).data; }
 
   async adminSocialArticleStatus(articleId: string) { return (await this.client.get(`/api/v1/admin/social/articles/${articleId}/status`)).data; }
   async adminSocialPublishLinkedin(articleId: string) { return (await this.client.post(`/api/v1/admin/social/articles/${articleId}/publish_linkedin`)).data; }

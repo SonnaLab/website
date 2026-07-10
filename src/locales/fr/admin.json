@@ -176,7 +176,8 @@
         "published": "Publiés",
         "drafts": "Brouillons",
         "thisWeek": "Cette semaine",
-        "total": "Total"
+        "total": "Total articles",
+        "failed": "Génération échouée"
       }
     },
     "articles": {
