@@ -2977,6 +2977,19 @@
   gap: 12px;
 }
 
+.admin-news-prompts__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-news-prompts__filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .admin-news-overview__stat-card--danger .admin-news-overview__stat-value {
   color: #dc2626;
 }

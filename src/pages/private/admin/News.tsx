@@ -1675,6 +1675,8 @@ function PromptsTab({ onStatsChange }: { onStatsChange?: () => void }) {
   const [selectedPrompt, setSelectedPrompt] = useState<NewsAIPrompt | null>(null);
   const [actionId, setActionId]   = useState<string | null>(null);
   const [page, setPage]           = useState(1);
+  const [statusFilter, setStatusFilter] = useState('');
+  const [localeFilter, setLocaleFilter] = useState('');
 
   const reload = () => {
     setLoading(true);
@@ -1731,11 +1733,19 @@ function PromptsTab({ onStatsChange }: { onStatsChange?: () => void }) {
   };
 
   const selectedReason = selectedPrompt ? promptReason(selectedPrompt, t('news.prompts.noReason')) : '';
-  const totalPages = Math.max(1, Math.ceil(prompts.length / PROMPTS_PER_PAGE));
+  const totalPages = Math.max(1, Math.ceil(filteredPrompts.length / PROMPTS_PER_PAGE));
   const currentPage = Math.min(page, totalPages);
   const pageStart = (currentPage - 1) * PROMPTS_PER_PAGE;
-  const pageEnd = Math.min(pageStart + PROMPTS_PER_PAGE, prompts.length);
-  const visiblePrompts = prompts.slice(pageStart, pageEnd);
+  const pageEnd = Math.min(pageStart + PROMPTS_PER_PAGE, filteredPrompts.length);
+  const visiblePrompts = filteredPrompts.slice(pageStart, pageEnd);
+  useEffect(() => { setPage(1); }, [statusFilter, localeFilter]);
+
+  const filteredPrompts = prompts.filter(p => {
+    if (statusFilter && p.status !== statusFilter) return false;
+    if (localeFilter && p.locale !== localeFilter) return false;
+    return true;
+  });
+
   const selectedStatusInfo = selectedPrompt ? aiPromptStatusInfo(selectedPrompt) : null;
 
   const selectedDetails = selectedPrompt ? [
@@ -1754,13 +1764,13 @@ function PromptsTab({ onStatsChange }: { onStatsChange?: () => void }) {
     [t('news.prompts.completedAt'), selectedPrompt.completed_at ? fmtDate(selectedPrompt.completed_at, i18n.language) : '—'],
   ] : [];
 
-  const failedCount = prompts.filter(p => p.status === 'failed').length;
+  const failedCount = prompts.filter(p => p.status === 'failed' || p.status === 'rejected').length;
 
   const purgeFailed = async () => {
-    if (!confirm(`Supprimer les ${failedCount} générations échouées ?`)) return;
+    if (!confirm(`Supprimer les ${failedCount} générations échouées / rejetées ?`)) return;
     try {
       await apiService.adminNewsDeleteFailedPrompts();
-      toast.success('Générations échouées supprimées');
+      toast.success('Générations supprimées');
       await reload();
       onStatsChange?.();
     } catch {
@@ -1770,14 +1780,35 @@ function PromptsTab({ onStatsChange }: { onStatsChange?: () => void }) {
 
   return (
     <div className="admin-news-prompts">
-      {failedCount > 0 && (
-        <div className="admin-news-prompts__toolbar">
+      <div className="admin-news-prompts__toolbar">
+        <div className="admin-news-prompts__filters">
+          <select
+            value={statusFilter}
+            onChange={e => setStatusFilter(e.target.value)}
+            className="adm-select adm-select--sm"
+          >
+            <option value="">{t('news.articles.allStatuses')}</option>
+            <option value="pending">{t('news.prompts.statuses.pending')}</option>
+            <option value="running">{t('news.prompts.statuses.running')}</option>
+            <option value="failed">{t('news.prompts.statuses.failed')}</option>
+            <option value="rejected">{t('news.prompts.statuses.rejected')}</option>
+          </select>
+          <select
+            value={localeFilter}
+            onChange={e => setLocaleFilter(e.target.value)}
+            className="adm-select adm-select--sm"
+          >
+            <option value="">{t('news.prompts.allLocales')}</option>
+            {ARTICLE_LOCALES.map(l => <option key={l} value={l}>{l.toUpperCase()}</option>)}
+          </select>
+        </div>
+        {failedCount > 0 && (
           <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={purgeFailed}>
             <Trash2Icon size={13} />
             Purger les échecs ({failedCount})
           </button>
-        </div>
-      )}
+        )}
+      </div>
       <DataTable>
         <DataTableHead>
           <DataTableRow>
@@ -1864,9 +1895,9 @@ function PromptsTab({ onStatsChange }: { onStatsChange?: () => void }) {
         </DataTableBody>
       </DataTable>
 
-      {!loading && prompts.length > 0 && (
+      {!loading && filteredPrompts.length > 0 && (
         <div className="admin-news-prompts__pagination" aria-label={t('news.prompts.pagination')}>
-          <span>{t('news.prompts.paginationSummary', { from: pageStart + 1, to: pageEnd, total: prompts.length })}</span>
+          <span>{t('news.prompts.paginationSummary', { from: pageStart + 1, to: pageEnd, total: filteredPrompts.length })}</span>
           <div className="admin-news-prompts__pagination-actions">
             <button
               type="button"

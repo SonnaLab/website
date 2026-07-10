@@ -294,6 +294,7 @@
       "seoRules": "Reglas SEO",
       "payload": "Payload",
       "pushResponse": "Respuesta push",
+      "allLocales": "Todos los idiomas",
       "pagination": "Paginación de prompts",
       "paginationSummary": "{{from}}-{{to}} de {{total}}",
       "previousPage": "Página anterior",
