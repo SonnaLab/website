@@ -1732,12 +1732,6 @@ function PromptsTab({ onStatsChange }: { onStatsChange?: () => void }) {
     }
   };
 
-  const selectedReason = selectedPrompt ? promptReason(selectedPrompt, t('news.prompts.noReason')) : '';
-  const totalPages = Math.max(1, Math.ceil(filteredPrompts.length / PROMPTS_PER_PAGE));
-  const currentPage = Math.min(page, totalPages);
-  const pageStart = (currentPage - 1) * PROMPTS_PER_PAGE;
-  const pageEnd = Math.min(pageStart + PROMPTS_PER_PAGE, filteredPrompts.length);
-  const visiblePrompts = filteredPrompts.slice(pageStart, pageEnd);
   useEffect(() => { setPage(1); }, [statusFilter, localeFilter]);
 
   const filteredPrompts = prompts.filter(p => {
@@ -1746,6 +1740,12 @@ function PromptsTab({ onStatsChange }: { onStatsChange?: () => void }) {
     return true;
   });
 
+  const selectedReason = selectedPrompt ? promptReason(selectedPrompt, t('news.prompts.noReason')) : '';
+  const totalPages = Math.max(1, Math.ceil(filteredPrompts.length / PROMPTS_PER_PAGE));
+  const currentPage = Math.min(page, totalPages);
+  const pageStart = (currentPage - 1) * PROMPTS_PER_PAGE;
+  const pageEnd = Math.min(pageStart + PROMPTS_PER_PAGE, filteredPrompts.length);
+  const visiblePrompts = filteredPrompts.slice(pageStart, pageEnd);
   const selectedStatusInfo = selectedPrompt ? aiPromptStatusInfo(selectedPrompt) : null;
 
   const selectedDetails = selectedPrompt ? [
