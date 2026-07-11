@@ -1751,6 +1751,7 @@ function PromptsTab({ onStatsChange }: { onStatsChange?: () => void }) {
   const selectedDetails = selectedPrompt ? [
     [t('news.prompts.client'), formatOptional(selectedPrompt.client_id)],
     [t('news.prompts.calendarId'), formatOptional(selectedPrompt.editorial_calendar_id)],
+    [t('news.prompts.attemptCount'), selectedPrompt.attempt_count && selectedPrompt.attempt_count > 1 ? `${selectedPrompt.attempt_count} (échecs précédents masqués, dernière tentative affichée)` : '1'],
     [t('news.prompts.generationStatus'), t(`news.prompts.statuses.${selectedPrompt.status}`, { defaultValue: selectedPrompt.status })],
     [t('news.prompts.pushStatus'), t(`news.prompts.pushStatuses.${selectedPrompt.push_status || 'unknown'}`, { defaultValue: formatOptional(selectedPrompt.push_status) })],
     [t('news.prompts.pushEndpoint'), formatOptional(selectedPrompt.push_endpoint)],
@@ -1836,7 +1837,10 @@ function PromptsTab({ onStatsChange }: { onStatsChange?: () => void }) {
                 <DataTableTd>
                   <div className="admin-news-prompts__name">
                     <span className="admin-news-prompts__title">{prompt.title || prompt.keyword || `#${prompt.generation_id}`}</span>
-                    <span className="admin-news-prompts__meta">#{prompt.generation_id} · {formatOptional(prompt.keyword)}</span>
+                    <span className="admin-news-prompts__meta">
+                      #{prompt.generation_id} · {formatOptional(prompt.keyword)}
+                      {(prompt.attempt_count ?? 1) > 1 ? ` · ${prompt.attempt_count} tentatives` : ''}
+                    </span>
                   </div>
                 </DataTableTd>
                 <DataTableTd>

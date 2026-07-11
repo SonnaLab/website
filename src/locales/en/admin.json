@@ -278,6 +278,7 @@
       "pushPending": "Push pending",
       "client": "Client",
       "calendarId": "Calendar",
+      "attemptCount": "Attempts",
       "generationStatus": "Generation",
       "pushStatus": "Push",
       "pushEndpoint": "Push endpoint",

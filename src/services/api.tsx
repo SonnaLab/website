@@ -103,6 +103,7 @@ export interface NewsAIPrompt {
   country_id?: string | null;
   article_format?: string | null;
   status: string;
+  attempt_count?: number | null;
   push_status?: string | null;
   push_endpoint?: string | null;
   reason?: string | null;

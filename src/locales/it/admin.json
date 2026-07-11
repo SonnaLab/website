@@ -278,6 +278,7 @@
       "pushPending": "Push in attesa",
       "client": "Client",
       "calendarId": "Calendario",
+      "attemptCount": "Tentativi",
       "generationStatus": "Generazione",
       "pushStatus": "Push",
       "pushEndpoint": "Endpoint push",
