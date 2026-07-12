@@ -222,6 +222,7 @@
       "publish": "Pubblica",
       "unpublish": "Annulla pubblicazione",
       "confirmDelete": "Eliminare questo articolo?",
+      "deleted": "Articolo eliminato.",
       "statuses": {
         "draft": "Bozza",
         "published": "Pubblicato",

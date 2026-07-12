@@ -223,6 +223,7 @@
       "publish": "Publier",
       "unpublish": "Dépublier",
       "confirmDelete": "Supprimer cet article ?",
+      "deleted": "Article supprimé.",
       "statuses": {
         "draft": "Brouillon",
         "published": "Publié",

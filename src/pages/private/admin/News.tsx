@@ -327,9 +327,8 @@ type ReviewOutcome = 'approve' | 'reject' | 'rebuild';
 interface ReviewModalState {
   open: boolean;
   article: Article | null;
-  action: ReviewOutcome | null;
-  notes: string;
-  status: 'idle' | 'submitting' | 'done' | 'error';
+  status: 'idle' | 'reviewing' | 'approved' | 'rejected' | 'rebuilt' | 'error';
+  message: string;
   errorMsg: string;
 }
 
@@ -363,7 +362,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
   const [imageLoading, setImageLoading] = useState(false);
   const [actionId, setActionId]   = useState<string | null>(null);
   const [reviewModal, setReviewModal] = useState<ReviewModalState>({
-    open: false, article: null, action: null, notes: '', status: 'idle', errorMsg: '',
+    open: false, article: null, status: 'idle', message: '', errorMsg: '',
   });
   const [articleGeneration, setArticleGeneration] = useState<NewsAIPrompt | null>(null);
   const [promptModalOpen, setPromptModalOpen] = useState(false);
@@ -503,31 +502,38 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
     setImagePickerOpen(false);
   };
 
-  const openReview = (a: Article) => {
-    setReviewModal({ open: true, article: a, action: null, notes: '', status: 'idle', errorMsg: '' });
-  };
-
-  const submitReview = async () => {
-    const { article, action, notes } = reviewModal;
-    if (!article || !action) return;
-    const genId = article.lesankofa_transaction_id;
+  // Review IA v3 : purement automatique. L'ouverture du modal déclenche
+  // immédiatement le juge holistique côté Lesankofa (titre+meta+contenu vs
+  // profil client) — pas de choix manuel Approuver/Rejeter/Regénérer, le
+  // modal ne sert qu'à animer l'attente pendant que la décision se prend et,
+  // si besoin, qu'un article de remplacement est généré et poussé.
+  const openReview = async (a: Article) => {
+    const genId = a.lesankofa_transaction_id;
     if (!genId) {
-      setReviewModal(v => ({ ...v, status: 'error', errorMsg: 'Aucun ID de génération associé.' }));
+      setReviewModal({ open: true, article: a, status: 'error', message: '', errorMsg: 'Aucun ID de génération associé.' });
       return;
     }
-    setReviewModal(v => ({ ...v, status: 'submitting' }));
+    setReviewModal({ open: true, article: a, status: 'reviewing', message: '', errorMsg: '' });
     try {
-      await apiService.adminNewsAIReviewPrompt(String(genId), { action, ...(notes.trim() ? { notes: notes.trim() } : {}) });
-      if (action === 'reject' && article.status === 'published') {
-        await apiService.adminNewsUnpublishArticle(article.id);
-        setArticles(prev => prev.map(a => a.id === article.id ? { ...a, status: 'draft' as const } : a));
+      const res = await apiService.adminNewsAIReviewPrompt(String(genId), { action: 'auto' });
+      const action = (res?.action as ReviewOutcome | undefined) ?? 'approve';
+      if (action === 'reject' && a.status === 'published') {
+        await apiService.adminNewsUnpublishArticle(a.id);
+        setArticles(prev => prev.map(x => x.id === a.id ? { ...x, status: 'draft' as const } : x));
         triggerSitemapRefresh();
       }
-      setReviewModal(v => ({ ...v, status: 'done' }));
-      toast.success(action === 'approve' ? 'Article approuvé ✓' : action === 'rebuild' ? 'Regénération demandée' : 'Article rejeté');
-      setTimeout(() => setReviewModal(v => ({ ...v, open: false })), 1400);
+      const doneStatus: ReviewModalState['status'] =
+        action === 'approve' ? 'approved' : action === 'rebuild' ? 'rebuilt' : 'rejected';
+      setReviewModal(v => ({ ...v, status: doneStatus, message: res?.message || '' }));
+      toast.success(
+        action === 'approve' ? 'Article validé ✓'
+        : action === 'rebuild' ? 'Article hors-sujet — régénéré automatiquement ✓'
+        : 'Article rejeté'
+      );
+      reload(search, statusFilter, page);
+      setTimeout(() => setReviewModal(v => ({ ...v, open: false })), 2400);
     } catch (e: any) {
-      setReviewModal(v => ({ ...v, status: 'error', errorMsg: e?.response?.data?.error || e?.message || 'Erreur' }));
+      setReviewModal(v => ({ ...v, status: 'error', errorMsg: e?.response?.data?.detail || e?.response?.data?.error || e?.message || 'Erreur' }));
     }
   };
 
@@ -572,6 +578,17 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
     if (article.status !== 'published') return;
     const url = articlePublicUrl(article);
     if (url) window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const deleteArticle = async (article: Article) => {
+    if (!confirm(t('news.articles.confirmDelete'))) return;
+    try {
+      await apiService.adminNewsDeleteArticle(article.id);
+      toast.success(t('news.articles.deleted'));
+      reload(search, statusFilter, page);
+    } catch {
+      toast.error(t('common.error'));
+    }
   };
 
   const openPublishModal = async (article: Article, tab: 'web' | 'social' = 'web') => {
@@ -705,7 +722,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                       type="button"
                       className="adm-btn adm-btn--ghost adm-btn--xs"
                       onClick={() => openReview(a)}
-                      disabled={reviewModal.open && reviewModal.article?.id === a.id && reviewModal.status === 'submitting'}
+                      disabled={reviewModal.open && reviewModal.article?.id === a.id && reviewModal.status === 'reviewing'}
                       aria-label="Review IA"
                       title="Review IA"
                     >
@@ -734,6 +751,15 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                       <ArrowUpRightIcon size={13} />
                     </button>
                   )}
+                  <button
+                    type="button"
+                    className="adm-btn adm-btn--ghost adm-btn--xs adm-btn--danger"
+                    onClick={() => deleteArticle(a)}
+                    aria-label={t('common.delete')}
+                    title={t('common.delete')}
+                  >
+                    <Trash2Icon size={13} />
+                  </button>
                 </div>
               </DataTableTd>
             </DataTableRow>
@@ -1279,89 +1305,50 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
 
       <Modal
         open={reviewModal.open}
-        onClose={() => reviewModal.status !== 'submitting' && setReviewModal(v => ({ ...v, open: false }))}
+        onClose={() => reviewModal.status !== 'reviewing' && setReviewModal(v => ({ ...v, open: false }))}
         title="Review IA"
         size="sm"
-        footer={
-          reviewModal.status === 'done' ? null : (
-            <>
-              <button
-                type="button"
-                className="adm-btn adm-btn--ghost"
-                onClick={() => setReviewModal(v => ({ ...v, open: false }))}
-                disabled={reviewModal.status === 'submitting'}
-              >
-                Annuler
-              </button>
-              <button
-                type="button"
-                className="adm-btn adm-btn--primary"
-                onClick={submitReview}
-                disabled={!reviewModal.action || reviewModal.status === 'submitting'}
-              >
-                {reviewModal.status === 'submitting'
-                  ? <><RefreshCwIcon size={13} className="adm-spin" /> Envoi...</>
-                  : 'Confirmer'}
-              </button>
-            </>
-          )
-        }
+        footer={null}
       >
         <div className="adm-review-modal">
-          {reviewModal.status === 'done' ? (
+          <p className="adm-review-modal__article-title">{reviewModal.article?.title}</p>
+
+          {reviewModal.status === 'reviewing' && (
             <div className="adm-review-modal__done">
-              <CheckCircle2Icon size={38} />
-              <p>Review enregistrée</p>
+              <RefreshCwIcon size={38} className="adm-spin" />
+              <p>Vérification automatique en cours…</p>
             </div>
-          ) : (
-            <>
-              <p className="adm-review-modal__article-title">{reviewModal.article?.title}</p>
-              <div className="adm-review-modal__outcomes">
-                <button
-                  type="button"
-                  className={`adm-review-modal__outcome${reviewModal.action === 'approve' ? ' adm-review-modal__outcome--active' : ''}`}
-                  onClick={() => setReviewModal(v => ({ ...v, action: 'approve' }))}
-                >
-                  <CheckCircle2Icon size={16} />
-                  Approuver
-                </button>
-                <button
-                  type="button"
-                  className={`adm-review-modal__outcome${reviewModal.action === 'reject' ? ' adm-review-modal__outcome--active' : ''}`}
-                  onClick={() => setReviewModal(v => ({ ...v, action: 'reject' }))}
-                >
-                  <AlertTriangleIcon size={16} />
-                  Rejeter
-                </button>
-                <button
-                  type="button"
-                  className={`adm-review-modal__outcome${reviewModal.action === 'rebuild' ? ' adm-review-modal__outcome--active' : ''}`}
-                  onClick={() => setReviewModal(v => ({ ...v, action: 'rebuild' }))}
-                >
-                  <RefreshCwIcon size={16} />
-                  Regénérer
-                </button>
-              </div>
-              {reviewModal.action === 'reject' && reviewModal.article?.status === 'published' && (
-                <p className="adm-review-modal__warn">
-                  <AlertTriangleIcon size={13} />
-                  L'article sera dépublié automatiquement.
-                </p>
-              )}
-              <textarea
-                className="adm-input adm-review-modal__notes"
-                placeholder="Notes (optionnel)"
-                rows={3}
-                value={reviewModal.notes}
-                onChange={e => setReviewModal(v => ({ ...v, notes: e.target.value }))}
-              />
-              {reviewModal.status === 'error' && (
-                <p className="adm-review-modal__error">
-                  <XCircleIcon size={13} />
-                  {reviewModal.errorMsg}
-                </p>
-              )}
-            </>
+          )}
+
+          {reviewModal.status === 'approved' && (
+            <div className="adm-review-modal__done adm-review-modal__done--success">
+              <CheckCircle2Icon size={38} />
+              <p>Article validé</p>
+              {reviewModal.message && <p className="adm-review-modal__reason">{reviewModal.message}</p>}
+            </div>
+          )}
+
+          {reviewModal.status === 'rebuilt' && (
+            <div className="adm-review-modal__done adm-review-modal__done--warn">
+              <RefreshCwIcon size={38} />
+              <p>Article hors-sujet — régénéré automatiquement</p>
+              {reviewModal.message && <p className="adm-review-modal__reason">{reviewModal.message}</p>}
+            </div>
+          )}
+
+          {reviewModal.status === 'rejected' && (
+            <div className="adm-review-modal__done adm-review-modal__done--warn">
+              <AlertTriangleIcon size={38} />
+              <p>Article rejeté</p>
+              {reviewModal.message && <p className="adm-review-modal__reason">{reviewModal.message}</p>}
+            </div>
+          )}
+
+          {reviewModal.status === 'error' && (
+            <div className="adm-review-modal__done adm-review-modal__done--error">
+              <XCircleIcon size={38} />
+              <p>{reviewModal.errorMsg}</p>
+            </div>
           )}
         </div>
       </Modal>

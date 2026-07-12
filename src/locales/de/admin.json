@@ -222,6 +222,7 @@
       "publish": "Veröffentlichen",
       "unpublish": "Zurückziehen",
       "confirmDelete": "Diesen Artikel löschen?",
+      "deleted": "Artikel gelöscht.",
       "statuses": {
         "draft": "Entwurf",
         "published": "Veröffentlicht",
