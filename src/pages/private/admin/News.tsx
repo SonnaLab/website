@@ -374,7 +374,10 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
   const PER_PAGE = 10;
   const [previewTab, setPreviewTab] = useState<'web' | 'social'>('web');
   const [publishModal, setPublishModal] = useState<{ open: boolean; article: Article | null; tab: 'web' | 'social' }>({ open: false, article: null, tab: 'web' });
-  const [socialStatus, setSocialStatus] = useState<{ linkedin: { status: string; posted_at?: string; platform_post_id?: string; error?: string } | null } | null>(null);
+  const [socialStatus, setSocialStatus] = useState<{
+    linkedin: { status: string; posted_at?: string; platform_post_id?: string; error?: string } | null;
+    facebook: { status: string; posted_at?: string; platform_post_id?: string; error?: string } | null;
+  } | null>(null);
   const [socialPublishing, setSocialPublishing] = useState(false);
 
   const reload = (q = search, status = statusFilter, pg = page) => {
@@ -610,6 +613,21 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
       setSocialStatus(data);
     } catch (e: any) {
       toast.error(e?.response?.data?.error || 'Erreur publication LinkedIn');
+    } finally {
+      setSocialPublishing(false);
+    }
+  };
+
+  const publishToFacebook = async () => {
+    if (!publishModal.article) return;
+    setSocialPublishing(true);
+    try {
+      await apiService.adminSocialPublishFacebook(publishModal.article.id);
+      toast.success('Publication Facebook en cours…');
+      const data = await apiService.adminSocialArticleStatus(publishModal.article.id);
+      setSocialStatus(data);
+    } catch (e: any) {
+      toast.error(e?.response?.data?.error || 'Erreur publication Facebook');
     } finally {
       setSocialPublishing(false);
     }
@@ -923,8 +941,8 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                               <span>Page entreprise · {fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
                             </div>
                           </div>
-                          <p className="spc__text">{editing.excerpt ? (editing.excerpt.length > 280 ? `${editing.excerpt.slice(0, 280)}…` : editing.excerpt) : editing.title}</p>
-                          {!!editing.tags?.length && (
+                          <p className="spc__text">{editing.linkedin_post_text || (editing.excerpt ? (editing.excerpt.length > 280 ? `${editing.excerpt.slice(0, 280)}…` : editing.excerpt) : editing.title)}</p>
+                          {!editing.linkedin_post_text && !!editing.tags?.length && (
                             <p className="spc__hashtags">{editing.tags.slice(0, 4).map(tag => `#${tag}`).join(' ')}</p>
                           )}
                           <div className="spc__link-card spc__link-card--li-desktop">
@@ -962,8 +980,8 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                               <span>Page entreprise · {fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
                             </div>
                           </div>
-                          <p className="spc__text">{editing.excerpt ? (editing.excerpt.length > 160 ? `${editing.excerpt.slice(0, 160)}…` : editing.excerpt) : editing.title}</p>
-                          {!!editing.tags?.length && (
+                          <p className="spc__text">{editing.linkedin_post_text || (editing.excerpt ? (editing.excerpt.length > 160 ? `${editing.excerpt.slice(0, 160)}…` : editing.excerpt) : editing.title)}</p>
+                          {!editing.linkedin_post_text && !!editing.tags?.length && (
                             <p className="spc__hashtags">{editing.tags.slice(0, 3).map(tag => `#${tag}`).join(' ')}</p>
                           )}
                           <div className="spc__link-card spc__link-card--li-mobile">
@@ -1011,7 +1029,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                               <span>{fmtDate(editing.published_at ?? editing.created_at, i18n.language)} · Public</span>
                             </div>
                           </div>
-                          <p className="spc__text">{editing.excerpt ? (editing.excerpt.length > 240 ? `${editing.excerpt.slice(0, 240)}…` : editing.excerpt) : editing.title}</p>
+                          <p className="spc__text">{editing.facebook_post_text || (editing.excerpt ? (editing.excerpt.length > 240 ? `${editing.excerpt.slice(0, 240)}…` : editing.excerpt) : editing.title)}</p>
                           <div className="spc__link-card spc__link-card--fb-desktop">
                             {editing.feature_image && (
                               <img className="spc__link-img--fb-desktop" src={editing.feature_image} alt="" />
@@ -1047,7 +1065,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                               <span>{fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
                             </div>
                           </div>
-                          <p className="spc__text">{editing.excerpt ? (editing.excerpt.length > 120 ? `${editing.excerpt.slice(0, 120)}…` : editing.excerpt) : editing.title}</p>
+                          <p className="spc__text">{editing.facebook_post_text || (editing.excerpt ? (editing.excerpt.length > 120 ? `${editing.excerpt.slice(0, 120)}…` : editing.excerpt) : editing.title)}</p>
                           <div className="spc__link-card spc__link-card--fb-mobile">
                             {editing.feature_image && (
                               <img className="spc__link-img--fb-mobile" src={editing.feature_image} alt="" />
@@ -1532,6 +1550,44 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                   >
                     {socialPublishing ? <RefreshCwIcon size={13} className="adm-spin" /> : <LinkedinIcon size={13} />}
                     {socialPublishing ? 'Publication…' : socialStatus?.linkedin?.status === 'posted' ? 'Déjà publié ✓' : 'Publier sur LinkedIn'}
+                  </button>
+                )}
+              </div>
+
+              <div className="admin-news-publish-modal__platform">
+                <div className="admin-news-publish-modal__platform-head">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                  <strong>Facebook</strong>
+                  {socialStatus === null && <RefreshCwIcon size={12} className="adm-spin" />}
+                  {socialStatus?.facebook && (
+                    <StatusBadge
+                      label={socialStatus.facebook.status === 'posted' ? 'Publié' : socialStatus.facebook.status === 'pending' ? 'En attente' : socialStatus.facebook.status === 'failed' ? 'Échec' : socialStatus.facebook.status}
+                      variant={socialStatus.facebook.status === 'posted' ? 'success' : socialStatus.facebook.status === 'pending' ? 'info' : 'danger'}
+                    />
+                  )}
+                  {socialStatus !== null && !socialStatus.facebook && (
+                    <StatusBadge label="Non publié" variant="default" />
+                  )}
+                </div>
+                {socialStatus?.facebook?.posted_at && (
+                  <p className="admin-news-publish-modal__platform-detail">
+                    Publié le {fmtDate(socialStatus.facebook.posted_at, i18n.language)}
+                    {socialStatus.facebook.platform_post_id && ` · ${socialStatus.facebook.platform_post_id}`}
+                  </p>
+                )}
+                {socialStatus?.facebook?.error && (
+                  <p className="admin-news-publish-modal__platform-error">{socialStatus.facebook.error}</p>
+                )}
+                {publishModal.article?.status === 'published' && (
+                  <button
+                    type="button"
+                    className="adm-btn adm-btn--primary adm-btn--sm"
+                    disabled={socialPublishing || socialStatus?.facebook?.status === 'posted' || socialStatus?.facebook?.status === 'pending'}
+                    onClick={publishToFacebook}
+                    style={{ marginTop: 10 }}
+                  >
+                    {socialPublishing ? <RefreshCwIcon size={13} className="adm-spin" /> : null}
+                    {socialPublishing ? 'Publication…' : socialStatus?.facebook?.status === 'posted' ? 'Déjà publié ✓' : 'Publier sur Facebook'}
                   </button>
                 )}
               </div>

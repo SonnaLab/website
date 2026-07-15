@@ -68,6 +68,8 @@ export interface Article {
   lesankofa_transaction_id?: string | null;
   lesankofa_metadata?: Record<string, unknown>;
   published_url?: string | null;
+  linkedin_post_text?: string;
+  facebook_post_text?: string;
 }
 
 export interface ArticleImageOption {
@@ -546,6 +548,8 @@ class ApiService {
   async adminSocialArticleStatus(articleId: string) { return (await this.client.get(`/api/v1/admin/social/articles/${articleId}/status`)).data; }
   async adminSocialPublishLinkedin(articleId: string) { return (await this.client.post(`/api/v1/admin/social/articles/${articleId}/publish_linkedin`)).data; }
   async adminLinkedinStatus() { return (await this.client.get('/api/v1/admin/social/linkedin/status')).data; }
+  async adminSocialPublishFacebook(articleId: string) { return (await this.client.post(`/api/v1/admin/social/articles/${articleId}/publish_facebook`)).data; }
+  async adminFacebookStatus() { return (await this.client.get('/api/v1/admin/social/facebook/status')).data; }
 
   // ==================== Contact ====================
   
