@@ -2613,6 +2613,7 @@
   color: #111827;
   margin: 0;
   padding-top: 4px;
+  white-space: pre-line;
 }
 
 .spc__hashtags {
