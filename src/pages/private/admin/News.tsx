@@ -375,6 +375,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
   const [previewTab, setPreviewTab] = useState<'web' | 'social'>('web');
   const [publishModal, setPublishModal] = useState<{ open: boolean; article: Article | null; tab: 'web' | 'social' }>({ open: false, article: null, tab: 'web' });
   const [fbConnecting, setFbConnecting] = useState(false);
+  const [fbConnected, setFbConnected] = useState(false);
   const [socialStatus, setSocialStatus] = useState<{
     linkedin: { status: string; posted_at?: string; platform_post_id?: string; error?: string } | null;
     facebook: { status: string; posted_at?: string; platform_post_id?: string; error?: string } | null;
@@ -390,6 +391,24 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
   };
 
   useEffect(() => { reload(); }, []);
+
+  useEffect(() => {
+    apiService.adminFacebookStatus()
+      .then(s => setFbConnected(!!s.connected && !s.expired))
+      .catch(() => {});
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('facebook')) {
+      toast.success('Facebook connecté avec succès');
+      setFbConnected(true);
+      params.delete('facebook');
+      window.history.replaceState({}, '', `${window.location.pathname}${params.toString() ? `?${params}` : ''}`);
+    } else if (params.has('facebook_error')) {
+      toast.error(`Connexion Facebook échouée : ${params.get('facebook_error')}`);
+      params.delete('facebook_error');
+      window.history.replaceState({}, '', `${window.location.pathname}${params.toString() ? `?${params}` : ''}`);
+    }
+  }, []);
 
   const openArticle = async (article: Article, mode: ArticleModalMode) => {
     setModalMode(mode);
@@ -1030,9 +1049,10 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                     <span>Aperçu Facebook</span>
                     <button
                       type="button"
-                      className="spc__bar-connect-btn"
-                      disabled={fbConnecting}
+                      className={`spc__bar-connect-btn${fbConnected ? ' spc__bar-connect-btn--connected' : ''}`}
+                      disabled={fbConnecting || fbConnected}
                       onClick={async () => {
+                        if (fbConnected) return;
                         setFbConnecting(true);
                         try {
                           const { url } = await apiService.adminFacebookConnectUrl();
@@ -1044,7 +1064,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                       }}
                     >
                       {fbConnecting ? <RefreshCwIcon size={12} className="adm-spin" /> : null}
-                      Connecter Facebook
+                      {fbConnected ? 'Facebook connecté' : 'Connecter Facebook'}
                     </button>
                   </div>
                   <div className="spc__fb-previews">

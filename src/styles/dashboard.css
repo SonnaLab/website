@@ -2552,6 +2552,12 @@
   cursor: default;
 }
 
+.spc__bar-connect-btn--connected {
+  color: #16a34a;
+  border-color: #16a34a;
+  opacity: 1;
+}
+
 .spc__feed--linkedin {
   background: #f3f2ef;
   padding: 10px 10px 14px;
