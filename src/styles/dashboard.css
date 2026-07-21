@@ -2527,6 +2527,31 @@
   color: #0a66c2;
 }
 
+.spc__bar-connect-btn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.spc__bar-connect-btn:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.spc__bar-connect-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 .spc__feed--linkedin {
   background: #f3f2ef;
   padding: 10px 10px 14px;

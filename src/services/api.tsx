@@ -550,6 +550,7 @@ class ApiService {
   async adminLinkedinStatus() { return (await this.client.get('/api/v1/admin/social/linkedin/status')).data; }
   async adminSocialPublishFacebook(articleId: string) { return (await this.client.post(`/api/v1/admin/social/articles/${articleId}/publish_facebook`)).data; }
   async adminFacebookStatus() { return (await this.client.get('/api/v1/admin/social/facebook/status')).data; }
+  async adminFacebookConnectUrl() { return (await this.client.get('/api/v1/admin/social/facebook/connect_url')).data as { url: string }; }
 
   // ==================== Contact ====================
   
