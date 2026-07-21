@@ -186,6 +186,7 @@
       "generateUnavailable": "No hay planificación lista para generar.",
       "empty": "Sin artículos generados por ahora.",
       "searchPlaceholder": "Buscar un artículo…",
+      "cover": "Portada",
       "title": "Título",
       "status": "Estado",
       "locale": "Idioma",

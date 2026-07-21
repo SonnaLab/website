@@ -673,6 +673,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
         <DataTableHead>
           <DataTableRow>
             <DataTableTh>N°</DataTableTh>
+            <DataTableTh>{t('news.articles.cover')}</DataTableTh>
             <DataTableTh>{t('news.articles.title')}</DataTableTh>
             <DataTableTh>{t('news.articles.status')}</DataTableTh>
             <DataTableTh>{t('news.articles.locale')}</DataTableTh>
@@ -692,6 +693,18 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
             <DataTableRow key={a.id}>
               <DataTableTd>
                 <span className="adm-table__id-cell">{a.lesankofa_transaction_id ? `#${a.lesankofa_transaction_id}` : '—'}</span>
+              </DataTableTd>
+              <DataTableTd>
+                {a.feature_image ? (
+                  <img
+                    src={a.feature_image}
+                    alt={a.feature_image_alt || a.title || ''}
+                    className="adm-table__cover-thumb"
+                    loading="lazy"
+                  />
+                ) : (
+                  <span className="adm-table__cover-missing" title={t('news.articles.noContent')}>—</span>
+                )}
               </DataTableTd>
               <DataTableTd>
                 <div className="admin-news-articles__title-cell">

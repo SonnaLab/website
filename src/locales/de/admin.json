@@ -186,6 +186,7 @@
       "generateUnavailable": "Keine Planung ist bereit zur Generierung.",
       "empty": "Noch keine generierten Artikel.",
       "searchPlaceholder": "Artikel suchen…",
+      "cover": "Titelbild",
       "title": "Titel",
       "status": "Status",
       "locale": "Sprache",

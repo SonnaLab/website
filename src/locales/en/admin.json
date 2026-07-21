@@ -186,6 +186,7 @@
       "generateUnavailable": "No scheduled item is ready to generate.",
       "empty": "No generated articles yet.",
       "searchPlaceholder": "Search an article…",
+      "cover": "Cover",
       "title": "Title",
       "status": "Status",
       "locale": "Locale",
