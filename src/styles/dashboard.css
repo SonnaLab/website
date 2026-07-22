@@ -1020,6 +1020,14 @@
   border-bottom-color: #111111;
 }
 
+.adm-tabs__connected-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #16a34a;
+}
+
 .adm-tabs__trigger-icon {
   display: inline-flex;
   align-items: center;

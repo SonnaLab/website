@@ -54,7 +54,6 @@ import {
   MegaphoneOffIcon,
   TerminalIcon,
   LinkedinIcon,
-  Share2Icon,
 } from '@icons';
 
 // ─────────────────────────────────────────────
@@ -373,7 +372,6 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
   const [total, setTotal]         = useState(0);
   const PER_PAGE = 10;
   const [previewTab, setPreviewTab] = useState<'web' | 'linkedin' | 'facebook'>('web');
-  const [publishModal, setPublishModal] = useState<{ open: boolean; article: Article | null; tab: 'web' | 'social' }>({ open: false, article: null, tab: 'web' });
   const [fbConnecting, setFbConnecting] = useState(false);
   const [fbConnected, setFbConnected] = useState(false);
   const [socialStatus, setSocialStatus] = useState<{
@@ -616,22 +614,13 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
     }
   };
 
-  const openPublishModal = async (article: Article, tab: 'web' | 'social' = 'web') => {
-    setPublishModal({ open: true, article, tab });
-    setSocialStatus(null);
-    try {
-      const data = await apiService.adminSocialArticleStatus(article.id);
-      setSocialStatus(data);
-    } catch { /* non-critique */ }
-  };
-
   const publishToLinkedin = async () => {
-    if (!publishModal.article) return;
+    if (!editing.id) return;
     setSocialPublishing(true);
     try {
-      await apiService.adminSocialPublishLinkedin(publishModal.article.id);
+      await apiService.adminSocialPublishLinkedin(editing.id);
       toast.success('Publication LinkedIn en cours…');
-      const data = await apiService.adminSocialArticleStatus(publishModal.article.id);
+      const data = await apiService.adminSocialArticleStatus(editing.id);
       setSocialStatus(data);
     } catch (e: any) {
       toast.error(e?.response?.data?.error || 'Erreur publication LinkedIn');
@@ -641,18 +630,25 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
   };
 
   const publishToFacebook = async () => {
-    if (!publishModal.article) return;
+    if (!editing.id) return;
     setSocialPublishing(true);
     try {
-      await apiService.adminSocialPublishFacebook(publishModal.article.id);
+      await apiService.adminSocialPublishFacebook(editing.id);
       toast.success('Publication Facebook en cours…');
-      const data = await apiService.adminSocialArticleStatus(publishModal.article.id);
+      const data = await apiService.adminSocialArticleStatus(editing.id);
       setSocialStatus(data);
     } catch (e: any) {
       toast.error(e?.response?.data?.error || 'Erreur publication Facebook');
     } finally {
       setSocialPublishing(false);
     }
+  };
+
+  const socialPostUrl = (platform: 'linkedin' | 'facebook', postId?: string | null) => {
+    if (!postId) return '#';
+    return platform === 'facebook'
+      ? `https://www.facebook.com/${postId}`
+      : `https://www.linkedin.com/feed/update/${postId}/`;
   };
 
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
@@ -751,15 +747,6 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                     title={t('news.articles.preview')}
                   >
                     <EyeIcon size={13} />
-                  </button>
-                  <button
-                    type="button"
-                    className="adm-btn adm-btn--ghost adm-btn--xs"
-                    onClick={() => openPublishModal(a, 'web')}
-                    aria-label="Publier"
-                    title="Publier"
-                  >
-                    {a.status === 'published' ? <MegaphoneOffIcon size={13} /> : <MegaphoneIcon size={13} />}
                   </button>
                   <button
                     type="button"
@@ -867,13 +854,46 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                 <PenLineIcon size={14} />
                 {t('common.edit')}
               </button>
-              <button type="button" className="adm-btn adm-btn--ghost" onClick={() => togglePublish(editing)} disabled={!editing.id || actionId === `publish-${editing.id}`}>
-                {editing.status === 'published' ? t('news.articles.unpublish') : t('news.articles.publish')}
-              </button>
-              <button type="button" className="adm-btn adm-btn--primary" onClick={() => gotoArticle(editing)} disabled={editing.status !== 'published'}>
-                <ArrowUpRightIcon size={14} />
-                {t('news.articles.goto')}
-              </button>
+              {previewTab === 'web' ? (
+                <>
+                  <button type="button" className="adm-btn adm-btn--ghost" onClick={() => togglePublish(editing)} disabled={!editing.id || actionId === `publish-${editing.id}`}>
+                    {actionId === `publish-${editing.id}` ? <RefreshCwIcon size={14} className="adm-spin" /> : editing.status === 'published' ? <MegaphoneOffIcon size={14} /> : <MegaphoneIcon size={14} />}
+                    {editing.status === 'published' ? t('news.articles.unpublish') : t('news.articles.publish')}
+                  </button>
+                  <button type="button" className="adm-btn adm-btn--primary" onClick={() => gotoArticle(editing)} disabled={editing.status !== 'published'}>
+                    <ArrowUpRightIcon size={14} />
+                    {t('news.articles.goto')}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="adm-btn adm-btn--ghost"
+                    onClick={previewTab === 'linkedin' ? publishToLinkedin : publishToFacebook}
+                    disabled={
+                      socialPublishing ||
+                      editing.status !== 'published' ||
+                      socialStatus?.[previewTab]?.status === 'posted' ||
+                      socialStatus?.[previewTab]?.status === 'pending'
+                    }
+                  >
+                    {socialPublishing ? <RefreshCwIcon size={14} className="adm-spin" /> : <MegaphoneIcon size={14} />}
+                    {socialStatus?.[previewTab]?.status === 'posted'
+                      ? 'Déjà publié'
+                      : previewTab === 'linkedin' ? 'Publier sur LinkedIn' : 'Publier sur Facebook'}
+                  </button>
+                  <button
+                    type="button"
+                    className="adm-btn adm-btn--primary"
+                    onClick={() => window.open(socialPostUrl(previewTab, socialStatus?.[previewTab]?.platform_post_id), '_blank')}
+                    disabled={socialStatus?.[previewTab]?.status !== 'posted'}
+                  >
+                    <ArrowUpRightIcon size={14} />
+                    Voir le post
+                  </button>
+                </>
+              )}
             </>
           )
         }
@@ -891,6 +911,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
               <button type="button" role="tab" aria-selected={previewTab === 'facebook'} className={`adm-tabs__trigger${previewTab === 'facebook' ? ' adm-tabs__trigger--active' : ''}`} onClick={() => setPreviewTab('facebook')}>
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                 Facebook
+                {fbConnected && <span className="adm-tabs__connected-dot" title="Compte Facebook connecté" />}
                 {socialStatus?.facebook?.status === 'posted' && <StatusBadge label="Publié" variant="success" />}
               </button>
             </div>
@@ -1059,25 +1080,26 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                   <div className="spc__bar spc__bar--facebook">
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                     <span>Aperçu Facebook</span>
-                    <button
-                      type="button"
-                      className={`spc__bar-connect-btn${fbConnected ? ' spc__bar-connect-btn--connected' : ''}`}
-                      disabled={fbConnecting || fbConnected}
-                      onClick={async () => {
-                        if (fbConnected) return;
-                        setFbConnecting(true);
-                        try {
-                          const { url } = await apiService.adminFacebookConnectUrl();
-                          window.location.href = url;
-                        } catch (e: any) {
-                          toast.error(e?.response?.data?.error || 'Erreur de connexion à Facebook');
-                          setFbConnecting(false);
-                        }
-                      }}
-                    >
-                      {fbConnecting ? <RefreshCwIcon size={12} className="adm-spin" /> : null}
-                      {fbConnected ? 'Facebook connecté' : 'Connecter Facebook'}
-                    </button>
+                    {!fbConnected && (
+                      <button
+                        type="button"
+                        className="spc__bar-connect-btn"
+                        disabled={fbConnecting}
+                        onClick={async () => {
+                          setFbConnecting(true);
+                          try {
+                            const { url } = await apiService.adminFacebookConnectUrl();
+                            window.location.href = url;
+                          } catch (e: any) {
+                            toast.error(e?.response?.data?.error || 'Erreur de connexion à Facebook');
+                            setFbConnecting(false);
+                          }
+                        }}
+                      >
+                        {fbConnecting ? <RefreshCwIcon size={12} className="adm-spin" /> : null}
+                        Connecter Facebook
+                      </button>
+                    )}
                   </div>
                   <div className="spc__fb-previews">
 
@@ -1521,143 +1543,6 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
             )}
           </div>
         )}
-      </Modal>
-
-      <Modal
-        open={publishModal.open}
-        onClose={() => setPublishModal(v => ({ ...v, open: false }))}
-        title="Publier"
-        size="sm"
-        footer={
-          <button type="button" className="adm-btn adm-btn--ghost" onClick={() => setPublishModal(v => ({ ...v, open: false }))}>
-            {t('common.cancel')}
-          </button>
-        }
-      >
-        <div>
-          <div className="adm-tabs__list" style={{ marginBottom: 16 }}>
-            <button type="button" role="tab" aria-selected={publishModal.tab === 'web'} className={`adm-tabs__trigger${publishModal.tab === 'web' ? ' adm-tabs__trigger--active' : ''}`} onClick={() => setPublishModal(v => ({ ...v, tab: 'web' }))}>
-              <GlobeIcon size={13} /> Web
-            </button>
-            <button type="button" role="tab" aria-selected={publishModal.tab === 'social'} className={`adm-tabs__trigger${publishModal.tab === 'social' ? ' adm-tabs__trigger--active' : ''}`} onClick={() => setPublishModal(v => ({ ...v, tab: 'social' }))}>
-              <Share2Icon size={13} /> Réseaux sociaux
-            </button>
-          </div>
-
-          {publishModal.tab === 'web' ? (
-            <div className="admin-news-publish-modal__web">
-              <p className="admin-news-publish-modal__article-title">{publishModal.article?.title}</p>
-              <div className="admin-news-publish-modal__status">
-                <StatusBadge
-                  label={publishModal.article ? t(`news.articles.statuses.${publishModal.article.status}`) : '—'}
-                  variant={publishModal.article ? articleStatusVariant(publishModal.article.status) : 'default'}
-                />
-              </div>
-              <div className="admin-news-publish-modal__actions">
-                <button
-                  type="button"
-                  className={`adm-btn ${publishModal.article?.status === 'published' ? 'adm-btn--ghost' : 'adm-btn--primary'}`}
-                  disabled={!publishModal.article || actionId === `publish-${publishModal.article?.id}`}
-                  onClick={async () => {
-                    if (!publishModal.article) return;
-                    await togglePublish(publishModal.article);
-                    setPublishModal(v => ({ ...v, open: false }));
-                  }}
-                >
-                  {actionId === `publish-${publishModal.article?.id}` ? <RefreshCwIcon size={14} className="adm-spin" /> : null}
-                  {publishModal.article?.status === 'published' ? t('news.articles.unpublish') : t('news.articles.publish')}
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="admin-news-publish-modal__social">
-              <p className="admin-news-publish-modal__article-title">{publishModal.article?.title}</p>
-
-              {publishModal.article?.status !== 'published' && (
-                <div className="admin-news-publish-modal__warn">
-                  <AlertTriangleIcon size={14} />
-                  L'article doit être publié sur le web avant d'être partagé sur les réseaux.
-                </div>
-              )}
-
-              <div className="admin-news-publish-modal__platform">
-                <div className="admin-news-publish-modal__platform-head">
-                  <LinkedinIcon size={16} />
-                  <strong>LinkedIn</strong>
-                  {socialStatus === null && <RefreshCwIcon size={12} className="adm-spin" />}
-                  {socialStatus?.linkedin && (
-                    <StatusBadge
-                      label={socialStatus.linkedin.status === 'posted' ? 'Publié' : socialStatus.linkedin.status === 'pending' ? 'En attente' : socialStatus.linkedin.status === 'failed' ? 'Échec' : socialStatus.linkedin.status}
-                      variant={socialStatus.linkedin.status === 'posted' ? 'success' : socialStatus.linkedin.status === 'pending' ? 'info' : 'danger'}
-                    />
-                  )}
-                  {socialStatus !== null && !socialStatus.linkedin && (
-                    <StatusBadge label="Non publié" variant="default" />
-                  )}
-                </div>
-                {socialStatus?.linkedin?.posted_at && (
-                  <p className="admin-news-publish-modal__platform-detail">
-                    Publié le {fmtDate(socialStatus.linkedin.posted_at, i18n.language)}
-                    {socialStatus.linkedin.platform_post_id && ` · ${socialStatus.linkedin.platform_post_id}`}
-                  </p>
-                )}
-                {socialStatus?.linkedin?.error && (
-                  <p className="admin-news-publish-modal__platform-error">{socialStatus.linkedin.error}</p>
-                )}
-                {publishModal.article?.status === 'published' && (
-                  <button
-                    type="button"
-                    className="adm-btn adm-btn--primary adm-btn--sm"
-                    disabled={socialPublishing || socialStatus?.linkedin?.status === 'posted' || socialStatus?.linkedin?.status === 'pending'}
-                    onClick={publishToLinkedin}
-                    style={{ marginTop: 10 }}
-                  >
-                    {socialPublishing ? <RefreshCwIcon size={13} className="adm-spin" /> : <LinkedinIcon size={13} />}
-                    {socialPublishing ? 'Publication…' : socialStatus?.linkedin?.status === 'posted' ? 'Déjà publié ✓' : 'Publier sur LinkedIn'}
-                  </button>
-                )}
-              </div>
-
-              <div className="admin-news-publish-modal__platform">
-                <div className="admin-news-publish-modal__platform-head">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                  <strong>Facebook</strong>
-                  {socialStatus === null && <RefreshCwIcon size={12} className="adm-spin" />}
-                  {socialStatus?.facebook && (
-                    <StatusBadge
-                      label={socialStatus.facebook.status === 'posted' ? 'Publié' : socialStatus.facebook.status === 'pending' ? 'En attente' : socialStatus.facebook.status === 'failed' ? 'Échec' : socialStatus.facebook.status}
-                      variant={socialStatus.facebook.status === 'posted' ? 'success' : socialStatus.facebook.status === 'pending' ? 'info' : 'danger'}
-                    />
-                  )}
-                  {socialStatus !== null && !socialStatus.facebook && (
-                    <StatusBadge label="Non publié" variant="default" />
-                  )}
-                </div>
-                {socialStatus?.facebook?.posted_at && (
-                  <p className="admin-news-publish-modal__platform-detail">
-                    Publié le {fmtDate(socialStatus.facebook.posted_at, i18n.language)}
-                    {socialStatus.facebook.platform_post_id && ` · ${socialStatus.facebook.platform_post_id}`}
-                  </p>
-                )}
-                {socialStatus?.facebook?.error && (
-                  <p className="admin-news-publish-modal__platform-error">{socialStatus.facebook.error}</p>
-                )}
-                {publishModal.article?.status === 'published' && (
-                  <button
-                    type="button"
-                    className="adm-btn adm-btn--primary adm-btn--sm"
-                    disabled={socialPublishing || socialStatus?.facebook?.status === 'posted' || socialStatus?.facebook?.status === 'pending'}
-                    onClick={publishToFacebook}
-                    style={{ marginTop: 10 }}
-                  >
-                    {socialPublishing ? <RefreshCwIcon size={13} className="adm-spin" /> : null}
-                    {socialPublishing ? 'Publication…' : socialStatus?.facebook?.status === 'posted' ? 'Déjà publié ✓' : 'Publier sur Facebook'}
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
       </Modal>
 
       <Modal
