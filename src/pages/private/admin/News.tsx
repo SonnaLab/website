@@ -1108,7 +1108,26 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                   <div className="spc__bar spc__bar--facebook">
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                     <span>Aperçu Facebook</span>
-                    {!fbConnected && (
+                    {fbConnected ? (
+                      <button
+                        type="button"
+                        className="spc__bar-connect-btn spc__bar-connect-btn--icon"
+                        disabled={fbConnecting}
+                        title="Reconnecter Facebook (par ex. après l'ajout d'une nouvelle permission côté Meta)"
+                        onClick={async () => {
+                          setFbConnecting(true);
+                          try {
+                            const { url } = await apiService.adminFacebookConnectUrl();
+                            window.location.href = url;
+                          } catch (e: any) {
+                            toast.error(e?.response?.data?.error || 'Erreur de connexion à Facebook');
+                            setFbConnecting(false);
+                          }
+                        }}
+                      >
+                        <RefreshCwIcon size={12} className={fbConnecting ? 'adm-spin' : undefined} />
+                      </button>
+                    ) : (
                       <button
                         type="button"
                         className="spc__bar-connect-btn"

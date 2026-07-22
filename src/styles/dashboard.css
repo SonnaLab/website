@@ -2560,9 +2560,13 @@
   cursor: default;
 }
 
-.spc__bar-connect-btn--connected {
-  color: #16a34a;
-  border-color: #16a34a;
+.spc__bar-connect-btn--icon {
+  padding: 4px 6px;
+  border-radius: 50%;
+  opacity: 0.55;
+}
+
+.spc__bar-connect-btn--icon:hover:not(:disabled) {
   opacity: 1;
 }
 
