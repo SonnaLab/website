@@ -769,15 +769,6 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                   >
                     <EyeIcon size={13} />
                   </button>
-                  <button
-                    type="button"
-                    className="adm-btn adm-btn--ghost adm-btn--xs"
-                    onClick={() => openArticle(a, 'edit')}
-                    aria-label={t('common.edit')}
-                    title={t('common.edit')}
-                  >
-                    <PenLineIcon size={13} />
-                  </button>
                   {!!a.lesankofa_transaction_id && (
                     <button
                       type="button"
