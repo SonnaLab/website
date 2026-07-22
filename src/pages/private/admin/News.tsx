@@ -374,6 +374,8 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
   const [previewTab, setPreviewTab] = useState<'web' | 'linkedin' | 'facebook'>('web');
   const [fbConnecting, setFbConnecting] = useState(false);
   const [fbConnected, setFbConnected] = useState(false);
+  const [expandedPosts, setExpandedPosts] = useState<{ linkedin: boolean; facebook: boolean }>({ linkedin: false, facebook: false });
+  const [editSocialPlatform, setEditSocialPlatform] = useState<'linkedin' | 'facebook' | null>(null);
   const [socialStatus, setSocialStatus] = useState<{
     linkedin: { status: string; posted_at?: string; platform_post_id?: string; error?: string } | null;
     facebook: { status: string; posted_at?: string; platform_post_id?: string; error?: string } | null;
@@ -414,6 +416,8 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
     setModalOpen(true);
     setArticleGeneration(null);
     setSocialStatus(null);
+    setExpandedPosts({ linkedin: false, facebook: false });
+    setEditSocialPlatform(null);
     apiService.adminSocialArticleStatus(article.id).then(setSocialStatus).catch(() => {});
     try {
       const data = await apiService.adminNewsArticle(article.id);
@@ -651,6 +655,21 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
       : `https://www.linkedin.com/feed/update/${postId}/`;
   };
 
+  const unpublishFromSocial = async (platform: 'linkedin' | 'facebook') => {
+    if (!editing.id) return;
+    setSocialPublishing(true);
+    try {
+      await (platform === 'linkedin' ? apiService.adminSocialUnpublishLinkedin(editing.id) : apiService.adminSocialUnpublishFacebook(editing.id));
+      toast.success(platform === 'linkedin' ? 'Post LinkedIn supprimé' : 'Post Facebook supprimé');
+      const data = await apiService.adminSocialArticleStatus(editing.id);
+      setSocialStatus(data);
+    } catch (e: any) {
+      toast.error(e?.response?.data?.error || 'Erreur lors de la dépublication');
+    } finally {
+      setSocialPublishing(false);
+    }
+  };
+
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
   const paginated = articles;
   const localeOptions = Array.from(new Set([...ARTICLE_LOCALES, editing.locale].filter(Boolean) as string[]));
@@ -850,7 +869,12 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
           ) : (
             <>
               <button type="button" className="adm-btn adm-btn--ghost" onClick={closeModal}>{t('common.cancel')}</button>
-              <button type="button" className="adm-btn adm-btn--ghost" onClick={() => setModalMode('edit')} disabled={!editing.id}>
+              <button
+                type="button"
+                className="adm-btn adm-btn--ghost"
+                onClick={() => { setEditSocialPlatform(previewTab === 'web' ? null : previewTab); setModalMode('edit'); }}
+                disabled={!editing.id}
+              >
                 <PenLineIcon size={14} />
                 {t('common.edit')}
               </button>
@@ -870,18 +894,16 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                   <button
                     type="button"
                     className="adm-btn adm-btn--ghost"
-                    onClick={previewTab === 'linkedin' ? publishToLinkedin : publishToFacebook}
+                    onClick={() => socialStatus?.[previewTab]?.status === 'posted' ? unpublishFromSocial(previewTab) : (previewTab === 'linkedin' ? publishToLinkedin() : publishToFacebook())}
                     disabled={
                       socialPublishing ||
-                      editing.status !== 'published' ||
-                      socialStatus?.[previewTab]?.status === 'posted' ||
-                      socialStatus?.[previewTab]?.status === 'pending'
+                      (socialStatus?.[previewTab]?.status !== 'posted' && (editing.status !== 'published' || socialStatus?.[previewTab]?.status === 'pending'))
                     }
                   >
-                    {socialPublishing ? <RefreshCwIcon size={14} className="adm-spin" /> : <MegaphoneIcon size={14} />}
-                    {socialStatus?.[previewTab]?.status === 'posted'
-                      ? 'Déjà publié'
-                      : previewTab === 'linkedin' ? 'Publier sur LinkedIn' : 'Publier sur Facebook'}
+                    {socialPublishing
+                      ? <RefreshCwIcon size={14} className="adm-spin" />
+                      : socialStatus?.[previewTab]?.status === 'posted' ? <MegaphoneOffIcon size={14} /> : <MegaphoneIcon size={14} />}
+                    {socialStatus?.[previewTab]?.status === 'posted' ? 'Dépublier' : 'Publier'}
                   </button>
                   <button
                     type="button"
@@ -1003,19 +1025,18 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                               <span>Page entreprise · {fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
                             </div>
                           </div>
-                          <p className="spc__text">{editing.linkedin_post_text || (editing.excerpt ? (editing.excerpt.length > 280 ? `${editing.excerpt.slice(0, 280)}…` : editing.excerpt) : editing.title)}</p>
+                          <p className={`spc__text${expandedPosts.linkedin ? '' : ' spc__text--clamped'}`}>{editing.linkedin_post_text || editing.title}</p>
+                          {(editing.linkedin_post_text || editing.title || '').length > 180 && (
+                            <button type="button" className="spc__see-more" onClick={() => setExpandedPosts(p => ({ ...p, linkedin: !p.linkedin }))}>
+                              {expandedPosts.linkedin ? 'Voir moins' : 'Voir plus'}
+                            </button>
+                          )}
                           {!editing.linkedin_post_text && !!editing.tags?.length && (
                             <p className="spc__hashtags">{editing.tags.slice(0, 4).map(tag => `#${tag}`).join(' ')}</p>
                           )}
-                          <div className="spc__link-card spc__link-card--li-desktop">
-                            {editing.feature_image && (
-                              <img className="spc__link-thumb" src={editing.feature_image} alt="" />
-                            )}
-                            <div className="spc__link-info spc__link-info--li-desktop">
-                              <strong className="spc__link-title">{editing.title}</strong>
-                              <span className="spc__link-domain">sonnalab.com</span>
-                            </div>
-                          </div>
+                          {editing.feature_image && (
+                            <img className="spc__native-image" src={editing.feature_image} alt={editing.feature_image_alt || ''} />
+                          )}
                           <div className="spc__reactions">
                             <em>42 réactions</em>
                             <span>12 commentaires · 5 partages</span>
@@ -1042,19 +1063,18 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                               <span>Page entreprise · {fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
                             </div>
                           </div>
-                          <p className="spc__text">{editing.linkedin_post_text || (editing.excerpt ? (editing.excerpt.length > 160 ? `${editing.excerpt.slice(0, 160)}…` : editing.excerpt) : editing.title)}</p>
+                          <p className={`spc__text${expandedPosts.linkedin ? '' : ' spc__text--clamped'}`}>{editing.linkedin_post_text || editing.title}</p>
+                          {(editing.linkedin_post_text || editing.title || '').length > 180 && (
+                            <button type="button" className="spc__see-more" onClick={() => setExpandedPosts(p => ({ ...p, linkedin: !p.linkedin }))}>
+                              {expandedPosts.linkedin ? 'Voir moins' : 'Voir plus'}
+                            </button>
+                          )}
                           {!editing.linkedin_post_text && !!editing.tags?.length && (
                             <p className="spc__hashtags">{editing.tags.slice(0, 3).map(tag => `#${tag}`).join(' ')}</p>
                           )}
-                          <div className="spc__link-card spc__link-card--li-mobile">
-                            {editing.feature_image && (
-                              <img className="spc__link-img--li-mobile" src={editing.feature_image} alt="" />
-                            )}
-                            <div className="spc__link-info spc__link-info--li-mobile">
-                              <strong className="spc__link-title">{editing.title}</strong>
-                              <span className="spc__link-domain">sonnalab.com</span>
-                            </div>
-                          </div>
+                          {editing.feature_image && (
+                            <img className="spc__native-image" src={editing.feature_image} alt={editing.feature_image_alt || ''} />
+                          )}
                           <div className="spc__reactions">
                             <em>42 réactions</em>
                             <span>12 commentaires</span>
@@ -1115,17 +1135,15 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                               <span>{fmtDate(editing.published_at ?? editing.created_at, i18n.language)} · Public</span>
                             </div>
                           </div>
-                          <p className="spc__text">{editing.facebook_post_text || (editing.excerpt ? (editing.excerpt.length > 240 ? `${editing.excerpt.slice(0, 240)}…` : editing.excerpt) : editing.title)}</p>
-                          <div className="spc__link-card spc__link-card--fb-desktop">
-                            {editing.feature_image && (
-                              <img className="spc__link-img--fb-desktop" src={editing.feature_image} alt="" />
-                            )}
-                            <div className="spc__link-info spc__link-info--facebook">
-                              <span className="spc__link-domain">SONNALAB.COM</span>
-                              <strong className="spc__link-title">{editing.title}</strong>
-                              {editing.excerpt && <p className="spc__link-desc">{editing.excerpt.length > 100 ? `${editing.excerpt.slice(0, 100)}…` : editing.excerpt}</p>}
-                            </div>
-                          </div>
+                          <p className={`spc__text${expandedPosts.facebook ? '' : ' spc__text--clamped'}`}>{editing.facebook_post_text || editing.title}</p>
+                          {(editing.facebook_post_text || editing.title || '').length > 180 && (
+                            <button type="button" className="spc__see-more" onClick={() => setExpandedPosts(p => ({ ...p, facebook: !p.facebook }))}>
+                              {expandedPosts.facebook ? 'Voir moins' : 'Voir plus'}
+                            </button>
+                          )}
+                          {editing.feature_image && (
+                            <img className="spc__native-image" src={editing.feature_image} alt={editing.feature_image_alt || ''} />
+                          )}
                           <div className="spc__reactions spc__reactions--facebook">
                             <em>118 réactions</em>
                             <span>34 commentaires · 21 partages</span>
@@ -1151,16 +1169,15 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                               <span>{fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
                             </div>
                           </div>
-                          <p className="spc__text">{editing.facebook_post_text || (editing.excerpt ? (editing.excerpt.length > 120 ? `${editing.excerpt.slice(0, 120)}…` : editing.excerpt) : editing.title)}</p>
-                          <div className="spc__link-card spc__link-card--fb-mobile">
-                            {editing.feature_image && (
-                              <img className="spc__link-img--fb-mobile" src={editing.feature_image} alt="" />
-                            )}
-                            <div className="spc__link-info spc__link-info--facebook">
-                              <span className="spc__link-domain">SONNALAB.COM</span>
-                              <strong className="spc__link-title">{editing.title}</strong>
-                            </div>
-                          </div>
+                          <p className={`spc__text${expandedPosts.facebook ? '' : ' spc__text--clamped'}`}>{editing.facebook_post_text || editing.title}</p>
+                          {(editing.facebook_post_text || editing.title || '').length > 180 && (
+                            <button type="button" className="spc__see-more" onClick={() => setExpandedPosts(p => ({ ...p, facebook: !p.facebook }))}>
+                              {expandedPosts.facebook ? 'Voir moins' : 'Voir plus'}
+                            </button>
+                          )}
+                          {editing.feature_image && (
+                            <img className="spc__native-image" src={editing.feature_image} alt={editing.feature_image_alt || ''} />
+                          )}
                           <div className="spc__reactions spc__reactions--facebook">
                             <em>118 réactions</em>
                             <span>34 commentaires</span>
@@ -1179,6 +1196,23 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
 
               </div>
             )}
+          </div>
+        ) : editSocialPlatform ? (
+          <div className="adm-form">
+            <div className="adm-form__field">
+              <label className="adm-form__label">
+                Texte du post {editSocialPlatform === 'linkedin' ? 'LinkedIn' : 'Facebook'}
+              </label>
+              <textarea
+                className="adm-input"
+                rows={12}
+                value={(editSocialPlatform === 'linkedin' ? editing.linkedin_post_text : editing.facebook_post_text) ?? ''}
+                onChange={e => setEditing(p => ({
+                  ...p,
+                  [editSocialPlatform === 'linkedin' ? 'linkedin_post_text' : 'facebook_post_text']: e.target.value,
+                }))}
+              />
+            </div>
           </div>
         ) : (
           <div className="adm-form">

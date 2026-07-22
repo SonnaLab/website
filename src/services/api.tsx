@@ -549,6 +549,8 @@ class ApiService {
   async adminSocialPublishLinkedin(articleId: string) { return (await this.client.post(`/api/v1/admin/social/articles/${articleId}/publish_linkedin`)).data; }
   async adminLinkedinStatus() { return (await this.client.get('/api/v1/admin/social/linkedin/status')).data; }
   async adminSocialPublishFacebook(articleId: string) { return (await this.client.post(`/api/v1/admin/social/articles/${articleId}/publish_facebook`)).data; }
+  async adminSocialUnpublishLinkedin(articleId: string) { return (await this.client.post(`/api/v1/admin/social/articles/${articleId}/unpublish_linkedin`)).data; }
+  async adminSocialUnpublishFacebook(articleId: string) { return (await this.client.post(`/api/v1/admin/social/articles/${articleId}/unpublish_facebook`)).data; }
   async adminFacebookStatus() { return (await this.client.get('/api/v1/admin/social/facebook/status')).data; }
   async adminFacebookConnectUrl() { return (await this.client.get('/api/v1/admin/social/facebook/connect_url')).data as { url: string }; }
 

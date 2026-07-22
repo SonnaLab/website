@@ -2676,6 +2676,38 @@
   white-space: pre-line;
 }
 
+.spc__text--clamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.spc__see-more {
+  background: none;
+  border: none;
+  padding: 4px 0 0;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  text-align: left;
+}
+
+.spc__see-more:hover {
+  color: #111827;
+}
+
+.spc__native-image {
+  width: 100%;
+  display: block;
+  border-radius: 8px;
+  margin-top: 10px;
+  max-height: 320px;
+  object-fit: cover;
+}
+
 .spc__hashtags {
   margin: 0;
   font-size: 12px;
