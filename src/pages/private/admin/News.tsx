@@ -954,6 +954,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
             <div className="adm-tabs__list" style={{ marginBottom: 16 }}>
               <button type="button" role="tab" aria-selected={previewTab === 'web'} className={`adm-tabs__trigger${previewTab === 'web' ? ' adm-tabs__trigger--active' : ''}`} onClick={() => setPreviewTab('web')}>
                 <GlobeIcon size={13} /> Web
+                {editing.status === 'published' && <StatusBadge label="Publié" variant="success" />}
               </button>
               <button type="button" role="tab" aria-selected={previewTab === 'linkedin'} className={`adm-tabs__trigger${previewTab === 'linkedin' ? ' adm-tabs__trigger--active' : ''}`} onClick={() => setPreviewTab('linkedin')}>
                 <LinkedinIcon size={13} /> LinkedIn
