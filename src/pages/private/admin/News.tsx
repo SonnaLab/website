@@ -376,6 +376,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
   const [fbConnected, setFbConnected] = useState(false);
   const [expandedPosts, setExpandedPosts] = useState<{ linkedin: boolean; facebook: boolean }>({ linkedin: false, facebook: false });
   const [editSocialPlatform, setEditSocialPlatform] = useState<'linkedin' | 'facebook' | null>(null);
+  const [cameFromPreview, setCameFromPreview] = useState(false);
   const [socialStatus, setSocialStatus] = useState<{
     linkedin: { status: string; posted_at?: string; platform_post_id?: string; error?: string } | null;
     facebook: { status: string; posted_at?: string; platform_post_id?: string; error?: string } | null;
@@ -418,6 +419,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
     setSocialStatus(null);
     setExpandedPosts({ linkedin: false, facebook: false });
     setEditSocialPlatform(null);
+    setCameFromPreview(false);
     apiService.adminSocialArticleStatus(article.id).then(setSocialStatus).catch(() => {});
     try {
       const data = await apiService.adminNewsArticle(article.id);
@@ -860,7 +862,13 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
         footer={
           modalMode === 'edit' ? (
             <>
-              <button type="button" className="adm-btn adm-btn--ghost" onClick={closeModal}>{t('common.cancel')}</button>
+              <button
+                type="button"
+                className="adm-btn adm-btn--ghost"
+                onClick={() => { if (cameFromPreview) { setEditSocialPlatform(null); setModalMode('preview'); } else { closeModal(); } }}
+              >
+                {t('common.cancel')}
+              </button>
               <button type="button" className="adm-btn adm-btn--primary" onClick={save} disabled={saving}>
                 {saving ? <RefreshCwIcon size={14} className="adm-spin" /> : null}
                 {t('common.save')}
@@ -872,7 +880,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
               <button
                 type="button"
                 className="adm-btn adm-btn--ghost"
-                onClick={() => { setEditSocialPlatform(previewTab === 'web' ? null : previewTab); setModalMode('edit'); }}
+                onClick={() => { setEditSocialPlatform(previewTab === 'web' ? null : previewTab); setCameFromPreview(true); setModalMode('edit'); }}
                 disabled={!editing.id}
               >
                 <PenLineIcon size={14} />
