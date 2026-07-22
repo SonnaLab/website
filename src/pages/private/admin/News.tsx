@@ -372,7 +372,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
   const [page, setPage]           = useState(1);
   const [total, setTotal]         = useState(0);
   const PER_PAGE = 10;
-  const [previewTab, setPreviewTab] = useState<'web' | 'social'>('web');
+  const [previewTab, setPreviewTab] = useState<'web' | 'linkedin' | 'facebook'>('web');
   const [publishModal, setPublishModal] = useState<{ open: boolean; article: Article | null; tab: 'web' | 'social' }>({ open: false, article: null, tab: 'web' });
   const [fbConnecting, setFbConnecting] = useState(false);
   const [fbConnected, setFbConnected] = useState(false);
@@ -415,6 +415,8 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
     setEditing(article);
     setModalOpen(true);
     setArticleGeneration(null);
+    setSocialStatus(null);
+    apiService.adminSocialArticleStatus(article.id).then(setSocialStatus).catch(() => {});
     try {
       const data = await apiService.adminNewsArticle(article.id);
       setEditing(data.article ?? article);
@@ -882,8 +884,14 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
               <button type="button" role="tab" aria-selected={previewTab === 'web'} className={`adm-tabs__trigger${previewTab === 'web' ? ' adm-tabs__trigger--active' : ''}`} onClick={() => setPreviewTab('web')}>
                 <GlobeIcon size={13} /> Web
               </button>
-              <button type="button" role="tab" aria-selected={previewTab === 'social'} className={`adm-tabs__trigger${previewTab === 'social' ? ' adm-tabs__trigger--active' : ''}`} onClick={() => setPreviewTab('social')}>
-                <Share2Icon size={13} /> Social
+              <button type="button" role="tab" aria-selected={previewTab === 'linkedin'} className={`adm-tabs__trigger${previewTab === 'linkedin' ? ' adm-tabs__trigger--active' : ''}`} onClick={() => setPreviewTab('linkedin')}>
+                <LinkedinIcon size={13} /> LinkedIn
+                {socialStatus?.linkedin?.status === 'posted' && <StatusBadge label="Publié" variant="success" />}
+              </button>
+              <button type="button" role="tab" aria-selected={previewTab === 'facebook'} className={`adm-tabs__trigger${previewTab === 'facebook' ? ' adm-tabs__trigger--active' : ''}`} onClick={() => setPreviewTab('facebook')}>
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                Facebook
+                {socialStatus?.facebook?.status === 'posted' && <StatusBadge label="Publié" variant="success" />}
               </button>
             </div>
             {previewTab === 'web' ? (
@@ -951,7 +959,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                   </div>
                 </div>
               </article>
-            ) : (
+            ) : previewTab === 'linkedin' ? (
               <div className="admin-news-articles__social-preview">
 
                 {/* ── LinkedIn ── */}
@@ -1041,6 +1049,10 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
 
                   </div>
                 </div>
+
+              </div>
+            ) : (
+              <div className="admin-news-articles__social-preview">
 
                 {/* ── Facebook ── */}
                 <div className="spc spc--facebook">
