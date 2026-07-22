@@ -620,14 +620,41 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
     }
   };
 
+  // Le publish social est asynchrone cote Rails (ActiveJob via Sidekiq) --
+  // la reponse HTTP initiale ne dit que "queued", pas le resultat reel. On
+  // poll le statut toutes les 2s (jusqu'a 30s) pour refleter dynamiquement
+  // "posted"/"failed" des que le job termine, au lieu de figer l'UI sur un
+  // etat "pending" perime.
+  const pollSocialStatus = async (platform: 'linkedin' | 'facebook'): Promise<string | undefined> => {
+    if (!editing.id) return undefined;
+    const articleId = editing.id;
+    const maxAttempts = 15;
+    for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      let data;
+      try {
+        data = await apiService.adminSocialArticleStatus(articleId);
+      } catch {
+        continue;
+      }
+      setSocialStatus(data);
+      const status = data?.[platform]?.status;
+      if (status === 'posted' || status === 'failed') return status;
+    }
+    return undefined;
+  };
+
   const publishToLinkedin = async () => {
     if (!editing.id) return;
     setSocialPublishing(true);
     try {
       await apiService.adminSocialPublishLinkedin(editing.id);
-      toast.success('Publication LinkedIn en cours…');
       const data = await apiService.adminSocialArticleStatus(editing.id);
       setSocialStatus(data);
+      const finalStatus = await pollSocialStatus('linkedin');
+      if (finalStatus === 'posted') toast.success('Post LinkedIn publié');
+      else if (finalStatus === 'failed') toast.error('Échec de la publication LinkedIn');
+      else toast.info('Publication LinkedIn toujours en cours, ça peut prendre un moment');
     } catch (e: any) {
       toast.error(e?.response?.data?.error || 'Erreur publication LinkedIn');
     } finally {
@@ -640,9 +667,12 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
     setSocialPublishing(true);
     try {
       await apiService.adminSocialPublishFacebook(editing.id);
-      toast.success('Publication Facebook en cours…');
       const data = await apiService.adminSocialArticleStatus(editing.id);
       setSocialStatus(data);
+      const finalStatus = await pollSocialStatus('facebook');
+      if (finalStatus === 'posted') toast.success('Post Facebook publié');
+      else if (finalStatus === 'failed') toast.error('Échec de la publication Facebook');
+      else toast.info('Publication Facebook toujours en cours, ça peut prendre un moment');
     } catch (e: any) {
       toast.error(e?.response?.data?.error || 'Erreur publication Facebook');
     } finally {
