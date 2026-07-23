@@ -27,12 +27,6 @@ Disallow: /src/
 Disallow: /*.json$
 Disallow: /search
 Disallow: /*?*
-# Pas de préfixes de langue (canonical = URL sans préfixe)
-Disallow: /fr/
-Disallow: /en/
-Disallow: /es/
-Disallow: /it/
-Disallow: /de/
 
 # ── Google ────────────────────────────────────────────────────────────────────
 User-agent: Googlebot
@@ -52,11 +46,6 @@ Disallow: /src/
 Disallow: /*.json$
 Disallow: /search
 Disallow: /*?*
-Disallow: /fr/
-Disallow: /en/
-Disallow: /es/
-Disallow: /it/
-Disallow: /de/
 # Googlebot gère son propre rythme — pas de Crawl-delay
 
 User-agent: Googlebot-Image
@@ -92,11 +81,6 @@ Disallow: /src/
 Disallow: /*.json$
 Disallow: /search
 Disallow: /*?*
-Disallow: /fr/
-Disallow: /en/
-Disallow: /es/
-Disallow: /it/
-Disallow: /de/
 
 User-agent: MSNBot
 Allow: /
@@ -129,11 +113,6 @@ Disallow: /src/
 Disallow: /*.json$
 Disallow: /search
 Disallow: /*?*
-Disallow: /fr/
-Disallow: /en/
-Disallow: /es/
-Disallow: /it/
-Disallow: /de/
 
 User-agent: YandexImages
 Allow: /
@@ -164,11 +143,6 @@ Disallow: /src/
 Disallow: /*.json$
 Disallow: /search
 Disallow: /*?*
-Disallow: /fr/
-Disallow: /en/
-Disallow: /es/
-Disallow: /it/
-Disallow: /de/
 
 User-agent: Baiduspider-image
 Allow: /
