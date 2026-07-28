@@ -101,6 +101,7 @@ export function BreadcrumbStructuredData({ items }: { items: Array<{ name: strin
 
 export function ArticleStructuredData({
   title,
+  slug,
   description,
   image,
   datePublished,
@@ -130,7 +131,7 @@ export function ArticleStructuredData({
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://sonnalab.com/blog/${title.toLowerCase().replace(/\s+/g, '-')}`
+      '@id': `https://sonnalab.com/blog/${slug}`
     }
   };
 

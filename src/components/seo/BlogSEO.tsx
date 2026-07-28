@@ -36,6 +36,7 @@ export function BlogSEO({ post }: BlogSEOProps) {
     <>
       <ArticleStructuredData
         title={post.title}
+        slug={post.slug}
         description={post.excerpt}
         image={post.coverImage}
         datePublished={post.publishedAt}
