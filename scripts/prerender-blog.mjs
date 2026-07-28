@@ -192,8 +192,11 @@ async function run() {
 
   let written = 0;
   let redirects = 0;
+  let legacyRedirects = 0;
   let failures = 0;
   const redirectMap = [];
+  const realSlugs = new Set();
+  const legacyEntries = []; // computed after the main loop, once realSlugs is complete
 
   for (const locale of LOCALES) {
     let articles;
@@ -208,6 +211,7 @@ async function run() {
 
     for (const article of articles) {
       if (!article.slug) continue;
+      realSlugs.add(article.slug);
       const targetDir = join(BUILD_DIR, 'blog', article.slug);
       await mkdir(targetDir, { recursive: true });
 
@@ -222,7 +226,33 @@ async function run() {
       } else {
         written++;
       }
+
+      // Legacy-slug redirect (2026-07-28 fix): before the ArticleStructuredData
+      // slug bug was fixed, Search Console indexed a "slug" derived straight
+      // from the raw title (title.toLowerCase().replace(/\s+/g, '-') --
+      // accents/colons/uppercase all intact, e.g. "microservices-et-cloud-:-
+      // accélérez..."). Those crawled URLs still 404 with no page ever having
+      // linked to the real slug. Recompute the exact same buggy transform here
+      // and redirect it to the real article -- stops the still-indexed URLs
+      // from bouncing, without resurrecting the malformed path as a real page.
+      if (article.title) {
+        const legacySlug = article.title.toLowerCase().replace(/\s+/g, '-');
+        if (legacySlug && legacySlug !== article.slug) {
+          legacyEntries.push([legacySlug, article.slug]);
+        }
+      }
     }
+  }
+
+  const seenLegacy = new Set();
+  for (const [legacySlug, realSlug] of legacyEntries) {
+    // Skip if it collides with any real article slug (already resolvable) or
+    // was already emitted (two articles whose titles produce the same buggy
+    // slug -- first one wins, arbitrary but deterministic).
+    if (realSlugs.has(legacySlug) || seenLegacy.has(legacySlug)) continue;
+    seenLegacy.add(legacySlug);
+    redirectMap.push(`/blog/${legacySlug} /blog/${realSlug};`);
+    legacyRedirects++;
   }
 
   const mapPath = join(BUILD_DIR, 'blog-redirects.map');
@@ -234,7 +264,7 @@ async function run() {
     'utf-8'
   );
 
-  warn(`Done: ${written} article pages, ${redirects} redirect stubs, ${failures} locale failures.`);
+  warn(`Done: ${written} article pages, ${redirects} redirect stubs, ${legacyRedirects} legacy-slug redirects, ${failures} locale failures.`);
   warn(`Wrote ${mapPath} (${redirectMap.length} entries)`);
   if (failures === LOCALES.length) process.exit(1);
 }
