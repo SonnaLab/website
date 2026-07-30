@@ -1607,6 +1607,75 @@ function fmtNum(n: number) {
 }
 
 // ─────────────────────────────────────────────
+// Generation control (kill switch — incident 2026-07-29, 1000+ emails NoCapacity)
+// ─────────────────────────────────────────────
+
+interface GenerationControlState {
+  is_paused: boolean;
+  paused_at: string | null;
+  paused_reason: string | null;
+  resumed_at: string | null;
+  updated_by: string | null;
+  updated_at: string | null;
+}
+
+function GenerationControlToggle() {
+  const [state,   setState]   = useState<GenerationControlState | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [busy,    setBusy]    = useState(false);
+  const [error,   setError]   = useState<string | null>(null);
+
+  const load = () => {
+    setLoading(true);
+    apiService.adminLesankofaGenerationControl()
+      .then(setState)
+      .catch(e => setError(e.message))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const toggle = async () => {
+    if (!state) return;
+    setBusy(true);
+    setError(null);
+    try {
+      if (state.is_paused) {
+        await apiService.adminLesankofaGenerationResume();
+      } else {
+        const reason = window.prompt('Raison de la pause manuelle (optionnel) :', 'Pause manuelle (admin)') ?? undefined;
+        await apiService.adminLesankofaGenerationPause(reason);
+      }
+      load();
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const isPaused = state?.is_paused ?? false;
+
+  return (
+    <div className="admin-news__header-toggle">
+      <Button
+        variant={isPaused ? 'default' : 'outline'}
+        size="sm"
+        onClick={toggle}
+        disabled={loading || busy || !state}
+        title={isPaused ? (state?.paused_reason ?? 'Génération en pause') : 'Génération active'}
+      >
+        {isPaused
+          ? <AlertTriangleIcon size={14} />
+          : <ZapIcon size={14} />}
+        {busy ? 'Mise à jour…' : isPaused ? 'Génération en pause — reprendre' : 'Génération active — mettre en pause'}
+      </Button>
+      {error && <p className="admin-news__header-toggle-error">Erreur : {error}</p>}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
 // Page root
 // ─────────────────────────────────────────────
 
@@ -1634,12 +1703,15 @@ export default function AdminLesankofa() {
 
   return (
     <div className="admin-news">
-      <header className="admin-news__header">
-        <div className="admin-news__header-title">
-          <BrainIcon size={22} />
-          <h1>Lesankofa AI</h1>
+      <header className="admin-news__header admin-news__header--with-toggle">
+        <div>
+          <div className="admin-news__header-title">
+            <BrainIcon size={22} />
+            <h1>Lesankofa AI</h1>
+          </div>
+          <p className="admin-news__header-sub">Tableau de bord IA — modèles, tâches, infrastructure, clients</p>
         </div>
-        <p className="admin-news__header-sub">Tableau de bord IA — modèles, tâches, infrastructure, clients</p>
+        <GenerationControlToggle />
       </header>
 
       <Tabs value={tab} onValueChange={handleTabChange}>

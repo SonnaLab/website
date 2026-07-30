@@ -657,6 +657,9 @@ class ApiService {
   async adminLesankofaContainers()        { return (await this.client.get('/api/v1/admin/lesankofa/containers')).data; }
   async adminLesankofaContainerLogs(id: string, lines = 100) { return (await this.client.get(`/api/v1/admin/lesankofa/containers/${id}/logs`, { params: { lines } })).data; }
   async adminLesankofaHistory(limit = 20) { return (await this.client.get('/api/v1/admin/lesankofa/history', { params: { limit } })).data; }
+  async adminLesankofaGenerationControl()          { return (await this.client.get('/api/v1/admin/lesankofa/generation-control')).data; }
+  async adminLesankofaGenerationPause(reason?: string) { return (await this.client.post('/api/v1/admin/lesankofa/generation-control/pause', null, { params: reason ? { reason } : {} })).data; }
+  async adminLesankofaGenerationResume()           { return (await this.client.post('/api/v1/admin/lesankofa/generation-control/resume')).data; }
 
   getBaseUrl(): string {
     return API_BASE_URL;
