@@ -29,6 +29,8 @@ import {
   TargetIcon,
   FileTextIcon,
   ChevronRightIcon,
+  MegaphoneIcon,
+  MegaphoneOffIcon,
 } from '@icons';
 
 // ─────────────────────────────────────────────
@@ -91,8 +93,17 @@ interface AIClientRow {
   articles_success: number;
   articles_failed: number;
   articles_pending: number;
+  daily_generation_capacity: number;
   last_generation: string | null;
 }
+
+// 3 paliers exposés côté admin — miroir de DAILY_GENERATION_CAPACITY_TIERS
+// (src/models/client.py, ai.sonnalab.com). Fixés le 2026-08-05.
+const CAPACITY_TIERS = [
+  { value: 4,  label: 'Faible — 4/jour' },
+  { value: 5,  label: 'Standard — 5/jour' },
+  { value: 10, label: 'Élevée — 10/jour' },
+] as const;
 
 interface AIClientDetail extends AIClientRow {
   tagline?: string;
@@ -454,6 +465,15 @@ function ModelsTab() {
   const [error,         setError]         = useState<string | null>(null);
   const [modelPage,     setModelPage]     = useState(1);
   const [selectedModel, setSelectedModel] = useState<AIModelRow | null>(null);
+  const [togglingId,    setTogglingId]    = useState<string | null>(null);
+
+  const toggleModel = (id: string) => {
+    setTogglingId(id);
+    apiService.adminLesankofaModelToggle(id)
+      .then(() => load())
+      .catch(e => setError(e.message))
+      .finally(() => setTogglingId(null));
+  };
 
   const load = () => {
     setLoading(true);
@@ -524,14 +544,27 @@ function ModelsTab() {
               <DataTableTd>{fmtNum(m.tokens_today)}</DataTableTd>
               <DataTableTd>{m.quota_remaining ?? '∞'}</DataTableTd>
               <DataTableTd>
-                <button
-                  type="button"
-                  className="adm-btn adm-btn--ghost adm-btn--xs"
-                  onClick={() => setSelectedModel(m)}
-                  title="Détails du modèle"
-                >
-                  <EyeIcon size={13} />
-                </button>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    className="adm-btn adm-btn--ghost adm-btn--xs"
+                    onClick={() => setSelectedModel(m)}
+                    title="Détails du modèle"
+                  >
+                    <EyeIcon size={13} />
+                  </button>
+                  <button
+                    type="button"
+                    className="adm-btn adm-btn--ghost adm-btn--xs"
+                    onClick={() => toggleModel(String(m.id))}
+                    disabled={togglingId === String(m.id)}
+                    title={m.is_active ? 'Désactiver ce modèle' : 'Activer ce modèle'}
+                  >
+                    {m.is_active
+                      ? <MegaphoneIcon size={13} className="text-primary" />
+                      : <MegaphoneOffIcon size={13} className="text-muted-foreground" />}
+                  </button>
+                </div>
               </DataTableTd>
             </DataTableRow>
           ))}
@@ -873,6 +906,12 @@ function ClientsTab() {
       .finally(() => setDetailLoading(false));
   }, [selectedClient]);
 
+  const [editingClient, setEditingClient] = useState<AIClientRow | null>(null);
+
+  function handleCapacityUpdated(clientId: string, newCapacity: number) {
+    setClients(prev => prev?.map(c => c.id === clientId ? { ...c, daily_generation_capacity: newCapacity } : c) ?? prev);
+  }
+
   return (
     <div className="space-y-4">
       {error && (
@@ -885,7 +924,7 @@ function ClientsTab() {
             <DataTableTh>Total articles</DataTableTh>
             <DataTableTh>Succès</DataTableTh>
             <DataTableTh>Échecs</DataTableTh>
-            <DataTableTh>En cours</DataTableTh>
+            <DataTableTh>Capacité</DataTableTh>
             <DataTableTh>Dernière génération</DataTableTh>
             <DataTableTh>Statut</DataTableTh>
             <DataTableTh>Actions</DataTableTh>
@@ -906,7 +945,7 @@ function ClientsTab() {
                 ? <span className="text-destructive font-medium">{c.articles_failed}</span>
                 : 0}
               </DataTableTd>
-              <DataTableTd>{c.articles_pending}</DataTableTd>
+              <DataTableTd>{c.daily_generation_capacity}/jour</DataTableTd>
               <DataTableTd>{fmtDate(c.last_generation)}</DataTableTd>
               <DataTableTd><StatusBadgeLocal status={c.is_active ? 'active' : 'paused'} /></DataTableTd>
               <DataTableTd>
@@ -914,7 +953,7 @@ function ClientsTab() {
                   <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelectedClient(c)} title="Détails">
                     <EyeIcon size={13} />
                   </button>
-                  <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title="Modifier (à venir)" disabled>
+                  <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setEditingClient(c)} title="Modifier">
                     <PenLineIcon size={13} />
                   </button>
                 </div>
@@ -924,7 +963,7 @@ function ClientsTab() {
         </DataTableBody>
       </DataTable>
 
-      {/* Client detail modal */}
+      {/* Client detail modal (preview, multi-étapes) */}
       {selectedClient && (
         <ClientDetailModal
           client={selectedClient}
@@ -933,9 +972,20 @@ function ClientsTab() {
           onClose={() => setSelectedClient(null)}
         />
       )}
+
+      {/* Client update modal (multi-étapes) */}
+      {editingClient && (
+        <ClientUpdateModal
+          client={editingClient}
+          onClose={() => setEditingClient(null)}
+          onUpdated={handleCapacityUpdated}
+        />
+      )}
     </div>
   );
 }
+
+const DETAIL_STEPS = ['Identité', 'Capacité & articles', 'Stratégie éditoriale'] as const;
 
 function ClientDetailModal({
   client, detail, loading, onClose
@@ -946,6 +996,9 @@ function ClientDetailModal({
   onClose: () => void;
 }) {
   const d = detail ?? client;
+  const [step, setStep] = useState(0);
+  const weeklyCap = d.daily_generation_capacity * 5;
+
   return (
     <Modal
       open
@@ -954,119 +1007,309 @@ function ClientDetailModal({
       subtitle={(d as AIClientDetail).tagline}
       badge={<span className="flex items-center gap-1">{d.is_active ? <CheckCircle2Icon size={9} /> : <XCircleIcon size={9} />}{d.is_active ? 'Actif' : 'Inactif'}</span>}
       size="lg"
+      footer={
+        <ModalStepFooter
+          step={step}
+          totalSteps={DETAIL_STEPS.length}
+          onBack={() => setStep(s => s - 1)}
+          onNext={() => setStep(s => s + 1)}
+          onClose={onClose}
+          nextLabel="Suivant"
+        />
+      }
     >
-      <div className="space-y-6">
+      <ModalStepIndicator steps={DETAIL_STEPS} current={step} />
+      <div className="space-y-6 mt-4">
           {loading && (
             <p className="text-sm text-muted-foreground text-center py-4">Chargement…</p>
           )}
 
-          {/* Identité */}
-          <Section title="Identité">
-            <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
-              <Field label="Slug"      value={d.slug} />
-              <Field label="Industrie" value={(d as AIClientDetail).industry ?? '—'} />
-              <Field label="Locale"    value={(d as AIClientDetail).primary_locale ?? '—'} />
-              <Field label="Langues"   value={((d as AIClientDetail).languages ?? []).join(', ') || '—'} />
-              {(d as AIClientDetail).website_url && (
-                <Field label="Site" value={
-                  <a href={(d as AIClientDetail).website_url!} target="_blank" rel="noreferrer"
-                     className="text-primary hover:underline text-xs">{(d as AIClientDetail).website_url}</a>
-                } />
+          {step === 0 && (
+            <>
+              <Section title="Identité">
+                <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+                  <Field label="Slug"      value={d.slug} />
+                  <Field label="Industrie" value={(d as AIClientDetail).industry ?? '—'} />
+                  <Field label="Locale"    value={(d as AIClientDetail).primary_locale ?? '—'} />
+                  <Field label="Langues"   value={((d as AIClientDetail).languages ?? []).join(', ') || '—'} />
+                  {(d as AIClientDetail).website_url && (
+                    <Field label="Site" value={
+                      <a href={(d as AIClientDetail).website_url!} target="_blank" rel="noreferrer"
+                         className="text-primary hover:underline text-xs">{(d as AIClientDetail).website_url}</a>
+                    } />
+                  )}
+                  {(d as AIClientDetail).push_endpoint && (
+                    <Field label="Push endpoint" value={
+                      <span className="font-mono text-xs break-all">{(d as AIClientDetail).push_endpoint}</span>
+                    } />
+                  )}
+                </div>
+                {(d as AIClientDetail).description_short && (
+                  <p className="mt-2 text-sm text-muted-foreground">{(d as AIClientDetail).description_short}</p>
+                )}
+              </Section>
+              {(d as AIClientDetail).created_at && (
+                <p className="text-xs text-muted-foreground">Créé le {fmtDate((d as AIClientDetail).created_at)}</p>
               )}
-              {(d as AIClientDetail).push_endpoint && (
-                <Field label="Push endpoint" value={
-                  <span className="font-mono text-xs break-all">{(d as AIClientDetail).push_endpoint}</span>
-                } />
-              )}
-            </div>
-            {(d as AIClientDetail).description_short && (
-              <p className="mt-2 text-sm text-muted-foreground">{(d as AIClientDetail).description_short}</p>
-            )}
-          </Section>
+            </>
+          )}
 
-          {/* Stats articles */}
-          <Section title="Articles générés">
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-              {[
-                { label: 'Total',    value: d.articles_total,   icon: <LayersIcon       size={16} />, color: 'text-foreground' },
-                { label: 'Succès',   value: d.articles_success, icon: <CheckCircle2Icon size={16} />, color: 'text-green-600' },
-                { label: 'Échecs',   value: d.articles_failed,  icon: <XCircleIcon      size={16} />, color: d.articles_failed > 0 ? 'text-destructive' : 'text-foreground' },
-                { label: 'En cours', value: d.articles_pending, icon: <ZapIcon          size={16} />, color: 'text-foreground' },
-              ].map(({ label, value, icon, color }) => (
-                <div key={label} className="flex items-center gap-2">
-                  <span className={`flex items-center justify-center size-8 rounded-lg bg-muted/60 ${color}`}>
-                    {icon}
+          {step === 1 && (
+            <>
+              <Section title="Capacité de génération">
+                <div className="flex items-center gap-2">
+                  <span className="flex items-center justify-center size-8 rounded-lg bg-muted/60 text-foreground">
+                    <ZapIcon size={16} />
                   </span>
                   <div className="leading-tight whitespace-nowrap">
-                    <span className={`text-lg font-bold ${color}`}>{value}</span>
-                    <span className="ml-1.5 text-xs text-muted-foreground">{label}</span>
+                    <span className="text-lg font-bold">{d.daily_generation_capacity}/jour</span>
+                    <span className="ml-1.5 text-xs text-muted-foreground">soit {weeklyCap}/semaine</span>
                   </div>
                 </div>
-              ))}
-            </div>
-            <p className="text-xs text-muted-foreground mt-2">Dernière génération : {fmtDate(d.last_generation)}</p>
-          </Section>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Plafond appliqué à la PROCHAINE génération du calendrier hebdomadaire — jamais rétroactif sur une semaine déjà planifiée.
+                </p>
+              </Section>
 
-          {/* Stratégie éditoriale */}
-          {((d as AIClientDetail).content_pillars?.length ?? 0) > 0 && (
-            <Section title="Piliers de contenu">
-              <TagList items={(d as AIClientDetail).content_pillars!} />
-            </Section>
+              <Section title="Articles générés">
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+                  {[
+                    { label: 'Total',    value: d.articles_total,   icon: <LayersIcon       size={16} />, color: 'text-foreground' },
+                    { label: 'Succès',   value: d.articles_success, icon: <CheckCircle2Icon size={16} />, color: 'text-green-600' },
+                    { label: 'Échecs',   value: d.articles_failed,  icon: <XCircleIcon      size={16} />, color: d.articles_failed > 0 ? 'text-destructive' : 'text-foreground' },
+                    { label: 'En cours', value: d.articles_pending, icon: <RefreshCwIcon    size={16} />, color: 'text-foreground' },
+                  ].map(({ label, value, icon, color }) => (
+                    <div key={label} className="flex items-center gap-2">
+                      <span className={`flex items-center justify-center size-8 rounded-lg bg-muted/60 ${color}`}>
+                        {icon}
+                      </span>
+                      <div className="leading-tight whitespace-nowrap">
+                        <span className={`text-lg font-bold ${color}`}>{value}</span>
+                        <span className="ml-1.5 text-xs text-muted-foreground">{label}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">Dernière génération : {fmtDate(d.last_generation)}</p>
+              </Section>
+            </>
           )}
-          {((d as AIClientDetail).objectives?.length ?? 0) > 0 && (
-            <Section title="Objectifs">
-              <ul className="list-disc list-inside text-sm text-muted-foreground space-y-0.5">
-                {(d as AIClientDetail).objectives!.map((o, i) => <li key={i}>{o}</li>)}
-              </ul>
-            </Section>
-          )}
-          {((d as AIClientDetail).brand_keywords?.length ?? 0) > 0 && (
-            <Section title="Mots-clés marque">
-              <TagList items={(d as AIClientDetail).brand_keywords!} />
-            </Section>
-          )}
-          {((d as AIClientDetail).competitor_keywords?.length ?? 0) > 0 && (
-            <Section title="Mots-clés concurrents">
-              <TagList items={(d as AIClientDetail).competitor_keywords!} />
-            </Section>
-          )}
-          {((d as AIClientDetail).key_features?.length ?? 0) > 0 && (
-            <Section title="Fonctionnalités clés">
-              <TagList items={(d as AIClientDetail).key_features!} />
-            </Section>
-          )}
-          {((d as AIClientDetail).integrations?.length ?? 0) > 0 && (
-            <Section title="Intégrations">
-              <TagList items={(d as AIClientDetail).integrations!} />
-            </Section>
-          )}
-          {((d as AIClientDetail).geographic_zones?.length ?? 0) > 0 && (
-            <Section title="Zones géographiques">
-              <TagList items={(d as AIClientDetail).geographic_zones!} />
-            </Section>
-          )}
-          {(d as AIClientDetail).tone_of_voice && (
-            <Section title="Tonalité">
-              <p className="text-sm">{(d as AIClientDetail).tone_of_voice}</p>
-            </Section>
-          )}
-          {((d as AIClientDetail).pricing_tiers?.length ?? 0) > 0 && (
-            <Section title="Offres tarifaires">
-              <div className="space-y-1">
-                {(d as AIClientDetail).pricing_tiers!.map((t, i) => (
-                  <div key={i} className="flex items-center justify-between text-sm">
-                    <span>{t.name}</span>
-                    <span className="font-mono text-muted-foreground">{t.price === 0 ? 'Gratuit' : `${t.price} ${t.currency ?? '€'} / ${t.billing ?? 'mois'}`}</span>
+
+          {step === 2 && (
+            <>
+              {((d as AIClientDetail).content_pillars?.length ?? 0) > 0 && (
+                <Section title="Piliers de contenu">
+                  <TagList items={(d as AIClientDetail).content_pillars!} />
+                </Section>
+              )}
+              {((d as AIClientDetail).objectives?.length ?? 0) > 0 && (
+                <Section title="Objectifs">
+                  <ul className="list-disc list-inside text-sm text-muted-foreground space-y-0.5">
+                    {(d as AIClientDetail).objectives!.map((o, i) => <li key={i}>{o}</li>)}
+                  </ul>
+                </Section>
+              )}
+              {((d as AIClientDetail).brand_keywords?.length ?? 0) > 0 && (
+                <Section title="Mots-clés marque">
+                  <TagList items={(d as AIClientDetail).brand_keywords!} />
+                </Section>
+              )}
+              {((d as AIClientDetail).competitor_keywords?.length ?? 0) > 0 && (
+                <Section title="Mots-clés concurrents">
+                  <TagList items={(d as AIClientDetail).competitor_keywords!} />
+                </Section>
+              )}
+              {((d as AIClientDetail).key_features?.length ?? 0) > 0 && (
+                <Section title="Fonctionnalités clés">
+                  <TagList items={(d as AIClientDetail).key_features!} />
+                </Section>
+              )}
+              {((d as AIClientDetail).integrations?.length ?? 0) > 0 && (
+                <Section title="Intégrations">
+                  <TagList items={(d as AIClientDetail).integrations!} />
+                </Section>
+              )}
+              {((d as AIClientDetail).geographic_zones?.length ?? 0) > 0 && (
+                <Section title="Zones géographiques">
+                  <TagList items={(d as AIClientDetail).geographic_zones!} />
+                </Section>
+              )}
+              {(d as AIClientDetail).tone_of_voice && (
+                <Section title="Tonalité">
+                  <p className="text-sm">{(d as AIClientDetail).tone_of_voice}</p>
+                </Section>
+              )}
+              {((d as AIClientDetail).pricing_tiers?.length ?? 0) > 0 && (
+                <Section title="Offres tarifaires">
+                  <div className="space-y-1">
+                    {(d as AIClientDetail).pricing_tiers!.map((t, i) => (
+                      <div key={i} className="flex items-center justify-between text-sm">
+                        <span>{t.name}</span>
+                        <span className="font-mono text-muted-foreground">{t.price === 0 ? 'Gratuit' : `${t.price} ${t.currency ?? '€'} / ${t.billing ?? 'mois'}`}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </Section>
-          )}
-          {(d as AIClientDetail).created_at && (
-            <p className="text-xs text-muted-foreground">Créé le {fmtDate((d as AIClientDetail).created_at)}</p>
+                </Section>
+              )}
+            </>
           )}
         </div>
     </Modal>
+  );
+}
+
+function ClientUpdateModal({
+  client, onClose, onUpdated,
+}: {
+  client: AIClientRow;
+  onClose: () => void;
+  onUpdated: (clientId: string, newCapacity: number) => void;
+}) {
+  const UPDATE_STEPS = ['Client', 'Capacité', 'Confirmation'] as const;
+  const [step, setStep] = useState(0);
+  const [capacity, setCapacity] = useState(client.daily_generation_capacity);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
+
+  async function handleSave() {
+    setSaving(true);
+    setSaveError(null);
+    try {
+      await apiService.adminLesankofaClientUpdate(client.id, { daily_generation_capacity: capacity });
+      onUpdated(client.id, capacity);
+      setSaved(true);
+      setStep(2);
+    } catch (e) {
+      setSaveError(e instanceof Error ? e.message : 'Erreur inconnue');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Modal
+      open
+      onClose={onClose}
+      title={`Modifier ${client.name}`}
+      size="md"
+      footer={
+        step === 2 ? (
+          <div className="flex justify-end">
+            <Button onClick={onClose}>Fermer</Button>
+          </div>
+        ) : step === 1 ? (
+          <div className="flex justify-between w-full">
+            <Button variant="outline" onClick={() => setStep(0)}>Retour</Button>
+            <Button onClick={handleSave} disabled={saving}>{saving ? 'Enregistrement…' : 'Enregistrer'}</Button>
+          </div>
+        ) : (
+          <div className="flex justify-end">
+            <Button onClick={() => setStep(1)}>Suivant</Button>
+          </div>
+        )
+      }
+    >
+      <ModalStepIndicator steps={UPDATE_STEPS} current={step} />
+      <div className="space-y-6 mt-4">
+        {step === 0 && (
+          <Section title="Client concerné">
+            <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+              <Field label="Nom"  value={client.name} />
+              <Field label="Slug" value={client.slug} />
+              <Field label="Capacité actuelle" value={`${client.daily_generation_capacity}/jour`} />
+              <Field label="Statut" value={client.is_active ? 'Actif' : 'Inactif'} />
+            </div>
+          </Section>
+        )}
+
+        {step === 1 && (
+          <Section title="Capacité de génération quotidienne">
+            <p className="text-xs text-muted-foreground mb-3">
+              S'applique à la PROCHAINE génération du calendrier hebdomadaire (lundi-vendredi) — jamais rétroactif sur une semaine déjà planifiée.
+            </p>
+            <div className="space-y-2">
+              {CAPACITY_TIERS.map(tier => (
+                <label
+                  key={tier.value}
+                  className={`flex items-center gap-3 rounded-lg border px-3 py-2.5 cursor-pointer transition-colors ${
+                    capacity === tier.value ? 'border-primary bg-primary/5' : 'border-border hover:bg-muted/40'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="capacity-tier"
+                    checked={capacity === tier.value}
+                    onChange={() => setCapacity(tier.value)}
+                  />
+                  <span className="text-sm font-medium">{tier.label}</span>
+                  <span className="ml-auto text-xs text-muted-foreground">{tier.value * 5}/semaine</span>
+                </label>
+              ))}
+            </div>
+            {saveError && (
+              <p className="text-sm text-destructive mt-3">Erreur : {saveError}</p>
+            )}
+          </Section>
+        )}
+
+        {step === 2 && saved && (
+          <Section title="Confirmation">
+            <p className="text-sm flex items-center gap-2">
+              <CheckCircle2Icon size={16} className="text-green-600" />
+              Capacité de {client.name} mise à jour : {capacity}/jour ({capacity * 5}/semaine).
+            </p>
+          </Section>
+        )}
+      </div>
+    </Modal>
+  );
+}
+
+function ModalStepIndicator({ steps, current }: { steps: readonly string[]; current: number }) {
+  return (
+    <div className="flex items-center gap-2">
+      {steps.map((label, i) => (
+        <div key={label} className="flex items-center gap-2 flex-1">
+          <div className="flex items-center gap-2">
+            <span
+              className={`flex items-center justify-center size-6 rounded-full text-xs font-semibold shrink-0 ${
+                i < current ? 'bg-primary text-primary-foreground'
+                  : i === current ? 'bg-primary/20 text-primary ring-2 ring-primary/40'
+                  : 'bg-muted text-muted-foreground'
+              }`}
+            >
+              {i < current ? <CheckCircle2Icon size={13} /> : i + 1}
+            </span>
+            <span className={`text-xs font-medium hidden sm:inline ${i <= current ? 'text-foreground' : 'text-muted-foreground'}`}>
+              {label}
+            </span>
+          </div>
+          {i < steps.length - 1 && <div className="h-px flex-1 bg-border" />}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ModalStepFooter({
+  step, totalSteps, onBack, onNext, onClose, nextLabel,
+}: {
+  step: number;
+  totalSteps: number;
+  onBack: () => void;
+  onNext: () => void;
+  onClose: () => void;
+  nextLabel: string;
+}) {
+  const isLast = step === totalSteps - 1;
+  return (
+    <div className="flex justify-between w-full">
+      {step > 0
+        ? <Button variant="outline" onClick={onBack}>Retour</Button>
+        : <Button variant="outline" onClick={onClose}>Fermer</Button>}
+      {!isLast && <Button onClick={onNext}>{nextLabel}</Button>}
+    </div>
   );
 }
 

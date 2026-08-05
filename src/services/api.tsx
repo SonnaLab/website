@@ -651,8 +651,10 @@ class ApiService {
   async adminLesankofaModels()            { return (await this.client.get('/api/v1/admin/lesankofa/models')).data; }
   async adminLesankofaModelStats()        { return (await this.client.get('/api/v1/admin/lesankofa/models/stats')).data; }
   async adminLesankofaModel(id: string)   { return (await this.client.get(`/api/v1/admin/lesankofa/models/${id}`)).data; }
+  async adminLesankofaModelToggle(id: string) { return (await this.client.post(`/api/v1/admin/lesankofa/models/${id}/toggle`)).data; }
   async adminLesankofaClients()           { return (await this.client.get('/api/v1/admin/lesankofa/clients')).data; }
   async adminLesankofaClientDetail(id: string) { return (await this.client.get(`/api/v1/admin/lesankofa/clients/${id}`)).data; }
+  async adminLesankofaClientUpdate(id: string, payload: Record<string, unknown>) { return (await this.client.patch(`/api/v1/admin/lesankofa/clients/${id}`, payload)).data; }
   async adminLesankofaTasks()             { return (await this.client.get('/api/v1/admin/lesankofa/tasks')).data; }
   async adminLesankofaContainers()        { return (await this.client.get('/api/v1/admin/lesankofa/containers')).data; }
   async adminLesankofaContainerLogs(id: string, lines = 100) { return (await this.client.get(`/api/v1/admin/lesankofa/containers/${id}/logs`, { params: { lines } })).data; }
