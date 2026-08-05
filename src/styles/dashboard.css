@@ -1334,6 +1334,94 @@
   flex-shrink: 0;
 }
 
+/* ── Stepper (components/common/Stepper.tsx) ── */
+.adm-stepper {
+  display: flex;
+  align-items: flex-start;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.adm-stepper__item {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.adm-stepper__item:last-child {
+  flex: 0 0 auto;
+}
+
+.adm-stepper__node {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.adm-stepper__circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #f1f2f4;
+  color: #8a919c;
+  border: 1px solid #e4e6ea;
+  transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+}
+
+.adm-stepper__item--current .adm-stepper__circle {
+  background: var(--adm-primary, #171717);
+  color: #fff;
+  border-color: var(--adm-primary, #171717);
+}
+
+.adm-stepper__item--done .adm-stepper__circle {
+  background: var(--adm-primary, #171717);
+  color: #fff;
+  border-color: var(--adm-primary, #171717);
+  opacity: .55;
+}
+
+.adm-stepper__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8a919c;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.adm-stepper__item--current .adm-stepper__label,
+.adm-stepper__item--done .adm-stepper__label {
+  color: #171717;
+}
+
+.adm-stepper__connector {
+  flex: 1;
+  height: 1px;
+  background: #e4e6ea;
+  margin: 0 10px;
+  min-width: 16px;
+}
+
+.adm-stepper__item--done + .adm-stepper__item .adm-stepper__connector,
+.adm-stepper__item--done .adm-stepper__connector {
+  background: var(--adm-primary, #171717);
+  opacity: .35;
+}
+
+@media (max-width: 640px) {
+  .adm-stepper__label { display: none; }
+}
+
 /* ── StatusBadge ── */
 .adm-badge {
   display: inline-flex;

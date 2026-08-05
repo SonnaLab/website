@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { apiService } from '@/services/api';
 import { BaseTab } from '@/components/common/BaseTab';
 import { Modal } from '@/components/common/Modal';
+import { StepperModal } from '@/components/common/StepperModal';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
 import { DataTable, DataTableHead, DataTableBody, DataTableRow, DataTableTh, DataTableTd, DataTableEmpty } from '@/components/common/DataTable';
 import { Badge } from '@/components/ui/badge';
@@ -1000,26 +1001,19 @@ function ClientDetailModal({
   const weeklyCap = d.daily_generation_capacity * 5;
 
   return (
-    <Modal
+    <StepperModal
       open
       onClose={onClose}
       title={d.name}
       subtitle={(d as AIClientDetail).tagline}
       badge={<span className="flex items-center gap-1">{d.is_active ? <CheckCircle2Icon size={9} /> : <XCircleIcon size={9} />}{d.is_active ? 'Actif' : 'Inactif'}</span>}
       size="lg"
-      footer={
-        <ModalStepFooter
-          step={step}
-          totalSteps={DETAIL_STEPS.length}
-          onBack={() => setStep(s => s - 1)}
-          onNext={() => setStep(s => s + 1)}
-          onClose={onClose}
-          nextLabel="Suivant"
-        />
-      }
+      steps={DETAIL_STEPS}
+      currentStep={step}
+      onBack={() => setStep(s => s - 1)}
+      onNext={() => setStep(s => s + 1)}
     >
-      <ModalStepIndicator steps={DETAIL_STEPS} current={step} />
-      <div className="space-y-6 mt-4">
+      <div className="space-y-6">
           {loading && (
             <p className="text-sm text-muted-foreground text-center py-4">Chargement…</p>
           )}
@@ -1154,7 +1148,7 @@ function ClientDetailModal({
             </>
           )}
         </div>
-    </Modal>
+    </StepperModal>
   );
 }
 
@@ -1188,30 +1182,19 @@ function ClientUpdateModal({
   }
 
   return (
-    <Modal
+    <StepperModal
       open
       onClose={onClose}
       title={`Modifier ${client.name}`}
       size="md"
-      footer={
-        step === 2 ? (
-          <div className="flex justify-end">
-            <Button onClick={onClose}>Fermer</Button>
-          </div>
-        ) : step === 1 ? (
-          <div className="flex justify-between w-full">
-            <Button variant="outline" onClick={() => setStep(0)}>Retour</Button>
-            <Button onClick={handleSave} disabled={saving}>{saving ? 'Enregistrement…' : 'Enregistrer'}</Button>
-          </div>
-        ) : (
-          <div className="flex justify-end">
-            <Button onClick={() => setStep(1)}>Suivant</Button>
-          </div>
-        )
-      }
+      steps={UPDATE_STEPS}
+      currentStep={step}
+      onBack={() => setStep(s => s - 1)}
+      onNext={() => step === 1 ? handleSave() : setStep(s => s + 1)}
+      nextLabel={step === 1 ? (saving ? 'Enregistrement…' : 'Enregistrer') : 'Suivant'}
+      nextDisabled={step === 1 && saving}
     >
-      <ModalStepIndicator steps={UPDATE_STEPS} current={step} />
-      <div className="space-y-6 mt-4">
+      <div className="space-y-6">
         {step === 0 && (
           <Section title="Client concerné">
             <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
@@ -1262,54 +1245,7 @@ function ClientUpdateModal({
           </Section>
         )}
       </div>
-    </Modal>
-  );
-}
-
-function ModalStepIndicator({ steps, current }: { steps: readonly string[]; current: number }) {
-  return (
-    <div className="flex items-center gap-2">
-      {steps.map((label, i) => (
-        <div key={label} className="flex items-center gap-2 flex-1">
-          <div className="flex items-center gap-2">
-            <span
-              className={`flex items-center justify-center size-6 rounded-full text-xs font-semibold shrink-0 ${
-                i < current ? 'bg-primary text-primary-foreground'
-                  : i === current ? 'bg-primary/20 text-primary ring-2 ring-primary/40'
-                  : 'bg-muted text-muted-foreground'
-              }`}
-            >
-              {i < current ? <CheckCircle2Icon size={13} /> : i + 1}
-            </span>
-            <span className={`text-xs font-medium hidden sm:inline ${i <= current ? 'text-foreground' : 'text-muted-foreground'}`}>
-              {label}
-            </span>
-          </div>
-          {i < steps.length - 1 && <div className="h-px flex-1 bg-border" />}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function ModalStepFooter({
-  step, totalSteps, onBack, onNext, onClose, nextLabel,
-}: {
-  step: number;
-  totalSteps: number;
-  onBack: () => void;
-  onNext: () => void;
-  onClose: () => void;
-  nextLabel: string;
-}) {
-  const isLast = step === totalSteps - 1;
-  return (
-    <div className="flex justify-between w-full">
-      {step > 0
-        ? <Button variant="outline" onClick={onBack}>Retour</Button>
-        : <Button variant="outline" onClick={onClose}>Fermer</Button>}
-      {!isLast && <Button onClick={onNext}>{nextLabel}</Button>}
-    </div>
+    </StepperModal>
   );
 }
 
