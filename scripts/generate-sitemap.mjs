@@ -154,14 +154,15 @@ function renderUrl(url) {
 async function generateSitemap() {
   const allPostsById = new Map();
 
-  // Step 1: always load local indexes as a baseline (preserves manually curated articles)
-  for (const locale of LOCALES) {
-    const local = loadLocalIndex(locale);
-    for (const p of local) allPostsById.set(p.id, p);
-    if (local.length > 0) warn(`Local ${locale}: ${local.length} posts`);
-  }
-
-  // Step 2: supplement with API posts (same slug → API version wins; otherwise additive)
+  // 2026-08-11 : l'ancienne strategie chargeait TOUJOURS _index.json comme
+  // base puis ne retirait que les entrees dont le SLUG matchait un post API
+  // -- un article renomme/supprime cote API (le cas normal, l'API est la
+  // seule source de verite depuis longtemps) laissait donc son ancienne
+  // entree locale trainer indefiniment dans le sitemap (ex: incident
+  // "ia-generative-rgpd-conformite-2025", 404 vivant, jamais nettoye).
+  // _index.json est un filet de secours pour un build dont l'API serait
+  // injoignable -- il ne doit jamais survivre a cote d'un fetch API reussi
+  // pour la meme locale : par locale, c'est l'un OU l'autre, jamais un merge.
   let apiSuccesses = 0;
   for (const locale of LOCALES) {
     let posts;
@@ -170,13 +171,11 @@ async function generateSitemap() {
       apiSuccesses++;
       warn(`API OK ${locale}: ${posts.length} posts`);
     } catch (err) {
-      warn(`API FAIL ${locale} (${err.message}) -> local-only for this locale`);
+      warn(`API FAIL ${locale} (${err.message}) -> local fallback for this locale`);
+      const local = loadLocalIndex(locale);
+      if (local.length > 0) warn(`Local ${locale}: ${local.length} posts`);
+      for (const p of local) allPostsById.set(p.id, p);
       continue;
-    }
-    // Remove local entries whose slug is now covered by the API (avoid duplicates)
-    const apiSlugs = new Set(posts.map(p => p.slug));
-    for (const [id, p] of allPostsById) {
-      if (p.lang === locale && apiSlugs.has(p.slug)) allPostsById.delete(id);
     }
     for (const p of posts) allPostsById.set(p.id, p);
   }
