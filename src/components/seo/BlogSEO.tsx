@@ -1,15 +1,6 @@
 import { SEO } from './SEO';
 import { ArticleStructuredData } from './StructuredData';
 import { BlogPost } from '@/types/blog';
-import frBlogIndex from '@/locales/fr/blog/_index.json';
-import enBlogIndex from '@/locales/en/blog/_index.json';
-
-type BlogIndexEntry = { id: string; slug: string; lang: string };
-
-const ALL_BLOG_POSTS: BlogIndexEntry[] = [
-  ...(frBlogIndex as BlogIndexEntry[]),
-  ...(enBlogIndex as BlogIndexEntry[]),
-];
 
 const BASE = 'https://sonnalab.com';
 
@@ -18,19 +9,14 @@ interface BlogSEOProps {
 }
 
 export function BlogSEO({ post }: BlogSEOProps) {
-  const currentHref = `${BASE}/blog/${post.slug}`;
-  const relatedPost = post.relatedPostId
-    ? ALL_BLOG_POSTS.find(p => p.id === post.relatedPostId)
-    : null;
-  const alternateHref = relatedPost ? `${BASE}/blog/${relatedPost.slug}` : null;
-
-  const hreflangAlternates = alternateHref
-    ? [
-        { lang: post.lang === 'fr' ? 'fr' : 'en', href: currentHref },
-        { lang: post.lang === 'fr' ? 'en' : 'fr', href: alternateHref },
-        { lang: 'x-default', href: post.lang === 'fr' ? currentHref : alternateHref },
-      ]
-    : undefined;
+  // 2026-08-11 : les alternates hreflang etaient resolus via post.relatedPostId
+  // contre le JSON de demo _index.json (fr/en uniquement, contenu seed
+  // pre-CMS) -- l'API reelle (posts_controller#show cote api.sonnalab.com)
+  // ne renseigne jamais ce champ, donc cette branche etait un no-op silencieux
+  // pour tous les vrais articles publies. Retire en attendant que le backend
+  // expose translation_group_id / les slugs freres sur l'endpoint public (le
+  // meme mecanisme existe deja cote seo_controller#articles, utilise par le
+  // prerender statique, mais pas par ce composant client-side).
 
   return (
     <>
@@ -53,7 +39,6 @@ export function BlogSEO({ post }: BlogSEOProps) {
         author={post.author}
         publishedTime={post.publishedAt}
         modifiedTime={post.updatedAt}
-        hreflangAlternates={hreflangAlternates}
       />
     </>
   );

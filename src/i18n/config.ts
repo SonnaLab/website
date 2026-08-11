@@ -17,7 +17,6 @@ import frCommon from '@/locales/fr/common.json';
 import frContact from '@/locales/fr/contact.json';
 import frProjects from '@/locales/fr/projects.json';
 import frHome from '@/locales/fr/home.json'
-import frSEO from '@/locales/fr/seo.json'
 import frBlog from '@/locales/fr/blog.json'
 import frConsultation from '@/locales/fr/consultation.json'
 import frLegal from '@/locales/fr/legal.json'
@@ -42,7 +41,6 @@ import enCommon from '@/locales/en/common.json';
 import enContact from '@/locales/en/contact.json';
 import enProjects from '@/locales/en/projects.json';
 import enHome from '@/locales/en/home.json'
-import enSEO from '@/locales/en/seo.json'
 import enBlog from '@/locales/en/blog.json'
 import enConsultation from '@/locales/en/consultation.json'
 import enLegal from '@/locales/en/legal.json'
@@ -68,7 +66,6 @@ import esFooter from '@/locales/es/footer.json';
 import esContact from '@/locales/es/contact.json';
 import esProjects from '@/locales/es/projects.json';
 import esHome from '@/locales/es/home.json';
-import esSEO from '@/locales/es/seo.json';
 import esBlog from '@/locales/es/blog.json';
 import esConsultation from '@/locales/es/consultation.json';
 import esLegal from '@/locales/es/legal.json';
@@ -92,7 +89,6 @@ import itFooter from '@/locales/it/footer.json';
 import itContact from '@/locales/it/contact.json';
 import itProjects from '@/locales/it/projects.json';
 import itHome from '@/locales/it/home.json';
-import itSEO from '@/locales/it/seo.json';
 import itBlog from '@/locales/it/blog.json';
 import itConsultation from '@/locales/it/consultation.json';
 import itLegal from '@/locales/it/legal.json';
@@ -116,7 +112,6 @@ import deFooter from '@/locales/de/footer.json';
 import deContact from '@/locales/de/contact.json';
 import deProjects from '@/locales/de/projects.json';
 import deHome from '@/locales/de/home.json';
-import deSEO from '@/locales/de/seo.json';
 import deBlog from '@/locales/de/blog.json';
 import deConsultation from '@/locales/de/consultation.json';
 import deLegal from '@/locales/de/legal.json';
@@ -139,7 +134,6 @@ const resources = {
     contact: frContact,
     projects: frProjects,
     home: frHome,
-    seo: frSEO,
     blog: frBlog,
     consultation: frConsultation,
     legal: frLegal,
@@ -163,7 +157,6 @@ const resources = {
     contact: enContact,
     projects: enProjects,
     home: enHome,
-    seo: enSEO,
     blog: enBlog,
     consultation: enConsultation,
     legal: enLegal,
@@ -189,7 +182,6 @@ const resources = {
     contact: esContact,
     projects: esProjects,
     home: esHome,
-    seo: esSEO,
     blog: esBlog,
     consultation: esConsultation,
     legal: esLegal,
@@ -213,7 +205,6 @@ const resources = {
     contact: itContact,
     projects: itProjects,
     home: itHome,
-    seo: itSEO,
     blog: itBlog,
     consultation: itConsultation,
     legal: itLegal,
@@ -237,7 +228,6 @@ const resources = {
     contact: deContact,
     projects: deProjects,
     home: deHome,
-    seo: deSEO,
     blog: deBlog,
     consultation: deConsultation,
     legal: deLegal,
