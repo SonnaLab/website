@@ -3,5 +3,6 @@
   "heading": "Page Not Found",
   "description": "Sorry, the page you're looking for seems to be missing. It may have been moved or deleted.",
   "homeButton": "Back to Home",
-  "backButton": "Previous Page"
+  "backButton": "Previous Page",
+  "redirecting": "Redirecting to home in {{count}}s..."
 }

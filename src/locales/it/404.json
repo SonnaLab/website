@@ -1,0 +1,8 @@
+{
+  "title": "404 - Pagina non trovata | SonnaLab",
+  "heading": "Pagina non trovata",
+  "description": "Siamo spiacenti, la pagina che stai cercando sembra non esistere. Potrebbe essere stata spostata o eliminata.",
+  "homeButton": "Torna alla home",
+  "backButton": "Pagina precedente",
+  "redirecting": "Reindirizzamento alla home tra {{count}}s..."
+}

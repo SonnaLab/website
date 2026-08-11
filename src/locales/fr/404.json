@@ -3,5 +3,6 @@
   "heading": "Page non trouvée",
   "description": "Désolé, la page que vous recherchez semble introuvable. Elle a peut-être été déplacée ou supprimée.",
   "homeButton": "Retour à l'accueil",
-  "backButton": "Page précédente"
+  "backButton": "Page précédente",
+  "redirecting": "Redirection vers l'accueil dans {{count}}s..."
 }

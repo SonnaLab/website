@@ -25,7 +25,7 @@ import frCookies from '@/locales/fr/cookies.json'
 import frAuth from '@/locales/fr/auth.json'
 import frMember from '@/locales/fr/member.json'
 import frAdmin from '@/locales/fr/admin.json'
-import frNotFound from '@/pages/public/404';
+import frNotFound from '@/locales/fr/404.json';
 
 // English
 import enHeader from '@/locales/en/header.json';
@@ -50,7 +50,7 @@ import enCookies from '@/locales/en/cookies.json'
 import enAuth from '@/locales/en/auth.json'
 import enMember from '@/locales/en/member.json'
 import enAdmin from '@/locales/en/admin.json'
-import enNotFound from '@/pages/public/404';
+import enNotFound from '@/locales/en/404.json';
 
 // Spanish
 import esHeader from '@/locales/es/header.json';
@@ -74,6 +74,7 @@ import esConsultation from '@/locales/es/consultation.json';
 import esLegal from '@/locales/es/legal.json';
 import esCookies from '@/locales/es/cookies.json';
 import esMember from '@/locales/es/member.json';
+import esNotFound from '@/locales/es/404.json';
 
 // Italian
 import itHeader from '@/locales/it/header.json';
@@ -97,6 +98,7 @@ import itConsultation from '@/locales/it/consultation.json';
 import itLegal from '@/locales/it/legal.json';
 import itCookies from '@/locales/it/cookies.json';
 import itMember from '@/locales/it/member.json';
+import itNotFound from '@/locales/it/404.json';
 
 // German
 import deHeader from '@/locales/de/header.json';
@@ -120,6 +122,7 @@ import deConsultation from '@/locales/de/consultation.json';
 import deLegal from '@/locales/de/legal.json';
 import deCookies from '@/locales/de/cookies.json';
 import deMember from '@/locales/de/member.json';
+import deNotFound from '@/locales/de/404.json';
 
 const resources = {
   fr: {
@@ -144,7 +147,7 @@ const resources = {
     auth: frAuth,
     member: frMember,
     admin: frAdmin,
-    notFound: frNotFound,
+    '404': frNotFound,
   },
   en: {
     header: enHeader,
@@ -168,7 +171,7 @@ const resources = {
     auth: enAuth,
     member: enMember,
     admin: enAdmin,
-    notFound: enNotFound,
+    '404': enNotFound,
   },
   es: {
     header: esHeader,
@@ -192,6 +195,7 @@ const resources = {
     legal: esLegal,
     cookies: esCookies,
     member: esMember,
+    '404': esNotFound,
   },
   it: {
     header: itHeader,
@@ -215,6 +219,7 @@ const resources = {
     legal: itLegal,
     cookies: itCookies,
     member: itMember,
+    '404': itNotFound,
   },
   de: {
     header: deHeader,
@@ -238,6 +243,7 @@ const resources = {
     legal: deLegal,
     cookies: deCookies,
     member: deMember,
+    '404': deNotFound,
   },
 };
 

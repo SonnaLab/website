@@ -1,0 +1,8 @@
+{
+  "title": "404 - Seite nicht gefunden | SonnaLab",
+  "heading": "Seite nicht gefunden",
+  "description": "Die gesuchte Seite scheint nicht zu existieren. Sie wurde möglicherweise verschoben oder gelöscht.",
+  "homeButton": "Zurück zur Startseite",
+  "backButton": "Vorherige Seite",
+  "redirecting": "Weiterleitung zur Startseite in {{count}}s..."
+}
