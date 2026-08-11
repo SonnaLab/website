@@ -35,9 +35,31 @@ export default function NotFound(): React.ReactElement {
             de build (le bouton "Retour a l'accueil" avait un fond transparent
             au lieu de bleu). Remplace par les classes de token de design
             (bg-primary, text-muted-foreground...) deja utilisees ailleurs sur
-            le site, donc garanties presentes dans le CSS livre. */}
-        <div className="flex flex-col items-center justify-center min-h-screen bg-background">
-            <div className="text-center px-4">
+            le site, donc garanties presentes dans le CSS livre.
+
+            2026-08-12 : motif "papier peint" -- meme contrainte, donc en
+            style inline plutot qu'une classe Tailwind qui pourrait ne pas
+            exister dans le CSS fige. Le favicon (fond transparent, cercle
+            noir + oiseau blanc -- verifie via PIL) est repete en filigrane
+            sur deux calques decales d'un demi-carreau pour un effet
+            "quinconce" plutot qu'une simple grille, tres faible opacite
+            pour rester un motif de fond et jamais concurrencer le contenu. */}
+        <div className="relative flex flex-col items-center justify-center min-h-screen bg-background overflow-hidden">
+            <div
+                aria-hidden="true"
+                style={{
+                    position: 'absolute',
+                    inset: '-20%',
+                    backgroundImage: 'url(/favicon/android-chrome-192x192.png)',
+                    backgroundSize: '220px 220px',
+                    backgroundRepeat: 'repeat',
+                    transform: 'rotate(-8deg)',
+                    opacity: 0.035,
+                    pointerEvents: 'none',
+                }}
+            />
+
+            <div className="text-center px-4 relative z-10">
                 <div className="inline-flex items-center justify-center w-24 h-24 bg-muted rounded-full mb-6">
                     <AlertTriangle size={48} className="text-destructive" />
                 </div>
