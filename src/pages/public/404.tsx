@@ -64,7 +64,12 @@ export default function NotFound(): React.ReactElement {
                     <AlertTriangle size={48} className="text-destructive" />
                 </div>
 
-                <h1 className="text-6xl font-bold text-foreground mb-2">404</h1>
+                <h1
+                    className="font-bold text-foreground mb-2"
+                    style={{ fontSize: 'clamp(5rem, 12vw, 8rem)', lineHeight: 1 }}
+                >
+                    404
+                </h1>
                 <h2 className="text-3xl font-semibold text-foreground mb-4">
                     {t('heading')}
                 </h2>
@@ -72,17 +77,27 @@ export default function NotFound(): React.ReactElement {
                     {t('description')}
                 </p>
 
-                <div className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full bg-accent text-accent-foreground">
-                    <span className="relative flex w-2 h-2">
-                        <span className="animate-pulse absolute inline-flex w-full h-full rounded-full bg-accent-foreground opacity-70"></span>
-                        <span className="relative inline-flex rounded-full w-2 h-2 bg-accent-foreground"></span>
-                    </span>
-                    <span className="text-sm font-semibold tabular-nums">
-                        {t('redirecting', { count: secondsLeft })}
+                <div className="flex items-center justify-center gap-2 mb-8 text-sm text-muted-foreground">
+                    <span>{t('redirectingPrefix')}</span>
+                    <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-destructive text-white">
+                        <span className="relative flex w-2 h-2">
+                            <span className="animate-pulse absolute inline-flex w-full h-full rounded-full bg-white opacity-70"></span>
+                            <span className="relative inline-flex rounded-full w-2 h-2 bg-white"></span>
+                        </span>
+                        <span className="font-semibold tabular-nums">
+                            {t('secondsBadge', { count: secondsLeft })}
+                        </span>
                     </span>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button
+                        onClick={() => window.history.back()}
+                        className="inline-flex items-center justify-center px-6 py-3 bg-secondary text-secondary-foreground border border-black rounded-lg hover:opacity-70 transition-colors font-medium"
+                    >
+                        <ArrowLeft size={20} className="mr-2" />
+                        {t('backButton')}
+                    </button>
                     <Link
                         to="/"
                         className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-70 transition-colors font-medium"
@@ -90,13 +105,6 @@ export default function NotFound(): React.ReactElement {
                         <Home size={20} className="mr-2" />
                         {t('homeButton')}
                     </Link>
-                    <button
-                        onClick={() => window.history.back()}
-                        className="inline-flex items-center justify-center px-6 py-3 bg-secondary text-secondary-foreground rounded-lg hover:opacity-70 transition-colors font-medium"
-                    >
-                        <ArrowLeft size={20} className="mr-2" />
-                        {t('backButton')}
-                    </button>
                 </div>
             </div>
         </div>

@@ -4,5 +4,8 @@
   "description": "Sorry, the page you're looking for seems to be missing. It may have been moved or deleted.",
   "homeButton": "Back to Home",
   "backButton": "Previous Page",
-  "redirecting": "Redirecting to home in {{count}}s..."
+  "redirecting": "Redirecting to home in {{count}}s...",
+  "redirectingPrefix": "Redirecting to home in",
+  "secondsBadge_one": "{{count}} second",
+  "secondsBadge_other": "{{count}} seconds"
 }

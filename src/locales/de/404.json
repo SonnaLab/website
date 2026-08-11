@@ -4,5 +4,8 @@
   "description": "Die gesuchte Seite scheint nicht zu existieren. Sie wurde möglicherweise verschoben oder gelöscht.",
   "homeButton": "Zurück zur Startseite",
   "backButton": "Vorherige Seite",
-  "redirecting": "Weiterleitung zur Startseite in {{count}}s..."
+  "redirecting": "Weiterleitung zur Startseite in {{count}}s...",
+  "redirectingPrefix": "Weiterleitung zur Startseite in",
+  "secondsBadge_one": "{{count}} Sekunde",
+  "secondsBadge_other": "{{count}} Sekunden"
 }

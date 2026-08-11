@@ -4,5 +4,8 @@
   "description": "Siamo spiacenti, la pagina che stai cercando sembra non esistere. Potrebbe essere stata spostata o eliminata.",
   "homeButton": "Torna alla home",
   "backButton": "Pagina precedente",
-  "redirecting": "Reindirizzamento alla home tra {{count}}s..."
+  "redirecting": "Reindirizzamento alla home tra {{count}}s...",
+  "redirectingPrefix": "Reindirizzamento alla home tra",
+  "secondsBadge_one": "{{count}} secondo",
+  "secondsBadge_other": "{{count}} secondi"
 }
