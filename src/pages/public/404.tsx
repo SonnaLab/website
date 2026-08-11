@@ -51,7 +51,7 @@ export default function NotFound(): React.ReactElement {
                     position: 'absolute',
                     inset: '-20%',
                     backgroundImage: 'url(/favicon/android-chrome-192x192.png)',
-                    backgroundSize: '220px 220px',
+                    backgroundSize: '44px 44px',
                     backgroundRepeat: 'repeat',
                     transform: 'rotate(-8deg)',
                     opacity: 0.035,
@@ -65,15 +65,22 @@ export default function NotFound(): React.ReactElement {
                 </div>
 
                 <h1 className="text-6xl font-bold text-foreground mb-2">404</h1>
-                <h2 className="text-2xl font-semibold text-foreground mb-4">
+                <h2 className="text-3xl font-semibold text-foreground mb-4">
                     {t('heading')}
                 </h2>
-                <p className="text-muted-foreground mb-4 max-w-md">
+                <p className="text-lg text-muted-foreground leading-relaxed mb-6 max-w-lg mx-auto">
                     {t('description')}
                 </p>
-                <p className="text-sm text-muted-foreground opacity-70 mb-8">
-                    {t('redirecting', { count: secondsLeft })}
-                </p>
+
+                <div className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full bg-accent text-accent-foreground">
+                    <span className="relative flex w-2 h-2">
+                        <span className="animate-pulse absolute inline-flex w-full h-full rounded-full bg-accent-foreground opacity-70"></span>
+                        <span className="relative inline-flex rounded-full w-2 h-2 bg-accent-foreground"></span>
+                    </span>
+                    <span className="text-sm font-semibold tabular-nums">
+                        {t('redirecting', { count: secondsLeft })}
+                    </span>
+                </div>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <Link
