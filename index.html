@@ -9,7 +9,17 @@
     <meta name="description" content="SonnaLab, le laboratoire d'idées qui transforme le digital. Développement web, applications mobiles et solutions technologiques innovantes pour votre entreprise." />
     <meta name="keywords" content="développement web, applications mobiles, innovation digitale, transformation numérique, laboratoire technologique, solutions digitales" />
     <meta name="author" content="SonnaLab" />
-    <meta name="robots" content="index, follow" />
+    <!-- 2026-08-12 : pas de balise robots statique ici -- react-helmet-async
+         ne supprime que les balises qu'il a lui-meme creees (marquees
+         data-rh), jamais celle-ci si elle etait presente. Resultat observe :
+         deux <meta name="robots"> simultanees en DOM final sur les pages
+         qui posent noindex (ex. 404.tsx), l'ancienne "index, follow"
+         restant a cote. L'absence de balise = "index, follow" implicite
+         (comportement par defaut des crawlers), donc aucune regression pour
+         les pages qui n'en posent pas explicitement (legal/*, auth/*) --
+         chaque page qui a besoin d'un robots different (SEO.tsx, 404.tsx)
+         le declare elle-meme via Helmet, sans plus jamais entrer en
+         conflit avec un tag statique. -->
     <meta name="language" content="French" />
     
     <!-- Open Graph / Facebook -->
