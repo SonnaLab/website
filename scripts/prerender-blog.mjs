@@ -167,12 +167,23 @@ function buildArticleHead(article, template) {
   // aucun risque de doublon visible -- seul le PREMIER rendu (crawler,
   // JS desactive, ou fenetre avant hydratation) voit ce HTML statique.
   if (article.content_markdown) {
-    const bodyHtml = marked.parse(article.content_markdown);
-    const hasOwnH1 = /^\s*<h1[\s>]/.test(bodyHtml);
+    // 2026-08-13 : la premiere version detectait "le corps fournit deja son
+    // propre H1" en regardant si bodyHtml commencait par un <h1> -- mais
+    // certains articles utilisent "# Introduction"/"# Conclusion" (niveau 1)
+    // comme sous-titres internes, jamais le vrai titre. Resultat : la
+    // heuristique se trompait, sautait l'injection du VRAI titre, et la
+    // page se retrouvait avec "Introduction"/"Conclusion" comme seuls H1 --
+    // pire que le bug d'origine. Corrige en s'alignant sur MarkdownRenderer.tsx
+    // cote client (meme fix) : le titre de l'article a TOUJOURS son propre
+    // <h1> ici, sans condition, et tout <h1> produit par le corps est
+    // TOUJOURS retrograde en <h2> -- aucune heuristique a tromper.
+    const bodyHtml = marked.parse(article.content_markdown)
+      .replace(/<h1(\s[^>]*)?>/g, '<h2>')
+      .replace(/<\/h1>/g, '</h2>');
     // article.title (pas la variable `title` = seo_title || title, utilisee
     // pour <title>/OG) -- doit correspondre exactement au <h1> que
     // BlogPost.tsx rend cote client (`{post.title}`), jamais le titre SEO.
-    const articleShell = `<main id="article-prerender"><article>${hasOwnH1 ? '' : `<h1>${escapeHtml(article.title)}</h1>`}${bodyHtml}</article></main>`;
+    const articleShell = `<main id="article-prerender"><article><h1>${escapeHtml(article.title)}</h1>${bodyHtml}</article></main>`;
     html = html.replace('<div id="root"></div>', `<div id="root">${articleShell}</div>`);
   }
 

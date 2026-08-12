@@ -98,12 +98,19 @@ export function MarkdownRenderer({ content, lang = 'fr', enableCtas = false }: M
       key={key}
       remarkPlugins={[remarkGfm]}
       components={{
+        // 2026-08-13 : le titre de l'article a deja son propre <h1>
+        // (BlogPost.tsx, separe de ce composant) -- un "# heading" dans le
+        // markdown du corps (utilise comme sous-titre par certains articles,
+        // ex. "# Introduction"/"# Conclusion") ne doit donc JAMAIS produire
+        // un second <h1> HTML. Releve par Bing Webmaster Tools (regle "un
+        // seul H1 par page"). Rendu en <h2> avec le meme style que le "#"
+        // markdown recevait deja visuellement, juste la balise HTML change.
         h1: ({ children }) => {
           const id = `heading-${headingIndex++}`;
           return (
-            <h1 id={id} className="text-4xl font-bold mt-12 mb-6 text-gray-900 scroll-mt-24">
+            <h2 id={id} className="text-4xl font-bold mt-12 mb-6 text-gray-900 scroll-mt-24">
               {children}
-            </h1>
+            </h2>
           );
         },
         h2: ({ children }) => {
