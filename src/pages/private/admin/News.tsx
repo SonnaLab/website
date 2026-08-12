@@ -21,7 +21,7 @@ async function triggerSitemapRefresh(): Promise<void> {
 import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
-import { DataTable, DataTableHead, DataTableBody, DataTableRow, DataTableTh, DataTableTd, DataTableEmpty } from '@/components/common/DataTable';
+import { DataTable, DataTableHead, DataTableBody, DataTableRow, DataTableTh, DataTableTd, DataTableEmpty, DataTableBulkBar, DataTableSelectTh, DataTableSelectTd } from '@/components/common/DataTable';
 import { Modal } from '@/components/common/Modal';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { MarkdownRenderer } from '@/components/public/blog/MarkdownRenderer';
@@ -382,6 +382,14 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
     facebook: { status: string; posted_at?: string; platform_post_id?: string; error?: string } | null;
   } | null>(null);
   const [socialPublishing, setSocialPublishing] = useState(false);
+  // 2026-08-13 : selection multiple + actions groupees, meme pattern que
+  // BaseTable.vue sur lecolt.com. La selection ne survit pas a un
+  // changement de page/recherche/filtre -- eviter d'agir "a l'aveugle" sur
+  // des lignes qu'on ne voit plus a l'ecran (voir les 4 endroits qui vident
+  // selectedIds ci-dessous : recherche, filtre statut, page precedente/suivante).
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkActionRunning, setBulkActionRunning] = useState(false);
+  const [bulkConfirmAction, setBulkConfirmAction] = useState<'publish' | 'delete' | null>(null);
 
   const reload = (q = search, status = statusFilter, pg = page) => {
     setLoading(true);
@@ -620,6 +628,55 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
     }
   };
 
+  async function confirmBulkAction() {
+    const action = bulkConfirmAction;
+    if (!action || !selectedIds.size || bulkActionRunning) return;
+    setBulkConfirmAction(null);
+    if (action === 'publish') await bulkPublishSelected();
+    else await bulkDeleteSelected();
+  }
+
+  async function bulkPublishSelected() {
+    if (!selectedIds.size || bulkActionRunning) return;
+    setBulkActionRunning(true);
+    const ids = Array.from(selectedIds);
+    let succeeded = 0;
+    for (const id of ids) {
+      const article = articles.find(a => a.id === id);
+      if (!article || article.status === 'published') continue;
+      try {
+        await apiService.adminNewsPublishArticle(id);
+        succeeded++;
+      } catch { /* on continue le lot */ }
+    }
+    setBulkActionRunning(false);
+    setSelectedIds(new Set());
+    if (succeeded > 0) { onStatsChange?.(); triggerSitemapRefresh(); }
+    reload(search, statusFilter, page);
+    if (succeeded > 0) toast.success(`${succeeded} article(s) publié(s) ✓`);
+    else toast.error("Aucun article n'a pu être publié");
+  }
+
+  async function bulkDeleteSelected() {
+    if (!selectedIds.size || bulkActionRunning) return;
+    setBulkActionRunning(true);
+    const ids = Array.from(selectedIds);
+    let succeeded = 0;
+    for (const id of ids) {
+      const article = articles.find(a => a.id === id);
+      if (!article) continue;
+      try {
+        await apiService.adminNewsDeleteArticle(id);
+        succeeded++;
+      } catch { /* on continue le lot */ }
+    }
+    setBulkActionRunning(false);
+    setSelectedIds(new Set());
+    reload(search, statusFilter, page);
+    if (succeeded > 0) toast.success(`${succeeded} article(s) supprimé(s)`);
+    else toast.error("Aucun article n'a pu être supprimé");
+  }
+
   // Le publish social est asynchrone cote Rails (ActiveJob via Sidekiq) --
   // la reponse HTTP initiale ne dit que "queued", pas le resultat reel. On
   // poll le statut toutes les 2s (jusqu'a 30s) pour refleter dynamiquement
@@ -717,13 +774,13 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
               className="adm-search__input"
               placeholder={t('news.articles.searchPlaceholder')}
               value={search}
-              onChange={e => { setSearch(e.target.value); setPage(1); reload(e.target.value, statusFilter, 1); }}
+              onChange={e => { setSearch(e.target.value); setPage(1); setSelectedIds(new Set()); reload(e.target.value, statusFilter, 1); }}
             />
           </div>
           <select
             className="adm-select adm-select--sm"
             value={statusFilter}
-            onChange={e => { const v = e.target.value; setStatusFilter(v); setPage(1); reload(search, v, 1); }}
+            onChange={e => { const v = e.target.value; setStatusFilter(v); setPage(1); setSelectedIds(new Set()); reload(search, v, 1); }}
             aria-label={t('news.articles.allStatuses')}
           >
             <option value="">{t('news.articles.allStatuses')}</option>
@@ -738,9 +795,40 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
         </button>
       </div>
 
+      {selectedIds.size > 0 && (
+        <DataTableBulkBar count={selectedIds.size}>
+          <button
+            type="button"
+            className="adm-btn adm-btn--primary adm-btn--sm"
+            disabled={bulkActionRunning}
+            onClick={() => setBulkConfirmAction('publish')}
+          >
+            {bulkActionRunning ? <RefreshCwIcon size={13} className="adm-spin" /> : <MegaphoneIcon size={13} />}
+            {t('news.articles.publish')}
+          </button>
+          <button
+            type="button"
+            className="adm-btn adm-btn--danger adm-btn--sm"
+            disabled={bulkActionRunning}
+            onClick={() => setBulkConfirmAction('delete')}
+          >
+            {bulkActionRunning ? <RefreshCwIcon size={13} className="adm-spin" /> : <Trash2Icon size={13} />}
+            {t('news.articles.delete')}
+          </button>
+        </DataTableBulkBar>
+      )}
+
       <DataTable>
         <DataTableHead>
           <DataTableRow>
+            <DataTableSelectTh
+              checked={paginated.length > 0 && paginated.every(a => selectedIds.has(a.id))}
+              indeterminate={selectedIds.size > 0 && !paginated.every(a => selectedIds.has(a.id))}
+              ariaLabel={t('news.articles.selectAll')}
+              onChange={(checked) => {
+                setSelectedIds(checked ? new Set(paginated.map(a => a.id)) : new Set());
+              }}
+            />
             <DataTableTh>N°</DataTableTh>
             <DataTableTh>{t('news.articles.cover')}</DataTableTh>
             <DataTableTh>{t('news.articles.title')}</DataTableTh>
@@ -760,6 +848,17 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
             <DataTableEmpty label={t('news.articles.empty')} />
           ) : paginated.map(a => (
             <DataTableRow key={a.id}>
+              <DataTableSelectTd
+                checked={selectedIds.has(a.id)}
+                ariaLabel={t('news.articles.title')}
+                onChange={(checked) => {
+                  setSelectedIds(prev => {
+                    const next = new Set(prev);
+                    if (checked) next.add(a.id); else next.delete(a.id);
+                    return next;
+                  });
+                }}
+              />
               <DataTableTd>
                 <span className="adm-table__id-cell">{a.lesankofa_transaction_id ? `#${a.lesankofa_transaction_id}` : '—'}</span>
               </DataTableTd>
@@ -859,7 +958,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
               type="button"
               className="adm-btn adm-btn--ghost adm-btn--xs"
               disabled={page <= 1}
-              onClick={() => { const p = page - 1; setPage(p); reload(search, statusFilter, p); }}
+              onClick={() => { const p = page - 1; setPage(p); setSelectedIds(new Set()); reload(search, statusFilter, p); }}
             >
               <ChevronLeftIcon size={13} />
             </button>
@@ -867,7 +966,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
               type="button"
               className="adm-btn adm-btn--ghost adm-btn--xs"
               disabled={page >= totalPages}
-              onClick={() => { const p = page + 1; setPage(p); reload(search, statusFilter, p); }}
+              onClick={() => { const p = page + 1; setPage(p); setSelectedIds(new Set()); reload(search, statusFilter, p); }}
             >
               <ChevronRightIcon size={13} />
             </button>
@@ -1682,6 +1781,34 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
             </div>
           )}
         </div>
+      </Modal>
+
+      <Modal
+        open={!!bulkConfirmAction}
+        onClose={() => setBulkConfirmAction(null)}
+        title={t(
+          bulkConfirmAction === 'delete' ? 'news.articles.bulkDeleteTitle' : 'news.articles.bulkPublishTitle',
+          { count: selectedIds.size }
+        )}
+        size="sm"
+        footer={
+          <>
+            <button type="button" className="adm-btn adm-btn--ghost" onClick={() => setBulkConfirmAction(null)}>
+              {t('common.cancel')}
+            </button>
+            <button
+              type="button"
+              className={`adm-btn ${bulkConfirmAction === 'delete' ? 'adm-btn--danger' : 'adm-btn--primary'}`}
+              disabled={bulkActionRunning}
+              onClick={confirmBulkAction}
+            >
+              {bulkConfirmAction === 'delete' ? <Trash2Icon size={14} /> : <MegaphoneIcon size={14} />}
+              {t(bulkConfirmAction === 'delete' ? 'news.articles.delete' : 'news.articles.publish')}
+            </button>
+          </>
+        }
+      >
+        <p>{t(bulkConfirmAction === 'delete' ? 'news.articles.bulkDeleteBody' : 'news.articles.bulkPublishBody')}</p>
       </Modal>
     </div>
   );
