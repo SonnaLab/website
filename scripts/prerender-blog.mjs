@@ -15,6 +15,7 @@ import { readFile, writeFile, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { marked } from 'marked';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = dirname(__filename);
@@ -156,6 +157,24 @@ function buildArticleHead(article, template) {
   }
 
   html = html.replace('</head>', `    ${articleExtras}\n  </head>`);
+
+  // 2026-08-12 : jusque-la <body> restait un <div id="root"></div> vide --
+  // aucun <h1> ni texte reel avant hydratation React, cause du "H1 tag
+  // missing" releve par Bing Webmaster Tools sur la quasi-totalite des
+  // articles. Injecte le corps reel (meme lib `marked` que lescopr.com,
+  // meme approche) dans le shell SPA ; React remplace ce contenu au
+  // montage (BlogPost.tsx rend son propre <h1> + MarkdownRenderer), donc
+  // aucun risque de doublon visible -- seul le PREMIER rendu (crawler,
+  // JS desactive, ou fenetre avant hydratation) voit ce HTML statique.
+  if (article.content_markdown) {
+    const bodyHtml = marked.parse(article.content_markdown);
+    const hasOwnH1 = /^\s*<h1[\s>]/.test(bodyHtml);
+    // article.title (pas la variable `title` = seo_title || title, utilisee
+    // pour <title>/OG) -- doit correspondre exactement au <h1> que
+    // BlogPost.tsx rend cote client (`{post.title}`), jamais le titre SEO.
+    const articleShell = `<main id="article-prerender"><article>${hasOwnH1 ? '' : `<h1>${escapeHtml(article.title)}</h1>`}${bodyHtml}</article></main>`;
+    html = html.replace('<div id="root"></div>', `<div id="root">${articleShell}</div>`);
+  }
 
   return html;
 }
