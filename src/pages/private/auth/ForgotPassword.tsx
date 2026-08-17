@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
+import { SEO } from '@/components/seo';
 import { AuthLayout } from '@/components/private/auth/AuthLayout';
 import { apiService } from '@/services/api';
 import { createForgotPasswordSchema, ForgotPasswordInputs } from '@/schemas/authSchema';
@@ -36,6 +37,7 @@ export default function ForgotPasswordPage() {
       subtitle={t('forgotPassword.subtitle')}
       footer={<Link to="/sign-in" className="text-foreground hover:underline">← {t('forgotPassword.back')}</Link>}
     >
+      <SEO title={t('forgotPassword.title')} noindex />
       {submitted ? (
         <p className="text-sm text-muted-foreground">{t('forgotPassword.successMessage')}</p>
       ) : (

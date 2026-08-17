@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { AxiosError } from 'axios';
 
+import { SEO } from '@/components/seo';
 import { AuthLayout } from '@/components/private/auth/AuthLayout';
 import { apiService } from '@/services/api';
 import { createResetPasswordSchema, ResetPasswordInputs } from '@/schemas/authSchema';
@@ -47,6 +48,7 @@ export default function ResetPasswordPage() {
       subtitle={t('resetPassword.subtitle')}
       footer={<Link to="/sign-in" className="text-foreground hover:underline">← {t('forgotPassword.back')}</Link>}
     >
+      <SEO title={t('resetPassword.title')} noindex />
       {tokenInvalid ? (
         <p className="text-sm text-destructive">{t('resetPassword.errorInvalidToken')}</p>
       ) : (

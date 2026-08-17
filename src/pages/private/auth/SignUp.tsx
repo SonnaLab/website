@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { AxiosError } from 'axios';
 
+import { SEO } from '@/components/seo';
 import { AuthLayout } from '@/components/private/auth/AuthLayout';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { createSignUpSchema, SignUpInputs } from '@/schemas/authSchema';
@@ -47,6 +48,7 @@ export default function SignUpPage() {
         </p>
       }
     >
+      <SEO title={t('signUp.title')} noindex />
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">

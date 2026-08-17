@@ -13,6 +13,7 @@ interface SEOProps {
   publishedTime?: string;
   modifiedTime?: string;
   hreflangAlternates?: Array<{ lang: string; href: string }>;
+  noindex?: boolean;
 }
 
 // Pages ayant une variante d'URL préfixée réelle par langue (/en, /es, /it,
@@ -40,6 +41,7 @@ export function SEO({
   publishedTime,
   modifiedTime,
   hreflangAlternates,
+  noindex = false,
 }: SEOProps) {
   const { i18n } = useTranslation();
   const location = useLocation();
@@ -143,8 +145,17 @@ export function SEO({
       <meta name="msapplication-TileColor" content="#000000" />
 
       {/* Robots */}
-      <meta name="robots"    content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-      <meta name="googlebot" content="index, follow" />
+      {noindex ? (
+        <>
+          <meta name="robots"    content="noindex, nofollow" />
+          <meta name="googlebot" content="noindex, nofollow" />
+        </>
+      ) : (
+        <>
+          <meta name="robots"    content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+          <meta name="googlebot" content="index, follow" />
+        </>
+      )}
     </Helmet>
   );
 }

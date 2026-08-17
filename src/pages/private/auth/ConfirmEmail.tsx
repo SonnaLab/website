@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2Icon, XCircleIcon } from '@icons';
 
+import { SEO } from '@/components/seo';
 import { AuthLayout } from '@/components/private/auth/AuthLayout';
 import { apiService } from '@/services/api';
 import { Button } from '@/components/ui/button';
@@ -26,6 +27,7 @@ export default function ConfirmEmailPage() {
 
   return (
     <AuthLayout title={t('confirmEmail.title')}>
+      <SEO title={t('confirmEmail.title')} noindex />
       {status === 'verifying' && (
         <p className="text-sm text-muted-foreground">{t('confirmEmail.verifying')}</p>
       )}
