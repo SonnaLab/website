@@ -13,11 +13,12 @@ export default function Home() {
     <>
       <OrganizationStructuredData />
       <WebsiteStructuredData />
+      {/* pas de url="/" en dur : SEO.tsx dérive canonical/hreflang de
+          location.pathname, cette page vit aussi à /en, /es, /it, /de */}
       <SEO
         title={t('seo.title')}
         description={t('seo.description')}
         keywords={t('seo.keywords')}
-        url="/"
         image="/images/home-og.png"
       />
       <div id="home">

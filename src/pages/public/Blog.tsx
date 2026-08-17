@@ -92,11 +92,12 @@ export default function Blog() {
 
   return (
     <>
+      {/* pas de url="/blog" en dur : SEO.tsx dérive canonical/hreflang de
+          location.pathname, cette page vit aussi à /en/blog, etc. */}
       <SEO
         title={t('seo.title')}
         description={t('seo.description')}
         keywords={t('seo.keywords')}
-        url="/blog"
       />
 
       <section className="blog-index-hero">

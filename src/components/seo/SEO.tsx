@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 
 interface SEOProps {
   title?: string;
@@ -12,6 +13,20 @@ interface SEOProps {
   publishedTime?: string;
   modifiedTime?: string;
   hreflangAlternates?: Array<{ lang: string; href: string }>;
+}
+
+// Pages ayant une variante d'URL préfixée réelle par langue (/en, /es, /it,
+// /de en plus du français non préfixé -- voir router/index.tsx). Les autres
+// pages n'ont qu'une seule URL : leur hreflang s'auto-référence.
+const LOCALIZED_PATHS = ['/', '/blog', '/contact'];
+const SITE_LOCALES = ['fr', 'en', 'es', 'it', 'de'];
+const DEFAULT_LOCALE = 'fr';
+
+function buildLocalizedHref(origin: string, basePath: string, lang: string): string {
+  if (lang === 'x-default' || lang === DEFAULT_LOCALE) {
+    return basePath === '/' ? origin : `${origin}${basePath}`;
+  }
+  return basePath === '/' ? `${origin}/${lang}` : `${origin}/${lang}${basePath}`;
 }
 
 export function SEO({
@@ -27,11 +42,24 @@ export function SEO({
   hreflangAlternates,
 }: SEOProps) {
   const { i18n } = useTranslation();
+  const location = useLocation();
   const currentLang = i18n.language?.slice(0, 2) || 'fr';
 
   const siteUrl = 'https://sonnalab.com';
-  const fullUrl = url ? `${siteUrl}${url}` : siteUrl;
+  // location.pathname (réactif à la navigation) plutôt que le seul `url`
+  // fourni par la page appelante : la balise canonical doit refléter l'URL
+  // RÉELLEMENT affichée (ex: /en, /en/blog) à chaque changement de route,
+  // pas seulement au premier chargement.
+  const currentPath = location.pathname === '/' ? '' : location.pathname.replace(/\/+$/, '');
+  const fullUrl = url ? `${siteUrl}${url}` : `${siteUrl}${currentPath}` || siteUrl;
   const fullImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
+
+  const prefixMatch = location.pathname.match(/^\/(en|es|it|de)(\/.*)?$/);
+  const basePath = prefixMatch ? (prefixMatch[2] || '/') : (location.pathname || '/');
+  const isLocalized = !hreflangAlternates && LOCALIZED_PATHS.includes(basePath);
+  const computedHreflangAlternates = isLocalized
+    ? [...SITE_LOCALES, 'x-default'].map((lang) => ({ lang, href: buildLocalizedHref(siteUrl, basePath, lang) }))
+    : hreflangAlternates;
 
   const defaultTitle = currentLang === 'fr'
     ? 'SonnaLab - Le laboratoire d\'idées qui transforme le digital'
@@ -60,13 +88,14 @@ export function SEO({
       {/* Canonical */}
       <link rel="canonical" href={fullUrl} />
 
-      {/* hreflang */}
-      {hreflangAlternates
-        ? hreflangAlternates.map(alt => (
+      {/* hreflang : URLs réelles par langue pour home/blog/contact (voir
+          LOCALIZED_PATHS ci-dessus) ; auto-référence pour les autres pages,
+          qui n'ont qu'une seule URL. */}
+      {computedHreflangAlternates
+        ? computedHreflangAlternates.map(alt => (
             <link key={alt.lang} rel="alternate" hrefLang={alt.lang} href={alt.href} />
           ))
         : <>
-            {/* Same URL serves all 5 languages via client-side i18n */}
             <link rel="alternate" hrefLang="fr"        href={fullUrl} />
             <link rel="alternate" hrefLang="en"        href={fullUrl} />
             <link rel="alternate" hrefLang="es"        href={fullUrl} />

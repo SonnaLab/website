@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { createBrowserRouter, Navigate, Outlet, useParams } from 'react-router-dom';
+import i18n from '@/i18n/config';
 import { AnalyticsProvider } from '@/components/providers/AnalyticsProvider';
 import { AuthProvider } from '@/components/providers/AuthProvider';
 import { Layout } from '@/components/public/Layout';
@@ -58,10 +60,39 @@ function PublicShell() {
   return <Layout><Outlet /></Layout>;
 }
 
-// Redirect /en/*, /es/*, /it/*, /de/* → /* (lang-prefix URLs → canonical)
+// Redirect /fr/* → /* : le français reste la langue par défaut non préfixée
+// (comportement inchangé). /en, /es, /it, /de ont désormais de vraies routes
+// ci-dessous (voir LOCALIZED_PREFIXES) au lieu d'être redirigées.
 function EnLangRedirect() {
   const { '*': wildcard = '' } = useParams();
   return <Navigate to={`/${wildcard}`} replace />;
+}
+
+// Langues avec une URL préfixée réelle en plus du français non préfixé.
+// Objectif : donner aux crawlers de vraies URLs distinctes par langue (voir
+// SEO.tsx / scripts/prerender-blog.mjs) sans rien changer à la navigation
+// normale des utilisateurs (sélecteur de langue client-side existant).
+const LOCALIZED_PREFIXES = ['en', 'es', 'it', 'de'] as const;
+
+// Force i18n.language à l'entrée d'une route préfixée, SANS écrire dans le
+// cache localStorage de i18next-browser-languagedetector (qui écoute
+// l'évènement `languageChanged` et écraserait la préférence persistée de
+// l'utilisateur à chaque visite d'une URL /en, /es...). On restaure la
+// valeur du cache juste après le changement pour neutraliser cet effet de
+// bord, exactement le même principe que côté lecolt.com (router forcedLocale
+// sans toucher localStorage).
+function ForceLocale({ lang }: { lang: string }) {
+  useEffect(() => {
+    const cachedBefore = localStorage.getItem('i18nextLng');
+    i18n.changeLanguage(lang).then(() => {
+      if (cachedBefore === null) {
+        localStorage.removeItem('i18nextLng');
+      } else {
+        localStorage.setItem('i18nextLng', cachedBefore);
+      }
+    });
+  }, [lang]);
+  return <Outlet />;
 }
 
 export const router = createBrowserRouter([
@@ -86,6 +117,25 @@ export const router = createBrowserRouter([
         ],
       },
 
+      // ---- Public site, URLs préfixées par langue (crawlables, contenu
+      // réel identique aux routes ci-dessus) : home/blog/contact uniquement
+      // -- les seules pages dont le contenu diffère vraiment par langue.
+      // Le français n'a PAS de préfixe (déjà à la racine, voir plus bas).
+      ...LOCALIZED_PREFIXES.map((lang) => ({
+        path: `/${lang}`,
+        element: <ForceLocale lang={lang} />,
+        children: [
+          {
+            element: <PublicShell />,
+            children: [
+              { index: true,     element: <Home /> },
+              { path: 'blog',    element: <Blog /> },
+              { path: 'contact', element: <Contact /> },
+            ],
+          },
+        ],
+      })),
+
       // ---- Auth (no layout) ----
       { path: '/sign-in',         element: <SignInPage /> },
       { path: '/sign-up',         element: <SignUpPage /> },
@@ -93,12 +143,8 @@ export const router = createBrowserRouter([
       { path: '/reset-password',  element: <ResetPasswordPage /> },
       { path: '/confirm-email',   element: <ConfirmEmailPage /> },
 
-      // ---- Language prefix redirects (/fr/*, /en/*, /es/*, /it/*, /de/* → /*) ----
+      // ---- Legacy /fr/* redirect (fr reste non préfixé) ----
       { path: '/fr/*', element: <EnLangRedirect /> },
-      { path: '/en/*', element: <EnLangRedirect /> },
-      { path: '/es/*', element: <EnLangRedirect /> },
-      { path: '/it/*', element: <EnLangRedirect /> },
-      { path: '/de/*', element: <EnLangRedirect /> },
 
       // ---- 404 catch-all (must be last) ----
       { path: '*', element: <NotFound /> },

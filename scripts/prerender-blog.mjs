@@ -29,6 +29,77 @@ const LOCALES = ['fr', 'en', 'es', 'it', 'de'];
 const OG_LOCALE = { fr: 'fr_FR', en: 'en_US', es: 'es_ES', it: 'it_IT', de: 'de_DE' };
 const TIMEOUT = 15_000;
 
+// Langues avec une URL préfixée réelle en plus du français non préfixé --
+// doit rester en phase avec LOCALIZED_PREFIXES dans src/router/index.tsx.
+const PREFIXED_LOCALES = ['en', 'es', 'it', 'de'];
+const DEFAULT_LOCALE = 'fr';
+
+function localizedUrl(locale, basePath) {
+  const prefix = locale === DEFAULT_LOCALE ? '' : `/${locale}`;
+  return basePath === '/' ? `${BASE_URL}${prefix || ''}` : `${BASE_URL}${prefix}${basePath}`;
+}
+
+function staticHreflangLinks(basePath) {
+  const links = [DEFAULT_LOCALE, ...PREFIXED_LOCALES].map(
+    (lang) => `<link rel="alternate" hreflang="${lang}" href="${localizedUrl(lang, basePath)}" />`
+  );
+  links.push(`<link rel="alternate" hreflang="x-default" href="${localizedUrl(DEFAULT_LOCALE, basePath)}" />`);
+  return links;
+}
+
+// title/description repris tels quels des locales src/locales/{locale}/{home,blog,contact}.json
+// -- SEO.tsx ajoute " | SonnaLab" au titre sauf pour la page blog qui l'a déjà.
+const STATIC_PAGE_I18N = {
+  home: {
+    fr: { title: "Accueil - De l'Idée à l'Innovation | SonnaLab", desc: "SonnaLab est votre partenaire de confiance pour l'innovation technologique. Conseil technologique, développement d'applications, IA et solutions numériques sur mesure.", h1: "De l'Idée à l'Innovation" },
+    en: { title: 'Home - From Idea to Innovation | SonnaLab', desc: 'SonnaLab is your trusted partner for technological innovation. Tech consulting, app development, AI and custom digital solutions.', h1: 'From Idea to Innovation' },
+    es: { title: 'Inicio - De la Idea a la Innovación | SonnaLab', desc: 'SonnaLab es su socio de confianza para la innovación tecnológica.', h1: 'De la Idea a la Innovación' },
+    it: { title: "Home - Dall'Idea all'Innovazione | SonnaLab", desc: "SonnaLab è il tuo partner di fiducia per l'innovazione tecnologica.", h1: "Dall'Idea all'Innovazione" },
+    de: { title: 'Startseite - Von der Idee zur Innovation | SonnaLab', desc: 'SonnaLab ist Ihr vertrauenswürdiger Partner für technologische Innovation.', h1: 'Von der Idee zur Innovation' },
+  },
+  blog: {
+    fr: { title: 'Blog | SonnaLab - Innovation Digitale & IA | SonnaLab', desc: "Découvrez nos articles sur l'intelligence artificielle, le développement web et la transformation digitale. Guides pratiques et études de cas." },
+    en: { title: 'SonnaLab | Blog - Digital Innovation & AI | SonnaLab', desc: 'Discover our articles on artificial intelligence, web development and digital transformation. Practical guides and case studies.' },
+    es: { title: 'Blog | SonnaLab - Innovación Digital & IA | SonnaLab', desc: 'Descubra nuestros artículos sobre inteligencia artificial, desarrollo web y transformación digital.' },
+    it: { title: 'Blog | SonnaLab - Innovazione Digitale & IA | SonnaLab', desc: "Scoprite i nostri articoli sull'intelligenza artificiale, lo sviluppo web e la trasformazione digitale." },
+    de: { title: 'Blog | SonnaLab - Digitale Innovation & KI | SonnaLab', desc: 'Entdecken Sie unsere Artikel über künstliche Intelligenz, Webentwicklung und digitale Transformation.' },
+  },
+  contact: {
+    fr: { title: 'Contact - Parlons de Votre Projet | SonnaLab', desc: "Contactez SonnaLab pour discuter de votre projet digital. Notre équipe d'experts est prête à vous accompagner dans votre transformation numérique." },
+    en: { title: "Contact - Let's Talk About Your Project | SonnaLab", desc: 'Get in touch with SonnaLab to discuss your digital project. Our team of experts is ready to assist you in your digital transformation.' },
+    es: { title: 'Contacto - Hablemos de su Proyecto | SonnaLab', desc: 'Póngase en contacto con SonnaLab para hablar de su proyecto digital.' },
+    it: { title: 'Contatti - Parliamo del Vostro Progetto | SonnaLab', desc: 'Contattateci per discutere il vostro progetto digitale.' },
+    de: { title: 'Kontakt - Sprechen wir über Ihr Projekt | SonnaLab', desc: 'Kontaktieren Sie SonnaLab, um Ihr digitales Projekt zu besprechen.' },
+  },
+};
+
+/**
+ * Coquille statique minimale : meta + hreflang réels, plus un H1 visible
+ * injecté dans #root pour home (crawler sans JS) -- sans SSR complet des
+ * sections (pas d'infra SSR React en place).
+ */
+function buildStaticPageHtml(template, { locale, basePath, page, heroHtml }) {
+  const url = localizedUrl(locale, basePath);
+  const { title, desc } = STATIC_PAGE_I18N[page][locale];
+
+  let html = template;
+  html = html.replace(/<html lang="[^"]*"/, `<html lang="${locale}"`);
+  html = html.replace(/<title>[\s\S]*?<\/title>/, `<title>${escapeHtml(title)}</title>`);
+  html = html.replace(/<meta name="description" content="[^"]*"\s*\/>/, `<meta name="description" content="${escapeHtml(desc)}" />`);
+  html = html.replace(/<meta property="og:title" content="[^"]*"\s*\/>/, `<meta property="og:title" content="${escapeHtml(title)}" />`);
+  html = html.replace(/<meta property="og:description" content="[^"]*"\s*\/>/, `<meta property="og:description" content="${escapeHtml(desc)}" />`);
+  html = html.replace(/<meta property="og:url" content="[^"]*"\s*\/>/, `<meta property="og:url" content="${url}" />`);
+  html = html.replace(/<meta property="og:locale" content="[^"]*"\s*\/>/, `<meta property="og:locale" content="${OG_LOCALE[locale] || 'fr_FR'}" />`);
+  html = html.replace(/<link rel="canonical" href="[^"]*"\s*\/>/, `<link rel="canonical" href="${url}" />`);
+  html = html.replace('</head>', `    ${staticHreflangLinks(basePath).join('\n    ')}\n  </head>`);
+
+  if (heroHtml) {
+    html = html.replace('<div id="root"></div>', `<div id="root">${heroHtml}</div>`);
+  }
+
+  return html;
+}
+
 function warn(msg) { process.stderr.write(`[prerender] ${msg}\n`); }
 
 function escapeHtml(value) {
@@ -283,6 +354,56 @@ async function run() {
     seenLegacy.add(legacySlug);
     redirectMap.push(`/blog/${legacySlug} /blog/${realSlug};`);
     legacyRedirects++;
+  }
+
+  // Génère les coquilles statiques home/blog/contact : fr non préfixé
+  // (réécrit sur place) + variantes réelles /en, /es, /it, /de (voir
+  // LOCALIZED_PREFIXES dans src/router/index.tsx).
+  await writeFile(
+    join(BUILD_DIR, 'index.html'),
+    buildStaticPageHtml(template, {
+      locale: DEFAULT_LOCALE,
+      basePath: '/',
+      page: 'home',
+      heroHtml: `<main id="home-prerender"><h1>${escapeHtml(STATIC_PAGE_I18N.home.fr.h1)}</h1></main>`,
+    }),
+    'utf-8'
+  );
+  warn('Wrote index.html (home, fr)');
+
+  const blogDir = join(BUILD_DIR, 'blog');
+  await mkdir(blogDir, { recursive: true });
+  await writeFile(join(blogDir, 'index.html'), buildStaticPageHtml(template, { locale: DEFAULT_LOCALE, basePath: '/blog', page: 'blog' }), 'utf-8');
+  warn('Wrote blog/index.html (fr)');
+
+  const contactDir = join(BUILD_DIR, 'contact');
+  await mkdir(contactDir, { recursive: true });
+  await writeFile(join(contactDir, 'index.html'), buildStaticPageHtml(template, { locale: DEFAULT_LOCALE, basePath: '/contact', page: 'contact' }), 'utf-8');
+  warn('Wrote contact/index.html (fr)');
+
+  for (const locale of PREFIXED_LOCALES) {
+    const localeDir = join(BUILD_DIR, locale);
+    await mkdir(localeDir, { recursive: true });
+    await writeFile(
+      join(localeDir, 'index.html'),
+      buildStaticPageHtml(template, {
+        locale,
+        basePath: '/',
+        page: 'home',
+        heroHtml: `<main id="home-prerender"><h1>${escapeHtml(STATIC_PAGE_I18N.home[locale].h1)}</h1></main>`,
+      }),
+      'utf-8'
+    );
+
+    const localeBlogDir = join(localeDir, 'blog');
+    await mkdir(localeBlogDir, { recursive: true });
+    await writeFile(join(localeBlogDir, 'index.html'), buildStaticPageHtml(template, { locale, basePath: '/blog', page: 'blog' }), 'utf-8');
+
+    const localeContactDir = join(localeDir, 'contact');
+    await mkdir(localeContactDir, { recursive: true });
+    await writeFile(join(localeContactDir, 'index.html'), buildStaticPageHtml(template, { locale, basePath: '/contact', page: 'contact' }), 'utf-8');
+
+    warn(`Wrote /${locale}/, /${locale}/blog/, /${locale}/contact/`);
   }
 
   const mapPath = join(BUILD_DIR, 'blog-redirects.map');

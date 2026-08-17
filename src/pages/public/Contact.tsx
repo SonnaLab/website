@@ -91,11 +91,12 @@ export default function Contact() {
 
   return (
     <>
+      {/* pas de url="/contact" en dur : SEO.tsx dérive canonical/hreflang
+          de location.pathname, cette page vit aussi à /en/contact, etc. */}
       <SEO
         title={t('seo.title')}
         description={t('seo.description')}
         keywords={t('seo.keywords')}
-        url="/contact"
         image="/images/contact-og.png"
       />
       <section className="relative py-20 bg-linear-to-br from-gray-50 to-white overflow-hidden">
