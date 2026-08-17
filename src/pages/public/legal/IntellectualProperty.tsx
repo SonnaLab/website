@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { SEO } from '@/components/seo';
 import { LegalPageLayout } from '@/components/public/legal/LegalPageLayout';
 import { LegalSection } from '@/components/public/legal/LegalSection';
 import { Shield, Mail, FileText, Code, LucideCopyright, AlertTriangle } from 'lucide-react';
@@ -10,10 +11,12 @@ export default function IntellectualProperty() {
   const ip = t('intellectualProperty.sections', { returnObjects: true }) as any;
 
   return (
-    <LegalPageLayout
-      title={t('intellectualProperty.title')}
-      lastUpdate={t('intellectualProperty.lastUpdate')}
-    >
+    <>
+      <SEO title={t('intellectualProperty.title')} description={ip.ownership?.content} />
+      <LegalPageLayout
+        title={t('intellectualProperty.title')}
+        lastUpdate={t('intellectualProperty.lastUpdate')}
+      >
       {/* Ownership */}
       <LegalSection title={ip.ownership.title}>
         <div className="bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-200 rounded-2xl p-6 mb-4">
@@ -111,6 +114,7 @@ export default function IntellectualProperty() {
           </div>
         </div>
       </LegalSection>
-    </LegalPageLayout>
+      </LegalPageLayout>
+    </>
   );
 }

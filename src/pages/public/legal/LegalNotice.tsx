@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { SEO } from '@/components/seo';
 import { LegalPageLayout } from '@/components/public/legal/LegalPageLayout';
 import { LegalSection } from '@/components/public/legal/LegalSection';
 import { Building2, User, Server, Palette, Mail, Phone, MapPin } from 'lucide-react';
@@ -10,10 +11,12 @@ export default function LegalNotice() {
   const notice = t('notice.sections', { returnObjects: true }) as any;
 
   return (
-    <LegalPageLayout
-      title={t('notice.title')}
-      lastUpdate={t('notice.lastUpdate')}
-    >
+    <>
+      <SEO title={t('notice.title')} />
+      <LegalPageLayout
+        title={t('notice.title')}
+        lastUpdate={t('notice.lastUpdate')}
+      >
       {/* Editor */}
       <LegalSection title={notice.editor.title}>
         <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 space-y-4">
@@ -92,6 +95,7 @@ export default function LegalNotice() {
           <p className="text-sm text-gray-600 ml-8">{notice.credits.images}</p>
         </div>
       </LegalSection>
-    </LegalPageLayout>
+      </LegalPageLayout>
+    </>
   );
 }

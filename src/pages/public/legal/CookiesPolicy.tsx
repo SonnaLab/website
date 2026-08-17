@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { SEO } from '@/components/seo';
 import { LegalPageLayout } from '@/components/public/legal/LegalPageLayout';
 import { LegalSection } from '@/components/public/legal/LegalSection';
 import { LegalList } from '@/components/public/legal/LegalList';
@@ -11,10 +12,12 @@ export default function CookiesPolicy() {
   const cookies = t('cookies.sections', { returnObjects: true }) as any;
 
   return (
-    <LegalPageLayout
-      title={t('cookies.title')}
-      lastUpdate={t('cookies.lastUpdate')}
-    >
+    <>
+      <SEO title={t('cookies.title')} description={cookies.intro?.content} />
+      <LegalPageLayout
+        title={t('cookies.title')}
+        lastUpdate={t('cookies.lastUpdate')}
+      >
       {/* Introduction */}
       <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-8 mb-8">
         <div className="flex items-start gap-4">
@@ -108,6 +111,7 @@ export default function CookiesPolicy() {
           </div>
         </div>
       </LegalSection>
-    </LegalPageLayout>
+      </LegalPageLayout>
+    </>
   );
 }

@@ -58,11 +58,11 @@ const STATIC_PAGE_I18N = {
     de: { title: 'Startseite - Von der Idee zur Innovation | SonnaLab', desc: 'SonnaLab ist Ihr vertrauenswürdiger Partner für technologische Innovation.', h1: 'Von der Idee zur Innovation' },
   },
   blog: {
-    fr: { title: 'Blog | SonnaLab - Innovation Digitale & IA | SonnaLab', desc: "Découvrez nos articles sur l'intelligence artificielle, le développement web et la transformation digitale. Guides pratiques et études de cas." },
-    en: { title: 'SonnaLab | Blog - Digital Innovation & AI | SonnaLab', desc: 'Discover our articles on artificial intelligence, web development and digital transformation. Practical guides and case studies.' },
-    es: { title: 'Blog | SonnaLab - Innovación Digital & IA | SonnaLab', desc: 'Descubra nuestros artículos sobre inteligencia artificial, desarrollo web y transformación digital.' },
-    it: { title: 'Blog | SonnaLab - Innovazione Digitale & IA | SonnaLab', desc: "Scoprite i nostri articoli sull'intelligenza artificiale, lo sviluppo web e la trasformazione digitale." },
-    de: { title: 'Blog | SonnaLab - Digitale Innovation & KI | SonnaLab', desc: 'Entdecken Sie unsere Artikel über künstliche Intelligenz, Webentwicklung und digitale Transformation.' },
+    fr: { title: 'Blog - Innovation Digitale & IA | SonnaLab', desc: "Découvrez nos articles sur l'intelligence artificielle, le développement web et la transformation digitale. Guides pratiques et études de cas." },
+    en: { title: 'Blog - Digital Innovation & AI | SonnaLab', desc: 'Discover our articles on artificial intelligence, web development and digital transformation. Practical guides and case studies.' },
+    es: { title: 'Blog - Innovación Digital & IA | SonnaLab', desc: 'Descubra nuestros artículos sobre inteligencia artificial, desarrollo web y transformación digital.' },
+    it: { title: 'Blog - Innovazione Digitale & IA | SonnaLab', desc: "Scoprite i nostri articoli sull'intelligenza artificiale, lo sviluppo web e la trasformazione digitale." },
+    de: { title: 'Blog - Digitale Innovation & KI | SonnaLab', desc: 'Entdecken Sie unsere Artikel über künstliche Intelligenz, Webentwicklung und digitale Transformation.' },
   },
   contact: {
     fr: { title: 'Contact - Parlons de Votre Projet | SonnaLab', desc: "Contactez SonnaLab pour discuter de votre projet digital. Notre équipe d'experts est prête à vous accompagner dans votre transformation numérique." },

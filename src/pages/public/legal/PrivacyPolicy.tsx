@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { SEO } from '@/components/seo';
 import { LegalPageLayout } from '@/components/public/legal/LegalPageLayout';
 import { LegalSection } from '@/components/public/legal/LegalSection';
 import { LegalList } from '@/components/public/legal/LegalList';
@@ -11,10 +12,14 @@ export default function PrivacyPolicy() {
   const privacy = t('privacy.sections', { returnObjects: true }) as any;
 
   return (
-    <LegalPageLayout
-      title={t('privacy.title')}
-      lastUpdate={t('privacy.lastUpdate')}
-    >
+    <>
+      {/* Aucune des 6 pages légales n'avait de <SEO> : le <title> restait
+          celui de la dernière page visitée avant d'y naviguer. */}
+      <SEO title={t('privacy.title')} description={privacy.intro?.content} />
+      <LegalPageLayout
+        title={t('privacy.title')}
+        lastUpdate={t('privacy.lastUpdate')}
+      >
       {/* Introduction */}
       <LegalSection title={privacy.intro.title}>
         <p>{privacy.intro.content}</p>
@@ -61,6 +66,7 @@ export default function PrivacyPolicy() {
           </p>
         </div>
       </LegalSection>
-    </LegalPageLayout>
+      </LegalPageLayout>
+    </>
   );
 }

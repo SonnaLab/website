@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { SEO } from '@/components/seo';
 import { LegalPageLayout } from '@/components/public/legal/LegalPageLayout';
 import { LegalSection } from '@/components/public/legal/LegalSection';
 import { ExternalLink } from 'lucide-react';
@@ -11,10 +12,12 @@ export default function TermsOfService() {
   const terms = t('terms.sections', { returnObjects: true }) as any;
 
   return (
-    <LegalPageLayout
-      title={t('terms.title')}
-      lastUpdate={t('terms.lastUpdate')}
-    >
+    <>
+      <SEO title={t('terms.title')} description={terms.acceptance?.content} />
+      <LegalPageLayout
+        title={t('terms.title')}
+        lastUpdate={t('terms.lastUpdate')}
+      >
       {/* Acceptance */}
       <LegalSection title={terms.acceptance.title}>
         <p>{terms.acceptance.content}</p>
@@ -56,6 +59,7 @@ export default function TermsOfService() {
       <LegalSection title={terms.law.title}>
         <p>{terms.law.content}</p>
       </LegalSection>
-    </LegalPageLayout>
+      </LegalPageLayout>
+    </>
   );
 }
