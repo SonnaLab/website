@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { createBrowserRouter, Navigate, Outlet, useParams } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 import i18n from '@/i18n/config';
 import { AnalyticsProvider } from '@/components/providers/AnalyticsProvider';
 import { AuthProvider } from '@/components/providers/AuthProvider';
@@ -74,24 +74,29 @@ function EnLangRedirect() {
 // normale des utilisateurs (sélecteur de langue client-side existant).
 const LOCALIZED_PREFIXES = ['en', 'es', 'it', 'de'] as const;
 
-// Force i18n.language à l'entrée d'une route préfixée, SANS écrire dans le
-// cache localStorage de i18next-browser-languagedetector (qui écoute
-// l'évènement `languageChanged` et écraserait la préférence persistée de
-// l'utilisateur à chaque visite d'une URL /en, /es...). On restaure la
-// valeur du cache juste après le changement pour neutraliser cet effet de
-// bord, exactement le même principe que côté lecolt.com (router forcedLocale
-// sans toucher localStorage).
+// 2026-08-21 : les préfixes /en, /es, /it, /de n'existent QUE comme point
+// d'entrée crawl/partage (URL prerendue correcte pour Googlebot ou pour
+// quelqu'un qui arrive depuis un résultat de recherche/lien partagé) — un
+// vrai navigateur ne doit jamais garder ce préfixe visible en naviguant.
+// Même mécanisme que lebocheur.com et lecolt.com : on force la langue puis
+// on retire immédiatement le préfixe de l'URL via un replace (pas d'entrée
+// d'historique, pas de flash), et on persiste la langue dans le cache de
+// i18next-browser-languagedetector pour que la préférence survive après le
+// strip du préfixe -- remplace l'ancien comportement qui restaurait la
+// valeur précédente du cache pour ne pas la polluer.
 function ForceLocale({ lang }: { lang: string }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   useEffect(() => {
-    const cachedBefore = localStorage.getItem('i18nextLng');
     i18n.changeLanguage(lang).then(() => {
-      if (cachedBefore === null) {
-        localStorage.removeItem('i18nextLng');
-      } else {
-        localStorage.setItem('i18nextLng', cachedBefore);
-      }
+      localStorage.setItem('i18nextLng', lang);
+      const bare = location.pathname.slice(lang.length + 1) || '/';
+      navigate({ pathname: bare, search: location.search, hash: location.hash }, { replace: true });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lang]);
+
   return <Outlet />;
 }
 
