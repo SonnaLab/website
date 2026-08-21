@@ -20,7 +20,27 @@ function warn(msg) {
   process.stderr.write(`[sitemap] ${msg}\n`);
 }
 
-// ─── Static pages (same URL for all 5 languages — client-side i18n) ───────────
+// ─── Static pages ───────────────────────────────────────────────────────────
+// home/blog/contact ont de vraies URLs préfixées par langue depuis le
+// 2026-08-17 (voir router/index.tsx LOCALIZED_PREFIXES + prerender-blog.mjs) --
+// leurs alternates pointent désormais vers ces vraies URLs sœurs au lieu de
+// s'auto-référencer. /projects n'a PAS de préfixe réel (jamais ajouté à
+// LOCALIZED_PREFIXES) : reste sur l'ancien comportement auto-référencé, seule
+// option honnête pour une page qui n'a qu'une seule URL.
+const PREFIXED_LOCALES = ['en', 'es', 'it', 'de'];
+const DEFAULT_LOCALE   = 'fr';
+
+function localizedUrl(locale, basePath) {
+  const prefix = locale === DEFAULT_LOCALE ? '' : `/${locale}`;
+  return basePath === '/' ? `${BASE_URL}${prefix || ''}` : `${BASE_URL}${prefix}${basePath}`;
+}
+
+function makeLocalizedAlternates(basePath) {
+  return [
+    ...[DEFAULT_LOCALE, ...PREFIXED_LOCALES].map(lang => ({ lang, href: localizedUrl(lang, basePath) })),
+    { lang: 'x-default', href: localizedUrl(DEFAULT_LOCALE, basePath) },
+  ];
+}
 
 function makeStaticAlternates(path) {
   return [
@@ -30,11 +50,20 @@ function makeStaticAlternates(path) {
 }
 
 const staticPages = [
-  { loc: `${BASE_URL}/`,         lastmod: today(), changefreq: 'weekly',  priority: 1.0, alternates: makeStaticAlternates('/') },
-  { loc: `${BASE_URL}/blog`,     lastmod: today(), changefreq: 'weekly',  priority: 0.9, alternates: makeStaticAlternates('/blog') },
+  { loc: `${BASE_URL}/`,         lastmod: today(), changefreq: 'weekly',  priority: 1.0, alternates: makeLocalizedAlternates('/') },
+  { loc: `${BASE_URL}/blog`,     lastmod: today(), changefreq: 'weekly',  priority: 0.9, alternates: makeLocalizedAlternates('/blog') },
   { loc: `${BASE_URL}/projects`, lastmod: today(), changefreq: 'monthly', priority: 0.8, alternates: makeStaticAlternates('/projects') },
-  { loc: `${BASE_URL}/contact`,  lastmod: today(), changefreq: 'monthly', priority: 0.7, alternates: makeStaticAlternates('/contact') },
+  { loc: `${BASE_URL}/contact`,  lastmod: today(), changefreq: 'monthly', priority: 0.7, alternates: makeLocalizedAlternates('/contact') },
 ];
+
+// Entrées sitemap dédiées pour les URLs préfixées elles-mêmes (/en, /es, /it,
+// /de × home/blog/contact) : sans ça, ces 12 pages réelles n'apparaissaient
+// dans AUCUN sitemap, jamais découvertes par les moteurs.
+const prefixedStaticPages = PREFIXED_LOCALES.flatMap(lang => ([
+  { loc: localizedUrl(lang, '/'),        lastmod: today(), changefreq: 'weekly',  priority: 0.9, alternates: makeLocalizedAlternates('/') },
+  { loc: localizedUrl(lang, '/blog'),    lastmod: today(), changefreq: 'weekly',  priority: 0.8, alternates: makeLocalizedAlternates('/blog') },
+  { loc: localizedUrl(lang, '/contact'), lastmod: today(), changefreq: 'monthly', priority: 0.6, alternates: makeLocalizedAlternates('/contact') },
+]));
 
 // ─── API fetch (per locale) ───────────────────────────────────────────────────
 
@@ -186,9 +215,9 @@ async function generateSitemap() {
 
   const families = buildFamilies(allPostsById);
   const blogUrls = buildBlogUrls(families);
-  const allUrls  = [...staticPages, ...blogUrls];
+  const allUrls  = [...staticPages, ...prefixedStaticPages, ...blogUrls];
 
-  warn(`Sitemap: ${staticPages.length} static + ${blogUrls.length} blog URLs (${families.length} article families)`);
+  warn(`Sitemap: ${staticPages.length} static + ${prefixedStaticPages.length} prefixed static + ${blogUrls.length} blog URLs (${families.length} article families)`);
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
