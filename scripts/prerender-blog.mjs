@@ -256,6 +256,41 @@ function buildArticleHead(article, template) {
     // BlogPost.tsx rend cote client (`{post.title}`), jamais le titre SEO.
     const articleShell = `<main id="article-prerender"><article><h1>${escapeHtml(article.title)}</h1>${bodyHtml}</article></main>`;
     html = html.replace('<div id="root"></div>', `<div id="root">${articleShell}</div>`);
+
+    // Donnees pour BlogPost.tsx (readPrerenderedPost) -- meme forme que
+    // BlogPost renvoye par GET /api/v1/blog/posts/{slug}, mais avec ce que
+    // le feed SEO fournit reellement (pas d'id/category/credit photo reels
+    // ici -- BlogPost.tsx les recoit via son fetch normal qui tourne quand
+    // meme en arriere-plan et complete l'etat sans jamais revider l'ecran).
+    // Objectif unique : que le tout premier rendu client ait deja le vrai
+    // contenu, jamais un spinner "Loading..." qui efface l'article deja
+    // peint par le prerender.
+    const wordCount = article.content_markdown.trim().split(/\s+/).length;
+    const prerenderedPost = {
+      id: article.slug,
+      slug: article.slug,
+      lang: article.locale,
+      title: article.title,
+      excerpt: article.excerpt || '',
+      content: article.content_markdown,
+      author: article.author || 'SonnaLab',
+      publishedAt: article.published_at,
+      updatedAt: article.updated_at,
+      coverImage: article.feature_image || '',
+      coverImageCredit: null,
+      category: '',
+      tags: Array.isArray(article.tags) ? article.tags : [],
+      readTime: Math.max(1, Math.round(wordCount / 200)),
+      seo: {
+        title: article.seo_title || article.title,
+        description: desc,
+        keywords: tags.join(', '),
+      },
+    };
+    html = html.replace(
+      '</head>',
+      `    <script id="prerendered-post-data" type="application/json">${jsonSafe(prerenderedPost)}</script>\n  </head>`
+    );
   }
 
   return html;
