@@ -301,10 +301,32 @@ async function run() {
   // premier fix : le webhook a tourne entre-temps et a re-corrompu
   // app-shell.html).
   const rawTemplate = await readFile(templatePath, 'utf-8');
-  const template = rawTemplate.replace(
+  let template = rawTemplate.replace(
     /<div id="root">[\s\S]*?<\/div>/,
     '<div id="root"></div>'
   );
+
+  // Inline le CSS de build (~200 Ko) directement dans <head> au lieu du
+  // <link rel="stylesheet"> externe -- ces pages statiques (surtout les
+  // articles, dont #root contient deja tout le corps du texte pour le SEO,
+  // voir buildArticleHead) affichaient un vrai FOUC : le HTML pre-rendu
+  // peint immediatement mais sans aucune regle CSS le temps que le fichier
+  // externe soit requete + telecharge, donc un "mur" de texte brut visible
+  // avant que le style n'arrive (mesure ~100ms en local, bien plus sur une
+  // connexion lente -- signale par l'utilisateur comme "tout le blog qui se
+  // charge sans css" au refresh d'un article, 2026-08-24). Inliner supprime
+  // l'aller-retour reseau : le style est deja present au tout premier paint.
+  const cssLinkMatch = template.match(/<link rel="stylesheet"[^>]*href="([^"]+)"[^>]*\/?>/);
+  if (cssLinkMatch) {
+    const cssPath = join(BUILD_DIR, cssLinkMatch[1].replace(/^\//, ''));
+    if (existsSync(cssPath)) {
+      const cssContent = await readFile(cssPath, 'utf-8');
+      template = template.replace(cssLinkMatch[0], `<style>${cssContent}</style>`);
+      warn(`Inlined CSS (${(cssContent.length / 1024).toFixed(0)} KB) from ${cssLinkMatch[1]}`);
+    } else {
+      warn(`CSS file not found for inlining: ${cssPath} — keeping external <link>`);
+    }
+  }
 
   let written = 0;
   let redirects = 0;
