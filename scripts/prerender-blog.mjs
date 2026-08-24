@@ -356,6 +356,19 @@ async function run() {
     legacyRedirects++;
   }
 
+  // Coquille générique SANS contenu pré-rendu (#root vide, comme le
+  // template Vite brut) — utilisée par nginx (@shell) comme fallback pour
+  // toute route SPA sans page dédiée (legal/*, sign-in, dashboard, projects,
+  // staff, admin...). Doit être écrite AVANT que index.html ne soit
+  // réécrit ci-dessous avec le H1 de la home injecté dans #root : sans ce
+  // fichier séparé, nginx retombait sur ce même index.html "home" comme
+  // coquille partagée, donc *toute* route flashait le H1 "De l'Idée à
+  // l'Innovation" pendant l'hydratation React (2026-08-24, signalé par
+  // l'utilisateur après le fix nginx @shell du 2026-08-24 plus tôt le
+  // même jour, qui a rendu ce partage de fichier visible).
+  await writeFile(join(BUILD_DIR, 'app-shell.html'), template, 'utf-8');
+  warn('Wrote app-shell.html (generic, no prerendered content)');
+
   // Génère les coquilles statiques home/blog/contact : fr non préfixé
   // (réécrit sur place) + variantes réelles /en, /es, /it, /de (voir
   // LOCALIZED_PREFIXES dans src/router/index.tsx).
