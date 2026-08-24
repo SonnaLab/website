@@ -289,7 +289,22 @@ async function run() {
     warn(`Template missing: ${templatePath} — skip.`);
     process.exit(0);
   }
-  const template = await readFile(templatePath, 'utf-8');
+  // Ce script REECRIT index.html en place (H1 de la home injecte dans
+  // #root, voir plus bas). Le webhook /sitemap/refresh (scripts/
+  // sitemap-webhook.mjs -> regen-sitemap.sh) relance CE script seul, sans
+  // repasser par `vite build` avant -- une execution relit alors le
+  // index.html DEJA modifie par la fois precedente comme s'il etait le
+  // template vierge, et propage le H1 injecte jusque dans app-shell.html
+  // (qui doit pourtant rester generique). Normaliser #root vers son etat
+  // vierge des la lecture rend le script idempotent, execute seul ou apres
+  // un vrai build (2026-08-24, regression observee en prod ~2h apres le
+  // premier fix : le webhook a tourne entre-temps et a re-corrompu
+  // app-shell.html).
+  const rawTemplate = await readFile(templatePath, 'utf-8');
+  const template = rawTemplate.replace(
+    /<div id="root">[\s\S]*?<\/div>/,
+    '<div id="root"></div>'
+  );
 
   let written = 0;
   let redirects = 0;
