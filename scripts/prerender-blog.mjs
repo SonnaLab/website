@@ -254,7 +254,16 @@ function buildArticleHead(article, template) {
     // article.title (pas la variable `title` = seo_title || title, utilisee
     // pour <title>/OG) -- doit correspondre exactement au <h1> que
     // BlogPost.tsx rend cote client (`{post.title}`), jamais le titre SEO.
-    const articleShell = `<main id="article-prerender"><article><h1>${escapeHtml(article.title)}</h1>${bodyHtml}</article></main>`;
+    // 2026-08-28 : le squelette utilisait des balises nues (h1/article/h2/p,
+    // aucune classe) -- avec le CSS desormais inline (fix FOUC precedent),
+    // ce squelette peignait INSTANTANEMENT mais restait un mur de texte en
+    // gras sans aucune ressemblance avec la vraie page (image hero, badge,
+    // grille), car la mise en forme reelle vient de classes React qui
+    // n'existaient pas ici. Reutilise les VRAIES classes du composant
+    // BlogPost.tsx (blog-post-title, prose prose-lg, meme conteneur) sur ce
+    // meme balisage nu -- meme typographie/couleurs/espacements que la page
+    // finale des le premier paint, sans dupliquer aucune regle CSS.
+    const articleShell = `<main id="article-prerender"><div class="container mx-auto px-4 max-w-[1600px] blog-post-content-shell"><article class="blog-post-page"><h1 class="blog-post-title">${escapeHtml(article.title)}</h1><div class="prose prose-lg max-w-none">${bodyHtml}</div></article></div></main>`;
     html = html.replace('<div id="root"></div>', `<div id="root">${articleShell}</div>`);
 
     // Donnees pour BlogPost.tsx (readPrerenderedPost) -- meme forme que
@@ -294,6 +303,18 @@ function buildArticleHead(article, template) {
   }
 
   return html;
+}
+
+// 2026-08-28 : meme constat que pour l'article -- un <h1> nu dans #root
+// peignait instantanement (CSS inline) mais ne ressemblait a rien de la
+// vraie home (src/components/public/HeroSection.tsx), qui utilise des
+// classes utilitaires Tailwind pour la taille/graisse/couleur du titre.
+// Reutilise EXACTEMENT ces classes (deja presentes dans le CSS inline,
+// Tailwind les genere au build quel que soit l'endroit ou elles sont
+// utilisees) sur ce meme h1 -- meme rendu typographique des le premier
+// paint, sans dupliquer aucune regle CSS.
+function homeHeroHtml(title) {
+  return `<main id="home-prerender"><section class="relative pt-24 pb-20 lg:pt-32 lg:pb-32 bg-gradient-to-br from-gray-50 to-white"><div class="container mx-auto px-4"><h1 class="text-4xl lg:text-5xl font-bold leading-tight text-black">${escapeHtml(title)}</h1></div></section></main>`;
 }
 
 function buildRedirectHtml(fromSlug, toSlug, locale) {
@@ -450,7 +471,7 @@ async function run() {
       locale: DEFAULT_LOCALE,
       basePath: '/',
       page: 'home',
-      heroHtml: `<main id="home-prerender"><h1>${escapeHtml(STATIC_PAGE_I18N.home.fr.h1)}</h1></main>`,
+      heroHtml: homeHeroHtml(STATIC_PAGE_I18N.home.fr.h1),
     }),
     'utf-8'
   );
@@ -475,7 +496,7 @@ async function run() {
         locale,
         basePath: '/',
         page: 'home',
-        heroHtml: `<main id="home-prerender"><h1>${escapeHtml(STATIC_PAGE_I18N.home[locale].h1)}</h1></main>`,
+        heroHtml: homeHeroHtml(STATIC_PAGE_I18N.home[locale].h1),
       }),
       'utf-8'
     );
