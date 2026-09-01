@@ -410,7 +410,16 @@ function headerHtml(locale) {
   const navLinks = nav.map(([label, href]) =>
     `<a href="${href}" class="public-nav-link inline-flex h-16 items-center text-sm font-medium text-gray-700">${escapeHtml(label)}</a>`
   ).join('');
-  return `<header class="fixed top-0 left-0 z-50 w-full border-b-2 border-black transition-all duration-300 bg-white/80 backdrop-blur-sm"><div class="flex h-16 items-center justify-between gap-4 px-4 lg:px-6 max-w-7xl mx-auto"><div class="flex shrink-0 items-center space-x-3"><a href="/" class="cursor-pointer"><img src="${headerLogoSrc()}" alt="SonnaLab" class="h-10 w-auto" /></a></div><nav class="public-header-nav shrink-0 items-center gap-5 xl:gap-7 whitespace-nowrap">${navLinks}</nav><div class="public-header-actions shrink-0 items-center gap-2 xl:gap-3"><a href="/sign-in" class="text-white transition-all duration-300 inline-flex h-9 items-center rounded-md bg-black px-4 text-sm font-medium">${escapeHtml(t.signIn)}</a></div></div></header>`;
+  // Bouton hamburger mobile (<1024px, voir .public-header-menu-button dans
+  // globals.css : inline-flex par defaut, none des 1024px). Absent de la
+  // premiere version de ce squelette -- sur mobile/tablette, le header
+  // pre-rendu montrait juste le logo (nav+CTA masques par CSS a cette
+  // largeur, comme prevu) mais AUCUNE icone a droite, puis l'icone
+  // apparaissait brutalement au montage React (~1s, capture video
+  // 2026-09-01) alors que rien d'autre ne changeait de position -- un
+  // vrai pop-in visible, distinct du FOUT de police deja corrige.
+  const menuButton = `<button type="button" aria-label="Menu" class="public-header-menu-button inline-flex items-center justify-center rounded-md size-9 text-black hover:bg-gray-100 transition-colors duration-300"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg></button>`;
+  return `<header class="fixed top-0 left-0 z-50 w-full border-b-2 border-black transition-all duration-300 bg-white/80 backdrop-blur-sm"><div class="flex h-16 items-center justify-between gap-4 px-4 lg:px-6 max-w-7xl mx-auto"><div class="flex shrink-0 items-center space-x-3"><a href="/" class="cursor-pointer"><img src="${headerLogoSrc()}" alt="SonnaLab" class="h-10 w-auto" /></a></div><nav class="public-header-nav shrink-0 items-center gap-5 xl:gap-7 whitespace-nowrap">${navLinks}</nav><div class="public-header-actions shrink-0 items-center gap-2 xl:gap-3"><a href="/sign-in" class="text-white transition-all duration-300 inline-flex h-9 items-center rounded-md bg-black px-4 text-sm font-medium">${escapeHtml(t.signIn)}</a></div>${menuButton}</div></header>`;
 }
 
 // Enveloppe le contenu (hero home ou article) dans la MEME structure que
