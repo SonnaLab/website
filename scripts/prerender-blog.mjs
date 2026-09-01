@@ -102,6 +102,45 @@ function buildStaticPageHtml(template, { locale, basePath, page, heroHtml }) {
 
 function warn(msg) { process.stderr.write(`[prerender] ${msg}\n`); }
 
+/**
+ * Vide #root en repérant sa VRAIE balise fermante par comptage de
+ * profondeur, plutôt qu'une regex non-greedy qui s'arrête au premier
+ * </div> rencontré. Le contenu injecté dans #root (hero home, article)
+ * contient des <div> imbriqués avant sa propre fermeture -- une regex
+ * `<div id="root">[\s\S]*?<\/div>` s'arrête donc trop tôt et laisse les
+ * vraies fermetures (</section></main></div>) orpheline juste après.
+ * Comme ce script relit son propre index.html à chaque rerun du webhook
+ * /sitemap/refresh (sans repasser par vite build), cette troncature
+ * s'empilait à l'identique à chaque passage -- des dizaines de balises
+ * orphelines accumulées en prod (2026-09-01, signalé par l'utilisateur
+ * comme une "balise qui fuit" sur /contact, /blog, /projects, /legal/*).
+ */
+function stripRootContent(html) {
+  const OPEN = '<div id="root">';
+  const start = html.indexOf(OPEN);
+  if (start === -1) return html;
+  const contentStart = start + OPEN.length;
+  let i = contentStart;
+  let depth = 1;
+  while (depth > 0) {
+    const nextOpen = html.indexOf('<div', i);
+    const nextClose = html.indexOf('</div>', i);
+    if (nextClose === -1) {
+      warn('stripRootContent: no matching </div> found for #root, leaving untouched');
+      return html;
+    }
+    if (nextOpen !== -1 && nextOpen < nextClose) {
+      depth++;
+      i = html.indexOf('>', nextOpen) + 1;
+    } else {
+      depth--;
+      i = nextClose + '</div>'.length;
+    }
+  }
+  const contentEnd = i - '</div>'.length;
+  return html.slice(0, contentStart) + html.slice(contentEnd);
+}
+
 function escapeHtml(value) {
   return String(value ?? '')
     .replace(/&/g, '&amp;')
@@ -357,10 +396,7 @@ async function run() {
   // premier fix : le webhook a tourne entre-temps et a re-corrompu
   // app-shell.html).
   const rawTemplate = await readFile(templatePath, 'utf-8');
-  let template = rawTemplate.replace(
-    /<div id="root">[\s\S]*?<\/div>/,
-    '<div id="root"></div>'
-  );
+  let template = stripRootContent(rawTemplate);
 
   // Inline le CSS de build (~200 Ko) directement dans <head> au lieu du
   // <link rel="stylesheet"> externe -- ces pages statiques (surtout les
