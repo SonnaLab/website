@@ -1,7 +1,20 @@
-/* Police Raleway auto-hebergee (public/fonts/) -- voir la note dans
-   index.html (2026-09-01) sur pourquoi Google Fonts (@import puis <link>)
-   laissait encore un FOUT visible. Fichiers variables (un seul poids-range
-   300-900 par fichier) : plus besoin de repeter une regle par poids. */
+@import url("./styles/globals.css");
+@import url("./styles/blog.css");
+@import url("./styles/form.css");
+@import url("./styles/contact.css");
+@import url("./styles/auth.css");
+@import url("./styles/dashboard.css");
+
+/* 2026-09-01 : ces regles @font-face etaient placees AVANT les @import
+   ci-dessus lors du premier passage a l'auto-hebergement de Raleway -- une
+   regle CSS DOIT toujours suivre tous les @import (spec CSS), donc PostCSS
+   a silencieusement ignore tous les @import suivants des qu'il a rencontre
+   une regle non-@import en tete de fichier ("@import must precede all
+   other statements"). Resultat : globals.css/blog.css/form.css/
+   contact.css/auth.css/dashboard.css n'etaient plus importes DU TOUT,
+   sans aucune erreur de build -- toutes les classes qu'ils definissent
+   (dont .public-header-nav, responsable de l'espacement des liens du menu)
+   ont disparu du CSS compile. Deplacees ici, apres les @import. */
 @font-face {
   font-family: 'Raleway';
   font-style: normal;
@@ -18,13 +31,6 @@
   src: url('/fonts/raleway-latinext-variable.woff2') format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
-
-@import url("./styles/globals.css");
-@import url("./styles/blog.css");
-@import url("./styles/form.css");
-@import url("./styles/contact.css");
-@import url("./styles/auth.css");
-@import url("./styles/dashboard.css");
 @layer properties {
   @supports (((-webkit-hyphens: none)) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color: rgb(from red r g b)))) {
     *, :before, :after, ::backdrop {
