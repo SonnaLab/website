@@ -57,7 +57,24 @@
     <!-- Preconnect to external domains for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    
+
+    <!-- 2026-09-01 : la police Raleway etait chargee via @import en tete de
+         src/index.css. Une fois ce CSS inline dans le <head> (fix FOUC
+         precedent), le navigateur doit d'abord parser tout le bloc <style>
+         (~223 Ko) avant meme de decouvrir cet @import -- puis enchainer deux
+         allers-retours reseau (CSS Google Fonts, puis les fichiers .woff2)
+         APRES le premier paint. Avec display=swap, le H1 pre-rendu (visible
+         des le premier paint, voir headerHtml()/homeHeroHtml() dans
+         prerender-blog.mjs) s'affiche entre-temps avec la police de repli du
+         navigateur -- plus grasse/differente de Raleway -- puis change
+         d'aspect au chargement de la vraie police. Signale par l'utilisateur
+         comme du texte "en gras sur une page blanche" une fraction de
+         seconde avant l'affichage final. Un vrai <link rel="stylesheet">
+         ici est decouvert par le parser HTML immediatement, en parallele du
+         reste (y compris du <style> inline), sans attendre sa lecture --
+         coupe un aller-retour complet sur le chemin critique de la police. -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800;900&amp;display=swap" />
+
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
     {

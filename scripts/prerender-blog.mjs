@@ -479,7 +479,14 @@ async function run() {
   // connexion lente -- signale par l'utilisateur comme "tout le blog qui se
   // charge sans css" au refresh d'un article, 2026-08-24). Inliner supprime
   // l'aller-retour reseau : le style est deja present au tout premier paint.
-  const cssLinkMatch = template.match(/<link rel="stylesheet"[^>]*href="([^"]+)"[^>]*\/?>/);
+  // href="\/[^"]+" (chemin local, ex. /assets/index-XXXX.css) uniquement --
+  // 2026-09-01 : depuis l'ajout d'un <link rel="stylesheet"> Google Fonts
+  // externe dans index.html (avant le lien vers le CSS de build), un
+  // pattern non ancre au chemin local matchait CE lien externe en premier
+  // et tentait de "l'inliner" comme un fichier local inexistant -- echec
+  // silencieux qui laissait le vrai CSS du build (~223 Ko, tout Tailwind)
+  // jamais inline, reintroduisant le FOUC d'origine sur toutes les pages.
+  const cssLinkMatch = template.match(/<link rel="stylesheet"[^>]*href="(\/[^"]+)"[^>]*\/?>/);
   if (cssLinkMatch) {
     const cssPath = join(BUILD_DIR, cssLinkMatch[1].replace(/^\//, ''));
     if (existsSync(cssPath)) {

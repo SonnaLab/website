@@ -1,4 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800;900&display=swap');
+/* Police Raleway : chargee via <link rel="stylesheet"> dans index.html
+   (decouverte immediate par le parser HTML) -- voir la note dans
+   index.html (2026-09-01). */
 
 @custom-variant dark (&:is(.dark *));
 
