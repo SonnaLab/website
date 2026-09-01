@@ -54,26 +54,26 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="https://sonnalab.com/" />
     
-    <!-- Preconnect to external domains for performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <!-- 2026-09-01 : la police Raleway etait chargee via @import en tete de
-         src/index.css. Une fois ce CSS inline dans le <head> (fix FOUC
-         precedent), le navigateur doit d'abord parser tout le bloc <style>
-         (~223 Ko) avant meme de decouvrir cet @import -- puis enchainer deux
-         allers-retours reseau (CSS Google Fonts, puis les fichiers .woff2)
-         APRES le premier paint. Avec display=swap, le H1 pre-rendu (visible
-         des le premier paint, voir headerHtml()/homeHeroHtml() dans
-         prerender-blog.mjs) s'affiche entre-temps avec la police de repli du
-         navigateur -- plus grasse/differente de Raleway -- puis change
-         d'aspect au chargement de la vraie police. Signale par l'utilisateur
-         comme du texte "en gras sur une page blanche" une fraction de
-         seconde avant l'affichage final. Un vrai <link rel="stylesheet">
-         ici est decouvert par le parser HTML immediatement, en parallele du
-         reste (y compris du <style> inline), sans attendre sa lecture --
-         coupe un aller-retour complet sur le chemin critique de la police. -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800;900&amp;display=swap" />
+    <!-- 2026-09-01 : la police Raleway a d'abord ete chargee via @import
+         (deux fois : src/index.css ET src/styles/globals.css), puis via un
+         <link rel="stylesheet"> pointant vers fonts.googleapis.com -- dans
+         les deux cas, un ou deux allers-retours reseau vers un domaine tiers
+         restaient sur le chemin critique APRES le premier paint. Avec
+         font-display: swap, le H1 pre-rendu (visible des le premier paint,
+         voir headerHtml()/homeHeroHtml() dans prerender-blog.mjs) s'affiche
+         entre-temps avec la police de repli du navigateur, puis change
+         d'aspect une fois Raleway charge -- confirme par capture video
+         (frame ~7 vs frame ~15 a 25fps, lettres "g"/"a" et logo visiblement
+         differents) et par document.fonts.status qui restait a "loading"
+         jusqu'a ~300ms. Signale par l'utilisateur, en navigation privee
+         (donc hors cache), comme du texte qui "apparait inline" avant de
+         changer d'aspect. Auto-heberge desormais les 2 fichiers variables
+         (latin + latin-ext, tous poids 300-900 en un seul fichier chacun,
+         voir public/fonts/) et les precharge : plus aucune requete vers un
+         domaine tiers sur le chemin de la police, le fichier commence a
+         se telecharger en parallele de tout le reste des la reception du
+         HTML, avant meme que le CSS ou le JS ne soient parses. -->
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/raleway-latin-variable.woff2" crossorigin />
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">

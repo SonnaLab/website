@@ -1,6 +1,5 @@
-/* Police Raleway : chargee via <link rel="stylesheet"> dans index.html
-   (decouverte immediate par le parser HTML) -- voir la note dans
-   index.html (2026-09-01). */
+/* Police Raleway : auto-hebergee, regles @font-face dans src/index.css --
+   voir la note dans index.html (2026-09-01). */
 
 @custom-variant dark (&:is(.dark *));
 
