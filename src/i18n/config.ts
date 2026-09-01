@@ -247,8 +247,20 @@ i18n
     interpolation: {
       escapeValue: false,
     },
+    // 2026-09-01 : la route '/' n'est jamais prefixee (francais = langue
+    // par defaut de l'URL, voir ForceLocale dans router/index.tsx pour les
+    // autres langues) et le squelette pre-rendu de la home/des articles est
+    // toujours en francais (scripts/prerender-blog.mjs). Avec 'navigator'
+    // dans l'ordre de detection, un visiteur sans preference deja en cache
+    // (premiere visite) recevait la langue de son navigateur au montage
+    // React -- le slogan changeait de langue sous ses yeux ~150ms apres le
+    // premier paint (signale par l'utilisateur comme la home "cassee" au
+    // refresh). 'localStorage' seul : le choix explicite fait via
+    // LanguageSwitcher continue de persister et de primer comme avant, on
+    // supprime seulement la devinette automatique via la langue du
+    // navigateur, jamais la preference que l'utilisateur a lui-meme posee.
     detection: {
-      order: ['localStorage', 'navigator'],
+      order: ['localStorage'],
       caches: ['localStorage'],
     },
   });

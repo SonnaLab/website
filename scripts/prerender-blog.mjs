@@ -12,7 +12,7 @@
  */
 
 import { readFile, writeFile, mkdir } from 'fs/promises';
-import { existsSync } from 'fs';
+import { existsSync, readdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { marked } from 'marked';
@@ -27,6 +27,17 @@ const BUILD_DIR = process.env.BUILD_DIR
   : join(__dirname, '..', 'build');
 const LOCALES = ['fr', 'en', 'es', 'it', 'de'];
 const OG_LOCALE = { fr: 'fr_FR', en: 'en_US', es: 'es_ES', it: 'it_IT', de: 'de_DE' };
+
+// Copie statique de src/locales/{locale}/header.json (nav + cta.signIn) --
+// juste ce qu'il faut pour approcher le VRAI Header.tsx dans le squelette,
+// voir headerHtml() plus bas.
+const HEADER_I18N = {
+  fr: { home: 'Accueil', about: 'À propos', services: 'Services', projects: 'Projets', research: 'R & D', blog: 'Blog', contact: 'Contact', signIn: 'Connexion' },
+  en: { home: 'Home', about: 'About', services: 'Services', projects: 'Projects', research: 'Research & Development', blog: 'Blog', contact: 'Contact', signIn: 'Sign in' },
+  es: { home: 'Inicio', about: 'Nosotros', services: 'Servicios', projects: 'Proyectos', research: 'I + D', blog: 'Blog', contact: 'Contacto', signIn: 'Iniciar sesión' },
+  it: { home: 'Home', about: 'Chi siamo', services: 'Servizi', projects: 'Progetti', research: 'R & S', blog: 'Blog', contact: 'Contatti', signIn: 'Accedi' },
+  de: { home: 'Startseite', about: 'Über uns', services: 'Leistungen', projects: 'Projekte', research: 'F & E', blog: 'Blog', contact: 'Kontakt', signIn: 'Anmelden' },
+};
 const TIMEOUT = 15_000;
 
 // Langues avec une URL préfixée réelle en plus du français non préfixé --
@@ -94,7 +105,7 @@ function buildStaticPageHtml(template, { locale, basePath, page, heroHtml }) {
   html = html.replace('</head>', `    ${staticHreflangLinks(basePath).join('\n    ')}\n  </head>`);
 
   if (heroHtml) {
-    html = html.replace('<div id="root"></div>', `<div id="root">${heroHtml}</div>`);
+    html = html.replace('<div id="root"></div>', `<div id="root">${layoutWrap(locale, heroHtml)}</div>`);
   }
 
   return html;
@@ -303,7 +314,7 @@ function buildArticleHead(article, template) {
     // meme balisage nu -- meme typographie/couleurs/espacements que la page
     // finale des le premier paint, sans dupliquer aucune regle CSS.
     const articleShell = `<main id="article-prerender"><div class="container mx-auto px-4 max-w-[1600px] blog-post-content-shell"><article class="blog-post-page"><h1 class="blog-post-title">${escapeHtml(article.title)}</h1><div class="prose prose-lg max-w-none">${bodyHtml}</div></article></div></main>`;
-    html = html.replace('<div id="root"></div>', `<div id="root">${articleShell}</div>`);
+    html = html.replace('<div id="root"></div>', `<div id="root">${layoutWrap(article.locale, articleShell)}</div>`);
 
     // Donnees pour BlogPost.tsx (readPrerenderedPost) -- meme forme que
     // BlogPost renvoye par GET /api/v1/blog/posts/{slug}, mais avec ce que
@@ -354,6 +365,66 @@ function buildArticleHead(article, template) {
 // paint, sans dupliquer aucune regle CSS.
 function homeHeroHtml(title) {
   return `<main id="home-prerender"><section class="relative pt-24 pb-20 lg:pt-32 lg:pb-32 bg-gradient-to-br from-gray-50 to-white"><div class="container mx-auto px-4"><h1 class="text-4xl lg:text-5xl font-bold leading-tight text-black">${escapeHtml(title)}</h1></div></section></main>`;
+}
+
+// Reprend la structure REELLE de Header.tsx (etat par defaut : pas encore
+// scrolle, visiteur non authentifie -- exactement ce qu'un premier paint
+// voit) : meme classes, meme hauteur fixe (h-16), memes libelles de nav
+// par langue. Sans ca, le squelette home/article n'avait PAS de header du
+// tout -- au montage React, le vrai header (position fixed, h-16) apparaît
+// d'un coup et pousse/recouvre le contenu deja peint, un decalage brutal
+// signale par l'utilisateur comme la page "carrement cassee" au refresh
+// (2026-09-01). Le contenu (liens de nav sans onClick JS, pas de menu
+// mobile fonctionnel) est volontairement simplifie : il n'est visible que
+// le temps du tout premier paint avant que React ne le remplace.
+// Le logo est importe en JS dans Header.tsx (pas de <img> statique dans
+// index.html a lire) -- Vite hashe son nom de fichier a chaque build
+// (ex. bSonnaLab-ITQYTo0l.png). Le retrouver dynamiquement dans
+// build/assets/ plutot que de coder le hash en dur, qui casserait des le
+// build suivant.
+let cachedHeaderLogoSrc = null;
+function headerLogoSrc() {
+  if (cachedHeaderLogoSrc !== null) return cachedHeaderLogoSrc;
+  try {
+    const file = readdirSync(join(BUILD_DIR, 'assets')).find(
+      (f) => f.startsWith('bSonnaLab-') && f.endsWith('.png')
+    );
+    cachedHeaderLogoSrc = file ? `/assets/${file}` : '/assets/bSonnaLab.png';
+  } catch {
+    cachedHeaderLogoSrc = '/assets/bSonnaLab.png';
+  }
+  return cachedHeaderLogoSrc;
+}
+
+function headerHtml(locale) {
+  const t = HEADER_I18N[locale] || HEADER_I18N.fr;
+  const nav = [
+    [t.home, '/'],
+    [t.about, '/'],
+    [t.services, '/'],
+    [t.research, '/'],
+    [t.projects, '/projects'],
+    [t.blog, '/blog'],
+    [t.contact, '/contact'],
+  ];
+  const navLinks = nav.map(([label, href]) =>
+    `<a href="${href}" class="public-nav-link inline-flex h-16 items-center text-sm font-medium text-gray-700">${escapeHtml(label)}</a>`
+  ).join('');
+  return `<header class="fixed top-0 left-0 z-50 w-full border-b-2 border-black transition-all duration-300 bg-white/80 backdrop-blur-sm"><div class="flex h-16 items-center justify-between gap-4 px-4 lg:px-6 max-w-7xl mx-auto"><div class="flex shrink-0 items-center space-x-3"><a href="/" class="cursor-pointer"><img src="${headerLogoSrc()}" alt="SonnaLab" class="h-10 w-auto" /></a></div><nav class="public-header-nav shrink-0 items-center gap-5 xl:gap-7 whitespace-nowrap">${navLinks}</nav><div class="public-header-actions shrink-0 items-center gap-2 xl:gap-3"><a href="/sign-in" class="text-white transition-all duration-300 inline-flex h-9 items-center rounded-md bg-black px-4 text-sm font-medium">${escapeHtml(t.signIn)}</a></div></div></header>`;
+}
+
+// Enveloppe le contenu (hero home ou article) dans la MEME structure que
+// Layout.tsx (<div class="min-h-screen ..."><Header/><main class="flex-1
+// public-layout-main">{children}</main><Footer/></div>) -- sans ca, le
+// squelette et le vrai DOM montaient a des profondeurs differentes (root
+// direct vs root > div > header/main/footer), ce qui a le meme effet de
+// bord que l'absence de header : tout le chrome apparait d'un coup.
+// Footer volontairement omis (contenu riche, animations framer-motion,
+// hors-champ au premier paint) -- seul un fond noir place la ou le vrai
+// footer commencera, pour eviter un blanc si le visiteur scrolle avant
+// l'hydratation.
+function layoutWrap(locale, innerHtml) {
+  return `<div class="min-h-screen bg-background flex flex-col">${headerHtml(locale)}<main class="flex-1 public-layout-main">${innerHtml}</main><footer class="bg-black text-white"></footer></div>`;
 }
 
 function buildRedirectHtml(fromSlug, toSlug, locale) {
