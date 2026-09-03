@@ -12,13 +12,28 @@
  */
 
 import { readFile, writeFile, mkdir } from 'fs/promises';
-import { existsSync, readdirSync } from 'fs';
+import { existsSync } from 'fs';
 import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { marked } from 'marked';
+import { fileURLToPath, pathToFileURL } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = dirname(__filename);
+
+// entry-server.tsx (rendu React reel, voir src/entry-server.tsx) est compile
+// a part par `npm run build:ssr` (vite build --ssr) avant que ce script ne
+// tourne -- jamais bundle avec le reste, jamais expedie en prod. Charge une
+// seule fois, reutilise pour toutes les routes de la boucle ci-dessous.
+const SSR_ENTRY = join(__dirname, '..', 'build-ssr', 'entry-server.js');
+let ssrRenderFn = null;
+async function ssrRender(url, locale, ssrData) {
+  if (!ssrRenderFn) {
+    if (!existsSync(SSR_ENTRY)) {
+      throw new Error(`SSR entry introuvable : ${SSR_ENTRY} -- lancer "npm run build:ssr" avant le prerender.`);
+    }
+    ({ render: ssrRenderFn } = await import(pathToFileURL(SSR_ENTRY).href));
+  }
+  return ssrRenderFn(url, locale, ssrData);
+}
 
 const BASE_URL = 'https://sonnalab.com';
 const API_URL  = process.env.API_URL || 'https://api.sonnalab.com';
@@ -28,16 +43,6 @@ const BUILD_DIR = process.env.BUILD_DIR
 const LOCALES = ['fr', 'en', 'es', 'it', 'de'];
 const OG_LOCALE = { fr: 'fr_FR', en: 'en_US', es: 'es_ES', it: 'it_IT', de: 'de_DE' };
 
-// Copie statique de src/locales/{locale}/header.json (nav + cta.signIn) --
-// juste ce qu'il faut pour approcher le VRAI Header.tsx dans le squelette,
-// voir headerHtml() plus bas.
-const HEADER_I18N = {
-  fr: { home: 'Accueil', about: 'À propos', services: 'Services', projects: 'Projets', research: 'R & D', blog: 'Blog', contact: 'Contact', signIn: 'Connexion' },
-  en: { home: 'Home', about: 'About', services: 'Services', projects: 'Projects', research: 'Research & Development', blog: 'Blog', contact: 'Contact', signIn: 'Sign in' },
-  es: { home: 'Inicio', about: 'Nosotros', services: 'Servicios', projects: 'Proyectos', research: 'I + D', blog: 'Blog', contact: 'Contacto', signIn: 'Iniciar sesión' },
-  it: { home: 'Home', about: 'Chi siamo', services: 'Servizi', projects: 'Progetti', research: 'R & S', blog: 'Blog', contact: 'Contatti', signIn: 'Accedi' },
-  de: { home: 'Startseite', about: 'Über uns', services: 'Leistungen', projects: 'Projekte', research: 'F & E', blog: 'Blog', contact: 'Kontakt', signIn: 'Anmelden' },
-};
 const TIMEOUT = 15_000;
 
 // Langues avec une URL préfixée réelle en plus du français non préfixé --
@@ -89,7 +94,7 @@ const STATIC_PAGE_I18N = {
  * injecté dans #root pour home (crawler sans JS) -- sans SSR complet des
  * sections (pas d'infra SSR React en place).
  */
-function buildStaticPageHtml(template, { locale, basePath, page, heroHtml }) {
+async function buildStaticPageHtml(template, { locale, basePath, page, ssrRoute }) {
   const url = localizedUrl(locale, basePath);
   const { title, desc } = STATIC_PAGE_I18N[page][locale];
 
@@ -104,8 +109,14 @@ function buildStaticPageHtml(template, { locale, basePath, page, heroHtml }) {
   html = html.replace(/<link rel="canonical" href="[^"]*"\s*\/>/, `<link rel="canonical" href="${url}" />`);
   html = html.replace('</head>', `    ${staticHreflangLinks(basePath).join('\n    ')}\n  </head>`);
 
-  if (heroHtml) {
-    html = html.replace('<div id="root"></div>', `<div id="root">${layoutWrap(locale, heroHtml)}</div>`);
+  // Home seule est passee au vrai rendu SSR (entry-server.tsx) pour
+  // l'instant -- blog (liste) et contact restent sans contenu injecte dans
+  // #root comme avant (aucune regression, simplement pas encore migres,
+  // voir le plan de migration SSR).
+  if (ssrRoute) {
+    const { html: rootHtml, ssrDataScript } = await ssrRender(ssrRoute, locale);
+    html = html.replace('<div id="root"></div>', `<div id="root" data-ssr="1">${rootHtml}</div>`);
+    if (ssrDataScript) html = html.replace('</head>', `    ${ssrDataScript}\n  </head>`);
   }
 
   return html;
@@ -127,10 +138,17 @@ function warn(msg) { process.stderr.write(`[prerender] ${msg}\n`); }
  * comme une "balise qui fuit" sur /contact, /blog, /projects, /legal/*).
  */
 function stripRootContent(html) {
-  const OPEN = '<div id="root">';
-  const start = html.indexOf(OPEN);
-  if (start === -1) return html;
-  const contentStart = start + OPEN.length;
+  // Le match tolere un attribut supplementaire (ex. data-ssr="1", pose par
+  // le rendu SSR reel -- voir buildArticleHead/buildStaticPageHtml) : un
+  // rerun (webhook /sitemap/refresh, voir plus bas) relit un index.html
+  // DEJA prerendu au tour precedent, donc l'ouverture peut deja porter cet
+  // attribut. La reconstruction ci-dessous rend toujours un <div id="root">
+  // nu, quel que soit l'attribut trouve a l'entree.
+  const OPEN_RE = /<div id="root"[^>]*>/;
+  const openMatch = html.match(OPEN_RE);
+  if (!openMatch) return html;
+  const start = openMatch.index;
+  const contentStart = start + openMatch[0].length;
   let i = contentStart;
   let depth = 1;
   while (depth > 0) {
@@ -149,7 +167,7 @@ function stripRootContent(html) {
     }
   }
   const contentEnd = i - '</div>'.length;
-  return html.slice(0, contentStart) + html.slice(contentEnd);
+  return html.slice(0, start) + '<div id="root">' + html.slice(contentEnd);
 }
 
 function escapeHtml(value) {
@@ -193,7 +211,7 @@ async function fetchArticles(locale) {
   return Array.isArray(data?.articles) ? data.articles : [];
 }
 
-function buildArticleHead(article, template) {
+async function buildArticleHead(article, template) {
   const url = `${BASE_URL}/blog/${article.slug}`;
   const title = article.seo_title || article.title;
   const desc = (article.meta_description || article.excerpt || '').slice(0, 300);
@@ -282,48 +300,16 @@ function buildArticleHead(article, template) {
   // 2026-08-12 : jusque-la <body> restait un <div id="root"></div> vide --
   // aucun <h1> ni texte reel avant hydratation React, cause du "H1 tag
   // missing" releve par Bing Webmaster Tools sur la quasi-totalite des
-  // articles. Injecte le corps reel (meme lib `marked` que lescopr.com,
-  // meme approche) dans le shell SPA ; React remplace ce contenu au
-  // montage (BlogPost.tsx rend son propre <h1> + MarkdownRenderer), donc
-  // aucun risque de doublon visible -- seul le PREMIER rendu (crawler,
-  // JS desactive, ou fenetre avant hydratation) voit ce HTML statique.
+  // articles.
+  //
+  // Remplace ici par un vrai rendu SSR (entry-server.tsx, renderToString du
+  // VRAI composant BlogPost) au lieu du squelette ecrit a la main -- ce
+  // dernier ne matchait jamais exactement ce que React produit au premier
+  // rendu, ce qui empechait toute hydratation reelle cote client
+  // (createRoot devait TOUJOURS effacer et reconstruire, cause du flash
+  // signale par l'utilisateur). Le HTML genere ici est PRECISEMENT ce que
+  // hydrateRoot() retrouvera au premier rendu client -- voir main.tsx.
   if (article.content_markdown) {
-    // 2026-08-13 : la premiere version detectait "le corps fournit deja son
-    // propre H1" en regardant si bodyHtml commencait par un <h1> -- mais
-    // certains articles utilisent "# Introduction"/"# Conclusion" (niveau 1)
-    // comme sous-titres internes, jamais le vrai titre. Resultat : la
-    // heuristique se trompait, sautait l'injection du VRAI titre, et la
-    // page se retrouvait avec "Introduction"/"Conclusion" comme seuls H1 --
-    // pire que le bug d'origine. Corrige en s'alignant sur MarkdownRenderer.tsx
-    // cote client (meme fix) : le titre de l'article a TOUJOURS son propre
-    // <h1> ici, sans condition, et tout <h1> produit par le corps est
-    // TOUJOURS retrograde en <h2> -- aucune heuristique a tromper.
-    const bodyHtml = marked.parse(article.content_markdown)
-      .replace(/<h1(\s[^>]*)?>/g, '<h2>')
-      .replace(/<\/h1>/g, '</h2>');
-    // article.title (pas la variable `title` = seo_title || title, utilisee
-    // pour <title>/OG) -- doit correspondre exactement au <h1> que
-    // BlogPost.tsx rend cote client (`{post.title}`), jamais le titre SEO.
-    // 2026-08-28 : le squelette utilisait des balises nues (h1/article/h2/p,
-    // aucune classe) -- avec le CSS desormais inline (fix FOUC precedent),
-    // ce squelette peignait INSTANTANEMENT mais restait un mur de texte en
-    // gras sans aucune ressemblance avec la vraie page (image hero, badge,
-    // grille), car la mise en forme reelle vient de classes React qui
-    // n'existaient pas ici. Reutilise les VRAIES classes du composant
-    // BlogPost.tsx (blog-post-title, prose prose-lg, meme conteneur) sur ce
-    // meme balisage nu -- meme typographie/couleurs/espacements que la page
-    // finale des le premier paint, sans dupliquer aucune regle CSS.
-    const articleShell = `<main id="article-prerender"><div class="container mx-auto px-4 max-w-[1600px] blog-post-content-shell"><article class="blog-post-page"><h1 class="blog-post-title">${escapeHtml(article.title)}</h1><div class="prose prose-lg max-w-none">${bodyHtml}</div></article></div></main>`;
-    html = html.replace('<div id="root"></div>', `<div id="root">${layoutWrap(article.locale, articleShell)}</div>`);
-
-    // Donnees pour BlogPost.tsx (readPrerenderedPost) -- meme forme que
-    // BlogPost renvoye par GET /api/v1/blog/posts/{slug}, mais avec ce que
-    // le feed SEO fournit reellement (pas d'id/category/credit photo reels
-    // ici -- BlogPost.tsx les recoit via son fetch normal qui tourne quand
-    // meme en arriere-plan et complete l'etat sans jamais revider l'ecran).
-    // Objectif unique : que le tout premier rendu client ait deja le vrai
-    // contenu, jamais un spinner "Loading..." qui efface l'article deja
-    // peint par le prerender.
     const wordCount = article.content_markdown.trim().split(/\s+/).length;
     const prerenderedPost = {
       id: article.slug,
@@ -346,94 +332,17 @@ function buildArticleHead(article, template) {
         keywords: tags.join(', '),
       },
     };
-    html = html.replace(
-      '</head>',
-      `    <script id="prerendered-post-data" type="application/json">${jsonSafe(prerenderedPost)}</script>\n  </head>`
+
+    const { html: rootHtml, ssrDataScript } = await ssrRender(
+      `/blog/${article.slug}`,
+      article.locale,
+      { route: `blog:${article.slug}`, data: prerenderedPost },
     );
+    html = html.replace('<div id="root"></div>', `<div id="root" data-ssr="1">${rootHtml}</div>`);
+    if (ssrDataScript) html = html.replace('</head>', `    ${ssrDataScript}\n  </head>`);
   }
 
   return html;
-}
-
-// 2026-08-28 : meme constat que pour l'article -- un <h1> nu dans #root
-// peignait instantanement (CSS inline) mais ne ressemblait a rien de la
-// vraie home (src/components/public/HeroSection.tsx), qui utilise des
-// classes utilitaires Tailwind pour la taille/graisse/couleur du titre.
-// Reutilise EXACTEMENT ces classes (deja presentes dans le CSS inline,
-// Tailwind les genere au build quel que soit l'endroit ou elles sont
-// utilisees) sur ce meme h1 -- meme rendu typographique des le premier
-// paint, sans dupliquer aucune regle CSS.
-function homeHeroHtml(title) {
-  return `<main id="home-prerender"><section class="relative pt-24 pb-20 lg:pt-32 lg:pb-32 bg-gradient-to-br from-gray-50 to-white"><div class="container mx-auto px-4"><h1 class="text-4xl lg:text-5xl font-bold leading-tight text-black">${escapeHtml(title)}</h1></div></section></main>`;
-}
-
-// Reprend la structure REELLE de Header.tsx (etat par defaut : pas encore
-// scrolle, visiteur non authentifie -- exactement ce qu'un premier paint
-// voit) : meme classes, meme hauteur fixe (h-16), memes libelles de nav
-// par langue. Sans ca, le squelette home/article n'avait PAS de header du
-// tout -- au montage React, le vrai header (position fixed, h-16) apparaît
-// d'un coup et pousse/recouvre le contenu deja peint, un decalage brutal
-// signale par l'utilisateur comme la page "carrement cassee" au refresh
-// (2026-09-01). Le contenu (liens de nav sans onClick JS, pas de menu
-// mobile fonctionnel) est volontairement simplifie : il n'est visible que
-// le temps du tout premier paint avant que React ne le remplace.
-// Le logo est importe en JS dans Header.tsx (pas de <img> statique dans
-// index.html a lire) -- Vite hashe son nom de fichier a chaque build
-// (ex. bSonnaLab-ITQYTo0l.png). Le retrouver dynamiquement dans
-// build/assets/ plutot que de coder le hash en dur, qui casserait des le
-// build suivant.
-let cachedHeaderLogoSrc = null;
-function headerLogoSrc() {
-  if (cachedHeaderLogoSrc !== null) return cachedHeaderLogoSrc;
-  try {
-    const file = readdirSync(join(BUILD_DIR, 'assets')).find(
-      (f) => f.startsWith('bSonnaLab-') && f.endsWith('.png')
-    );
-    cachedHeaderLogoSrc = file ? `/assets/${file}` : '/assets/bSonnaLab.png';
-  } catch {
-    cachedHeaderLogoSrc = '/assets/bSonnaLab.png';
-  }
-  return cachedHeaderLogoSrc;
-}
-
-function headerHtml(locale) {
-  const t = HEADER_I18N[locale] || HEADER_I18N.fr;
-  const nav = [
-    [t.home, '/'],
-    [t.about, '/'],
-    [t.services, '/'],
-    [t.research, '/'],
-    [t.projects, '/projects'],
-    [t.blog, '/blog'],
-    [t.contact, '/contact'],
-  ];
-  const navLinks = nav.map(([label, href]) =>
-    `<a href="${href}" class="public-nav-link inline-flex h-16 items-center text-sm font-medium text-gray-700">${escapeHtml(label)}</a>`
-  ).join('');
-  // Bouton hamburger mobile (<1024px, voir .public-header-menu-button dans
-  // globals.css : inline-flex par defaut, none des 1024px). Absent de la
-  // premiere version de ce squelette -- sur mobile/tablette, le header
-  // pre-rendu montrait juste le logo (nav+CTA masques par CSS a cette
-  // largeur, comme prevu) mais AUCUNE icone a droite, puis l'icone
-  // apparaissait brutalement au montage React (~1s, capture video
-  // 2026-09-01) alors que rien d'autre ne changeait de position -- un
-  // vrai pop-in visible, distinct du FOUT de police deja corrige.
-  const menuButton = `<button type="button" aria-label="Menu" class="public-header-menu-button inline-flex items-center justify-center rounded-md size-9 text-black hover:bg-gray-100 transition-colors duration-300"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg></button>`;
-  return `<header class="fixed top-0 left-0 z-50 w-full border-b-2 border-black transition-all duration-300 bg-white/80 backdrop-blur-sm"><div class="flex h-16 items-center justify-between gap-4 px-4 lg:px-6 max-w-7xl mx-auto"><div class="flex shrink-0 items-center space-x-3"><a href="/" class="cursor-pointer"><img src="${headerLogoSrc()}" alt="SonnaLab" class="h-10 w-auto" /></a></div><nav class="public-header-nav shrink-0 items-center gap-5 xl:gap-7 whitespace-nowrap">${navLinks}</nav><div class="public-header-actions shrink-0 items-center gap-2 xl:gap-3"><a href="/sign-in" class="text-white transition-all duration-300 inline-flex h-9 items-center rounded-md bg-black px-4 text-sm font-medium">${escapeHtml(t.signIn)}</a></div>${menuButton}</div></header>`;
-}
-
-// Enveloppe le contenu (hero home ou article) dans la MEME structure que
-// Layout.tsx (<div class="min-h-screen ..."><Header/><main class="flex-1
-// public-layout-main">{children}</main><Footer/></div>) -- sans ca, le
-// squelette et le vrai DOM montaient a des profondeurs differentes (root
-// direct vs root > div > header/main/footer), ce qui a le meme effet de
-// bord que l'absence de header : tout le chrome apparait d'un coup.
-// Footer volontairement omis (contenu riche, animations framer-motion,
-// hors-champ au premier paint) -- seul un fond noir place la ou le vrai
-// footer commencera, pour eviter un blanc si le visiteur scrolle avant
-// l'hydratation.
-function layoutWrap(locale, innerHtml) {
-  return `<div class="min-h-screen bg-background flex flex-col">${headerHtml(locale)}<main class="flex-1 public-layout-main">${innerHtml}</main><footer class="bg-black text-white"></footer></div>`;
 }
 
 function buildRedirectHtml(fromSlug, toSlug, locale) {
@@ -534,7 +443,7 @@ async function run() {
 
       const html = article.redirected_to_slug
         ? buildRedirectHtml(article.slug, article.redirected_to_slug, article.locale)
-        : buildArticleHead(article, template);
+        : await buildArticleHead(article, template);
 
       await writeFile(join(targetDir, 'index.html'), html, 'utf-8');
       if (article.redirected_to_slug) {
@@ -590,11 +499,11 @@ async function run() {
   // LOCALIZED_PREFIXES dans src/router/index.tsx).
   await writeFile(
     join(BUILD_DIR, 'index.html'),
-    buildStaticPageHtml(template, {
+    await buildStaticPageHtml(template, {
       locale: DEFAULT_LOCALE,
       basePath: '/',
       page: 'home',
-      heroHtml: homeHeroHtml(STATIC_PAGE_I18N.home.fr.h1),
+      ssrRoute: '/',
     }),
     'utf-8'
   );
@@ -602,12 +511,12 @@ async function run() {
 
   const blogDir = join(BUILD_DIR, 'blog');
   await mkdir(blogDir, { recursive: true });
-  await writeFile(join(blogDir, 'index.html'), buildStaticPageHtml(template, { locale: DEFAULT_LOCALE, basePath: '/blog', page: 'blog' }), 'utf-8');
+  await writeFile(join(blogDir, 'index.html'), await buildStaticPageHtml(template, { locale: DEFAULT_LOCALE, basePath: '/blog', page: 'blog' }), 'utf-8');
   warn('Wrote blog/index.html (fr)');
 
   const contactDir = join(BUILD_DIR, 'contact');
   await mkdir(contactDir, { recursive: true });
-  await writeFile(join(contactDir, 'index.html'), buildStaticPageHtml(template, { locale: DEFAULT_LOCALE, basePath: '/contact', page: 'contact' }), 'utf-8');
+  await writeFile(join(contactDir, 'index.html'), await buildStaticPageHtml(template, { locale: DEFAULT_LOCALE, basePath: '/contact', page: 'contact' }), 'utf-8');
   warn('Wrote contact/index.html (fr)');
 
   for (const locale of PREFIXED_LOCALES) {
@@ -615,22 +524,22 @@ async function run() {
     await mkdir(localeDir, { recursive: true });
     await writeFile(
       join(localeDir, 'index.html'),
-      buildStaticPageHtml(template, {
+      await buildStaticPageHtml(template, {
         locale,
         basePath: '/',
         page: 'home',
-        heroHtml: homeHeroHtml(STATIC_PAGE_I18N.home[locale].h1),
+        ssrRoute: '/',
       }),
       'utf-8'
     );
 
     const localeBlogDir = join(localeDir, 'blog');
     await mkdir(localeBlogDir, { recursive: true });
-    await writeFile(join(localeBlogDir, 'index.html'), buildStaticPageHtml(template, { locale, basePath: '/blog', page: 'blog' }), 'utf-8');
+    await writeFile(join(localeBlogDir, 'index.html'), await buildStaticPageHtml(template, { locale, basePath: '/blog', page: 'blog' }), 'utf-8');
 
     const localeContactDir = join(localeDir, 'contact');
     await mkdir(localeContactDir, { recursive: true });
-    await writeFile(join(localeContactDir, 'index.html'), buildStaticPageHtml(template, { locale, basePath: '/contact', page: 'contact' }), 'utf-8');
+    await writeFile(join(localeContactDir, 'index.html'), await buildStaticPageHtml(template, { locale, basePath: '/contact', page: 'contact' }), 'utf-8');
 
     warn(`Wrote /${locale}/, /${locale}/blog/, /${locale}/contact/`);
   }
@@ -650,6 +559,6 @@ async function run() {
 }
 
 run().catch(err => {
-  warn(`Fatal: ${err.message}`);
+  warn(`Fatal: ${err.stack || err.message}`);
   process.exit(1);
 });

@@ -83,7 +83,8 @@
       },
       "scripts": {
             "dev": "vite",
-            "build": "vite build && npm run prerender:blog && npm run generate:sitemap",
+            "build": "vite build && npm run build:ssr && npm run prerender:blog && npm run generate:sitemap",
+            "build:ssr": "vite build --ssr src/entry-server.tsx --outDir build-ssr --minify false",
             "prerender:blog": "node scripts/prerender-blog.mjs",
             "generate:sitemap": "node scripts/generate-sitemap.mjs > build/sitemap.xml",
             "preview": "vite preview"

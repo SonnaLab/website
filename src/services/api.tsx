@@ -207,12 +207,15 @@ export interface BlogPostsResponse {
 }
 
 export function getStoredAccessToken(): string | null {
+  if (typeof window === 'undefined') return null;
   return localStorage.getItem(AUTH_STORAGE_KEYS.access);
 }
 export function getStoredRefreshToken(): string | null {
+  if (typeof window === 'undefined') return null;
   return localStorage.getItem(AUTH_STORAGE_KEYS.refresh);
 }
 export function getStoredUser(): AuthUser | null {
+  if (typeof window === 'undefined') return null;
   const raw = localStorage.getItem(AUTH_STORAGE_KEYS.user);
   if (!raw || raw === 'undefined' || raw === 'null') {
     localStorage.removeItem(AUTH_STORAGE_KEYS.user);

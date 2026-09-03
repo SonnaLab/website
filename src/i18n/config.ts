@@ -237,11 +237,20 @@ const resources = {
   },
 };
 
-i18n
-  .use(LanguageDetector)
+// LanguageDetector touche localStorage des son .init() (synchrone), avant
+// meme le premier rendu -- absent de Node, ce qui plante l'import de ce
+// module depuis entry-server.tsx (rendu SSR au moment du build). Cote
+// serveur, la langue est de toute facon fournie explicitement par le script
+// de prerender (une locale par route, voir LOCALIZED_PREFIXES), donc le
+// detecteur n'a rien a detecter : on le saute entierement et on fixe `lng`
+// au lieu de le laisser deviner.
+const isBrowser = typeof window !== 'undefined';
+
+(isBrowser ? i18n.use(LanguageDetector) : i18n)
   .use(initReactI18next)
   .init({
     resources,
+    lng: isBrowser ? undefined : 'fr',
     fallbackLng: 'fr',
     defaultNS: 'common',
     interpolation: {
@@ -259,10 +268,12 @@ i18n
     // LanguageSwitcher continue de persister et de primer comme avant, on
     // supprime seulement la devinette automatique via la langue du
     // navigateur, jamais la preference que l'utilisateur a lui-meme posee.
-    detection: {
-      order: ['localStorage'],
-      caches: ['localStorage'],
-    },
+    ...(isBrowser && {
+      detection: {
+        order: ['localStorage'],
+        caches: ['localStorage'],
+      },
+    }),
   });
 
 export default i18n;

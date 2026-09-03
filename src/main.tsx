@@ -1,4 +1,4 @@
-import { createRoot } from "react-dom/client";
+import { createRoot, hydrateRoot } from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import { ModalProvider } from './components/providers/ModalProvider';
@@ -20,19 +20,42 @@ import i18n from "./i18n/config";
 // ne survient pas. Repere sur /services vs /services/web-development :
 // meme composant NotFound, un chargement montrait la traduction, l'autre
 // les cles brutes -- pas un bug de routing, un flash non-deterministe.
-function mount() {
-  createRoot(document.getElementById("root")!).render(
-    <HelmetProvider>
-      <ModalProvider>
-        <RouterProvider router={router} />
+const rootEl = document.getElementById("root")!;
 
-        {/* Modals & Overlays globaux (hors Router) */}
-        <ConsultationModal />
-        <CookieConsent />
-        <Toaster richColors closeButton position="top-right" />
-      </ModalProvider>
-    </HelmetProvider>
-  );
+const tree = (
+  <HelmetProvider>
+    <ModalProvider>
+      <RouterProvider router={router} />
+
+      {/* Modals & Overlays globaux (hors Router) */}
+      <ConsultationModal />
+      <CookieConsent />
+      <Toaster richColors closeButton position="top-right" />
+    </ModalProvider>
+  </HelmetProvider>
+);
+
+// hydrateRoot (pas createRoot) : les pages prerendues (scripts/
+// prerender-blog.mjs, via src/entry-server.tsx) contiennent deja le HTML
+// reel de la page -- createRoot l'effacait et reconstruisait tout depuis
+// zero a chaque refresh, un flash visible signale par l'utilisateur.
+// hydrateRoot reutilise ce DOM existant tant que le premier rendu client
+// correspond a ce que le serveur a produit (voir BlogPost.tsx : post/loading
+// initialises depuis getSSRData(), jamais dans un useEffect, sinon le
+// premier rendu client ne matche plus et React rejette le sous-arbre au
+// lieu de l'hydrater).
+//
+// data-ssr="1" (pose par entry-server.tsx sur #root) marque une page
+// effectivement pre-rendue via le nouveau pipeline SSR -- absent, on
+// retombe sur createRoot (comportement client-only classique, sûr pour
+// n'importe quelle page pas encore migree vers entry-server, ex. /blog en
+// liste pour l'instant).
+function mount() {
+  if (rootEl.dataset.ssr === '1') {
+    hydrateRoot(rootEl, tree);
+  } else {
+    createRoot(rootEl).render(tree);
+  }
 }
 
 if (i18n.isInitialized) {

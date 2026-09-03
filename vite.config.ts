@@ -3,7 +3,7 @@
   import react from '@vitejs/plugin-react-swc';
   import path from 'path';
 
-  export default defineConfig({
+  export default defineConfig(({ isSsrBuild }) => ({
     plugins: [react()],
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
@@ -64,7 +64,15 @@
     build: {
       target: 'esnext',
       outDir: 'build',
-      rollupOptions: {
+      // manualChunks force react/radix-ui/framer-motion a etre BUNDLES en
+      // chunks nommes -- incompatible avec un build SSR (--ssr), qui
+      // externalise ces memes paquets node_modules par defaut pour les
+      // resoudre via Node au runtime plutot que de les inclure dans le
+      // bundle. Rollup refuse de chunker un module qu'il traite par
+      // ailleurs comme externe : desactive donc pour le build SSR
+      // uniquement (entry-server.tsx, voir package.json "build:ssr"),
+      // aucun impact sur le decoupage du bundle client normal.
+      rollupOptions: isSsrBuild ? {} : {
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
@@ -77,8 +85,20 @@
       },
     },
     },
+    // Un build SSR externalise les deps node_modules par defaut (resolues
+    // par Node au runtime plutot que bundlees) -- react-syntax-highlighter
+    // expose des imports profonds sans extension (styles/prism/coy) que la
+    // resolution ESM stricte de Node refuse, alors que le resolveur de Vite
+    // les tolere. noExternal force Vite a le bundler comme le reste, meme
+    // chemin de resolution que pour le build client.
+    ssr: {
+      // react-helmet-async : meme classe de probleme, mais cote CJS -- son
+      // export nomme (Helmet, HelmetProvider) n'est pas detectable par
+      // l'interop CJS->ESM stricte de Node quand le paquet reste externe.
+      noExternal: ['react-syntax-highlighter', 'react-helmet-async'],
+    },
     server: {
       port: 3000,
       open: true,
     },
-  });
+  }));

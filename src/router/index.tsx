@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { createBrowserRouter, Navigate, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet, useLocation, useNavigate, useParams, type RouteObject } from 'react-router-dom';
 import i18n from '@/i18n/config';
 import { AnalyticsProvider } from '@/components/providers/AnalyticsProvider';
 import { AuthProvider } from '@/components/providers/AuthProvider';
@@ -100,7 +100,12 @@ function ForceLocale({ lang }: { lang: string }) {
   return <Outlet />;
 }
 
-export const router = createBrowserRouter([
+// Tableau exporte separement de createBrowserRouter(...) pour etre reutilise
+// tel quel par entry-server.tsx (createMemoryRouter, meme arbre) -- le SSR
+// doit rendre EXACTEMENT le meme arbre de composants que le client, sinon on
+// retombe dans le probleme du squelette approximatif qu'on est en train
+// d'eliminer.
+export const routeTree: RouteObject[] = [
   {
     element: <RootShell />,
     children: [
@@ -195,4 +200,12 @@ export const router = createBrowserRouter([
       },
     ],
   },
-]);
+];
+
+// createBrowserRouter() appelle document.* des sa construction (via
+// createBrowserHistory) -- entry-server.tsx importe SEULEMENT routeTree
+// depuis ce module, mais evaluer un module ES execute TOUT son code de
+// premier niveau, y compris cet export inutilise sous Node. `router` n'a
+// aucun sens cote serveur (jamais lu par entry-server.tsx) : ne le
+// construis que dans un navigateur.
+export const router = typeof window !== 'undefined' ? createBrowserRouter(routeTree) : (null as never);

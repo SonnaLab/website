@@ -13,31 +13,10 @@ import { Button } from '@/components/ui/button';
 import { useBlogTracking } from '@/hooks/useAnalytics';
 import { useAutoConsultationTrigger } from '@/hooks/useAutoConsultationTrigger';
 import { apiService } from '@/services/api';
+import { getSSRData } from '@/lib/ssrData';
 
 function getArticleBodyContent(content: string): string {
   return content.replace(/^#\s+.+(?:\r?\n)+/, '').trimStart();
-}
-
-// Le prerender statique (scripts/prerender-blog.mjs) embarque les donnees
-// de l'article dans un <script id="prerendered-post-data"> — main.tsx monte
-// via createRoot (pas hydrateRoot), qui EFFACE le HTML pre-rendu au premier
-// rendu ; sans cette donnee, BlogPost affichait alors un spinner "Loading..."
-// pendant l'appel API, un vrai flash visible (contenu complet -> ecran vide
-// -> contenu re-affiche) signale par l'utilisateur comme "tout le blog qui
-// se charge" au refresh d'un article. La lire ici permet au tout premier
-// rendu client d'avoir deja le contenu reel, sans jamais passer par l'etat
-// loading — le fetch normal tourne ensuite en arriere-plan pour completer
-// les champs absents du prerender (id reel, category, credit photo...) sans
-// jamais revider l'ecran.
-function readPrerenderedPost(slug: string): BlogPostType | null {
-  try {
-    const el = document.getElementById('prerendered-post-data');
-    if (!el?.textContent) return null;
-    const data = JSON.parse(el.textContent) as BlogPostType;
-    return data.slug === slug ? data : null;
-  } catch {
-    return null;
-  }
 }
 
 export default function BlogPost() {
@@ -45,10 +24,18 @@ export default function BlogPost() {
   const { t, i18n } = useTranslation('blog');
   const lang = i18n.language.substring(0, 2);
   const navigate = useNavigate();
-  
-  const [post, setPost] = useState<BlogPostType | null>(null);
+
+  // Lu comme etat INITIAL (lazy useState), pas dans un useEffect : le
+  // rendu SSR (entry-server.tsx) produit deja le HTML de l'article reel,
+  // donc le tout premier rendu client doit partir du meme etat (post rempli,
+  // loading=false) pour que hydrateRoot hydrate au lieu de rejeter le
+  // sous-arbre et le reconstruire -- ce qui recreerait le flash qu'on
+  // elimine. Le fetch normal tourne ensuite en arriere-plan pour completer
+  // les champs absents du rendu serveur (id reel, category, credit photo...)
+  // sans jamais revider l'ecran.
+  const [post, setPost] = useState<BlogPostType | null>(() => (slug ? getSSRData<BlogPostType>(`blog:${slug}`) : null));
   const [relatedPosts, setRelatedPosts] = useState<Omit<BlogPostType, 'content'>[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => !(slug && getSSRData<BlogPostType>(`blog:${slug}`)));
   const [tableOfContents, setTableOfContents] = useState<Array<{ id: string; text: string; level: number }>>([]);
 
   // ✅ Hook appelé AVANT toute condition
@@ -64,7 +51,7 @@ export default function BlogPost() {
     async function loadPost() {
       if (!slug) return;
 
-      const prerendered = readPrerenderedPost(slug);
+      const prerendered = getSSRData<BlogPostType>(`blog:${slug}`);
       if (prerendered) {
         if (prerendered.lang !== lang) i18n.changeLanguage(prerendered.lang);
         setPost(prerendered);

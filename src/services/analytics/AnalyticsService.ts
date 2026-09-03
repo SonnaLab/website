@@ -453,4 +453,15 @@ class AnalyticsService {
   }
 }
 
-export const analytics = new AnalyticsService();
+// Le constructeur touche navigator/sessionStorage/localStorage/window des
+// l'instanciation (getOrCreateSession, loadPreferences, setupOnlineListener...)
+// -- absents sous Node, ce qui plante l'import de ce module depuis
+// entry-server.tsx (rendu SSR au moment du build, voir AnalyticsProvider qui
+// l'importe). Tous les appelants reels (AnalyticsProvider.trackPageView...)
+// ne s'executent que dans un useEffect, jamais pendant renderToString : un
+// stub qui absorbe silencieusement n'importe quel appel de methode suffit
+// cote serveur, ses methodes ne sont jamais reellement invoquees a ce
+// moment-la.
+export const analytics: AnalyticsService = typeof window !== 'undefined'
+  ? new AnalyticsService()
+  : new Proxy({} as AnalyticsService, { get: () => () => undefined });
