@@ -11,7 +11,7 @@
  * the bundled index.html.
  */
 
-import { readFile, writeFile, mkdir } from 'fs/promises';
+import { readFile, writeFile, mkdir, copyFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
@@ -374,17 +374,32 @@ async function run() {
     process.exit(0);
   }
   // Ce script REECRIT index.html en place (H1 de la home injecte dans
-  // #root, voir plus bas). Le webhook /sitemap/refresh (scripts/
-  // sitemap-webhook.mjs -> regen-sitemap.sh) relance CE script seul, sans
-  // repasser par `vite build` avant -- une execution relit alors le
-  // index.html DEJA modifie par la fois precedente comme s'il etait le
-  // template vierge, et propage le H1 injecte jusque dans app-shell.html
-  // (qui doit pourtant rester generique). Normaliser #root vers son etat
-  // vierge des la lecture rend le script idempotent, execute seul ou apres
-  // un vrai build (2026-08-24, regression observee en prod ~2h apres le
-  // premier fix : le webhook a tourne entre-temps et a re-corrompu
-  // app-shell.html).
-  const rawTemplate = await readFile(templatePath, 'utf-8');
+  // #root, title/description ecrases avec ceux de la home -- voir plus
+  // bas). Le webhook /sitemap/refresh (scripts/sitemap-webhook.mjs ->
+  // regen-sitemap.sh) relance CE script seul, sans repasser par
+  // `vite build` avant -- une execution relit alors index.html DEJA
+  // modifie par la fois precedente comme s'il etait le template vierge.
+  // stripRootContent() (2026-08-24) a bien rendu #root idempotent, mais
+  // title/meta/canonical de la home restaient propages jusque dans
+  // app-shell.html a chaque rerun -- app-shell.html est cense rester
+  // GENERIQUE (utilise par nginx comme fallback pour toute route SPA sans
+  // page dediee : legal/*, sign-in, dashboard, projects...), donc ces
+  // routes affichaient le titre/description de la home au lieu du leur
+  // (2026-09-04, meme classe de bug que sur lecolt.com, signale par
+  // l'utilisateur apres coup : "j'espere que ca a ete gere dans tous les
+  // projets"). Fix definitif : figer une VRAIE copie vierge d'index.html
+  // (title/meta d'origine du template source, voir index.html a la racine
+  // du repo) juste apres `vite build`, avant toute mutation -- ce script la
+  // cree si absente (premiere execution suivant un vrai build) et la relit
+  // TOUJOURS ensuite, meme invoque seul par le webhook. `vite build` vide
+  // BUILD_DIR a chaque build complet (emptyOutDir), donc cette snapshot est
+  // automatiquement effacee et regeneree a chaque vrai build -- jamais
+  // perimee au dela d'un cycle de build.
+  const templateSnapshotPath = join(BUILD_DIR, '.prerender-template.html');
+  if (!existsSync(templateSnapshotPath)) {
+    await copyFile(templatePath, templateSnapshotPath);
+  }
+  const rawTemplate = await readFile(templateSnapshotPath, 'utf-8');
   let template = stripRootContent(rawTemplate);
 
   // Inline le CSS de build (~200 Ko) directement dans <head> au lieu du
