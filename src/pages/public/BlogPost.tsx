@@ -106,18 +106,25 @@ export default function BlogPost() {
           }
 
           setRelatedPosts(relatedCandidates.slice(0, 3));
-        } else {
+        } else if (!prerendered) {
+          // Ne jamais vider un post deja affiche (seede par le HTML pre-
+          // rendu) juste parce que CE fetch de reconciliation en arriere-
+          // plan echoue -- sinon un article deja visible et hydrate
+          // correctement disparaitrait au moindre blip reseau, exactement
+          // le flash contenu->vide que la seed SSR est censee eliminer.
           setPost(null);
           setRelatedPosts([]);
         }
       } catch {
-        setPost(null);
-        setRelatedPosts([]);
+        if (!prerendered) {
+          setPost(null);
+          setRelatedPosts([]);
+        }
       } finally {
         setLoading(false);
       }
     }
-    
+
     loadPost();
   }, [slug, lang]);
 
