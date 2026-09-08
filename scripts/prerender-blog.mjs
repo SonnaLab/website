@@ -87,6 +87,19 @@ const STATIC_PAGE_I18N = {
     it: { title: 'Contatti - Parliamo del Vostro Progetto | SonnaLab', desc: 'Contattateci per discutere il vostro progetto digitale.' },
     de: { title: 'Kontakt - Sprechen wir über Ihr Projekt | SonnaLab', desc: 'Kontaktieren Sie SonnaLab, um Ihr digitales Projekt zu besprechen.' },
   },
+  // Ajouté 2026-09-08 : /projects n'avait jamais été ajouté ici ni au nginx
+  // whitelist regex ni au bloc de génération des coquilles locale (voir
+  // writeStaticShells plus bas) -- /{locale}/projects renvoyait donc un
+  // vrai 404 pour les 4 locales préfixées (jamais bare /projects, lui géré
+  // par ailleurs), repéré via Search Console (audit sonnalab.com, 2026-09-08).
+  // Titres/descriptions repris tels quels de src/locales/{locale}/projects.json#seo.
+  projects: {
+    fr: { title: 'Projets - Innovation & Technologie | SonnaLab', desc: 'Chaque application utilise des technologies de pointe pour garantir fiabilité et évolutivité' },
+    en: { title: 'Projects - Innovation & Technology | SonnaLab', desc: 'Each application uses top-performing technologies to ensure reliability and scalability' },
+    es: { title: 'Proyectos - Innovación y Tecnología | SonnaLab', desc: 'Cada aplicación utiliza tecnologías de alto rendimiento para garantizar fiabilidad y escalabilidad' },
+    it: { title: 'Progetti - Innovazione e Tecnologia | SonnaLab', desc: 'Ogni applicazione utilizza tecnologie ad alte prestazioni per garantire affidabilità e scalabilità' },
+    de: { title: 'Projekte - Innovation & Technologie | SonnaLab', desc: 'Jede Anwendung verwendet leistungsstarke Technologien für Zuverlässigkeit und Skalierbarkeit' },
+  },
 };
 
 /**
@@ -534,6 +547,16 @@ async function run() {
   await writeFile(join(contactDir, 'index.html'), await buildStaticPageHtml(template, { locale: DEFAULT_LOCALE, basePath: '/contact', page: 'contact' }), 'utf-8');
   warn('Wrote contact/index.html (fr)');
 
+  // /projects (bare, fr) était déjà servie via le nginx whitelist regex
+  // `^/(contact|projects|blog|...)` mais sans coquille dédiée écrite ici --
+  // fonctionnait par accident via le fallback @shell (titre générique, pas
+  // de vrai SEO). Ajouté en même temps que les variantes localisées
+  // ci-dessous pour cohérence (2026-09-08).
+  const projectsDir = join(BUILD_DIR, 'projects');
+  await mkdir(projectsDir, { recursive: true });
+  await writeFile(join(projectsDir, 'index.html'), await buildStaticPageHtml(template, { locale: DEFAULT_LOCALE, basePath: '/projects', page: 'projects' }), 'utf-8');
+  warn('Wrote projects/index.html (fr)');
+
   for (const locale of PREFIXED_LOCALES) {
     const localeDir = join(BUILD_DIR, locale);
     await mkdir(localeDir, { recursive: true });
@@ -556,7 +579,11 @@ async function run() {
     await mkdir(localeContactDir, { recursive: true });
     await writeFile(join(localeContactDir, 'index.html'), await buildStaticPageHtml(template, { locale, basePath: '/contact', page: 'contact' }), 'utf-8');
 
-    warn(`Wrote /${locale}/, /${locale}/blog/, /${locale}/contact/`);
+    const localeProjectsDir = join(localeDir, 'projects');
+    await mkdir(localeProjectsDir, { recursive: true });
+    await writeFile(join(localeProjectsDir, 'index.html'), await buildStaticPageHtml(template, { locale, basePath: '/projects', page: 'projects' }), 'utf-8');
+
+    warn(`Wrote /${locale}/, /${locale}/blog/, /${locale}/contact/, /${locale}/projects/`);
   }
 
   const mapPath = join(BUILD_DIR, 'blog-redirects.map');
