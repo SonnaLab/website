@@ -67,13 +67,30 @@ const prefixedStaticPages = PREFIXED_LOCALES.flatMap(lang => ([
 
 // ─── API fetch (per locale) ───────────────────────────────────────────────────
 
+// 2026-09-08 : `per_page=1000` demandé ici mais requested_per_page côté
+// Rails le plafonne silencieusement à 60 (`[[raw, 1].max, 60].min`,
+// blog/posts_controller.rb) -- comme cet appel unique ne paginait jamais,
+// seuls les 60 articles les PLUS RÉCENTS (tri DESC) atterrissaient dans le
+// sitemap. Chaque nouvelle publication faisait donc sortir silencieusement
+// le plus ancien -- 129 articles bien publiés, avec du vrai trafic
+// possible, invisibles de Google faute d'être dans le sitemap (repéré via
+// audit Search Console : "URL is unknown to Google" sur des articles
+// publiés dès mai 2026). On paginer désormais jusqu'à total_pages.
 async function fetchPostsFromAPI(locale) {
-  const url = `${API_URL}/api/v1/blog/posts?locale=${locale}&per_page=1000`;
-  const res = await fetch(url, { signal: AbortSignal.timeout(TIMEOUT) });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const data = await res.json();
-  const raw = data.posts || data || [];
-  return raw.map(p => normalisePost(p, locale));
+  const all = [];
+  let page = 1;
+  let totalPages = 1;
+  do {
+    const url = `${API_URL}/api/v1/blog/posts?locale=${locale}&per_page=60&page=${page}`;
+    const res = await fetch(url, { signal: AbortSignal.timeout(TIMEOUT) });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const raw = data.posts || [];
+    all.push(...raw.map(p => normalisePost(p, locale)));
+    totalPages = data.total_pages || 1;
+    page += 1;
+  } while (page <= totalPages);
+  return all;
 }
 
 function normalisePost(p, locale) {
