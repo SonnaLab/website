@@ -307,14 +307,17 @@ export function clearStoredAuth() {
 interface ImpersonationSnapshot { access_token: string; refresh_token: string; user: AuthUser }
 
 export function saveImpersonationSnapshot(snapshot: ImpersonationSnapshot) {
+  if (typeof window === 'undefined') return;
   localStorage.setItem(AUTH_STORAGE_KEYS.impersonationSnapshot, JSON.stringify(snapshot));
 }
 export function getImpersonationSnapshot(): ImpersonationSnapshot | null {
+  if (typeof window === 'undefined') return null;
   const raw = localStorage.getItem(AUTH_STORAGE_KEYS.impersonationSnapshot);
   if (!raw) return null;
   try { return JSON.parse(raw) as ImpersonationSnapshot; } catch { return null; }
 }
 export function clearImpersonationSnapshot() {
+  if (typeof window === 'undefined') return;
   localStorage.removeItem(AUTH_STORAGE_KEYS.impersonationSnapshot);
 }
 
