@@ -352,7 +352,56 @@
   },
   "users": {
     "title": "Utenti",
-    "subtitle": "Gestione account e ruoli.",
-    "empty": "Nessun utente da visualizzare."
+    "subtitle": "Gestione di account e ruoli.",
+    "empty": "Nessun utente da visualizzare.",
+    "searchPlaceholder": "Cerca per nome o email…",
+    "allRoles": "Tutti i ruoli",
+    "impersonate": "Accedi come questo utente",
+    "cantImpersonateSelf": "Hai già effettuato l'accesso con questo account",
+    "cantImpersonateAdmin": "Impossibile impersonare un account amministratore",
+    "impersonateSuccess": "Accesso effettuato come {{name}}",
+    "impersonateError": "Impossibile accedere come questo utente",
+    "tabs": {
+      "overview": "Panoramica",
+      "list": "Utenti"
+    },
+    "kpis": {
+      "total": "Utenti",
+      "admins": "Amministratori",
+      "staff": "Team",
+      "clients": "Clienti",
+      "confirmed": "Confermati",
+      "locked": "Bloccati",
+      "new7d": "Nuovi (7g)",
+      "new30d": "Nuovi (30g)"
+    },
+    "roles": {
+      "admin": "Amministratore",
+      "staff": "Team",
+      "user": "Cliente"
+    },
+    "status": {
+      "confirmed": "Confermato",
+      "unconfirmed": "Non confermato",
+      "locked": "Bloccato"
+    },
+    "table": {
+      "name": "Nome",
+      "email": "Email",
+      "role": "Ruolo",
+      "status": "Stato",
+      "createdAt": "Creato",
+      "actions": "Azioni"
+    },
+    "detail": {
+      "phone": "Telefono",
+      "company": "Azienda",
+      "signInCount": "Accessi",
+      "lastSignIn": "Ultimo accesso"
+    }
+  },
+  "impersonation": {
+    "banner": "Hai effettuato l'accesso come {{name}}.",
+    "stop": "Torna al mio account admin"
   }
 }

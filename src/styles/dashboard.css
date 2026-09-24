@@ -36,6 +36,35 @@
   font-family: 'Raleway', sans-serif;
 }
 
+/* ── Impersonation banner ── */
+.dash-impersonation-banner {
+  position: sticky;
+  top: 0;
+  z-index: 31; /* above .dash-topbar (30) so it stays visible when it scrolls under */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #fffbeb;
+  border-bottom: 1px solid #fde68a;
+  color: #92400e;
+  font-size: 12.5px;
+  font-weight: 500;
+}
+.dash-impersonation-banner span { flex: 1; }
+.dash-impersonation-banner__btn {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #d97706;
+  background: #fff;
+  color: #92400e;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.dash-impersonation-banner__btn:hover { background: #fef3c7; }
+
 /* ══════════════════════════════════════
    TOP BAR
    ══════════════════════════════════════ */
@@ -1601,6 +1630,19 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
+}
+
+/* ── Generic toolbar (search + filter row above a DataTable) ── */
+.adm-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.adm-toolbar__search-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* ── Search bar ── */

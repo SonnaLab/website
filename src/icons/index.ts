@@ -60,4 +60,7 @@ export {
   TerminalIcon,
   LinkedinIcon,
   Share2Icon,
+  ShieldIcon,
+  LockIcon,
+  CheckCircleIcon,
 } from './icons';

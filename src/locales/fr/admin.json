@@ -354,6 +354,55 @@
   "users": {
     "title": "Utilisateurs",
     "subtitle": "Gestion des comptes et des rôles.",
-    "empty": "Aucun utilisateur à afficher."
+    "empty": "Aucun utilisateur à afficher.",
+    "searchPlaceholder": "Rechercher par nom ou email…",
+    "allRoles": "Tous les rôles",
+    "impersonate": "Se connecter en tant que cet utilisateur",
+    "cantImpersonateSelf": "Vous êtes déjà connecté avec ce compte",
+    "cantImpersonateAdmin": "Impossible d'imiter un compte administrateur",
+    "impersonateSuccess": "Connecté en tant que {{name}}",
+    "impersonateError": "Impossible de se connecter en tant que cet utilisateur",
+    "tabs": {
+      "overview": "Vue d'ensemble",
+      "list": "Utilisateurs"
+    },
+    "kpis": {
+      "total": "Utilisateurs",
+      "admins": "Administrateurs",
+      "staff": "Équipe",
+      "clients": "Clients",
+      "confirmed": "Confirmés",
+      "locked": "Verrouillés",
+      "new7d": "Nouveaux (7j)",
+      "new30d": "Nouveaux (30j)"
+    },
+    "roles": {
+      "admin": "Administrateur",
+      "staff": "Équipe",
+      "user": "Client"
+    },
+    "status": {
+      "confirmed": "Confirmé",
+      "unconfirmed": "Non confirmé",
+      "locked": "Verrouillé"
+    },
+    "table": {
+      "name": "Nom",
+      "email": "Email",
+      "role": "Rôle",
+      "status": "Statut",
+      "createdAt": "Créé le",
+      "actions": "Actions"
+    },
+    "detail": {
+      "phone": "Téléphone",
+      "company": "Société",
+      "signInCount": "Connexions",
+      "lastSignIn": "Dernière connexion"
+    }
+  },
+  "impersonation": {
+    "banner": "Vous êtes connecté(e) en tant que {{name}}.",
+    "stop": "Retour à mon compte admin"
   }
 }

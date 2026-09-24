@@ -13,6 +13,11 @@ export const AUTH_STORAGE_KEYS = {
   access:  'auth_token',
   refresh: 'refresh_token',
   user:    'auth_user',
+  // Holds the admin's own {access_token, refresh_token, user} while an
+  // impersonation session is active — never touched by clearStoredAuth(),
+  // so "return to my admin account" (AuthProvider.stopImpersonating) can
+  // restore it client-side, without another sign-in.
+  impersonationSnapshot: 'admin_impersonation_snapshot',
 } as const;
 
 export type AuthRole = 'user' | 'staff' | 'admin';
@@ -206,6 +211,64 @@ export interface BlogPostsResponse {
   total_pages: number;
 }
 
+// ==================== Admin: Users ====================
+
+export interface AdminUser {
+  id: string;
+  email: string;
+  first_name: string | null;
+  last_name: string | null;
+  full_name: string | null;
+  role: AuthRole;
+  language: string | null;
+  confirmed: boolean;
+  locked: boolean;
+  created_at: string;
+  // Only present when fetched with full: true (show/create/update/lock/unlock/impersonate)
+  phone?: string | null;
+  company?: string | null;
+  sign_in_count?: number;
+  last_sign_in_at?: string | null;
+  failed_attempts?: number;
+  locked_at?: string | null;
+}
+
+export interface AdminUsersListResponse {
+  users: AdminUser[];
+  meta: { total: number; page: number; per_page: number; pages: number };
+}
+
+/** AdminUser (admin listing shape) → AuthUser (session shape) — used when an
+ * impersonated user's record becomes the active session's `user`. */
+export function adminUserToAuthUser(u: AdminUser): AuthUser {
+  return {
+    id: u.id,
+    email: u.email,
+    first_name: u.first_name ?? undefined,
+    last_name: u.last_name ?? undefined,
+    role: u.role,
+    language: u.language ?? undefined,
+  };
+}
+
+export interface AdminUsersOverview {
+  total: number;
+  admins: number;
+  staff: number;
+  clients: number;
+  confirmed: number;
+  unconfirmed: number;
+  locked: number;
+  new_last_7_days: number;
+  new_last_30_days: number;
+}
+
+export interface AdminImpersonateResponse {
+  access_token: string;
+  user: AdminUser;
+  impersonator: { id: string; email: string; full_name: string | null };
+}
+
 export function getStoredAccessToken(): string | null {
   if (typeof window === 'undefined') return null;
   return localStorage.getItem(AUTH_STORAGE_KEYS.access);
@@ -238,6 +301,21 @@ export function clearStoredAuth() {
   localStorage.removeItem(AUTH_STORAGE_KEYS.access);
   localStorage.removeItem(AUTH_STORAGE_KEYS.refresh);
   localStorage.removeItem(AUTH_STORAGE_KEYS.user);
+}
+
+// ---- Impersonation snapshot (see AUTH_STORAGE_KEYS.impersonationSnapshot) ----
+interface ImpersonationSnapshot { access_token: string; refresh_token: string; user: AuthUser }
+
+export function saveImpersonationSnapshot(snapshot: ImpersonationSnapshot) {
+  localStorage.setItem(AUTH_STORAGE_KEYS.impersonationSnapshot, JSON.stringify(snapshot));
+}
+export function getImpersonationSnapshot(): ImpersonationSnapshot | null {
+  const raw = localStorage.getItem(AUTH_STORAGE_KEYS.impersonationSnapshot);
+  if (!raw) return null;
+  try { return JSON.parse(raw) as ImpersonationSnapshot; } catch { return null; }
+}
+export function clearImpersonationSnapshot() {
+  localStorage.removeItem(AUTH_STORAGE_KEYS.impersonationSnapshot);
 }
 
 // Endpoints that create/rotate tokens — never retry on 401 for these
@@ -439,6 +517,27 @@ class ApiService {
 
   async listInvoices() { return (await this.client.get('/api/v1/invoices')).data; }
   async getInvoice(id: string) { return (await this.client.get(`/api/v1/invoices/${id}`)).data; }
+
+  // ==================== Admin: Users ====================
+
+  async adminUsersOverview(): Promise<AdminUsersOverview> {
+    return (await this.client.get('/api/v1/admin/users/overview')).data;
+  }
+  async adminUsersList(params?: { role?: AuthRole; q?: string; page?: number; per_page?: number; active?: 'true'; unconfirmed?: boolean }): Promise<AdminUsersListResponse> {
+    return (await this.client.get('/api/v1/admin/users', { params })).data;
+  }
+  async adminUserDetail(id: string): Promise<{ user: AdminUser }> {
+    return (await this.client.get(`/api/v1/admin/users/${id}`)).data;
+  }
+  async adminUserLock(id: string): Promise<{ user: AdminUser }> {
+    return (await this.client.post(`/api/v1/admin/users/${id}/lock`)).data;
+  }
+  async adminUserUnlock(id: string): Promise<{ user: AdminUser }> {
+    return (await this.client.post(`/api/v1/admin/users/${id}/unlock`)).data;
+  }
+  async adminImpersonateUser(id: string): Promise<AdminImpersonateResponse> {
+    return (await this.client.post(`/api/v1/admin/users/${id}/impersonate`)).data;
+  }
 
   // ==================== Admin ====================
 

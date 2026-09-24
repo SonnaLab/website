@@ -352,7 +352,56 @@
   },
   "users": {
     "title": "Benutzer",
-    "subtitle": "Konten und Rollenverwaltung.",
-    "empty": "Keine Benutzer zum Anzeigen."
+    "subtitle": "Konten- und Rollenverwaltung.",
+    "empty": "Keine Benutzer vorhanden.",
+    "searchPlaceholder": "Suche nach Name oder E-Mail…",
+    "allRoles": "Alle Rollen",
+    "impersonate": "Als dieser Benutzer anmelden",
+    "cantImpersonateSelf": "Sie sind bereits mit diesem Konto angemeldet",
+    "cantImpersonateAdmin": "Ein Administratorkonto kann nicht imitiert werden",
+    "impersonateSuccess": "Angemeldet als {{name}}",
+    "impersonateError": "Anmeldung als dieser Benutzer nicht möglich",
+    "tabs": {
+      "overview": "Übersicht",
+      "list": "Benutzer"
+    },
+    "kpis": {
+      "total": "Benutzer",
+      "admins": "Administratoren",
+      "staff": "Team",
+      "clients": "Kunden",
+      "confirmed": "Bestätigt",
+      "locked": "Gesperrt",
+      "new7d": "Neu (7T)",
+      "new30d": "Neu (30T)"
+    },
+    "roles": {
+      "admin": "Administrator",
+      "staff": "Team",
+      "user": "Kunde"
+    },
+    "status": {
+      "confirmed": "Bestätigt",
+      "unconfirmed": "Unbestätigt",
+      "locked": "Gesperrt"
+    },
+    "table": {
+      "name": "Name",
+      "email": "E-Mail",
+      "role": "Rolle",
+      "status": "Status",
+      "createdAt": "Erstellt",
+      "actions": "Aktionen"
+    },
+    "detail": {
+      "phone": "Telefon",
+      "company": "Unternehmen",
+      "signInCount": "Anmeldungen",
+      "lastSignIn": "Letzte Anmeldung"
+    }
+  },
+  "impersonation": {
+    "banner": "Sie sind als {{name}} angemeldet.",
+    "stop": "Zurück zu meinem Admin-Konto"
   }
 }

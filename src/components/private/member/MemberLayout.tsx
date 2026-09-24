@@ -20,6 +20,7 @@ import {
   BrainIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  EyeIcon,
 } from '@icons';
 
 import { useAuth } from '@/components/providers/AuthProvider';
@@ -32,7 +33,7 @@ export function MemberLayout() {
   const { t }    = useTranslation('member');
   const { t: tA } = useTranslation('admin');
   const { i18n } = useTranslation();
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, isAdmin, signOut, impersonatingAdmin, stopImpersonating } = useAuth();
 
   const [collapsed, setCollapsed]       = useState(true);
   const [sidebarHover, setSidebarHover] = useState(false);
@@ -92,6 +93,17 @@ export function MemberLayout() {
       data-collapsed={collapsed ? 'true' : 'false'}
       data-sidebar-expanded={sidebarExpanded ? 'true' : 'false'}
     >
+
+      {/* ── Impersonation banner ── */}
+      {impersonatingAdmin && (
+        <div className="dash-impersonation-banner">
+          <EyeIcon size={14} />
+          <span>{tA('impersonation.banner', { name: displayName || user?.email })}</span>
+          <button type="button" className="dash-impersonation-banner__btn" onClick={stopImpersonating}>
+            {tA('impersonation.stop')}
+          </button>
+        </div>
+      )}
 
       {/* ── Top bar ── */}
       <header className="dash-topbar">

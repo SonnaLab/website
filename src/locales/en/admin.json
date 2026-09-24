@@ -352,7 +352,56 @@
   },
   "users": {
     "title": "Users",
-    "subtitle": "Manage accounts and roles.",
-    "empty": "No users to display."
+    "subtitle": "Account and role management.",
+    "empty": "No users to display.",
+    "searchPlaceholder": "Search by name or email…",
+    "allRoles": "All roles",
+    "impersonate": "Sign in as this user",
+    "cantImpersonateSelf": "You are already signed in with this account",
+    "cantImpersonateAdmin": "Cannot impersonate an administrator account",
+    "impersonateSuccess": "Signed in as {{name}}",
+    "impersonateError": "Could not sign in as this user",
+    "tabs": {
+      "overview": "Overview",
+      "list": "Users"
+    },
+    "kpis": {
+      "total": "Users",
+      "admins": "Admins",
+      "staff": "Staff",
+      "clients": "Clients",
+      "confirmed": "Confirmed",
+      "locked": "Locked",
+      "new7d": "New (7d)",
+      "new30d": "New (30d)"
+    },
+    "roles": {
+      "admin": "Admin",
+      "staff": "Staff",
+      "user": "Client"
+    },
+    "status": {
+      "confirmed": "Confirmed",
+      "unconfirmed": "Unconfirmed",
+      "locked": "Locked"
+    },
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "createdAt": "Created",
+      "actions": "Actions"
+    },
+    "detail": {
+      "phone": "Phone",
+      "company": "Company",
+      "signInCount": "Sign-ins",
+      "lastSignIn": "Last sign-in"
+    }
+  },
+  "impersonation": {
+    "banner": "You are signed in as {{name}}.",
+    "stop": "Back to my admin account"
   }
 }

@@ -353,6 +353,55 @@
   "users": {
     "title": "Usuarios",
     "subtitle": "Gestión de cuentas y roles.",
-    "empty": "Sin usuarios para mostrar."
+    "empty": "No hay usuarios que mostrar.",
+    "searchPlaceholder": "Buscar por nombre o email…",
+    "allRoles": "Todos los roles",
+    "impersonate": "Iniciar sesión como este usuario",
+    "cantImpersonateSelf": "Ya has iniciado sesión con esta cuenta",
+    "cantImpersonateAdmin": "No se puede suplantar a un administrador",
+    "impersonateSuccess": "Sesión iniciada como {{name}}",
+    "impersonateError": "No se pudo iniciar sesión como este usuario",
+    "tabs": {
+      "overview": "Resumen",
+      "list": "Usuarios"
+    },
+    "kpis": {
+      "total": "Usuarios",
+      "admins": "Administradores",
+      "staff": "Equipo",
+      "clients": "Clientes",
+      "confirmed": "Confirmados",
+      "locked": "Bloqueados",
+      "new7d": "Nuevos (7d)",
+      "new30d": "Nuevos (30d)"
+    },
+    "roles": {
+      "admin": "Administrador",
+      "staff": "Equipo",
+      "user": "Cliente"
+    },
+    "status": {
+      "confirmed": "Confirmado",
+      "unconfirmed": "No confirmado",
+      "locked": "Bloqueado"
+    },
+    "table": {
+      "name": "Nombre",
+      "email": "Email",
+      "role": "Rol",
+      "status": "Estado",
+      "createdAt": "Creado",
+      "actions": "Acciones"
+    },
+    "detail": {
+      "phone": "Teléfono",
+      "company": "Empresa",
+      "signInCount": "Inicios de sesión",
+      "lastSignIn": "Último acceso"
+    }
+  },
+  "impersonation": {
+    "banner": "Has iniciado sesión como {{name}}.",
+    "stop": "Volver a mi cuenta de admin"
   }
 }
