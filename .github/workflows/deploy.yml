@@ -3,16 +3,41 @@ name: Deploy
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+
+# One deploy at a time: a second push waits instead of building over it.
+concurrency:
+  group: deploy-sonnalab-com
+  cancel-in-progress: false
 
 jobs:
   deploy:
-    runs-on: [self-hosted, linux]
-    timeout-minutes: 15
+    # GitHub-hosted runner + SSH, like lecolt.com and lebocheur.com. The
+    # [self-hosted, linux] runner this workflow targeted since 2026-07-08 was
+    # never registered for SonnaLab: every push sat queued, then got
+    # cancelled. (GitHub-hosted runners had been refused in June because the
+    # account was locked for billing.) The build still runs on the VPS, so
+    # scripts/regen-sitemap.sh and build-ssr/ stay in sync with what is served.
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
-      - name: Pull & build
-        working-directory: /var/www/sonnalab.com
+      - name: Pull & build on the VPS
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          SSH_HOST: ${{ secrets.DEPLOY_SSH_HOST }}
+          SSH_PORT: ${{ secrets.DEPLOY_SSH_PORT }}
+          SSH_USER: ${{ secrets.DEPLOY_SSH_USER }}
         run: |
-          git pull origin main
-          npm ci
-          npm run build
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" \
+            -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 \
+            -o ServerAliveInterval=15 -o ServerAliveCountMax=8 \
+            "$SSH_USER@$SSH_HOST" 'set -e
+              cd /var/www/sonnalab.com
+              git pull --ff-only origin main
+              npm ci
+              npm run build
+              echo "sonnalab.com deployed $(git log --oneline -1) — $(date -u "+%Y-%m-%d %H:%M UTC")"'
