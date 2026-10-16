@@ -62,12 +62,6 @@ export function partyPhone(c: LetterheadCompany | null | undefined): string | nu
   return present(c?.referent_phone) ? c!.referent_phone!.trim() : null;
 }
 
-/** « téléphone | e-mail » sous le logo de l'émetteur. */
-export function issuerContact(c: LetterheadCompany | null | undefined): string {
-  if (!c) return '';
-  return join([partyPhone(c), c.contact_email], ' | ');
-}
-
 /**
  * Numéro de TVA intracommunautaire, ou null : la ligne au-dessus du pied de
  * page affiche alors « TVA non applicable – article 293 B du CGI ».

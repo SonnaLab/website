@@ -646,7 +646,7 @@
     "sections": {
       "header": {
         "title": "Header",
-        "hint": "Logo, phone and email at the top left; the recipient client appears on the right."
+        "hint": "Logo, then email and phone at the top left; the recipient client appears on the right."
       },
       "footer": {
         "title": "Footer",

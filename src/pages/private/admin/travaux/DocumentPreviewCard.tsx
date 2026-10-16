@@ -135,10 +135,10 @@ export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
             {vat ? t('travaux.document.vatNumber', { number: vat }) : t('travaux.document.vatMention')}
           </p>
           <div className="trv-doc__footer-lines">
-            <p className="trv-doc__url">{footerWebsite(data.issuer)}</p>
-            {address && <p className="trv-doc__legal">{address}</p>}
-            <p className="trv-doc__slogan">{footerSlogan(data.issuer)}</p>
-            {legal && <p className="trv-doc__legal">{legal}</p>}
+            <p>{footerWebsite(data.issuer)}</p>
+            {address && <p>{address}</p>}
+            <p>{footerSlogan(data.issuer)}</p>
+            {legal && <p>{legal}</p>}
           </div>
         </div>
       </div>

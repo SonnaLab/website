@@ -646,7 +646,7 @@
     "sections": {
       "header": {
         "title": "Kopfzeile",
-        "hint": "Logo, Telefon und E-Mail oben links; der empfangende Kunde erscheint rechts."
+        "hint": "Logo, darunter E-Mail und Telefon oben links; der empfangende Kunde erscheint rechts."
       },
       "footer": {
         "title": "Fußzeile",

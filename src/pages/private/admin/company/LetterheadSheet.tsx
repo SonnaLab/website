@@ -4,7 +4,6 @@ import {
   footerAddress,
   footerSlogan,
   footerWebsite,
-  issuerContact,
   legalLine,
   partyPhone,
   vatNumber,
@@ -22,7 +21,7 @@ export interface LetterheadClient extends LetterheadCompany {
 /**
  * Page A4 de papier à en-tête : réplique de Travaux::Letterhead (PDF) aux
  * mêmes cotes — marges 20 mm / 15 mm, pied de page ancré à 8 mm du bord.
- * En-tête : émetteur à gauche (logo, « tél | e-mail »), client à droite.
+ * En-tête : logo, e-mail puis téléphone — émetteur à gauche, client à droite.
  * Pied : mention TVA, puis site web, adresse, « Nom — slogan », ligne légale.
  * Le corps est schématisé : chaque document (devis, facture…) le remplit.
  */
@@ -38,7 +37,6 @@ export function LetterheadSheet({
   zone: LetterheadZone;
 }) {
   const { t } = useTranslation('admin');
-  const contact = issuerContact(company);
   const address = footerAddress(company);
   const legal = legalLine(company);
   const bank = bankLine(company);
@@ -54,7 +52,8 @@ export function LetterheadSheet({
           ) : (
             <p className="co-sheet__name">{company.name || '—'}</p>
           )}
-          {contact && <p className="co-sheet__meta">{contact}</p>}
+          {company.contact_email && <p className="co-sheet__meta">{company.contact_email}</p>}
+          {partyPhone(company) && <p className="co-sheet__meta">{partyPhone(company)}</p>}
         </div>
 
         {client ? (
@@ -64,14 +63,14 @@ export function LetterheadSheet({
             ) : (
               <p className="co-sheet__name">{client.name || '—'}</p>
             )}
-            {partyPhone(client) && <p className="co-sheet__meta">{partyPhone(client)}</p>}
             {client.contact_email && <p className="co-sheet__meta">{client.contact_email}</p>}
+            {partyPhone(client) && <p className="co-sheet__meta">{partyPhone(client)}</p>}
           </div>
         ) : (
           <div className="co-sheet__party co-sheet__party--right co-sheet__party--placeholder">
             <span className="co-sheet__logo-slot">{t('company.preview.clientLogo')}</span>
-            <p className="co-sheet__meta">{t('company.preview.clientPhone')}</p>
             <p className="co-sheet__meta">{t('company.preview.clientEmail')}</p>
+            <p className="co-sheet__meta">{t('company.preview.clientPhone')}</p>
           </div>
         )}
       </header>
@@ -98,10 +97,10 @@ export function LetterheadSheet({
           {vat ? t('travaux.document.vatNumber', { number: vat }) : t('travaux.document.vatMention')}
         </p>
         <div className={`co-sheet__foot-lines ${zoneClass('footer')}`}>
-          <p className="co-sheet__url">{footerWebsite(company)}</p>
-          {address && <p className="co-sheet__address">{address}</p>}
-          <p className="co-sheet__slogan">{footerSlogan(company)}</p>
-          {legal && <p className="co-sheet__legal">{legal}</p>}
+          <p>{footerWebsite(company)}</p>
+          {address && <p>{address}</p>}
+          <p>{footerSlogan(company)}</p>
+          {legal && <p>{legal}</p>}
         </div>
       </footer>
     </div>

@@ -646,7 +646,7 @@
     "sections": {
       "header": {
         "title": "Encabezado",
-        "hint": "Logo, teléfono y email arriba a la izquierda; el cliente destinatario aparece a la derecha."
+        "hint": "Logo y, debajo, email y teléfono arriba a la izquierda; el cliente destinatario aparece a la derecha."
       },
       "footer": {
         "title": "Pie de página",

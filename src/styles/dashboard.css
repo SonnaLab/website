@@ -5398,16 +5398,15 @@
 .trv-doc__mentions p { margin: 0; }
 .trv-doc__footer { margin-top: auto; display: flex; flex-direction: column; gap: 12px; padding-top: 24px; text-align: center; }
 .trv-doc__schedule { margin: 0; font-size: 14px; color: #737373; }
-.trv-doc__slogan { margin: 0; font-size: 12px; font-style: italic; color: #a3a3a3; }
-.trv-doc__url { margin: 2px 0 0; font-size: 12px; font-weight: 700; color: #26348b; text-decoration: underline; }
 
 /* ── Menu avatar : séparateur avant la déconnexion ── */
 .dash-avatar-menu-sep { height: 1px; margin: 4px 0; background: #f0f0f0; }
 
-/* Pied de page de l'aperçu devis/facture (fiche émetteur) : TVA, puis site, adresse, slogan, ligne légale */
-.trv-doc__legal { margin: 2px 0 0; font-size: 11px; color: #737373; }
-.trv-doc__vat { margin: 0 0 8px; font-size: 11px; color: #a3a3a3; }
+/* Pied de page de l'aperçu devis/facture (fiche émetteur) : TVA, puis site, adresse, slogan, ligne légale — même police, taille, graisse, en noir */
+.trv-doc__vat { margin: 0 0 8px; }
 .trv-doc__footer-lines { padding-top: 6px; border-top: 1px solid #e5e5e5; }
+.trv-doc__footer-lines p, .trv-doc__vat { font-family: Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 400; font-style: normal; line-height: 1.4; color: #171717; text-decoration: none; }
+.trv-doc__footer-lines p { margin: 0; }
 
 /* ══ Entreprise (fiche émetteur) — aperçu A4 60 % · champs 40 % ══ */
 .co-layout { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 20px; align-items: start; }
@@ -5451,13 +5450,10 @@
 .co-sheet__table span:last-child { border-bottom: 0; }
 .co-sheet__payment { margin: 28px 0 0; padding: 4px 0; text-align: center; font-size: 8px; color: #a3a3a3; }
 .co-sheet__foot { position: absolute; left: 57px; right: 57px; bottom: 30px; text-align: center; }
-.co-sheet__foot p { margin: 0; line-height: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.co-sheet__foot .co-sheet__vat { margin-bottom: 8px; font-size: 8px; color: #a3a3a3; }
+/* Pied de page : mention TVA + 4 lignes, même police, taille et graisse, en noir (cf. Letterhead::FOOTER_SIZE). */
+.co-sheet__foot p { margin: 0; font-family: Helvetica, Arial, sans-serif; font-size: 8.5px; font-weight: 400; font-style: normal; line-height: 13px; color: #171717; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.co-sheet__foot .co-sheet__vat { margin-bottom: 8px; }
 .co-sheet__foot-lines { padding-top: 6px; border-top: 1px solid #e5e5e5; }
-.co-sheet__url { font-size: 9px; font-weight: 700; color: #26348b; text-decoration: underline; }
-.co-sheet__address { font-size: 8.5px; color: #737373; }
-.co-sheet__slogan { font-size: 9px; font-style: italic; color: #a3a3a3; }
-.co-sheet__legal { font-size: 8px; color: #737373; }
 
 /* Profil */
 .co-profile { max-width: 720px; }

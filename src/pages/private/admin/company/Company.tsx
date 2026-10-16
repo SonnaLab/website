@@ -27,8 +27,8 @@ const SECTIONS: { key: string; zone: LetterheadZone; fields: FieldDef[]; logo?: 
   {
     key: 'header', zone: 'header', logo: true, fields: [
       { name: 'name', maxLength: 255, full: true, required: true },
-      { name: 'phone', maxLength: 30, type: 'tel' },
       { name: 'contact_email', maxLength: 255, type: 'email' },
+      { name: 'phone', maxLength: 30, type: 'tel' },
     ],
   },
   {
