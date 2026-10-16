@@ -5372,7 +5372,7 @@
 .trv-a4-zoom span { width: 40px; text-align: center; font-size: 12px; font-weight: 600; color: #6b7280; font-variant-numeric: tabular-nums; }
 
 /* Réplique HTML du PDF devis/facture (gabarit app/services/travaux/devis_pdf.rb) */
-.trv-doc { display: flex; flex-direction: column; min-height: 100%; padding: 32px; background: #ffffff; color: #171717; font-size: 14px; box-sizing: border-box; }
+.trv-doc { display: flex; flex-direction: column; min-height: 100%; padding: 32px; background: #ffffff; color: #171717; font-family: Helvetica, Arial, sans-serif; font-size: 14px; box-sizing: border-box; }
 .trv-doc__parties { margin-top: 56px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 .trv-doc__party { display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 0; }
 .trv-doc__label { margin: 0 0 6px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #a3a3a3; }
@@ -5405,7 +5405,7 @@
 /* Pied de page de l'aperçu devis/facture (fiche émetteur) : TVA, puis site, adresse, slogan, ligne légale — même police, taille, graisse, en noir */
 .trv-doc__vat { margin: 0 0 8px; }
 .trv-doc__footer-lines { padding-top: 6px; border-top: 1px solid #e5e5e5; }
-.trv-doc__footer-lines p, .trv-doc__vat { font-family: Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 400; font-style: normal; line-height: 1.4; color: #171717; text-decoration: none; }
+.trv-doc__footer-lines p, .trv-doc__vat { font-size: 11px; font-weight: 400; font-style: normal; line-height: 1.4; color: #171717; text-decoration: none; }
 .trv-doc__footer-lines p { margin: 0; }
 
 /* ══ Entreprise (fiche émetteur) — aperçu A4 60 % · champs 40 % ══ */
@@ -5451,7 +5451,7 @@
 .co-sheet__payment { margin: 28px 0 0; padding: 4px 0; text-align: center; font-size: 8px; color: #a3a3a3; }
 .co-sheet__foot { position: absolute; left: 57px; right: 57px; bottom: 30px; text-align: center; }
 /* Pied de page : mention TVA + 4 lignes, même police, taille et graisse, en noir (cf. Letterhead::FOOTER_SIZE). */
-.co-sheet__foot p { margin: 0; font-family: Helvetica, Arial, sans-serif; font-size: 8.5px; font-weight: 400; font-style: normal; line-height: 13px; color: #171717; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.co-sheet__foot p { margin: 0; font-size: 8.5px; font-weight: 400; font-style: normal; line-height: 13px; color: #171717; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .co-sheet__foot .co-sheet__vat { margin-bottom: 8px; }
 .co-sheet__foot-lines { padding-top: 6px; border-top: 1px solid #e5e5e5; }
 
