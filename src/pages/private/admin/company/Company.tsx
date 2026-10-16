@@ -151,12 +151,12 @@ export default function Company() {
 
   return (
     <div className="space-y-6">
-      <header className="trk-header">
-        <div className="trk-header__title">
-          <HotelIcon size={22} className="trk-header__icon" />
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">{t('company.title')}</h1>
+      <header className="admin-news__header">
+        <div className="admin-news__header-title">
+          <HotelIcon size={22} />
+          <h1>{t('company.title')}</h1>
         </div>
-        <p className="mt-1 text-muted-foreground text-sm">{t('company.subtitle')}</p>
+        <p className="admin-news__header-sub">{t('company.subtitle')}</p>
       </header>
 
       <div className="co-layout">
