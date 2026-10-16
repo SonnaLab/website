@@ -488,6 +488,20 @@
         "contact": "Contact",
         "referent": "Référent",
         "members": "Comptes membres"
+      },
+      "lookup": {
+        "companyLabel": "Rechercher dans l'annuaire des entreprises",
+        "companyPlaceholder": "Nom, SIREN ou SIRET",
+        "companyHint": "Remplit le nom, le SIRET et l'adresse (entreprises françaises). Saisie manuelle possible ci-dessous.",
+        "addressPlaceholder": "Commencez à taper l'adresse…",
+        "loading": "Recherche…",
+        "empty": "Aucun résultat",
+        "error": "Annuaire indisponible — saisissez les informations à la main.",
+        "closed": "Fermé",
+        "headOffice": "Siège",
+        "imported": "Importé depuis l'annuaire : {{name}}. Vérifiez les coordonnées à l'étape suivante.",
+        "sourceCompanies": "Source : annuaire des entreprises (data.gouv.fr)",
+        "sourceAddresses": "Source : Base Adresse Nationale (Géoplateforme IGN)"
       }
     },
     "tabs": {

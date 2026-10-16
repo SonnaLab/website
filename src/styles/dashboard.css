@@ -5478,3 +5478,16 @@
 .trv-recap dt { color: #6b7280; }
 .trv-recap dd { margin: 0; color: #111111; overflow-wrap: anywhere; }
 @media (max-width: 560px) { .trv-recap__row { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
+
+/* Autocomplétion annuaire — entreprises / adresses (travaux/LookupInput.tsx) */
+.trv-lookup { position: relative; }
+.trv-lookup__panel { position: absolute; z-index: 30; top: calc(100% + 4px); left: 0; right: 0; overflow: hidden; border: 1px solid #e2e8f0; border-radius: 8px; background: #ffffff; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12); }
+.trv-lookup__list { max-height: 260px; margin: 0; padding: 4px; overflow-y: auto; list-style: none; }
+.trv-lookup__item { display: flex; flex-direction: column; gap: 1px; padding: 7px 10px; border-radius: 6px; cursor: pointer; }
+.trv-lookup__item--active { background: #f3f4f6; }
+.trv-lookup__title { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #111111; }
+.trv-lookup__meta { font-size: 12px; color: #6b7280; overflow-wrap: anywhere; }
+.trv-lookup__badge { padding: 1px 6px; border-radius: 999px; background: #fef2f2; color: #dc2626; font-size: 10px; font-weight: 600; }
+.trv-lookup__status { padding: 8px 10px; font-size: 12px; color: #6b7280; }
+.trv-lookup__source { margin: 0; padding: 6px 12px; border-top: 1px solid #f0f0f0; font-size: 11px; color: #9ca3af; }
+.trv-lookup__imported { margin: 0; font-size: 12px; color: #047857; }

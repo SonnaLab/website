@@ -487,6 +487,20 @@
         "contact": "Contatto",
         "referent": "Referente",
         "members": "Account membri"
+      },
+      "lookup": {
+        "companyLabel": "Cerca nel registro delle imprese francese",
+        "companyPlaceholder": "Nome, SIREN o SIRET",
+        "companyHint": "Compila nome, SIRET e indirizzo (imprese francesi). Puoi comunque inserirli qui sotto.",
+        "addressPlaceholder": "Inizia a digitare l'indirizzo…",
+        "loading": "Ricerca…",
+        "empty": "Nessun risultato",
+        "error": "Registro non disponibile: inserisci i dati manualmente.",
+        "closed": "Chiusa",
+        "headOffice": "Sede",
+        "imported": "Importato dal registro: {{name}}. Verifica i recapiti al passaggio successivo.",
+        "sourceCompanies": "Fonte: annuaire des entreprises (data.gouv.fr)",
+        "sourceAddresses": "Fonte: Base Adresse Nationale (Géoplateforme IGN)"
       }
     },
     "tabs": {

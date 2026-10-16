@@ -6,7 +6,15 @@ import { StepperModal } from '@/components/common/StepperModal';
 import { apiAssetUrl, apiService, type AdminUser } from '@/services/api';
 import type { TravauxClient, TravauxPayload } from '@/types/travaux';
 import { addressLines } from '@/lib/letterhead';
+import {
+  normalizeCompanyAddress,
+  searchAddresses,
+  searchCompanies,
+  type AddressSuggestion,
+  type CompanySuggestion,
+} from '@/lib/publicDirectories';
 import { FileDropzone } from './FileDropzone';
+import { LookupInput } from './LookupInput';
 import { apiErrorMessage } from './format';
 
 const STEPS = ['company', 'contact', 'referent', 'access'] as const;
@@ -18,6 +26,8 @@ const STEPS = ['company', 'contact', 'referent', 'access'] as const;
  *
  * Création : assistant en 4 étapes (StepperModal) — entreprise, coordonnées,
  * référent, accès membres + récapitulatif. Édition : formulaire sur une page.
+ * Nom, SIRET et adresse se pré-remplissent depuis l'annuaire des entreprises,
+ * l'adresse s'autocomplète (Base Adresse Nationale) — voir lib/publicDirectories.
  */
 export function ClientFormModal({
   open,
@@ -54,10 +64,15 @@ export function ClientFormModal({
   const [members, setMembers] = useState<AdminUser[]>([]);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [companyQuery, setCompanyQuery] = useState('');
+  const [imported, setImported] = useState<string | null>(null);
+  const normalizing = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (!open) return;
     setStep(0);
+    setCompanyQuery('');
+    setImported(null);
     setName(client?.name ?? '');
     setSiret(client?.siret ?? '');
     setContactEmail(client?.contact_email ?? '');
@@ -140,14 +155,81 @@ export function ClientFormModal({
     if (isLastStep) { if (!saving) save(); } else goNext();
   }
 
+  const lookupLabels = {
+    loading: t('travaux.clients.lookup.loading'),
+    empty: t('travaux.clients.lookup.empty'),
+    error: t('travaux.clients.lookup.error'),
+  };
+
+  // Fiche de l'annuaire → nom, SIRET, adresse. L'adresse publiée (capitales)
+  // est ensuite remplacée par sa graphie BAN, sauf si on l'a modifiée entre-temps.
+  function importCompany(c: CompanySuggestion) {
+    setName(c.name);
+    setSiret(c.siret ?? c.siren);
+    setAddressLine1(c.street);
+    setPostalCode(c.postal_code);
+    setCity(c.city);
+    setCountry(c.country);
+    setCompanyQuery('');
+    setImported(c.name);
+    normalizing.current?.abort();
+    const controller = new AbortController();
+    normalizing.current = controller;
+    normalizeCompanyAddress(c, controller.signal)
+      .then((a) => {
+        setAddressLine1((cur) => (cur === c.street ? a.street : cur));
+        setPostalCode((cur) => (cur === c.postal_code ? a.postal_code : cur));
+        setCity((cur) => (cur === c.city ? a.city : cur));
+      })
+      .catch(() => { /* adresse publiée conservée */ });
+  }
+
+  function pickAddress(a: AddressSuggestion) {
+    setAddressLine1(a.street);
+    setPostalCode(a.postal_code);
+    setCity(a.city);
+    setCountry('France');
+  }
+
   const toggleMember = (id: string) =>
     setMemberIds((ids) => (ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id]));
 
   const companyFields = (
     <>
       <div className="adm-form__field">
+        <label className="adm-form__label" htmlFor="trv-client-lookup">{t('travaux.clients.lookup.companyLabel')}</label>
+        <LookupInput
+          id="trv-client-lookup"
+          value={companyQuery}
+          onChange={setCompanyQuery}
+          search={searchCompanies}
+          onPick={importCompany}
+          itemKey={(c) => c.key}
+          placeholder={t('travaux.clients.lookup.companyPlaceholder')}
+          autoFocus={!isEdit}
+          labels={lookupLabels}
+          source={t('travaux.clients.lookup.sourceCompanies')}
+          renderItem={(c) => (
+            <>
+              <span className="trv-lookup__title">
+                {c.name}
+                {c.closed && <span className="trv-lookup__badge">{t('travaux.clients.lookup.closed')}</span>}
+              </span>
+              <span className="trv-lookup__meta">
+                {c.siret ? `SIRET ${c.siret}` : `SIREN ${c.siren}`}
+                {c.isHeadOffice ? ` · ${t('travaux.clients.lookup.headOffice')}` : ''}
+              </span>
+              {c.address && <span className="trv-lookup__meta">{c.address}</span>}
+            </>
+          )}
+        />
+        {imported
+          ? <p className="trv-lookup__imported">{t('travaux.clients.lookup.imported', { name: imported })}</p>
+          : <p className="trv-muted">{t('travaux.clients.lookup.companyHint')}</p>}
+      </div>
+      <div className="adm-form__field">
         <label className="adm-form__label" htmlFor="trv-client-name">{t('travaux.clients.fields.name')} *</label>
-        <input id="trv-client-name" className="adm-input" required maxLength={255} autoFocus={!isEdit} value={name} onChange={(e) => setName(e.target.value)} />
+        <input id="trv-client-name" className="adm-input" required maxLength={255} value={name} onChange={(e) => setName(e.target.value)} />
       </div>
       <div className="adm-form__field">
         <label className="adm-form__label" htmlFor="trv-client-siret">{t('travaux.clients.fields.siret')}</label>
@@ -185,7 +267,24 @@ export function ClientFormModal({
       </div>
       <div className="adm-form__field">
         <label className="adm-form__label" htmlFor="trv-client-address">{t('travaux.clients.fields.address')}</label>
-        <input id="trv-client-address" className="adm-input" maxLength={255} value={addressLine1} onChange={(e) => setAddressLine1(e.target.value)} />
+        <LookupInput
+          id="trv-client-address"
+          maxLength={255}
+          value={addressLine1}
+          onChange={setAddressLine1}
+          search={searchAddresses}
+          onPick={pickAddress}
+          itemKey={(a) => a.key}
+          placeholder={t('travaux.clients.lookup.addressPlaceholder')}
+          labels={lookupLabels}
+          source={t('travaux.clients.lookup.sourceAddresses')}
+          renderItem={(a) => (
+            <>
+              <span className="trv-lookup__title">{a.label}</span>
+              <span className="trv-lookup__meta">{a.context}</span>
+            </>
+          )}
+        />
       </div>
       <div className="adm-form__row">
         <div className="adm-form__field">
