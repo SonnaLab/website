@@ -529,3 +529,81 @@ export function CheckCircleIcon(p: IconProps) {
     </svg>
   );
 }
+
+/* Plot de chantier — icône du menu Travaux (lucide TrafficCone). */
+export function TrafficConeIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <path d="M9.3 6.2a4.55 4.55 0 0 0 5.4 0" />
+      <path d="M7.9 10.7c.9.8 2.4 1.3 4.1 1.3s3.2-.5 4.1-1.3" />
+      <path d="M13.9 3.5a1.93 1.93 0 0 0-3.8-.1l-3 10c-.1.2-.1.4-.1.6 0 1.7 2.2 3 5 3s5-1.3 5-3c0-.2 0-.4-.1-.5Z" />
+      <path d="m7.5 12.2-4.7 2.7c-.5.3-.8.7-.8 1.1s.3.8.8 1.1l7.6 4.5c.9.5 2.1.5 3 0l7.6-4.5c.7-.3 1-.7 1-1.1s-.3-.8-.8-1.1l-4.7-2.8" />
+    </svg>
+  );
+}
+
+export function DownloadIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" x2="12" y1="15" y2="3" />
+    </svg>
+  );
+}
+
+export function UploadIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="17 8 12 3 7 8" />
+      <line x1="12" x2="12" y1="3" y2="15" />
+    </svg>
+  );
+}
+
+export function WalletIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1" />
+      <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" />
+    </svg>
+  );
+}
+
+export function FileSignatureIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <path d="m18 5-2.414-2.414A2 2 0 0 0 14.172 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2" />
+      <path d="M21.378 12.626a1 1 0 0 0-3.004-3.004l-4.01 4.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z" />
+      <path d="M8 18h1" />
+    </svg>
+  );
+}
+
+export function KanbanIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <path d="M6 5v11" />
+      <path d="M12 5v6" />
+      <path d="M18 5v14" />
+    </svg>
+  );
+}
+
+export function PaperclipIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <path d="M13.234 20.252 21 12.3" />
+      <path d="m16 6-8.414 8.586a2 2 0 0 0 0 2.828 2 2 0 0 0 2.828 0l8.414-8.586a4 4 0 0 0 0-5.656 4 4 0 0 0-5.656 0l-8.415 8.585a6 6 0 1 0 8.486 8.486" />
+    </svg>
+  );
+}
+
+export function MinusIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <path d="M5 12h14" />
+    </svg>
+  );
+}

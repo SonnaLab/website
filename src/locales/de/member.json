@@ -135,6 +135,17 @@
     "view": "Anzeigen",
     "download": "PDF",
     "noQuotes": "Keine Angebote.",
-    "noInvoices": "Keine Rechnungen."
+    "noInvoices": "Keine Rechnungen.",
+    "label": "Bezeichnung",
+    "loadError": "Deine Dokumente konnten nicht geladen werden.",
+    "downloadError": "PDF konnte nicht heruntergeladen werden.",
+    "statuses": {
+      "draft": "Entwurf",
+      "sent": "Gesendet",
+      "accepted": "Angenommen",
+      "paid": "Bezahlt",
+      "overdue": "Überfällig",
+      "cancelled": "Storniert"
+    }
   }
 }

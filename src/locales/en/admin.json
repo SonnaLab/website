@@ -9,7 +9,8 @@
     "users": "Users",
     "lesankofa": "Lesankofa",
     "billing": "Billing",
-    "projects": "Projects"
+    "projects": "Projects",
+    "travaux": "Work"
   },
   "dashboard": {
     "title": "Welcome, =={{name}}==",
@@ -403,5 +404,227 @@
   "impersonation": {
     "banner": "You are signed in as {{name}}.",
     "stop": "Back to my admin account"
+  },
+  "travaux": {
+    "title": "Work",
+    "subtitle": "Clients, deliverables, tasks, quotes/invoices, contracts and payments.",
+    "common": {
+      "view": "View",
+      "title": "Title",
+      "description": "Description",
+      "status": "Status",
+      "amount": "Amount",
+      "none": "None",
+      "confirmDelete": "Confirm deletion?",
+      "back": "Clients",
+      "removeFile": "Remove file"
+    },
+    "clients": {
+      "search": "Search a client…",
+      "new": "New client",
+      "edit": "Edit client",
+      "empty": "No clients yet.",
+      "loadError": "Could not load clients.",
+      "issuer": "Issuer",
+      "issuerTitle": "Quote issuer (SonnaLab)",
+      "issuerHint": "This information appears in the \"Issued by\" block of every quote and invoice.",
+      "saved": "Client saved.",
+      "deleted": "Client deleted.",
+      "deleteBlocked": "This client cannot be deleted: it still has projects or documents.",
+      "dropLogo": "Drop the logo here",
+      "dropLogoHint": "PNG or JPG (shown on PDFs)",
+      "table": {
+        "client": "Client",
+        "referent": "Contact",
+        "projects": "Projects",
+        "inProgress": "Ongoing deliverables",
+        "invoiced": "Invoiced",
+        "paid": "Collected",
+        "actions": "Actions"
+      },
+      "actions": {
+        "view": "View details",
+        "travaux": "Open work",
+        "edit": "Edit"
+      },
+      "fields": {
+        "name": "Company name",
+        "siret": "SIRET",
+        "contactEmail": "Contact email",
+        "referentFirstName": "Contact first name",
+        "referentLastName": "Contact last name",
+        "referentEmail": "Contact email",
+        "referentPhone": "Contact phone",
+        "logo": "Logo",
+        "members": "Linked member accounts",
+        "membersHint": "These accounts will see this client's projects and quotes/invoices (drafts excluded) in their area.",
+        "noMembers": "No member account (user role) available."
+      },
+      "detail": {
+        "projects": "Projects",
+        "members": "Member accounts",
+        "noProjects": "No projects.",
+        "noMembers": "No linked account.",
+        "referent": "Contact"
+      }
+    },
+    "tabs": {
+      "objectives": "Deliverables",
+      "tracking": "Tasks",
+      "invoices": "Invoices",
+      "contracts": "Contracts",
+      "payments": "Payments"
+    },
+    "projects": {
+      "new": "New project",
+      "edit": "Edit project",
+      "name": "Project name",
+      "hint": "One column per client project.",
+      "empty": "No projects: create one to attach deliverables to it.",
+      "noObjectives": "No deliverables.",
+      "deleteBlocked": "This project cannot be deleted: it still has deliverables."
+    },
+    "objectives": {
+      "new": "New deliverable",
+      "project": "Project",
+      "format": "Format",
+      "formats": {
+        "web": "Web",
+        "mobile": "Mobile"
+      },
+      "statuses": {
+        "planned": "Planned",
+        "in_progress": "In progress",
+        "done": "Delivered",
+        "at_risk": "At risk"
+      },
+      "progress": "Progress",
+      "noTasks": "No linked tasks.",
+      "dueDate": "Due date",
+      "archive": "Done",
+      "generateDevis": "Generate a quote",
+      "updateDevis": "Update the quote",
+      "generateDevisNoScore": "No scored task on this deliverable (or the due date has passed): score the tasks (1-5) to compute the quote.",
+      "deleteBlocked": "This deliverable has linked tasks and cannot be deleted. Mark it as done instead.",
+      "needProject": "Create a project for this client first."
+    },
+    "tracking": {
+      "new": "New task",
+      "objective": "Deliverable",
+      "noObjective": "No deliverable",
+      "column": "Column",
+      "score": "Effort score (1-5)",
+      "scoreHint": "e.g. 2.5",
+      "priority": "Priority",
+      "priorities": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High",
+        "urgent": "Urgent"
+      },
+      "columns": {
+        "todo": "To do",
+        "in_progress": "In progress",
+        "review": "In review",
+        "done": "Done"
+      }
+    },
+    "invoices": {
+      "new": "New quote",
+      "empty": "No quotes or invoices.",
+      "kind": "Type",
+      "kinds": {
+        "quote": "Quote",
+        "invoice": "Invoice"
+      },
+      "statuses": {
+        "draft": "Draft",
+        "sent": "Sent",
+        "accepted": "Accepted",
+        "paid": "Paid",
+        "overdue": "Overdue",
+        "cancelled": "Cancelled"
+      },
+      "number": "Number",
+      "amount": "Amount",
+      "issueDate": "Issue date",
+      "dueDate": "Due date",
+      "dailyRate": "Daily rate (€/day)",
+      "days": "Days",
+      "daysRemaining": "days left",
+      "total": "Total",
+      "document": "Document",
+      "livrable": "Deliverable",
+      "terms": "Terms",
+      "generateInvoice": "Generate the invoice",
+      "generateInvoiceError": "Could not generate the invoice.",
+      "download": "Download",
+      "downloadError": "Could not download the PDF.",
+      "send": "Send",
+      "sendConfirm": "Mark \"{{title}}\" as sent to {{client}}?",
+      "sendHint": "No email is sent: the document simply moves to the \"Sent\" status.",
+      "sentDone": "Document marked as sent.",
+      "created": "Quote created.",
+      "saved": "Document saved.",
+      "deleted": "Document deleted.",
+      "noIssuer": "Issuer not configured: fill in the \"Issuer\" (SonnaLab) record from the clients list so it appears on quotes.",
+      "dropDocument": "Drop a document",
+      "dropDocumentHint": "PDF, image… (optional)",
+      "replaceDocument": "Click to replace"
+    },
+    "contracts": {
+      "new": "New contract",
+      "empty": "No contracts.",
+      "amount": "Amount",
+      "startDate": "Start",
+      "endDate": "End",
+      "file": "File",
+      "notes": "Notes",
+      "statuses": {
+        "draft": "Draft",
+        "active": "Active",
+        "expired": "Expired",
+        "terminated": "Terminated"
+      }
+    },
+    "payments": {
+      "new": "New payment",
+      "empty": "No payments.",
+      "amount": "Amount",
+      "method": "Method",
+      "methods": {
+        "transfer": "Bank transfer",
+        "card": "Card",
+        "check": "Cheque",
+        "other": "Other"
+      },
+      "paidAt": "Payment date",
+      "invoice": "Quote/Invoice",
+      "notes": "Notes",
+      "statuses": {
+        "pending": "Pending",
+        "completed": "Completed",
+        "failed": "Failed"
+      }
+    },
+    "document": {
+      "emittedBy": "Issued by",
+      "attentionOf": "For the attention of",
+      "total": "Total incl. tax",
+      "deliverable": "Deliverable",
+      "phases": "Phases",
+      "description": "Description",
+      "days": "Days",
+      "price": "Price",
+      "vatMention": "VAT not applicable – article 293 B of the French General Tax Code.",
+      "paymentMention": "Payment by bank transfer to the details provided separately.",
+      "depositMentionBefore": "A deposit of",
+      "depositMentionRate": "30%",
+      "depositMentionAfter": "is due upon order, the balance upon delivery.",
+      "schedule": "Schedule",
+      "footer": "SonnaLab — The idea lab that transforms digital.",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out"
+    }
   }
 }

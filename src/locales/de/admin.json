@@ -9,7 +9,8 @@
     "users": "Benutzer",
     "lesankofa": "Lesankofa",
     "billing": "Abrechnung",
-    "projects": "Projekte"
+    "projects": "Projekte",
+    "travaux": "Arbeiten"
   },
   "dashboard": {
     "title": "Willkommen, =={{name}}==",
@@ -403,5 +404,227 @@
   "impersonation": {
     "banner": "Sie sind als {{name}} angemeldet.",
     "stop": "Zurück zu meinem Admin-Konto"
+  },
+  "travaux": {
+    "title": "Arbeiten",
+    "subtitle": "Kunden, Liefergegenstände, Aufgaben, Angebote/Rechnungen, Verträge und Zahlungen.",
+    "common": {
+      "view": "Ansehen",
+      "title": "Titel",
+      "description": "Beschreibung",
+      "status": "Status",
+      "amount": "Betrag",
+      "none": "Keine",
+      "confirmDelete": "Löschen bestätigen?",
+      "back": "Kunden",
+      "removeFile": "Datei entfernen"
+    },
+    "clients": {
+      "search": "Kunden suchen…",
+      "new": "Neuer Kunde",
+      "edit": "Kunde bearbeiten",
+      "empty": "Noch keine Kunden.",
+      "loadError": "Kunden konnten nicht geladen werden.",
+      "issuer": "Aussteller",
+      "issuerTitle": "Angebotsaussteller (SonnaLab)",
+      "issuerHint": "Diese Angaben erscheinen im Block „Ausgestellt von“ jedes Angebots und jeder Rechnung.",
+      "saved": "Kunde gespeichert.",
+      "deleted": "Kunde gelöscht.",
+      "deleteBlocked": "Dieser Kunde kann nicht gelöscht werden: Er hat noch Projekte oder Dokumente.",
+      "dropLogo": "Logo hier ablegen",
+      "dropLogoHint": "PNG oder JPG (erscheint auf den PDFs)",
+      "table": {
+        "client": "Kunde",
+        "referent": "Ansprechpartner",
+        "projects": "Projekte",
+        "inProgress": "Laufende Liefergegenstände",
+        "invoiced": "Fakturiert",
+        "paid": "Eingegangen",
+        "actions": "Aktionen"
+      },
+      "actions": {
+        "view": "Details ansehen",
+        "travaux": "Arbeiten öffnen",
+        "edit": "Bearbeiten"
+      },
+      "fields": {
+        "name": "Firmenname",
+        "siret": "SIRET",
+        "contactEmail": "Kontakt-E-Mail",
+        "referentFirstName": "Vorname des Ansprechpartners",
+        "referentLastName": "Nachname des Ansprechpartners",
+        "referentEmail": "E-Mail des Ansprechpartners",
+        "referentPhone": "Telefon des Ansprechpartners",
+        "logo": "Logo",
+        "members": "Verknüpfte Mitgliedskonten",
+        "membersHint": "Diese Konten sehen die Projekte und Angebote/Rechnungen (ohne Entwürfe) dieses Kunden in ihrem Bereich.",
+        "noMembers": "Kein Mitgliedskonto (Rolle Benutzer) verfügbar."
+      },
+      "detail": {
+        "projects": "Projekte",
+        "members": "Mitgliedskonten",
+        "noProjects": "Keine Projekte.",
+        "noMembers": "Kein verknüpftes Konto.",
+        "referent": "Ansprechpartner"
+      }
+    },
+    "tabs": {
+      "objectives": "Liefergegenstände",
+      "tracking": "Aufgaben",
+      "invoices": "Rechnungen",
+      "contracts": "Verträge",
+      "payments": "Zahlungen"
+    },
+    "projects": {
+      "new": "Neues Projekt",
+      "edit": "Projekt bearbeiten",
+      "name": "Projektname",
+      "hint": "Eine Spalte pro Kundenprojekt.",
+      "empty": "Keine Projekte: Lege eines an, um Liefergegenstände zuzuordnen.",
+      "noObjectives": "Keine Liefergegenstände.",
+      "deleteBlocked": "Dieses Projekt kann nicht gelöscht werden: Es hat noch Liefergegenstände."
+    },
+    "objectives": {
+      "new": "Neuer Liefergegenstand",
+      "project": "Projekt",
+      "format": "Format",
+      "formats": {
+        "web": "Web",
+        "mobile": "Mobile"
+      },
+      "statuses": {
+        "planned": "Geplant",
+        "in_progress": "In Arbeit",
+        "done": "Geliefert",
+        "at_risk": "Gefährdet"
+      },
+      "progress": "Fortschritt",
+      "noTasks": "Keine verknüpften Aufgaben.",
+      "dueDate": "Fälligkeit",
+      "archive": "Erledigt",
+      "generateDevis": "Angebot erstellen",
+      "updateDevis": "Angebot aktualisieren",
+      "generateDevisNoScore": "Keine bewertete Aufgabe für diesen Liefergegenstand (oder Fälligkeit überschritten): Bewerte die Aufgaben (1-5), um das Angebot zu berechnen.",
+      "deleteBlocked": "Dieser Liefergegenstand hat verknüpfte Aufgaben und kann nicht gelöscht werden. Markiere ihn stattdessen als erledigt.",
+      "needProject": "Lege zuerst ein Projekt für diesen Kunden an."
+    },
+    "tracking": {
+      "new": "Neue Aufgabe",
+      "objective": "Liefergegenstand",
+      "noObjective": "Kein Liefergegenstand",
+      "column": "Spalte",
+      "score": "Aufwandsbewertung (1-5)",
+      "scoreHint": "z. B. 2.5",
+      "priority": "Priorität",
+      "priorities": {
+        "low": "Niedrig",
+        "medium": "Mittel",
+        "high": "Hoch",
+        "urgent": "Dringend"
+      },
+      "columns": {
+        "todo": "Zu erledigen",
+        "in_progress": "In Arbeit",
+        "review": "In Prüfung",
+        "done": "Erledigt"
+      }
+    },
+    "invoices": {
+      "new": "Neues Angebot",
+      "empty": "Keine Angebote oder Rechnungen.",
+      "kind": "Typ",
+      "kinds": {
+        "quote": "Angebot",
+        "invoice": "Rechnung"
+      },
+      "statuses": {
+        "draft": "Entwurf",
+        "sent": "Gesendet",
+        "accepted": "Angenommen",
+        "paid": "Bezahlt",
+        "overdue": "Überfällig",
+        "cancelled": "Storniert"
+      },
+      "number": "Nummer",
+      "amount": "Betrag",
+      "issueDate": "Ausstellungsdatum",
+      "dueDate": "Fälligkeit",
+      "dailyRate": "Tagessatz (€/Tag)",
+      "days": "Tage",
+      "daysRemaining": "verbleibende Tage",
+      "total": "Gesamt",
+      "document": "Dokument",
+      "livrable": "Liefergegenstand",
+      "terms": "Bedingungen",
+      "generateInvoice": "Rechnung erstellen",
+      "generateInvoiceError": "Rechnung konnte nicht erstellt werden.",
+      "download": "Herunterladen",
+      "downloadError": "PDF konnte nicht heruntergeladen werden.",
+      "send": "Senden",
+      "sendConfirm": "„{{title}}“ als an {{client}} gesendet markieren?",
+      "sendHint": "Es wird keine E-Mail versendet: Das Dokument wechselt lediglich in den Status „Gesendet“.",
+      "sentDone": "Dokument als gesendet markiert.",
+      "created": "Angebot erstellt.",
+      "saved": "Dokument gespeichert.",
+      "deleted": "Dokument gelöscht.",
+      "noIssuer": "Aussteller nicht konfiguriert: Fülle den Datensatz „Aussteller“ (SonnaLab) in der Kundenliste aus, damit er auf Angeboten erscheint.",
+      "dropDocument": "Dokument ablegen",
+      "dropDocumentHint": "PDF, Bild… (optional)",
+      "replaceDocument": "Zum Ersetzen klicken"
+    },
+    "contracts": {
+      "new": "Neuer Vertrag",
+      "empty": "Keine Verträge.",
+      "amount": "Betrag",
+      "startDate": "Beginn",
+      "endDate": "Ende",
+      "file": "Datei",
+      "notes": "Notizen",
+      "statuses": {
+        "draft": "Entwurf",
+        "active": "Aktiv",
+        "expired": "Abgelaufen",
+        "terminated": "Gekündigt"
+      }
+    },
+    "payments": {
+      "new": "Neue Zahlung",
+      "empty": "Keine Zahlungen.",
+      "amount": "Betrag",
+      "method": "Zahlungsart",
+      "methods": {
+        "transfer": "Überweisung",
+        "card": "Karte",
+        "check": "Scheck",
+        "other": "Sonstige"
+      },
+      "paidAt": "Zahlungsdatum",
+      "invoice": "Angebot/Rechnung",
+      "notes": "Notizen",
+      "statuses": {
+        "pending": "Ausstehend",
+        "completed": "Abgeschlossen",
+        "failed": "Fehlgeschlagen"
+      }
+    },
+    "document": {
+      "emittedBy": "Ausgestellt von",
+      "attentionOf": "Zu Händen von",
+      "total": "Gesamt inkl. MwSt.",
+      "deliverable": "Liefergegenstand",
+      "phases": "Phasen",
+      "description": "Beschreibung",
+      "days": "Tage",
+      "price": "Preis",
+      "vatMention": "MwSt. nicht anwendbar – Artikel 293 B des französischen Steuergesetzbuchs.",
+      "paymentMention": "Zahlung per Banküberweisung an die separat mitgeteilte Bankverbindung.",
+      "depositMentionBefore": "Eine Anzahlung von",
+      "depositMentionRate": "30%",
+      "depositMentionAfter": "ist bei Bestellung fällig, der Rest bei Lieferung.",
+      "schedule": "Zahlungsplan",
+      "footer": "SonnaLab — Das Ideenlabor, das das Digitale verändert.",
+      "zoomIn": "Vergrößern",
+      "zoomOut": "Verkleinern"
+    }
   }
 }

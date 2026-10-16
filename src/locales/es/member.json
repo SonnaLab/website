@@ -135,6 +135,17 @@
     "view": "Ver",
     "download": "PDF",
     "noQuotes": "No hay presupuestos.",
-    "noInvoices": "No hay facturas."
+    "noInvoices": "No hay facturas.",
+    "label": "Concepto",
+    "loadError": "No se pudieron cargar tus documentos.",
+    "downloadError": "No se pudo descargar el PDF.",
+    "statuses": {
+      "draft": "Borrador",
+      "sent": "Enviado",
+      "accepted": "Aceptado",
+      "paid": "Pagado",
+      "overdue": "Vencido",
+      "cancelled": "Cancelado"
+    }
   }
 }

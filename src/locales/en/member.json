@@ -135,6 +135,17 @@
     "view": "View",
     "download": "PDF",
     "noQuotes": "No quotes.",
-    "noInvoices": "No invoices."
+    "noInvoices": "No invoices.",
+    "label": "Label",
+    "loadError": "Could not load your documents.",
+    "downloadError": "Could not download the PDF.",
+    "statuses": {
+      "draft": "Draft",
+      "sent": "Sent",
+      "accepted": "Accepted",
+      "paid": "Paid",
+      "overdue": "Overdue",
+      "cancelled": "Cancelled"
+    }
   }
 }

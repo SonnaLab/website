@@ -42,6 +42,8 @@ import AdminSeo from '@/pages/private/admin/Seo';
 import AdminNews from '@/pages/private/admin/News';
 import AdminUsers from '@/pages/private/admin/Users';
 import AdminLesankofa from '@/pages/private/admin/Lesankofa';
+import AdminTravauxClients from '@/pages/private/admin/travaux/TravauxClients';
+import AdminClientTravaux from '@/pages/private/admin/travaux/ClientTravaux';
 
 // Staff
 import StaffDashboard from '@/pages/private/staff/Dashboard';
@@ -196,6 +198,8 @@ export const routeTree: RouteObject[] = [
           { path: 'news',           element: <AdminNews /> },
           { path: 'users',          element: <AdminUsers /> },
           { path: 'lesankofa',      element: <AdminLesankofa /> },
+          { path: 'travaux',        element: <AdminTravauxClients /> },
+          { path: 'travaux/:clientId', element: <AdminClientTravaux /> },
         ],
       },
     ],

@@ -63,4 +63,12 @@ export {
   ShieldIcon,
   LockIcon,
   CheckCircleIcon,
+  TrafficConeIcon,
+  DownloadIcon,
+  UploadIcon,
+  WalletIcon,
+  FileSignatureIcon,
+  KanbanIcon,
+  PaperclipIcon,
+  MinusIcon,
 } from './icons';

@@ -9,7 +9,8 @@
     "users": "Usuarios",
     "lesankofa": "Lesankofa",
     "billing": "Facturación",
-    "projects": "Proyectos"
+    "projects": "Proyectos",
+    "travaux": "Trabajos"
   },
   "dashboard": {
     "title": "Bienvenido, =={{name}}==",
@@ -403,5 +404,227 @@
   "impersonation": {
     "banner": "Has iniciado sesión como {{name}}.",
     "stop": "Volver a mi cuenta de admin"
+  },
+  "travaux": {
+    "title": "Trabajos",
+    "subtitle": "Clientes, entregables, tareas, presupuestos/facturas, contratos y pagos.",
+    "common": {
+      "view": "Ver",
+      "title": "Título",
+      "description": "Descripción",
+      "status": "Estado",
+      "amount": "Importe",
+      "none": "Ninguno",
+      "confirmDelete": "¿Confirmar la eliminación?",
+      "back": "Clientes",
+      "removeFile": "Quitar el archivo"
+    },
+    "clients": {
+      "search": "Buscar un cliente…",
+      "new": "Nuevo cliente",
+      "edit": "Editar cliente",
+      "empty": "Aún no hay clientes.",
+      "loadError": "No se pudieron cargar los clientes.",
+      "issuer": "Emisor",
+      "issuerTitle": "Emisor de los presupuestos (SonnaLab)",
+      "issuerHint": "Estos datos aparecen en el bloque «Emitido por» de cada presupuesto y factura.",
+      "saved": "Cliente guardado.",
+      "deleted": "Cliente eliminado.",
+      "deleteBlocked": "No se puede eliminar este cliente: todavía tiene proyectos o documentos.",
+      "dropLogo": "Suelta el logo aquí",
+      "dropLogoHint": "PNG o JPG (aparece en los PDF)",
+      "table": {
+        "client": "Cliente",
+        "referent": "Contacto",
+        "projects": "Proyectos",
+        "inProgress": "Entregables en curso",
+        "invoiced": "Facturado",
+        "paid": "Cobrado",
+        "actions": "Acciones"
+      },
+      "actions": {
+        "view": "Ver la ficha",
+        "travaux": "Entrar en los trabajos",
+        "edit": "Editar"
+      },
+      "fields": {
+        "name": "Razón social",
+        "siret": "SIRET",
+        "contactEmail": "Correo de contacto",
+        "referentFirstName": "Nombre del contacto",
+        "referentLastName": "Apellido del contacto",
+        "referentEmail": "Correo del contacto",
+        "referentPhone": "Teléfono del contacto",
+        "logo": "Logo",
+        "members": "Cuentas de miembros vinculadas",
+        "membersHint": "Estas cuentas verán los proyectos y presupuestos/facturas (sin borradores) de este cliente en su espacio.",
+        "noMembers": "No hay cuentas de miembro (rol usuario) disponibles."
+      },
+      "detail": {
+        "projects": "Proyectos",
+        "members": "Cuentas de miembros",
+        "noProjects": "Sin proyectos.",
+        "noMembers": "Ninguna cuenta vinculada.",
+        "referent": "Contacto"
+      }
+    },
+    "tabs": {
+      "objectives": "Entregables",
+      "tracking": "Tareas",
+      "invoices": "Facturas",
+      "contracts": "Contratos",
+      "payments": "Pagos"
+    },
+    "projects": {
+      "new": "Nuevo proyecto",
+      "edit": "Editar proyecto",
+      "name": "Nombre del proyecto",
+      "hint": "Una columna por proyecto del cliente.",
+      "empty": "Sin proyectos: crea uno para vincularle entregables.",
+      "noObjectives": "Sin entregables.",
+      "deleteBlocked": "No se puede eliminar este proyecto: todavía tiene entregables."
+    },
+    "objectives": {
+      "new": "Nuevo entregable",
+      "project": "Proyecto",
+      "format": "Formato",
+      "formats": {
+        "web": "Web",
+        "mobile": "Mobile"
+      },
+      "statuses": {
+        "planned": "Planificado",
+        "in_progress": "En curso",
+        "done": "Entregado",
+        "at_risk": "En riesgo"
+      },
+      "progress": "Progreso",
+      "noTasks": "Sin tareas vinculadas.",
+      "dueDate": "Vencimiento",
+      "archive": "Terminado",
+      "generateDevis": "Generar un presupuesto",
+      "updateDevis": "Actualizar el presupuesto",
+      "generateDevisNoScore": "Ninguna tarea puntuada en este entregable (o vencimiento superado): puntúa las tareas (1-5) para calcular el presupuesto.",
+      "deleteBlocked": "Este entregable tiene tareas vinculadas y no se puede eliminar. Márcalo como terminado.",
+      "needProject": "Crea primero un proyecto para este cliente."
+    },
+    "tracking": {
+      "new": "Nueva tarea",
+      "objective": "Entregable",
+      "noObjective": "Sin entregable",
+      "column": "Columna",
+      "score": "Puntuación de esfuerzo (1-5)",
+      "scoreHint": "p. ej. 2.5",
+      "priority": "Prioridad",
+      "priorities": {
+        "low": "Baja",
+        "medium": "Media",
+        "high": "Alta",
+        "urgent": "Urgente"
+      },
+      "columns": {
+        "todo": "Por hacer",
+        "in_progress": "En curso",
+        "review": "En revisión",
+        "done": "Terminado"
+      }
+    },
+    "invoices": {
+      "new": "Nuevo presupuesto",
+      "empty": "Sin presupuestos ni facturas.",
+      "kind": "Tipo",
+      "kinds": {
+        "quote": "Presupuesto",
+        "invoice": "Factura"
+      },
+      "statuses": {
+        "draft": "Borrador",
+        "sent": "Enviado",
+        "accepted": "Aceptado",
+        "paid": "Pagado",
+        "overdue": "Vencido",
+        "cancelled": "Cancelado"
+      },
+      "number": "Número",
+      "amount": "Importe",
+      "issueDate": "Fecha de emisión",
+      "dueDate": "Vencimiento",
+      "dailyRate": "Tarifa diaria (€/día)",
+      "days": "Días",
+      "daysRemaining": "días restantes",
+      "total": "Total",
+      "document": "Documento",
+      "livrable": "Entregable",
+      "terms": "Condiciones",
+      "generateInvoice": "Generar la factura",
+      "generateInvoiceError": "No se pudo generar la factura.",
+      "download": "Descargar",
+      "downloadError": "No se pudo descargar el PDF.",
+      "send": "Enviar",
+      "sendConfirm": "¿Marcar «{{title}}» como enviado a {{client}}?",
+      "sendHint": "No se envía ningún correo: el documento pasa al estado «Enviado».",
+      "sentDone": "Documento marcado como enviado.",
+      "created": "Presupuesto creado.",
+      "saved": "Documento guardado.",
+      "deleted": "Documento eliminado.",
+      "noIssuer": "Emisor no configurado: completa la ficha «Emisor» (SonnaLab) desde la lista de clientes para que aparezca en los presupuestos.",
+      "dropDocument": "Suelta un documento",
+      "dropDocumentHint": "PDF, imagen… (opcional)",
+      "replaceDocument": "Haz clic para reemplazar"
+    },
+    "contracts": {
+      "new": "Nuevo contrato",
+      "empty": "Sin contratos.",
+      "amount": "Importe",
+      "startDate": "Inicio",
+      "endDate": "Fin",
+      "file": "Archivo",
+      "notes": "Notas",
+      "statuses": {
+        "draft": "Borrador",
+        "active": "Activo",
+        "expired": "Expirado",
+        "terminated": "Rescindido"
+      }
+    },
+    "payments": {
+      "new": "Nuevo pago",
+      "empty": "Sin pagos.",
+      "amount": "Importe",
+      "method": "Medio",
+      "methods": {
+        "transfer": "Transferencia",
+        "card": "Tarjeta",
+        "check": "Cheque",
+        "other": "Otro"
+      },
+      "paidAt": "Fecha de pago",
+      "invoice": "Presupuesto/Factura",
+      "notes": "Notas",
+      "statuses": {
+        "pending": "Pendiente",
+        "completed": "Realizado",
+        "failed": "Fallido"
+      }
+    },
+    "document": {
+      "emittedBy": "Emitido por",
+      "attentionOf": "A la atención de",
+      "total": "Total IVA incl.",
+      "deliverable": "Entregable",
+      "phases": "Fases",
+      "description": "Descripción",
+      "days": "Días",
+      "price": "Precio",
+      "vatMention": "IVA no aplicable – artículo 293 B del Código General de Impuestos francés.",
+      "paymentMention": "Pago por transferencia bancaria a los datos comunicados por separado.",
+      "depositMentionBefore": "Un anticipo del",
+      "depositMentionRate": "30%",
+      "depositMentionAfter": "es exigible al pedido, el saldo a la entrega.",
+      "schedule": "Calendario",
+      "footer": "SonnaLab — El laboratorio de ideas que transforma lo digital.",
+      "zoomIn": "Acercar",
+      "zoomOut": "Alejar"
+    }
   }
 }

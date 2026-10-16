@@ -135,6 +135,17 @@
     "view": "Voir",
     "download": "PDF",
     "noQuotes": "Aucun devis.",
-    "noInvoices": "Aucune facture."
+    "noInvoices": "Aucune facture.",
+    "label": "Intitulé",
+    "loadError": "Impossible de charger vos documents.",
+    "downloadError": "Impossible de télécharger le PDF.",
+    "statuses": {
+      "draft": "Brouillon",
+      "sent": "Envoyé",
+      "accepted": "Accepté",
+      "paid": "Payé",
+      "overdue": "En retard",
+      "cancelled": "Annulé"
+    }
   }
 }

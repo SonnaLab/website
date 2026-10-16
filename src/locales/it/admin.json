@@ -9,7 +9,8 @@
     "users": "Utenti",
     "lesankofa": "Lesankofa",
     "billing": "Fatturazione",
-    "projects": "Progetti"
+    "projects": "Progetti",
+    "travaux": "Lavori"
   },
   "dashboard": {
     "title": "Benvenuto, =={{name}}==",
@@ -403,5 +404,227 @@
   "impersonation": {
     "banner": "Hai effettuato l'accesso come {{name}}.",
     "stop": "Torna al mio account admin"
+  },
+  "travaux": {
+    "title": "Lavori",
+    "subtitle": "Clienti, deliverable, attività, preventivi/fatture, contratti e pagamenti.",
+    "common": {
+      "view": "Vedi",
+      "title": "Titolo",
+      "description": "Descrizione",
+      "status": "Stato",
+      "amount": "Importo",
+      "none": "Nessuno",
+      "confirmDelete": "Confermare l'eliminazione?",
+      "back": "Clienti",
+      "removeFile": "Rimuovi il file"
+    },
+    "clients": {
+      "search": "Cerca un cliente…",
+      "new": "Nuovo cliente",
+      "edit": "Modifica cliente",
+      "empty": "Ancora nessun cliente.",
+      "loadError": "Impossibile caricare i clienti.",
+      "issuer": "Emittente",
+      "issuerTitle": "Emittente dei preventivi (SonnaLab)",
+      "issuerHint": "Queste informazioni compaiono nel blocco «Emesso da» di ogni preventivo e fattura.",
+      "saved": "Cliente salvato.",
+      "deleted": "Cliente eliminato.",
+      "deleteBlocked": "Impossibile eliminare questo cliente: ha ancora progetti o documenti.",
+      "dropLogo": "Trascina qui il logo",
+      "dropLogoHint": "PNG o JPG (riportato sui PDF)",
+      "table": {
+        "client": "Cliente",
+        "referent": "Referente",
+        "projects": "Progetti",
+        "inProgress": "Deliverable in corso",
+        "invoiced": "Fatturato",
+        "paid": "Incassato",
+        "actions": "Azioni"
+      },
+      "actions": {
+        "view": "Vedi la scheda",
+        "travaux": "Entra nei lavori",
+        "edit": "Modifica"
+      },
+      "fields": {
+        "name": "Ragione sociale",
+        "siret": "SIRET",
+        "contactEmail": "E-mail di contatto",
+        "referentFirstName": "Nome del referente",
+        "referentLastName": "Cognome del referente",
+        "referentEmail": "E-mail del referente",
+        "referentPhone": "Telefono del referente",
+        "logo": "Logo",
+        "members": "Account membri collegati",
+        "membersHint": "Questi account vedranno i progetti e i preventivi/fatture (bozze escluse) di questo cliente nella loro area.",
+        "noMembers": "Nessun account membro (ruolo utente) disponibile."
+      },
+      "detail": {
+        "projects": "Progetti",
+        "members": "Account membri",
+        "noProjects": "Nessun progetto.",
+        "noMembers": "Nessun account collegato.",
+        "referent": "Referente"
+      }
+    },
+    "tabs": {
+      "objectives": "Deliverable",
+      "tracking": "Attività",
+      "invoices": "Fatture",
+      "contracts": "Contratti",
+      "payments": "Pagamenti"
+    },
+    "projects": {
+      "new": "Nuovo progetto",
+      "edit": "Modifica progetto",
+      "name": "Nome del progetto",
+      "hint": "Una colonna per progetto del cliente.",
+      "empty": "Nessun progetto: creane uno per collegarvi dei deliverable.",
+      "noObjectives": "Nessun deliverable.",
+      "deleteBlocked": "Impossibile eliminare questo progetto: ha ancora dei deliverable."
+    },
+    "objectives": {
+      "new": "Nuovo deliverable",
+      "project": "Progetto",
+      "format": "Formato",
+      "formats": {
+        "web": "Web",
+        "mobile": "Mobile"
+      },
+      "statuses": {
+        "planned": "Pianificato",
+        "in_progress": "In corso",
+        "done": "Consegnato",
+        "at_risk": "A rischio"
+      },
+      "progress": "Avanzamento",
+      "noTasks": "Nessuna attività collegata.",
+      "dueDate": "Scadenza",
+      "archive": "Completato",
+      "generateDevis": "Genera un preventivo",
+      "updateDevis": "Aggiorna il preventivo",
+      "generateDevisNoScore": "Nessuna attività valutata su questo deliverable (o scadenza superata): valuta le attività (1-5) per calcolare il preventivo.",
+      "deleteBlocked": "Questo deliverable ha attività collegate e non può essere eliminato. Segnalo invece come completato.",
+      "needProject": "Crea prima un progetto per questo cliente."
+    },
+    "tracking": {
+      "new": "Nuova attività",
+      "objective": "Deliverable",
+      "noObjective": "Nessun deliverable",
+      "column": "Colonna",
+      "score": "Punteggio di impegno (1-5)",
+      "scoreHint": "es. 2.5",
+      "priority": "Priorità",
+      "priorities": {
+        "low": "Bassa",
+        "medium": "Media",
+        "high": "Alta",
+        "urgent": "Urgente"
+      },
+      "columns": {
+        "todo": "Da fare",
+        "in_progress": "In corso",
+        "review": "In revisione",
+        "done": "Completato"
+      }
+    },
+    "invoices": {
+      "new": "Nuovo preventivo",
+      "empty": "Nessun preventivo né fattura.",
+      "kind": "Tipo",
+      "kinds": {
+        "quote": "Preventivo",
+        "invoice": "Fattura"
+      },
+      "statuses": {
+        "draft": "Bozza",
+        "sent": "Inviato",
+        "accepted": "Accettato",
+        "paid": "Pagato",
+        "overdue": "Scaduto",
+        "cancelled": "Annullato"
+      },
+      "number": "Numero",
+      "amount": "Importo",
+      "issueDate": "Data di emissione",
+      "dueDate": "Scadenza",
+      "dailyRate": "Tariffa giornaliera (€/giorno)",
+      "days": "Giorni",
+      "daysRemaining": "giorni rimanenti",
+      "total": "Totale",
+      "document": "Documento",
+      "livrable": "Deliverable",
+      "terms": "Condizioni",
+      "generateInvoice": "Genera la fattura",
+      "generateInvoiceError": "Impossibile generare la fattura.",
+      "download": "Scarica",
+      "downloadError": "Impossibile scaricare il PDF.",
+      "send": "Invia",
+      "sendConfirm": "Segnare «{{title}}» come inviato a {{client}}?",
+      "sendHint": "Nessuna e-mail viene inviata: il documento passa semplicemente allo stato «Inviato».",
+      "sentDone": "Documento segnato come inviato.",
+      "created": "Preventivo creato.",
+      "saved": "Documento salvato.",
+      "deleted": "Documento eliminato.",
+      "noIssuer": "Emittente non configurato: compila la scheda «Emittente» (SonnaLab) dalla lista clienti perché compaia sui preventivi.",
+      "dropDocument": "Trascina un documento",
+      "dropDocumentHint": "PDF, immagine… (facoltativo)",
+      "replaceDocument": "Clicca per sostituire"
+    },
+    "contracts": {
+      "new": "Nuovo contratto",
+      "empty": "Nessun contratto.",
+      "amount": "Importo",
+      "startDate": "Inizio",
+      "endDate": "Fine",
+      "file": "File",
+      "notes": "Note",
+      "statuses": {
+        "draft": "Bozza",
+        "active": "Attivo",
+        "expired": "Scaduto",
+        "terminated": "Risolto"
+      }
+    },
+    "payments": {
+      "new": "Nuovo pagamento",
+      "empty": "Nessun pagamento.",
+      "amount": "Importo",
+      "method": "Metodo",
+      "methods": {
+        "transfer": "Bonifico",
+        "card": "Carta",
+        "check": "Assegno",
+        "other": "Altro"
+      },
+      "paidAt": "Data di pagamento",
+      "invoice": "Preventivo/Fattura",
+      "notes": "Note",
+      "statuses": {
+        "pending": "In attesa",
+        "completed": "Effettuato",
+        "failed": "Non riuscito"
+      }
+    },
+    "document": {
+      "emittedBy": "Emesso da",
+      "attentionOf": "All'attenzione di",
+      "total": "Totale IVA incl.",
+      "deliverable": "Deliverable",
+      "phases": "Fasi",
+      "description": "Descrizione",
+      "days": "Giorni",
+      "price": "Prezzo",
+      "vatMention": "IVA non applicabile – articolo 293 B del Codice generale delle imposte francese.",
+      "paymentMention": "Pagamento tramite bonifico bancario alle coordinate comunicate separatamente.",
+      "depositMentionBefore": "Un acconto del",
+      "depositMentionRate": "30%",
+      "depositMentionAfter": "è dovuto all'ordine, il saldo alla consegna.",
+      "schedule": "Scadenzario",
+      "footer": "SonnaLab — Il laboratorio di idee che trasforma il digitale.",
+      "zoomIn": "Ingrandisci",
+      "zoomOut": "Riduci"
+    }
   }
 }

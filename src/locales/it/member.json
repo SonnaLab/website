@@ -135,6 +135,17 @@
     "view": "Visualizza",
     "download": "PDF",
     "noQuotes": "Nessun preventivo.",
-    "noInvoices": "Nessuna fattura."
+    "noInvoices": "Nessuna fattura.",
+    "label": "Descrizione",
+    "loadError": "Impossibile caricare i tuoi documenti.",
+    "downloadError": "Impossibile scaricare il PDF.",
+    "statuses": {
+      "draft": "Bozza",
+      "sent": "Inviato",
+      "accepted": "Accettato",
+      "paid": "Pagato",
+      "overdue": "Scaduto",
+      "cancelled": "Annullato"
+    }
   }
 }

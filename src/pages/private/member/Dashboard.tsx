@@ -24,17 +24,18 @@ export default function MemberDashboard() {
     Promise.allSettled([
       apiService.listAppointments(),
       apiService.listProjects(),
-      apiService.listInvoices(),
-      apiService.listQuotes(),
+      apiService.listBillingDocuments(),
     ]).then((res) => {
       if (cancelled) return;
       const value = (i: number, key: string) =>
         res[i].status === 'fulfilled' ? ((res[i] as PromiseFulfilledResult<any>).value?.[key]?.length ?? 0) : 0;
+      // Devis et factures arrivent dans une seule liste (documents Travaux du client).
+      const documents = res[2].status === 'fulfilled' ? res[2].value.documents : [];
       setCounts({
         appointments: value(0, 'appointments'),
         projects:     value(1, 'projects'),
-        invoices:     value(2, 'invoices'),
-        quotes:       value(3, 'quotes'),
+        invoices:     documents.filter((d) => d.kind === 'invoice').length,
+        quotes:       documents.filter((d) => d.kind === 'quote').length,
       });
     });
     return () => { cancelled = true; };

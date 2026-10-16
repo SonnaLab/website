@@ -9,7 +9,8 @@
     "users": "Utilisateurs",
     "lesankofa": "Lesankofa",
     "billing": "Facturation",
-    "projects": "Projets"
+    "projects": "Projets",
+    "travaux": "Travaux"
   },
   "dashboard": {
     "title": "Bienvenue, =={{name}}==",
@@ -404,5 +405,227 @@
   "impersonation": {
     "banner": "Vous êtes connecté(e) en tant que {{name}}.",
     "stop": "Retour à mon compte admin"
+  },
+  "travaux": {
+    "title": "Travaux",
+    "subtitle": "Clients, livrables, tâches, devis/factures, contrats et paiements.",
+    "common": {
+      "view": "Voir",
+      "title": "Titre",
+      "description": "Description",
+      "status": "Statut",
+      "amount": "Montant",
+      "none": "Aucun",
+      "confirmDelete": "Confirmer la suppression ?",
+      "back": "Clients",
+      "removeFile": "Retirer le fichier"
+    },
+    "clients": {
+      "search": "Rechercher un client…",
+      "new": "Nouveau client",
+      "edit": "Modifier le client",
+      "empty": "Aucun client pour le moment.",
+      "loadError": "Impossible de charger les clients.",
+      "issuer": "Émetteur",
+      "issuerTitle": "Émetteur des devis (SonnaLab)",
+      "issuerHint": "Ces informations apparaissent dans le bloc « Émis par » de chaque devis et facture.",
+      "saved": "Client enregistré.",
+      "deleted": "Client supprimé.",
+      "deleteBlocked": "Impossible de supprimer ce client : il a encore des projets ou des documents.",
+      "dropLogo": "Déposez le logo ici",
+      "dropLogoHint": "PNG ou JPG (repris sur les PDF)",
+      "table": {
+        "client": "Client",
+        "referent": "Référent",
+        "projects": "Projets",
+        "inProgress": "Livrables en cours",
+        "invoiced": "Facturé",
+        "paid": "Encaissé",
+        "actions": "Actions"
+      },
+      "actions": {
+        "view": "Voir la fiche",
+        "travaux": "Entrer dans les travaux",
+        "edit": "Modifier"
+      },
+      "fields": {
+        "name": "Raison sociale",
+        "siret": "SIRET",
+        "contactEmail": "E-mail de contact",
+        "referentFirstName": "Prénom du référent",
+        "referentLastName": "Nom du référent",
+        "referentEmail": "E-mail du référent",
+        "referentPhone": "Téléphone du référent",
+        "logo": "Logo",
+        "members": "Comptes membres rattachés",
+        "membersHint": "Ces comptes verront les projets et les devis/factures (hors brouillons) de ce client dans leur espace.",
+        "noMembers": "Aucun compte membre (rôle utilisateur) disponible."
+      },
+      "detail": {
+        "projects": "Projets",
+        "members": "Comptes membres",
+        "noProjects": "Aucun projet.",
+        "noMembers": "Aucun compte rattaché.",
+        "referent": "Référent"
+      }
+    },
+    "tabs": {
+      "objectives": "Livrables",
+      "tracking": "Tâches",
+      "invoices": "Factures",
+      "contracts": "Contrats",
+      "payments": "Paiements"
+    },
+    "projects": {
+      "new": "Nouveau projet",
+      "edit": "Modifier le projet",
+      "name": "Nom du projet",
+      "hint": "Une colonne par projet du client.",
+      "empty": "Aucun projet : créez-en un pour y rattacher des livrables.",
+      "noObjectives": "Aucun livrable.",
+      "deleteBlocked": "Impossible de supprimer ce projet : il porte encore des livrables."
+    },
+    "objectives": {
+      "new": "Nouveau livrable",
+      "project": "Projet",
+      "format": "Format",
+      "formats": {
+        "web": "Web",
+        "mobile": "Mobile"
+      },
+      "statuses": {
+        "planned": "Planifié",
+        "in_progress": "En cours",
+        "done": "Livré",
+        "at_risk": "À risque"
+      },
+      "progress": "Progression",
+      "noTasks": "Aucune tâche liée.",
+      "dueDate": "Échéance",
+      "archive": "Terminé",
+      "generateDevis": "Générer un devis",
+      "updateDevis": "Mettre à jour le devis",
+      "generateDevisNoScore": "Aucune tâche notée sur ce livrable (ou échéance dépassée) : notez les tâches (score 1-5) pour calculer le devis.",
+      "deleteBlocked": "Ce livrable a des tâches associées et ne peut pas être supprimé. Marquez-le comme terminé plutôt.",
+      "needProject": "Créez d'abord un projet pour ce client."
+    },
+    "tracking": {
+      "new": "Nouvelle tâche",
+      "objective": "Livrable",
+      "noObjective": "Aucun livrable",
+      "column": "Colonne",
+      "score": "Score d'effort (1-5)",
+      "scoreHint": "ex. 2.5",
+      "priority": "Priorité",
+      "priorities": {
+        "low": "Basse",
+        "medium": "Moyenne",
+        "high": "Haute",
+        "urgent": "Urgente"
+      },
+      "columns": {
+        "todo": "À faire",
+        "in_progress": "En cours",
+        "review": "En relecture",
+        "done": "Terminé"
+      }
+    },
+    "invoices": {
+      "new": "Nouveau devis",
+      "empty": "Aucun devis ni facture.",
+      "kind": "Type",
+      "kinds": {
+        "quote": "Devis",
+        "invoice": "Facture"
+      },
+      "statuses": {
+        "draft": "Brouillon",
+        "sent": "Envoyé",
+        "accepted": "Accepté",
+        "paid": "Payé",
+        "overdue": "En retard",
+        "cancelled": "Annulé"
+      },
+      "number": "Numéro",
+      "amount": "Montant",
+      "issueDate": "Date d'émission",
+      "dueDate": "Échéance",
+      "dailyRate": "TJM (€/jour)",
+      "days": "Jours",
+      "daysRemaining": "jours restants",
+      "total": "Total",
+      "document": "Document",
+      "livrable": "Livrable",
+      "terms": "Conditions",
+      "generateInvoice": "Générer la facture",
+      "generateInvoiceError": "Impossible de générer la facture.",
+      "download": "Télécharger",
+      "downloadError": "Impossible de télécharger le PDF.",
+      "send": "Envoyer",
+      "sendConfirm": "Marquer « {{title}} » comme envoyé à {{client}} ?",
+      "sendHint": "Aucun e-mail n'est envoyé : le document passe simplement au statut « Envoyé ».",
+      "sentDone": "Document marqué comme envoyé.",
+      "created": "Devis créé.",
+      "saved": "Document enregistré.",
+      "deleted": "Document supprimé.",
+      "noIssuer": "Émetteur non configuré : renseignez la fiche « Émetteur » (SonnaLab) depuis la liste des clients pour qu'il apparaisse sur les devis.",
+      "dropDocument": "Déposez un document",
+      "dropDocumentHint": "PDF, image… (optionnel)",
+      "replaceDocument": "Cliquez pour remplacer"
+    },
+    "contracts": {
+      "new": "Nouveau contrat",
+      "empty": "Aucun contrat.",
+      "amount": "Montant",
+      "startDate": "Début",
+      "endDate": "Fin",
+      "file": "Fichier",
+      "notes": "Notes",
+      "statuses": {
+        "draft": "Brouillon",
+        "active": "Actif",
+        "expired": "Expiré",
+        "terminated": "Résilié"
+      }
+    },
+    "payments": {
+      "new": "Nouveau paiement",
+      "empty": "Aucun paiement.",
+      "amount": "Montant",
+      "method": "Moyen",
+      "methods": {
+        "transfer": "Virement",
+        "card": "Carte",
+        "check": "Chèque",
+        "other": "Autre"
+      },
+      "paidAt": "Date de paiement",
+      "invoice": "Devis/Facture",
+      "notes": "Notes",
+      "statuses": {
+        "pending": "En attente",
+        "completed": "Effectué",
+        "failed": "Échoué"
+      }
+    },
+    "document": {
+      "emittedBy": "Émis par",
+      "attentionOf": "À l'attention de",
+      "total": "Total TTC",
+      "deliverable": "Livrable",
+      "phases": "Phases",
+      "description": "Description",
+      "days": "Jours",
+      "price": "Prix",
+      "vatMention": "TVA non applicable – article 293 B du Code général des impôts.",
+      "paymentMention": "Paiement par virement bancaire aux coordonnées communiquées séparément.",
+      "depositMentionBefore": "Un acompte de",
+      "depositMentionRate": "30%",
+      "depositMentionAfter": "est exigible à la commande, le solde à la livraison.",
+      "schedule": "Échéancier",
+      "footer": "SonnaLab — Le laboratoire d'idée qui transforme le digital.",
+      "zoomIn": "Zoom avant",
+      "zoomOut": "Zoom arrière"
+    }
   }
 }

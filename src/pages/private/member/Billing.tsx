@@ -2,58 +2,99 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
-import { apiService } from '@/services/api';
-import { Button } from '@/components/ui/button';
+import { apiService, saveBlob } from '@/services/api';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
 import { DataTable, DataTableHead, DataTableBody, DataTableRow, DataTableTh, DataTableTd, DataTableEmpty } from '@/components/common/DataTable';
 import { StatusBadge } from '@/components/common/StatusBadge';
-import { ReceiptIcon, FileTextIcon } from '@icons';
+import { DownloadIcon, ReceiptIcon, FileTextIcon } from '@icons';
+import type { InvoiceStatus, TravauxInvoice } from '@/types/travaux';
 
-interface Money { cents: number; currency: string }
-interface Quote   { id: string; number: string; status: string; total: Money; issued_on?: string; valid_until?: string }
-interface Invoice { id: string; number: string; status: string; total: Money; amount_due: Money; due_on?: string }
-
+/**
+ * Espace membre — devis et factures (module Travaux) du client auquel le
+ * compte est rattaché. Lecture seule + PDF ; les brouillons ne remontent pas.
+ */
 export default function MemberBilling() {
   const { t, i18n } = useTranslation('member');
-  const [tab, setTab]           = useState('invoices');
-  const [quotes, setQuotes]     = useState<Quote[]>([]);
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [loading, setLoading]   = useState(true);
+  const [tab, setTab]             = useState('invoices');
+  const [documents, setDocuments] = useState<TravauxInvoice[]>([]);
+  const [loading, setLoading]     = useState(true);
+  const [downloading, setDownloading] = useState<string | null>(null);
 
-  const reload = () => {
-    setLoading(true);
-    Promise.all([apiService.listQuotes(), apiService.listInvoices()])
-      .then(([q, i]) => { setQuotes(q.quotes || []); setInvoices(i.invoices || []); })
+  useEffect(() => {
+    apiService.listBillingDocuments()
+      .then((res) => setDocuments(res.documents || []))
+      .catch(() => toast.error(t('billing.loadError')))
       .finally(() => setLoading(false));
-  };
-  useEffect(reload, []);
+  }, [t]);
 
-  const fmtMoney = (m?: Money) => {
-    if (!m) return '—';
-    return new Intl.NumberFormat(i18n.language, { style: 'currency', currency: m.currency || 'EUR' })
-      .format((m.cents || 0) / 100);
-  };
-  const fmtDate = (iso?: string) => iso
-    ? new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }).format(new Date(iso))
+  const quotes   = documents.filter((d) => d.kind === 'quote');
+  const invoices = documents.filter((d) => d.kind === 'invoice');
+
+  const fmtMoney = (cents: number) =>
+    new Intl.NumberFormat(i18n.language, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(cents / 100);
+  const fmtDate = (iso?: string | null) => iso
+    ? new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }).format(new Date(`${iso}T00:00:00`))
     : '—';
 
-  const accept = async (id: string) => { try { await apiService.acceptQuote(id); reload(); } catch { toast.error(t('billing.accept')); } };
-  const reject = async (id: string) => { try { await apiService.rejectQuote(id); reload(); } catch { toast.error(t('billing.reject')); } };
+  async function download(doc: TravauxInvoice) {
+    setDownloading(doc.id);
+    try {
+      const { blob, filename } = await apiService.downloadBillingDocumentPdf(doc.id);
+      saveBlob(blob, filename);
+    } catch {
+      toast.error(t('billing.downloadError'));
+    } finally {
+      setDownloading(null);
+    }
+  }
 
-  function invoiceVariant(status: string) {
-    if (status === 'paid')                  return 'success' as const;
-    if (status === 'overdue')               return 'danger'  as const;
-    if (status === 'sent' || status === 'open') return 'info' as const;
-    if (status === 'draft')                 return 'muted'   as const;
+  function variant(status: InvoiceStatus) {
+    if (status === 'paid' || status === 'accepted') return 'success' as const;
+    if (status === 'overdue')                       return 'danger'  as const;
+    if (status === 'sent')                          return 'info'    as const;
+    if (status === 'cancelled')                     return 'muted'   as const;
     return 'default' as const;
   }
 
-  function quoteVariant(status: string) {
-    if (status === 'accepted')  return 'success' as const;
-    if (status === 'rejected')  return 'danger'  as const;
-    if (status === 'sent')      return 'info'    as const;
-    if (status === 'draft')     return 'muted'   as const;
-    return 'default' as const;
+  function table(rows: TravauxInvoice[], empty: string, emptyIcon: React.ReactNode) {
+    return (
+      <DataTable>
+        <DataTableHead>
+          <DataTableRow>
+            <DataTableTh>{t('billing.number')}</DataTableTh>
+            <DataTableTh>{t('billing.label')}</DataTableTh>
+            <DataTableTh>{t('billing.status')}</DataTableTh>
+            <DataTableTh>{t('billing.dueOn')}</DataTableTh>
+            <DataTableTh>{t('billing.total')}</DataTableTh>
+            <DataTableTh>{t('billing.download')}</DataTableTh>
+          </DataTableRow>
+        </DataTableHead>
+        <DataTableBody>
+          {loading && <DataTableEmpty label="…" />}
+          {!loading && rows.length === 0 && <DataTableEmpty icon={emptyIcon} label={empty} />}
+          {rows.map((doc) => (
+            <DataTableRow key={doc.id}>
+              <DataTableTd className="font-mono text-sm">{doc.printed_number}</DataTableTd>
+              <DataTableTd>{doc.title || '—'}</DataTableTd>
+              <DataTableTd><StatusBadge label={t(`billing.statuses.${doc.status}`)} variant={variant(doc.status)} /></DataTableTd>
+              <DataTableTd>{fmtDate(doc.due_on)}</DataTableTd>
+              <DataTableTd>{fmtMoney(doc.amount_cents)}</DataTableTd>
+              <DataTableTd>
+                <button
+                  type="button"
+                  className="adm-btn adm-btn--ghost adm-btn--xs"
+                  disabled={downloading === doc.id}
+                  onClick={() => download(doc)}
+                  title={t('billing.download')}
+                >
+                  <DownloadIcon size={13} /> PDF
+                </button>
+              </DataTableTd>
+            </DataTableRow>
+          ))}
+        </DataTableBody>
+      </DataTable>
+    );
   }
 
   return (
@@ -68,68 +109,12 @@ export default function MemberBilling() {
 
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
-          <TabsTrigger value="invoices" icon={<ReceiptIcon  size={14} />}>{t('billing.invoices')}</TabsTrigger>
-          <TabsTrigger value="quotes"   icon={<FileTextIcon size={14} />}>{t('billing.quotes')}</TabsTrigger>
+          <TabsTrigger value="invoices" icon={<ReceiptIcon  size={14} />} count={invoices.length}>{t('billing.invoices')}</TabsTrigger>
+          <TabsTrigger value="quotes"   icon={<FileTextIcon size={14} />} count={quotes.length}>{t('billing.quotes')}</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="invoices">
-          <DataTable>
-            <DataTableHead>
-              <DataTableRow>
-                <DataTableTh>{t('billing.number')}</DataTableTh>
-                <DataTableTh>{t('billing.status')}</DataTableTh>
-                <DataTableTh>{t('billing.dueOn')}</DataTableTh>
-                <DataTableTh className="text-right">{t('billing.total')}</DataTableTh>
-              </DataTableRow>
-            </DataTableHead>
-            <DataTableBody>
-              {loading && <DataTableEmpty label="…" />}
-              {!loading && invoices.length === 0 && <DataTableEmpty icon={<ReceiptIcon size={16} />} label={t('billing.noInvoices')} />}
-              {invoices.map((inv) => (
-                <DataTableRow key={inv.id}>
-                  <DataTableTd className="font-mono text-sm">{inv.number}</DataTableTd>
-                  <DataTableTd><StatusBadge label={inv.status} variant={invoiceVariant(inv.status)} /></DataTableTd>
-                  <DataTableTd>{fmtDate(inv.due_on)}</DataTableTd>
-                  <DataTableTd className="text-right">{fmtMoney(inv.total)}</DataTableTd>
-                </DataTableRow>
-              ))}
-            </DataTableBody>
-          </DataTable>
-        </TabsContent>
-
-        <TabsContent value="quotes">
-          <DataTable>
-            <DataTableHead>
-              <DataTableRow>
-                <DataTableTh>{t('billing.number')}</DataTableTh>
-                <DataTableTh>{t('billing.status')}</DataTableTh>
-                <DataTableTh>{t('billing.issuedOn')}</DataTableTh>
-                <DataTableTh>{t('billing.total')}</DataTableTh>
-                <DataTableTh className="text-right">{t('appointments.actions')}</DataTableTh>
-              </DataTableRow>
-            </DataTableHead>
-            <DataTableBody>
-              {loading && <DataTableEmpty label="…" />}
-              {!loading && quotes.length === 0 && <DataTableEmpty icon={<FileTextIcon size={16} />} label={t('billing.noQuotes')} />}
-              {quotes.map((q) => (
-                <DataTableRow key={q.id}>
-                  <DataTableTd className="font-mono text-sm">{q.number}</DataTableTd>
-                  <DataTableTd><StatusBadge label={q.status} variant={quoteVariant(q.status)} /></DataTableTd>
-                  <DataTableTd>{fmtDate(q.issued_on)}</DataTableTd>
-                  <DataTableTd>{fmtMoney(q.total)}</DataTableTd>
-                  <DataTableTd className="text-right space-x-2">
-                    {q.status === 'sent' && (
-                      <>
-                        <Button size="sm" onClick={() => accept(q.id)}>{t('billing.accept')}</Button>
-                        <Button size="sm" variant="ghost" onClick={() => reject(q.id)}>{t('billing.reject')}</Button>
-                      </>
-                    )}
-                  </DataTableTd>
-                </DataTableRow>
-              ))}
-            </DataTableBody>
-          </DataTable>
-        </TabsContent>
+        <TabsContent value="invoices">{table(invoices, t('billing.noInvoices'), <ReceiptIcon size={16} />)}</TabsContent>
+        <TabsContent value="quotes">{table(quotes, t('billing.noQuotes'), <FileTextIcon size={16} />)}</TabsContent>
       </Tabs>
     </div>
   );

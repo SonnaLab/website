@@ -3,10 +3,68 @@ import { ContactFormInputs } from '@/schemas/contactSchema';
 import type { AnalyticsEvent, ConsentPayload } from '@/types/analytics';
 import type { BlogPost } from '@/types/blog';
 import type { Budget, ProjectType, Timeline } from '@/types/consultation';
+import type {
+  TravauxClient,
+  TravauxClientsListResponse,
+  TravauxContract,
+  TravauxInvoice,
+  TravauxObjective,
+  TravauxPayload,
+  TravauxPayment,
+  TravauxTask,
+} from '@/types/travaux';
 
 const API_BASE_URL = import.meta.env.PROD
   ? import.meta.env.VITE_API_BASE_PROD_URL || 'https://api.sonnalab.com'
   : import.meta.env.VITE_API_BASE_DEV_URL || 'http://localhost:4000';
+
+/** Fichiers servis par l'API (logos, pièces jointes Travaux) : chemins relatifs → URL absolue. */
+export function apiAssetUrl(path: string | null | undefined): string | null {
+  return path ? `${API_BASE_URL}${path}` : null;
+}
+
+/**
+ * Corps multipart à la Rails : `{ root: { key: value } }` → `root[key]=value`.
+ * `null` vide le champ côté API (""), `undefined` ne l'envoie pas, un tableau
+ * vide envoie `root[key][]=` pour pouvoir tout détacher (ex. member_ids).
+ */
+function toFormData(root: string, payload: TravauxPayload): FormData {
+  const form = new FormData();
+  Object.entries(payload).forEach(([key, value]) => {
+    if (value === undefined) return;
+    if (Array.isArray(value)) {
+      if (value.length === 0) form.append(`${root}[${key}][]`, '');
+      value.forEach((v) => form.append(`${root}[${key}][]`, v));
+    } else if (value instanceof File) {
+      form.append(`${root}[${key}]`, value);
+    } else {
+      form.append(`${root}[${key}]`, value === null ? '' : String(value));
+    }
+  });
+  return form;
+}
+
+// Sans ce Content-Type, axios 1.x reconvertit un FormData en JSON (fichiers perdus)
+// à cause du Content-Type JSON par défaut de l'instance.
+const MULTIPART = { headers: { 'Content-Type': 'multipart/form-data' } };
+
+/** Nom de fichier depuis Content-Disposition (exposé par le CORS de l'API). */
+function filenameFrom(disposition: string | undefined, fallback: string): string {
+  const match = disposition?.match(/filename\*?=(?:UTF-8'')?"?([^";]+)"?/i);
+  return match ? decodeURIComponent(match[1]) : fallback;
+}
+
+/** Déclenche le téléchargement d'un blob — à appeler depuis un handler (jamais au rendu, SSR). */
+export function saveBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
 
 // ---- Auth token storage helpers (single source of truth) ----
 export const AUTH_STORAGE_KEYS = {
@@ -511,15 +569,125 @@ class ApiService {
     return res.data;
   }
 
-  // ==================== Member: Billing ====================
+  // ==================== Member: Billing (devis/factures Travaux du client) ====================
 
-  async listQuotes()   { return (await this.client.get('/api/v1/quotes')).data; }
-  async getQuote(id: string)   { return (await this.client.get(`/api/v1/quotes/${id}`)).data; }
-  async acceptQuote(id: string){ return (await this.client.post(`/api/v1/quotes/${id}/accept`)).data; }
-  async rejectQuote(id: string){ return (await this.client.post(`/api/v1/quotes/${id}/reject`)).data; }
+  async listBillingDocuments(): Promise<{ documents: TravauxInvoice[] }> {
+    return (await this.client.get('/api/v1/billing/documents')).data;
+  }
+  async downloadBillingDocumentPdf(id: string): Promise<{ blob: Blob; filename: string }> {
+    const res = await this.client.get(`/api/v1/billing/documents/${id}/pdf`, { responseType: 'blob', timeout: 30000 });
+    return { blob: res.data, filename: filenameFrom(res.headers['content-disposition'], 'document.pdf') };
+  }
 
-  async listInvoices() { return (await this.client.get('/api/v1/invoices')).data; }
-  async getInvoice(id: string) { return (await this.client.get(`/api/v1/invoices/${id}`)).data; }
+  // ==================== Admin: Travaux ====================
+
+  async adminTravauxClients(params?: { q?: string; page?: number; per_page?: number }): Promise<TravauxClientsListResponse> {
+    return (await this.client.get('/api/v1/admin/travaux/clients', { params })).data;
+  }
+  async adminTravauxClient(id: string): Promise<{ client: TravauxClient }> {
+    return (await this.client.get(`/api/v1/admin/travaux/clients/${id}`)).data;
+  }
+  async adminTravauxCreateClient(payload: TravauxPayload): Promise<{ client: TravauxClient }> {
+    return (await this.client.post('/api/v1/admin/travaux/clients', toFormData('client', payload), MULTIPART)).data;
+  }
+  async adminTravauxUpdateClient(id: string, payload: TravauxPayload): Promise<{ client: TravauxClient }> {
+    return (await this.client.patch(`/api/v1/admin/travaux/clients/${id}`, toFormData('client', payload), MULTIPART)).data;
+  }
+  async adminTravauxDeleteClient(id: string) {
+    return (await this.client.delete(`/api/v1/admin/travaux/clients/${id}`)).data;
+  }
+  async adminTravauxIssuer(): Promise<{ issuer: TravauxClient | null }> {
+    return (await this.client.get('/api/v1/admin/travaux/issuer')).data;
+  }
+  async adminTravauxUpdateIssuer(payload: TravauxPayload): Promise<{ issuer: TravauxClient }> {
+    return (await this.client.put('/api/v1/admin/travaux/issuer', toFormData('client', payload), MULTIPART)).data;
+  }
+
+  // Projets : endpoints projets existants, rattachés à un client
+  async adminTravauxProjects(clientId: string): Promise<{ projects: { id: string; name: string; status: string; progress: number; description?: string | null }[] }> {
+    return (await this.client.get('/api/v1/projects', { params: { client_id: clientId } })).data;
+  }
+  async adminTravauxCreateProject(payload: { client_id: string; name: string; description?: string }) {
+    return (await this.client.post('/api/v1/projects', { project: payload })).data;
+  }
+  async adminTravauxUpdateProject(id: string, payload: { name?: string; description?: string; status?: string }) {
+    return (await this.client.patch(`/api/v1/projects/${id}`, { project: payload })).data;
+  }
+  async adminTravauxDeleteProject(id: string) {
+    return (await this.client.delete(`/api/v1/projects/${id}`)).data;
+  }
+
+  async adminTravauxObjectives(clientId: string, params?: { project_id?: string }): Promise<{ objectives: TravauxObjective[] }> {
+    return (await this.client.get('/api/v1/admin/travaux/objectives', { params: { client_id: clientId, ...params } })).data;
+  }
+  async adminTravauxObjective(id: string): Promise<{ objective: TravauxObjective }> {
+    return (await this.client.get(`/api/v1/admin/travaux/objectives/${id}`)).data;
+  }
+  async adminTravauxCreateObjective(payload: TravauxPayload): Promise<{ objective: TravauxObjective }> {
+    return (await this.client.post('/api/v1/admin/travaux/objectives', { objective: payload })).data;
+  }
+  async adminTravauxUpdateObjective(id: string, payload: TravauxPayload): Promise<{ objective: TravauxObjective }> {
+    return (await this.client.patch(`/api/v1/admin/travaux/objectives/${id}`, { objective: payload })).data;
+  }
+  async adminTravauxDeleteObjective(id: string) {
+    return (await this.client.delete(`/api/v1/admin/travaux/objectives/${id}`)).data;
+  }
+
+  async adminTravauxTasks(clientId: string, params?: { objective_id?: string }): Promise<{ tasks: TravauxTask[] }> {
+    return (await this.client.get('/api/v1/admin/travaux/tasks', { params: { client_id: clientId, ...params } })).data;
+  }
+  async adminTravauxCreateTask(payload: TravauxPayload): Promise<{ task: TravauxTask }> {
+    return (await this.client.post('/api/v1/admin/travaux/tasks', { task: payload })).data;
+  }
+  async adminTravauxUpdateTask(id: string, payload: TravauxPayload): Promise<{ task: TravauxTask }> {
+    return (await this.client.patch(`/api/v1/admin/travaux/tasks/${id}`, { task: payload })).data;
+  }
+  async adminTravauxDeleteTask(id: string) {
+    return (await this.client.delete(`/api/v1/admin/travaux/tasks/${id}`)).data;
+  }
+
+  async adminTravauxContracts(clientId: string): Promise<{ contracts: TravauxContract[] }> {
+    return (await this.client.get('/api/v1/admin/travaux/contracts', { params: { client_id: clientId } })).data;
+  }
+  async adminTravauxCreateContract(payload: TravauxPayload): Promise<{ contract: TravauxContract }> {
+    return (await this.client.post('/api/v1/admin/travaux/contracts', toFormData('contract', payload), MULTIPART)).data;
+  }
+  async adminTravauxDeleteContract(id: string) {
+    return (await this.client.delete(`/api/v1/admin/travaux/contracts/${id}`)).data;
+  }
+
+  async adminTravauxInvoices(clientId: string, params?: { kind?: string; objective_id?: string }): Promise<{ invoices: TravauxInvoice[] }> {
+    return (await this.client.get('/api/v1/admin/travaux/invoices', { params: { client_id: clientId, ...params } })).data;
+  }
+  async adminTravauxInvoice(id: string): Promise<{ invoice: TravauxInvoice }> {
+    return (await this.client.get(`/api/v1/admin/travaux/invoices/${id}`)).data;
+  }
+  async adminTravauxCreateInvoice(payload: TravauxPayload): Promise<{ invoice: TravauxInvoice }> {
+    return (await this.client.post('/api/v1/admin/travaux/invoices', toFormData('invoice', payload), MULTIPART)).data;
+  }
+  async adminTravauxUpdateInvoice(id: string, payload: TravauxPayload): Promise<{ invoice: TravauxInvoice }> {
+    return (await this.client.patch(`/api/v1/admin/travaux/invoices/${id}`, toFormData('invoice', payload), MULTIPART)).data;
+  }
+  async adminTravauxDeleteInvoice(id: string) {
+    return (await this.client.delete(`/api/v1/admin/travaux/invoices/${id}`)).data;
+  }
+  async adminTravauxGenerateInvoice(id: string): Promise<{ invoice: TravauxInvoice }> {
+    return (await this.client.post(`/api/v1/admin/travaux/invoices/${id}/generate_invoice`)).data;
+  }
+  async adminTravauxDownloadInvoicePdf(id: string): Promise<{ blob: Blob; filename: string }> {
+    const res = await this.client.get(`/api/v1/admin/travaux/invoices/${id}/pdf`, { responseType: 'blob', timeout: 30000 });
+    return { blob: res.data, filename: filenameFrom(res.headers['content-disposition'], 'document.pdf') };
+  }
+
+  async adminTravauxPayments(clientId: string): Promise<{ payments: TravauxPayment[] }> {
+    return (await this.client.get('/api/v1/admin/travaux/payments', { params: { client_id: clientId } })).data;
+  }
+  async adminTravauxCreatePayment(payload: TravauxPayload): Promise<{ payment: TravauxPayment }> {
+    return (await this.client.post('/api/v1/admin/travaux/payments', { payment: payload })).data;
+  }
+  async adminTravauxDeletePayment(id: string) {
+    return (await this.client.delete(`/api/v1/admin/travaux/payments/${id}`)).data;
+  }
 
   // ==================== Admin: Users ====================
 

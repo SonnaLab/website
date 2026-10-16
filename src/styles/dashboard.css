@@ -5231,3 +5231,172 @@
   font-weight: 600;
   color: #dc2626;
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Travaux (admin/travaux) — porté d'elancevae. Tailwind étant précompilé,
+   tout le style spécifique au module vit ici sous le préfixe trv-*.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.adm-modal--xl { max-width: 1120px; }
+
+.trv-page { display: flex; flex-direction: column; gap: 20px; }
+.trv-header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.trv-header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.trv-back { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #6b7280; text-decoration: none; }
+.trv-back:hover { color: #111111; }
+.trv-muted { font-size: 12px; color: #6b7280; }
+.trv-info { font-size: 13px; color: #6b7280; margin: 0; }
+.trv-error { font-size: 13px; color: #dc2626; margin: 0; }
+.trv-num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.trv-right { text-align: right; }
+.trv-mr-auto { margin-right: auto; }
+.trv-chip-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.trv-section-title { font-size: 13px; font-weight: 700; margin: 0 0 10px; color: #111111; }
+.trv-fieldset-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #9ca3af; margin: 0 0 8px; }
+.trv-link { display: inline-flex; align-items: center; gap: 4px; color: #26348b; }
+.trv-link:hover { text-decoration: underline; }
+
+/* Client : logo ou initiales */
+.trv-client-cell { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.trv-client-cell__name { font-weight: 600; color: #111111; }
+.trv-avatar { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 32px; height: 32px; border-radius: 999px; background: #111111; color: #ffffff; font-size: 12px; font-weight: 700; }
+.trv-avatar--lg { width: 44px; height: 44px; font-size: 15px; }
+.trv-logo { height: 32px; width: auto; max-width: 96px; object-fit: contain; flex-shrink: 0; }
+.trv-logo--lg { height: 44px; max-width: 140px; }
+
+/* Pastilles pleines (statut / format / priorité) */
+.trv-pill { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; color: #ffffff; white-space: nowrap; }
+.trv-pill--planned     { background: #6b7280; }
+.trv-pill--in_progress { background: #26348b; }
+.trv-pill--done        { background: #16a34a; }
+.trv-pill--at_risk     { background: #dc2626; }
+.trv-pill--web         { background: #0284c7; }
+.trv-pill--mobile      { background: #26348b; }
+.trv-pill--low         { background: #9ca3af; }
+.trv-pill--medium      { background: #0ea5e9; }
+.trv-pill--high        { background: #f59e0b; }
+.trv-pill--urgent      { background: #dc2626; }
+.trv-pill--soft        { background: #f3f4f6; color: #4b5563; }
+
+.trv-progress { height: 6px; width: 100%; overflow: hidden; border-radius: 999px; background: #f1f5f9; }
+.trv-progress__bar { height: 100%; border-radius: 999px; background: #404c99; transition: width 0.2s; }
+.trv-progress-label { display: flex; justify-content: space-between; font-size: 12px; color: #9ca3af; margin-bottom: 4px; }
+
+/* Livrables : une colonne par projet du client */
+.trv-board { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; align-items: start; }
+.trv-board__column { display: flex; flex-direction: column; gap: 12px; }
+.trv-board__column-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 2px; }
+.trv-board__column-title { font-size: 13px; font-weight: 700; color: #111111; }
+.trv-board__empty { border: 1px dashed #e2e8f0; border-radius: 10px; padding: 16px; text-align: center; font-size: 12px; color: #9ca3af; }
+
+.trv-card { background: #ffffff; border: 1px solid #e8eaed; border-radius: 10px; overflow: hidden; cursor: pointer; transition: box-shadow 0.15s; }
+.trv-card:hover { box-shadow: 0 4px 12px rgba(16, 24, 40, 0.08); }
+.trv-card__head { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-bottom: 1px solid #f0f2f4; }
+.trv-card__ordinal { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 6px; border-radius: 6px; background: #26348b; color: #ffffff; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+.trv-card__title { font-size: 14px; font-weight: 600; color: #111111; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.trv-card__body { display: flex; flex-direction: column; gap: 10px; padding: 12px 16px; }
+.trv-card__desc { font-size: 13px; color: #4b5563; margin: 0; }
+.trv-card__foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 16px; border-top: 1px solid #f0f2f4; }
+.trv-due { font-size: 12px; font-weight: 600; color: #dc2626; }
+
+/* Tâches : kanban */
+.trv-kanban { display: grid; grid-template-columns: repeat(4, minmax(220px, 1fr)); gap: 14px; overflow-x: auto; }
+.trv-kanban__col { background: #f8f9fa; border: 1px solid #e8eaed; border-radius: 10px; transition: border-color 0.12s; }
+.trv-kanban__col--over { border-color: #6771ae; }
+.trv-kanban__head { padding: 10px 12px; border-bottom: 1px solid #e8eaed; font-size: 13px; font-weight: 700; color: #111111; }
+.trv-kanban__count { color: #9ca3af; font-weight: 500; }
+.trv-kanban__list { display: flex; flex-direction: column; gap: 8px; padding: 8px; min-height: 60px; }
+.trv-task { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; background: #ffffff; border: 1px solid #e8eaed; border-radius: 8px; cursor: grab; }
+.trv-task:active { cursor: grabbing; }
+.trv-task__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.trv-task__title { font-size: 13px; font-weight: 600; color: #111111; margin: 0; }
+.trv-task__desc { font-size: 12px; color: #4b5563; margin: 0; }
+.trv-task__delete { border: none; background: none; padding: 0; color: #9ca3af; cursor: pointer; flex-shrink: 0; }
+.trv-task__delete:hover { color: #dc2626; }
+.trv-task__objective { font-size: 12px; color: #26348b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin: 0; }
+.trv-task__meta { display: flex; align-items: center; gap: 6px; }
+.trv-score { margin-left: auto; padding: 2px 8px; border-radius: 999px; background: #f3f4f6; color: #4b5563; font-size: 11px; font-weight: 600; }
+
+/* Fiche livrable : frise des tâches */
+.trv-timeline { list-style: none; margin: 0; padding: 0 0 0 16px; border-left: 1px solid #e8eaed; display: flex; flex-direction: column; gap: 14px; }
+.trv-timeline--scroll { max-height: 360px; overflow-y: auto; padding-right: 4px; }
+.trv-timeline__item { position: relative; }
+.trv-timeline__dot { position: absolute; left: -21px; top: 4px; width: 10px; height: 10px; border-radius: 999px; box-shadow: 0 0 0 4px #ffffff; }
+.trv-timeline__dot--todo        { background: #9ca3af; }
+.trv-timeline__dot--in_progress { background: #404c99; }
+.trv-timeline__dot--review      { background: #f59e0b; }
+.trv-timeline__dot--done        { background: #22c55e; }
+.trv-timeline__row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.trv-timeline__title { font-size: 13px; font-weight: 600; margin: 0; }
+
+/* Tableau de répartition jours / prix */
+.trv-alloc { border: 1px solid #e8eaed; border-radius: 8px; overflow: hidden; }
+.trv-alloc--scroll { max-height: 280px; overflow-y: auto; }
+.trv-alloc table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.trv-alloc th { background: #f8f9fa; text-align: left; font-size: 11px; text-transform: uppercase; color: #9ca3af; padding: 10px 14px; position: sticky; top: 0; }
+.trv-alloc td { padding: 10px 14px; border-top: 1px solid #f0f2f4; }
+.trv-alloc tfoot td { background: #f8f9fa; font-weight: 700; position: sticky; bottom: 0; }
+
+/* Édition devis/facture : formulaire 60 % + aperçu 40 % */
+.trv-split { display: grid; grid-template-columns: 3fr 2fr; gap: 24px; }
+.trv-split__form { max-height: 70vh; overflow-y: auto; padding-right: 4px; display: flex; flex-direction: column; gap: 20px; }
+.trv-split__preview { max-height: 70vh; overflow-y: auto; }
+@media (max-width: 900px) { .trv-split { grid-template-columns: 1fr; } }
+
+.trv-readonly { display: flex; align-items: center; min-height: 38px; padding: 0 11px; border: 1px solid #e2e8f0; border-radius: 6px; background: #f1f5f9; font-size: 13.5px; font-weight: 600; box-sizing: border-box; }
+.trv-input-suffix { position: relative; }
+.trv-input-suffix .adm-input { padding-right: 28px; }
+.trv-input-suffix > span { position: absolute; right: 11px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 13px; pointer-events: none; }
+
+/* Dépôt de fichier */
+.trv-dropzone { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 18px; border: 2px dashed #e2e8f0; border-radius: 8px; text-align: center; cursor: pointer; transition: background 0.12s, border-color 0.12s; }
+.trv-dropzone:hover { background: #f8f9fa; }
+.trv-dropzone--over { border-color: #404c99; background: #f4f5f9; }
+.trv-dropzone--compact { padding: 12px; }
+.trv-dropzone__name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 600; color: #111111; }
+.trv-dropzone__hint { font-size: 12px; color: #9ca3af; }
+.trv-dropzone img { height: 48px; width: auto; max-width: 140px; object-fit: contain; }
+.trv-dropzone__remove { border: none; background: none; padding: 0; font-size: 12px; color: #dc2626; cursor: pointer; }
+
+/* Comptes membres rattachés à un client */
+.trv-checklist { max-height: 200px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px; }
+.trv-checklist label { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 4px; font-size: 13px; cursor: pointer; }
+.trv-checklist label:hover { background: #f8f9fa; }
+
+/* Aperçu A4 zoomable */
+.trv-a4-viewport { position: relative; display: flex; align-items: flex-start; justify-content: center; width: 100%; height: 600px; overflow: auto; padding: 8px; border-radius: 8px; background: #e5e5e5; box-sizing: border-box; }
+.trv-a4-page { width: 794px; height: 1123px; transform-origin: top left; overflow-y: auto; border: 1px solid #d4d4d4; border-radius: 2px; background: #ffffff; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15); }
+.trv-a4-zoom { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 4px; padding: 4px 6px; border: 1px solid #e8eaed; border-radius: 999px; background: #ffffff; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); }
+.trv-a4-zoom button { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: none; border-radius: 999px; background: none; color: #4b5563; cursor: pointer; }
+.trv-a4-zoom button:hover { background: #f3f4f6; }
+.trv-a4-zoom span { width: 40px; text-align: center; font-size: 12px; font-weight: 600; color: #6b7280; font-variant-numeric: tabular-nums; }
+
+/* Réplique HTML du PDF devis/facture (gabarit app/services/travaux/devis_pdf.rb) */
+.trv-doc { display: flex; flex-direction: column; min-height: 100%; padding: 32px; background: #ffffff; color: #171717; font-size: 14px; box-sizing: border-box; }
+.trv-doc__parties { margin-top: 56px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.trv-doc__party { display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 0; }
+.trv-doc__label { margin: 0 0 6px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #a3a3a3; }
+.trv-doc__logo { height: 40px; width: auto; max-width: 160px; object-fit: contain; margin-bottom: 6px; }
+.trv-doc__avatar { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; margin-bottom: 6px; border-radius: 999px; background: #171717; color: #ffffff; font-size: 14px; font-weight: 700; }
+.trv-doc__name { margin: 0; font-weight: 600; }
+.trv-doc__meta { margin: 0; font-size: 12px; color: #737373; }
+.trv-doc__number { margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #a3a3a3; white-space: nowrap; }
+.trv-doc__rule { width: 24px; height: 1px; background: #d4d4d4; }
+.trv-doc__body { display: flex; flex-direction: column; gap: 32px; padding-top: 40px; flex: 1; }
+.trv-doc__deliverable { text-align: center; }
+.trv-doc__deliverable-title { margin: 4px 0 0; font-weight: 600; }
+.trv-doc__deliverable-desc { margin: 4px auto 0; max-width: 28rem; font-size: 13px; color: #737373; }
+.trv-doc__table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.trv-doc__table th, .trv-doc__table td { border: 1px solid #d4d4d4; padding: 8px 12px; text-align: left; vertical-align: top; }
+.trv-doc__table thead tr { background: #fafafa; font-size: 11px; text-transform: uppercase; color: #737373; }
+.trv-doc__table .trv-right { text-align: right; }
+.trv-doc__muted { color: #737373; }
+.trv-doc__task-title { margin: 0; font-weight: 500; }
+.trv-doc__task-desc { margin: 2px 0 0; font-size: 12px; color: #737373; }
+.trv-doc__mark { border-radius: 4px; padding: 2px 6px; background: #e5e7f1; color: #1f2b72; font-weight: 700; white-space: nowrap; }
+.trv-doc__mentions { display: flex; flex-direction: column; gap: 3px; text-align: center; font-size: 12px; color: #a3a3a3; }
+.trv-doc__mentions p { margin: 0; }
+.trv-doc__footer { margin-top: auto; display: flex; flex-direction: column; gap: 12px; padding-top: 24px; text-align: center; }
+.trv-doc__schedule { margin: 0; font-size: 14px; color: #737373; }
+.trv-doc__slogan { margin: 0; font-size: 12px; font-style: italic; color: #a3a3a3; }
+.trv-doc__url { margin: 2px 0 0; font-size: 12px; font-weight: 700; color: #26348b; text-decoration: underline; }
