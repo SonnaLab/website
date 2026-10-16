@@ -5372,7 +5372,7 @@
 .trv-a4-zoom span { width: 40px; text-align: center; font-size: 12px; font-weight: 600; color: #6b7280; font-variant-numeric: tabular-nums; }
 
 /* Réplique HTML du PDF devis/facture (gabarit app/services/travaux/devis_pdf.rb) */
-.trv-doc { display: flex; flex-direction: column; min-height: 100%; padding: 32px; background: #ffffff; color: #171717; font-family: Helvetica, Arial, sans-serif; font-size: 14px; box-sizing: border-box; }
+.trv-doc { display: flex; flex-direction: column; min-height: 100%; padding: 32px; background: #ffffff; color: #171717; font-family: 'Raleway', sans-serif; font-size: 14px; box-sizing: border-box; }
 .trv-doc__parties { margin-top: 56px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 .trv-doc__party { display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 0; }
 .trv-doc__label { margin: 0 0 6px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #a3a3a3; }
@@ -5427,7 +5427,7 @@
 
 /* Feuille A4 de 794 px aux cotes de Travaux::Letterhead (1 mm ≈ 3,78 px) :
    marges 20 mm / 15 mm, pied de page ancré à 8 mm du bord. */
-.co-sheet { position: relative; height: 100%; padding: 76px 57px 0; box-sizing: border-box; color: #171717; font-family: Helvetica, Arial, sans-serif; }
+.co-sheet { position: relative; height: 100%; padding: 76px 57px 0; box-sizing: border-box; color: #171717; font-family: 'Raleway', sans-serif; }
 .co-sheet__zone { border-radius: 4px; outline: 2px dashed transparent; outline-offset: 6px; transition: outline-color 0.15s, background-color 0.15s; }
 .co-sheet__zone--active { outline-color: rgba(38, 52, 139, 0.45); background-color: rgba(229, 231, 241, 0.35); }
 .co-sheet__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding-bottom: 10px; border-bottom: 1px solid #e5e5e5; }
