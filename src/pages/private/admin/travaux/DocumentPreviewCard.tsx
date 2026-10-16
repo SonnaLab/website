@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { apiAssetUrl } from '@/services/api';
 import { calculateDevis } from '@/lib/devisCalc';
+import { addressLines, bankLine, footerSlogan, footerWebsite, legalLine } from '@/lib/letterhead';
 import type { TravauxClient, TravauxObjective, TravauxTask } from '@/types/travaux';
 import { formatDate, formatEuros } from './format';
 
@@ -22,6 +23,7 @@ export interface DocumentPreviewData {
 
 function PartyBlock({ party, label }: { party: TravauxClient | null; label: string }) {
   const logo = apiAssetUrl(party?.logo_path);
+  const phone = party?.phone || party?.referent_phone;
   return (
     <div className="trv-doc__party">
       <p className="trv-doc__label">{label}</p>
@@ -32,8 +34,9 @@ function PartyBlock({ party, label }: { party: TravauxClient | null; label: stri
       )}
       <p className="trv-doc__name">{party?.name || '—'}</p>
       {party?.siret && <p className="trv-doc__meta">SIRET : {party.siret}</p>}
+      {addressLines(party).map((line, i) => <p key={i} className="trv-doc__meta">{line}</p>)}
       {party?.contact_email && <p className="trv-doc__meta">{party.contact_email}</p>}
-      {party?.referent_phone && <p className="trv-doc__meta">{party.referent_phone}</p>}
+      {phone && <p className="trv-doc__meta">{phone}</p>}
     </div>
   );
 }
@@ -47,6 +50,8 @@ export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
   const calc = data.objective ? calculateDevis(data.tasks, data.dueDate, data.dailyRate) : null;
   const hasAllocations = !!calc && calc.allocations.length > 0;
   const deliverableTitle = data.objective?.title || data.title || '—';
+  const bank = bankLine(data.issuer);
+  const legal = legalLine(data.issuer);
 
   return (
     <div className="trv-doc">
@@ -111,7 +116,7 @@ export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
 
         <div className="trv-doc__mentions">
           <p>{t('travaux.document.vatMention')}</p>
-          <p>{t('travaux.document.paymentMention')}</p>
+          <p>{bank ? t('travaux.document.paymentMentionBank', { bank }) : t('travaux.document.paymentMention')}</p>
           <p>
             {t('travaux.document.depositMentionBefore')}{' '}
             <mark className="trv-doc__mark">{t('travaux.document.depositMentionRate')}</mark>{' '}
@@ -125,8 +130,9 @@ export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
           {t('travaux.document.schedule')} : <mark className="trv-doc__mark">{formatDate(data.dueDate)}</mark>
         </p>
         <div>
-          <p className="trv-doc__slogan">{t('travaux.document.footer')}</p>
-          <p className="trv-doc__url">https://sonnalab.com</p>
+          <p className="trv-doc__slogan">{footerSlogan(data.issuer)}</p>
+          <p className="trv-doc__url">{footerWebsite(data.issuer)}</p>
+          {legal && <p className="trv-doc__legal">{legal}</p>}
         </div>
       </div>
     </div>

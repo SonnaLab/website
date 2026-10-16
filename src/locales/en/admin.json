@@ -9,7 +9,8 @@
     "users": "Users",
     "lesankofa": "Lesankofa",
     "billing": "Billing",
-    "travaux": "Work"
+    "travaux": "Work",
+    "company": "Company"
   },
   "dashboard": {
     "title": "Welcome, =={{name}}==",
@@ -421,8 +422,6 @@
       "empty": "No clients yet.",
       "loadError": "Could not load clients.",
       "issuer": "Issuer",
-      "issuerTitle": "Quote issuer (SonnaLab)",
-      "issuerHint": "This information appears in the \"Issued by\" block of every quote and invoice.",
       "saved": "Client saved.",
       "deleted": "Client deleted.",
       "deleteBlocked": "This client cannot be deleted: it still has projects or documents.",
@@ -453,7 +452,12 @@
         "logo": "Logo",
         "members": "Linked member accounts",
         "membersHint": "These accounts will see this client's projects and quotes/invoices (drafts excluded) in their area.",
-        "noMembers": "No member account (user role) available."
+        "noMembers": "No member account (user role) available.",
+        "address": "Address",
+        "postalCode": "Postal code",
+        "city": "City",
+        "country": "Country",
+        "phone": "Phone"
       },
       "detail": {
         "projects": "Projects",
@@ -613,13 +617,88 @@
       "price": "Price",
       "vatMention": "VAT not applicable – article 293 B of the French General Tax Code.",
       "paymentMention": "Payment by bank transfer to the details provided separately.",
+      "paymentMentionBank": "Payment by bank transfer — {{bank}}.",
       "depositMentionBefore": "A deposit of",
       "depositMentionRate": "30%",
       "depositMentionAfter": "is due upon order, the balance upon delivery.",
       "schedule": "Schedule",
-      "footer": "SonnaLab — The idea lab that transforms digital.",
       "zoomIn": "Zoom in",
       "zoomOut": "Zoom out"
+    }
+  },
+  "company": {
+    "title": "Company",
+    "subtitle": "SonnaLab issuer profile: header and footer used on quotes, invoices and every generated document.",
+    "loading": "Loading company profile…",
+    "loadError": "Could not load the company profile.",
+    "saved": "Company profile saved.",
+    "saving": "Saving…",
+    "unsaved": "Unsaved changes",
+    "upToDate": "Up to date",
+    "preview": {
+      "title": "A4 preview",
+      "body": "Document content"
+    },
+    "sections": {
+      "header": {
+        "title": "Header",
+        "hint": "Logo, name and contact details at the top of every document."
+      },
+      "footer": {
+        "title": "Footer",
+        "hint": "Tagline and legal notice at the bottom of every page."
+      },
+      "payment": {
+        "title": "Payment",
+        "hint": "Bank details quoted in the payment terms."
+      },
+      "referent": {
+        "title": "Contact person",
+        "hint": "Internal contact, not printed on documents."
+      }
+    },
+    "fields": {
+      "logo": "Logo",
+      "name": "Trading name",
+      "address_line1": "Address",
+      "address_line2": "Address line 2",
+      "postal_code": "Postal code",
+      "city": "City",
+      "country": "Country",
+      "phone": "Phone",
+      "contact_email": "Contact email",
+      "website": "Website",
+      "tagline": "Tagline",
+      "legal_name": "Legal name",
+      "legal_form": "Legal form",
+      "capital": "Share capital",
+      "rcs": "Trade register (RCS)",
+      "siret": "SIRET",
+      "vat_number": "VAT number",
+      "iban": "IBAN",
+      "bic": "BIC",
+      "referent_first_name": "First name",
+      "referent_last_name": "Last name",
+      "referent_email": "Email",
+      "referent_phone": "Phone"
+    },
+    "placeholders": {
+      "name": "SonnaLab",
+      "address_line1": "Avenue des Grouettes",
+      "postal_code": "95000",
+      "city": "Cergy",
+      "country": "France",
+      "phone": "+33 7 53 31 56 03",
+      "contact_email": "contact@sonnalab.com",
+      "website": "https://sonnalab.com",
+      "legal_name": "SONNALAB",
+      "legal_form": "SAS",
+      "capital": "1 000 €",
+      "rcs": "RCS Cergy 920978210",
+      "siret": "92097821000010",
+      "vat_number": "FR00 920978210",
+      "iban": "FR76 …",
+      "bic": "BNPAFRPP"
     }
   }
 }

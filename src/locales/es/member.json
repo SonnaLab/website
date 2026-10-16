@@ -5,7 +5,8 @@
     "billing": "Facturación",
     "account": "Mi cuenta",
     "signOut": "Cerrar sesión",
-    "backToSite": "Volver al sitio"
+    "backToSite": "Volver al sitio",
+    "profile": "Perfil"
   },
   "dashboard": {
     "title": "Bienvenido {{name}}",
@@ -54,5 +55,31 @@
       "overdue": "Vencido",
       "cancelled": "Cancelado"
     }
+  },
+  "profile": {
+    "title": "Perfil",
+    "subtitle": "Tus datos personales y tu idioma.",
+    "fields": {
+      "email": "Email",
+      "role": "Rol",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "phone": "Teléfono",
+      "company": "Empresa",
+      "language": "Idioma"
+    },
+    "roles": {
+      "user": "Miembro",
+      "staff": "Staff",
+      "admin": "Administrador"
+    },
+    "languages": {
+      "fr": "Francés",
+      "en": "Inglés"
+    },
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "saved": "Perfil actualizado.",
+    "saveError": "No se pudo guardar el perfil."
   }
 }

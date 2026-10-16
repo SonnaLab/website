@@ -8,20 +8,19 @@ import { FileDropzone } from './FileDropzone';
 import { apiErrorMessage } from './format';
 
 /**
- * Création/édition d'un client (entreprise), ou de la fiche émetteur
- * SonnaLab (`issuer`) : mêmes champs, sans les comptes membres.
+ * Création/édition d'un client (entreprise). Son adresse et son téléphone
+ * figurent dans le bloc « À l'attention de » des devis/factures. La fiche
+ * émetteur SonnaLab s'édite, elle, depuis la page Entreprise.
  */
 export function ClientFormModal({
   open,
   client,
-  issuer = false,
   onClose,
   onSaved,
   onDeleted,
 }: {
   open: boolean;
   client: TravauxClient | null;
-  issuer?: boolean;
   onClose: () => void;
   onSaved: (client: TravauxClient) => void;
   onDeleted?: () => void;
@@ -35,6 +34,11 @@ export function ClientFormModal({
   const [referentLastName, setReferentLastName] = useState('');
   const [referentEmail, setReferentEmail] = useState('');
   const [referentPhone, setReferentPhone] = useState('');
+  const [addressLine1, setAddressLine1] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [city, setCity] = useState('');
+  const [country, setCountry] = useState('');
+  const [phone, setPhone] = useState('');
   const [logo, setLogo] = useState<File | null>(null);
   const [removeLogo, setRemoveLogo] = useState(false);
   const [memberIds, setMemberIds] = useState<string[]>([]);
@@ -51,17 +55,22 @@ export function ClientFormModal({
     setReferentLastName(client?.referent_last_name ?? '');
     setReferentEmail(client?.referent_email ?? '');
     setReferentPhone(client?.referent_phone ?? '');
+    setAddressLine1(client?.address_line1 ?? '');
+    setPostalCode(client?.postal_code ?? '');
+    setCity(client?.city ?? '');
+    setCountry(client?.country ?? '');
+    setPhone(client?.phone ?? '');
     setLogo(null);
     setRemoveLogo(false);
     setMemberIds(client?.members?.map((m) => m.id) ?? []);
   }, [open, client]);
 
   useEffect(() => {
-    if (!open || issuer) return;
+    if (!open) return;
     apiService.adminUsersList({ role: 'user', per_page: 100 })
       .then((res) => setMembers(res.users))
       .catch(() => setMembers([]));
-  }, [open, issuer]);
+  }, [open]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -74,16 +83,19 @@ export function ClientFormModal({
       referent_last_name: referentLastName,
       referent_email: referentEmail,
       referent_phone: referentPhone,
+      address_line1: addressLine1,
+      postal_code: postalCode,
+      city,
+      country,
+      phone,
       logo: logo ?? undefined,
       remove_logo: removeLogo && !logo ? true : undefined,
+      member_ids: memberIds,
     };
-    if (!issuer) payload.member_ids = memberIds;
     try {
-      const saved = issuer
-        ? (await apiService.adminTravauxUpdateIssuer(payload)).issuer
-        : isEdit
-          ? (await apiService.adminTravauxUpdateClient(client!.id, payload)).client
-          : (await apiService.adminTravauxCreateClient(payload)).client;
+      const saved = isEdit
+        ? (await apiService.adminTravauxUpdateClient(client!.id, payload)).client
+        : (await apiService.adminTravauxCreateClient(payload)).client;
       toast.success(t('travaux.clients.saved'));
       onSaved(saved);
     } catch (err) {
@@ -110,25 +122,24 @@ export function ClientFormModal({
   const toggleMember = (id: string) =>
     setMemberIds((ids) => (ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id]));
 
-  const title = issuer ? t('travaux.clients.issuerTitle') : isEdit ? t('travaux.clients.edit') : t('travaux.clients.new');
+  const title = isEdit ? t('travaux.clients.edit') : t('travaux.clients.new');
 
   return (
     <Modal
       open={open}
       onClose={onClose}
       title={title}
-      subtitle={issuer ? t('travaux.clients.issuerHint') : undefined}
       size="md"
       footer={
         <>
-          {isEdit && !issuer && onDeleted && (
+          {isEdit && onDeleted && (
             <button type="button" className="adm-btn adm-btn--danger trv-mr-auto" onClick={remove} disabled={deleting}>
               {t('common.delete')}
             </button>
           )}
           <button type="button" className="adm-btn adm-btn--ghost" onClick={onClose}>{t('common.cancel')}</button>
           <button type="submit" form="trv-client-form" className="adm-btn adm-btn--primary" disabled={saving}>
-            {isEdit || issuer ? t('common.save') : t('common.create')}
+            {isEdit ? t('common.save') : t('common.create')}
           </button>
         </>
       }
@@ -163,6 +174,30 @@ export function ClientFormModal({
             <input id="trv-client-email" type="email" className="adm-input" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} />
           </div>
         </div>
+        <div className="adm-form__field">
+          <label className="adm-form__label" htmlFor="trv-client-address">{t('travaux.clients.fields.address')}</label>
+          <input id="trv-client-address" className="adm-input" maxLength={255} value={addressLine1} onChange={(e) => setAddressLine1(e.target.value)} />
+        </div>
+        <div className="adm-form__row">
+          <div className="adm-form__field">
+            <label className="adm-form__label" htmlFor="trv-client-postal">{t('travaux.clients.fields.postalCode')}</label>
+            <input id="trv-client-postal" className="adm-input" maxLength={20} value={postalCode} onChange={(e) => setPostalCode(e.target.value)} />
+          </div>
+          <div className="adm-form__field">
+            <label className="adm-form__label" htmlFor="trv-client-city">{t('travaux.clients.fields.city')}</label>
+            <input id="trv-client-city" className="adm-input" maxLength={120} value={city} onChange={(e) => setCity(e.target.value)} />
+          </div>
+        </div>
+        <div className="adm-form__row">
+          <div className="adm-form__field">
+            <label className="adm-form__label" htmlFor="trv-client-country">{t('travaux.clients.fields.country')}</label>
+            <input id="trv-client-country" className="adm-input" maxLength={120} value={country} onChange={(e) => setCountry(e.target.value)} />
+          </div>
+          <div className="adm-form__field">
+            <label className="adm-form__label" htmlFor="trv-client-phone">{t('travaux.clients.fields.phone')}</label>
+            <input id="trv-client-phone" type="tel" className="adm-input" maxLength={30} value={phone} onChange={(e) => setPhone(e.target.value)} />
+          </div>
+        </div>
         <div className="adm-form__row">
           <div className="adm-form__field">
             <label className="adm-form__label" htmlFor="trv-client-ref-first">{t('travaux.clients.fields.referentFirstName')}</label>
@@ -184,25 +219,23 @@ export function ClientFormModal({
           </div>
         </div>
 
-        {!issuer && (
-          <div className="adm-form__field">
-            <span className="adm-form__label">{t('travaux.clients.fields.members')}</span>
-            <p className="trv-muted">{t('travaux.clients.fields.membersHint')}</p>
-            {members.length ? (
-              <div className="trv-checklist">
-                {members.map((m) => (
-                  <label key={m.id}>
-                    <input type="checkbox" checked={memberIds.includes(m.id)} onChange={() => toggleMember(m.id)} />
-                    <span>{m.full_name || m.email}</span>
-                    {m.full_name && <span className="trv-muted">{m.email}</span>}
-                  </label>
-                ))}
-              </div>
-            ) : (
-              <p className="trv-info">{t('travaux.clients.fields.noMembers')}</p>
-            )}
-          </div>
-        )}
+        <div className="adm-form__field">
+          <span className="adm-form__label">{t('travaux.clients.fields.members')}</span>
+          <p className="trv-muted">{t('travaux.clients.fields.membersHint')}</p>
+          {members.length ? (
+            <div className="trv-checklist">
+              {members.map((m) => (
+                <label key={m.id}>
+                  <input type="checkbox" checked={memberIds.includes(m.id)} onChange={() => toggleMember(m.id)} />
+                  <span>{m.full_name || m.email}</span>
+                  {m.full_name && <span className="trv-muted">{m.email}</span>}
+                </label>
+              ))}
+            </div>
+          ) : (
+            <p className="trv-info">{t('travaux.clients.fields.noMembers')}</p>
+          )}
+        </div>
       </form>
     </Modal>
   );

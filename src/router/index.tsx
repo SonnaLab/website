@@ -31,6 +31,7 @@ import ConfirmEmailPage from '@/pages/private/auth/ConfirmEmail';
 import MemberDashboard from '@/pages/private/member/Dashboard';
 import MemberAppointments from '@/pages/private/member/Appointments';
 import MemberBilling from '@/pages/private/member/Billing';
+import MemberProfile from '@/pages/private/member/Profile';
 
 // Admin
 import AdminDashboard from '@/pages/private/admin/Dashboard';
@@ -43,6 +44,7 @@ import AdminUsers from '@/pages/private/admin/Users';
 import AdminLesankofa from '@/pages/private/admin/Lesankofa';
 import AdminTravauxClients from '@/pages/private/admin/travaux/TravauxClients';
 import AdminClientTravaux from '@/pages/private/admin/travaux/ClientTravaux';
+import AdminCompany from '@/pages/private/admin/company/Company';
 
 // Staff
 import StaffDashboard from '@/pages/private/staff/Dashboard';
@@ -168,6 +170,7 @@ export const routeTree: RouteObject[] = [
           { index: true,           element: <MemberDashboard /> },
           { path: 'appointments',  element: <MemberAppointments /> },
           { path: 'billing',       element: <MemberBilling /> },
+          { path: 'profile',       element: <MemberProfile /> },
         ],
       },
 
@@ -197,6 +200,7 @@ export const routeTree: RouteObject[] = [
           { path: 'lesankofa',      element: <AdminLesankofa /> },
           { path: 'travaux',        element: <AdminTravauxClients /> },
           { path: 'travaux/:clientId', element: <AdminClientTravaux /> },
+          { path: 'entreprise',     element: <AdminCompany /> },
         ],
       },
     ],

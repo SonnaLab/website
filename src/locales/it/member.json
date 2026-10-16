@@ -5,7 +5,8 @@
     "billing": "Fatturazione",
     "account": "Il mio account",
     "signOut": "Disconnetti",
-    "backToSite": "Torna al sito"
+    "backToSite": "Torna al sito",
+    "profile": "Profilo"
   },
   "dashboard": {
     "title": "Benvenuto {{name}}",
@@ -54,5 +55,31 @@
       "overdue": "Scaduto",
       "cancelled": "Annullato"
     }
+  },
+  "profile": {
+    "title": "Profilo",
+    "subtitle": "I tuoi dati personali e la lingua.",
+    "fields": {
+      "email": "Email",
+      "role": "Ruolo",
+      "firstName": "Nome",
+      "lastName": "Cognome",
+      "phone": "Telefono",
+      "company": "Azienda",
+      "language": "Lingua"
+    },
+    "roles": {
+      "user": "Membro",
+      "staff": "Staff",
+      "admin": "Amministratore"
+    },
+    "languages": {
+      "fr": "Francese",
+      "en": "Inglese"
+    },
+    "save": "Salva",
+    "saving": "Salvataggio…",
+    "saved": "Profilo aggiornato.",
+    "saveError": "Impossibile salvare il profilo."
   }
 }

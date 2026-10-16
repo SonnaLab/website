@@ -21,6 +21,8 @@ import {
   ChevronRightIcon,
   EyeIcon,
   TrafficConeIcon,
+  UserIcon,
+  Building2Icon,
 } from '@icons';
 
 import { useAuth } from '@/components/providers/AuthProvider';
@@ -161,6 +163,18 @@ export function MemberLayout() {
                   <span className="dash-avatar-info__name">{displayName}</span>
                   <span className="dash-avatar-info__role">{user?.role}</span>
                 </div>
+
+                <Link to="/dashboard/profile" className="dash-avatar-menu-item" onClick={() => setAvatarOpen(false)}>
+                  <UserIcon size={14} />
+                  {t('nav.profile')}
+                </Link>
+                {isAdmin && (
+                  <Link to="/admin/entreprise" className="dash-avatar-menu-item" onClick={() => setAvatarOpen(false)}>
+                    <Building2Icon size={14} />
+                    {tA('nav.company')}
+                  </Link>
+                )}
+                <div className="dash-avatar-menu-sep" />
 
                 <button
                   className="dash-avatar-menu-item dash-avatar-menu-item--danger"

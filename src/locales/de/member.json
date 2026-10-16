@@ -5,7 +5,8 @@
     "billing": "Abrechnung",
     "account": "Mein Konto",
     "signOut": "Abmelden",
-    "backToSite": "Zurück zur Website"
+    "backToSite": "Zurück zur Website",
+    "profile": "Profil"
   },
   "dashboard": {
     "title": "Willkommen {{name}}",
@@ -54,5 +55,31 @@
       "overdue": "Überfällig",
       "cancelled": "Storniert"
     }
+  },
+  "profile": {
+    "title": "Profil",
+    "subtitle": "Ihre persönlichen Daten und Ihre Sprache.",
+    "fields": {
+      "email": "E-Mail",
+      "role": "Rolle",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "phone": "Telefon",
+      "company": "Firma",
+      "language": "Sprache"
+    },
+    "roles": {
+      "user": "Mitglied",
+      "staff": "Staff",
+      "admin": "Administrator"
+    },
+    "languages": {
+      "fr": "Französisch",
+      "en": "Englisch"
+    },
+    "save": "Speichern",
+    "saving": "Wird gespeichert…",
+    "saved": "Profil aktualisiert.",
+    "saveError": "Profil konnte nicht gespeichert werden."
   }
 }

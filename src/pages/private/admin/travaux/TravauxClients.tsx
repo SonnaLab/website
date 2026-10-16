@@ -23,6 +23,7 @@ import {
   SearchIcon,
   TrafficConeIcon,
   UsersIcon,
+  Building2Icon,
 } from '@icons';
 import type { TravauxClient } from '@/types/travaux';
 import { ClientAvatar } from './ClientAvatar';
@@ -48,8 +49,6 @@ export default function AdminTravauxClients() {
   const [viewId, setViewId] = useState<string | null>(null);
   const [editClient, setEditClient] = useState<TravauxClient | null>(null);
   const [formOpen, setFormOpen] = useState(false);
-  const [issuerOpen, setIssuerOpen] = useState(false);
-  const [issuer, setIssuer] = useState<TravauxClient | null>(null);
 
   const load = useCallback((p: number, q: string) => {
     setLoading(true);
@@ -73,15 +72,6 @@ export default function AdminTravauxClients() {
     }
   }
 
-  async function openIssuer() {
-    try {
-      setIssuer((await apiService.adminTravauxIssuer()).issuer);
-      setIssuerOpen(true);
-    } catch {
-      toast.error(t('common.error'));
-    }
-  }
-
   const referentOf = (c: TravauxClient) => [c.referent_first_name, c.referent_last_name].filter(Boolean).join(' ');
 
   return (
@@ -95,7 +85,9 @@ export default function AdminTravauxClients() {
           <p className="mt-1 text-muted-foreground text-sm">{t('travaux.subtitle')}</p>
         </header>
         <div className="trv-header-actions">
-          <button type="button" className="adm-btn adm-btn--ghost" onClick={openIssuer}>{t('travaux.clients.issuer')}</button>
+          <button type="button" className="adm-btn adm-btn--ghost" onClick={() => navigate('/admin/entreprise')}>
+            <Building2Icon size={14} /> {t('travaux.clients.issuer')}
+          </button>
           <button type="button" className="adm-btn adm-btn--primary" onClick={() => { setEditClient(null); setFormOpen(true); }}>
             <PlusIcon size={14} /> {t('travaux.clients.new')}
           </button>
@@ -188,13 +180,6 @@ export default function AdminTravauxClients() {
         onClose={() => setFormOpen(false)}
         onSaved={() => { setFormOpen(false); load(page, search); }}
         onDeleted={() => { setFormOpen(false); load(page, search); }}
-      />
-      <ClientFormModal
-        open={issuerOpen}
-        client={issuer}
-        issuer
-        onClose={() => setIssuerOpen(false)}
-        onSaved={() => setIssuerOpen(false)}
       />
     </div>
   );

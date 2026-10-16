@@ -5400,3 +5400,69 @@
 .trv-doc__schedule { margin: 0; font-size: 14px; color: #737373; }
 .trv-doc__slogan { margin: 0; font-size: 12px; font-style: italic; color: #a3a3a3; }
 .trv-doc__url { margin: 2px 0 0; font-size: 12px; font-weight: 700; color: #26348b; text-decoration: underline; }
+
+/* ── Menu avatar : séparateur avant la déconnexion ── */
+.dash-avatar-menu-sep { height: 1px; margin: 4px 0; background: #f0f0f0; }
+
+/* Ligne légale du pied de page (fiche émetteur) dans l'aperçu devis/facture */
+.trv-doc__legal { margin: 2px 0 0; font-size: 11px; color: #737373; }
+
+/* ══ Entreprise (fiche émetteur) — aperçu A4 60 % · champs 40 % ══ */
+.co-layout { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 20px; align-items: start; }
+.co-layout__preview { position: sticky; top: 16px; min-width: 0; }
+.co-layout__preview .trv-a4-viewport { height: calc(100vh - 210px); min-height: 520px; }
+.co-panel { display: flex; flex-direction: column; min-width: 0; height: calc(100vh - 210px); min-height: 520px; border: 1px solid #e8eaed; border-radius: 8px; background: #ffffff; }
+.co-panel__scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 0 18px; }
+.co-panel__loading { padding: 24px 18px; flex: 1; }
+.co-panel__actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 12px 18px; border-top: 1px solid #f0f0f0; }
+.co-panel__status { margin-right: auto; font-size: 12px; color: #9ca3af; }
+.co-section { display: flex; flex-direction: column; gap: 12px; padding: 18px 0; border-bottom: 1px solid #f0f0f0; }
+.co-section:last-child { border-bottom: 0; }
+.co-section__title { margin: 0; font-size: 13px; font-weight: 700; color: #111111; transition: color 0.15s; }
+.co-section__hint { margin: -8px 0 0; font-size: 12px; color: #9ca3af; }
+.co-section--active .co-section__title { color: #26348b; }
+.co-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.co-field--full { grid-column: 1 / -1; }
+
+/* Feuille A4 de 794 px aux cotes de Travaux::Letterhead (1 mm ≈ 3,78 px) :
+   marges 20 mm / 15 mm, pied de page ancré à 8 mm du bord. */
+.co-sheet { position: relative; height: 100%; padding: 76px 57px 0; box-sizing: border-box; color: #171717; font-family: Helvetica, Arial, sans-serif; }
+.co-sheet__zone { border-radius: 4px; outline: 2px dashed transparent; outline-offset: 6px; transition: outline-color 0.15s, background-color 0.15s; }
+.co-sheet__zone--active { outline-color: rgba(38, 52, 139, 0.45); background-color: rgba(229, 231, 241, 0.35); }
+.co-sheet__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding-bottom: 10px; border-bottom: 1px solid #e5e5e5; }
+.co-sheet__logo { display: block; max-width: 160px; max-height: 48px; object-fit: contain; object-position: left top; }
+.co-sheet__initials { display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 999px; background: #171717; color: #ffffff; font-size: 12px; font-weight: 700; }
+.co-sheet__identity { min-width: 0; max-width: 50%; text-align: right; }
+.co-sheet__name { margin: 0; font-size: 16px; font-weight: 700; line-height: 1.2; overflow-wrap: anywhere; }
+.co-sheet__meta { margin: 2px 0 0; font-size: 10px; line-height: 1.25; color: #737373; overflow-wrap: anywhere; }
+.co-sheet__body { display: flex; flex-direction: column; gap: 28px; margin-top: 18px; }
+.co-sheet__body-label { margin: 24px 0 0; text-align: center; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #d4d4d4; }
+.co-sheet__lines { display: flex; flex-direction: column; gap: 10px; }
+.co-sheet__lines span { display: block; height: 8px; border-radius: 4px; background: #f3f4f6; }
+.co-sheet__lines--center { align-items: center; }
+.co-sheet__table { display: flex; flex-direction: column; border: 1px solid #f0f0f0; border-radius: 2px; }
+.co-sheet__table span { display: block; height: 30px; border-bottom: 1px solid #f0f0f0; }
+.co-sheet__table span:first-child { background: #fafafa; }
+.co-sheet__table span:last-child { border-bottom: 0; }
+.co-sheet__payment { margin: 28px 0 0; padding: 4px 0; text-align: center; font-size: 8px; color: #a3a3a3; }
+.co-sheet__foot { position: absolute; left: 57px; right: 57px; bottom: 30px; padding-top: 6px; border-top: 1px solid #e5e5e5; text-align: center; }
+.co-sheet__foot p { margin: 0; line-height: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.co-sheet__slogan { font-size: 9px; font-style: italic; color: #a3a3a3; }
+.co-sheet__url { font-size: 9px; font-weight: 700; color: #26348b; text-decoration: underline; }
+.co-sheet__legal { font-size: 8px; color: #737373; }
+
+/* Profil */
+.co-profile { max-width: 720px; }
+.co-profile__actions { display: flex; justify-content: flex-end; }
+
+@media (max-width: 1100px) {
+  .co-layout { grid-template-columns: minmax(0, 1fr); }
+  .co-layout__preview { position: static; }
+  .co-layout__preview .trv-a4-viewport { height: 70vh; min-height: 420px; }
+  .co-panel { height: auto; min-height: 0; }
+  .co-panel__scroll { overflow: visible; }
+}
+@media (max-width: 560px) {
+  .co-fields { grid-template-columns: minmax(0, 1fr); }
+  .co-profile .adm-form__row { grid-template-columns: minmax(0, 1fr); }
+}

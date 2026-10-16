@@ -5,7 +5,8 @@
     "billing": "Facturation",
     "account": "Mon compte",
     "signOut": "Déconnexion",
-    "backToSite": "Retour au site"
+    "backToSite": "Retour au site",
+    "profile": "Profil"
   },
   "dashboard": {
     "title": "Bienvenue {{name}}",
@@ -54,5 +55,31 @@
       "overdue": "En retard",
       "cancelled": "Annulé"
     }
+  },
+  "profile": {
+    "title": "Profil",
+    "subtitle": "Vos informations personnelles et votre langue.",
+    "fields": {
+      "email": "E-mail",
+      "role": "Rôle",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "phone": "Téléphone",
+      "company": "Société",
+      "language": "Langue"
+    },
+    "roles": {
+      "user": "Membre",
+      "staff": "Staff",
+      "admin": "Administrateur"
+    },
+    "languages": {
+      "fr": "Français",
+      "en": "Anglais"
+    },
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "saved": "Profil mis à jour.",
+    "saveError": "Impossible d'enregistrer le profil."
   }
 }

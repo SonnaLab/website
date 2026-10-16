@@ -5,7 +5,8 @@
     "billing": "Billing",
     "account": "My account",
     "signOut": "Sign out",
-    "backToSite": "Back to site"
+    "backToSite": "Back to site",
+    "profile": "Profile"
   },
   "dashboard": {
     "title": "Welcome {{name}}",
@@ -54,5 +55,31 @@
       "overdue": "Overdue",
       "cancelled": "Cancelled"
     }
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Your personal details and language.",
+    "fields": {
+      "email": "Email",
+      "role": "Role",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "phone": "Phone",
+      "company": "Company",
+      "language": "Language"
+    },
+    "roles": {
+      "user": "Member",
+      "staff": "Staff",
+      "admin": "Administrator"
+    },
+    "languages": {
+      "fr": "French",
+      "en": "English"
+    },
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Profile updated.",
+    "saveError": "Could not save your profile."
   }
 }

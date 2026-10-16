@@ -86,7 +86,17 @@ export interface AuthUser {
   last_name?: string;
   role: AuthRole;
   language?: string;
+  phone?: string | null;
+  company?: string | null;
   confirmed_at?: string | null;
+}
+
+export interface ProfilePayload {
+  first_name: string;
+  last_name: string;
+  phone: string;
+  company: string;
+  language: string;
 }
 
 export interface NewProjectPayload {
@@ -520,6 +530,10 @@ class ApiService {
 
   async fetchMe() {
     const res = await this.client.get('/api/v1/auth/me');
+    return res.data.user as AuthUser;
+  }
+  async updateMe(payload: ProfilePayload) {
+    const res = await this.client.patch('/api/v1/me', { user: payload });
     return res.data.user as AuthUser;
   }
 

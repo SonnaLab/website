@@ -9,7 +9,8 @@
     "users": "Utilisateurs",
     "lesankofa": "Lesankofa",
     "billing": "Facturation",
-    "travaux": "Travaux"
+    "travaux": "Travaux",
+    "company": "Entreprise"
   },
   "dashboard": {
     "title": "Bienvenue, =={{name}}==",
@@ -422,8 +423,6 @@
       "empty": "Aucun client pour le moment.",
       "loadError": "Impossible de charger les clients.",
       "issuer": "Émetteur",
-      "issuerTitle": "Émetteur des devis (SonnaLab)",
-      "issuerHint": "Ces informations apparaissent dans le bloc « Émis par » de chaque devis et facture.",
       "saved": "Client enregistré.",
       "deleted": "Client supprimé.",
       "deleteBlocked": "Impossible de supprimer ce client : il a encore des projets ou des documents.",
@@ -454,7 +453,12 @@
         "logo": "Logo",
         "members": "Comptes membres rattachés",
         "membersHint": "Ces comptes verront les projets et les devis/factures (hors brouillons) de ce client dans leur espace.",
-        "noMembers": "Aucun compte membre (rôle utilisateur) disponible."
+        "noMembers": "Aucun compte membre (rôle utilisateur) disponible.",
+        "address": "Adresse",
+        "postalCode": "Code postal",
+        "city": "Ville",
+        "country": "Pays",
+        "phone": "Téléphone"
       },
       "detail": {
         "projects": "Projets",
@@ -614,13 +618,88 @@
       "price": "Prix",
       "vatMention": "TVA non applicable – article 293 B du Code général des impôts.",
       "paymentMention": "Paiement par virement bancaire aux coordonnées communiquées séparément.",
+      "paymentMentionBank": "Paiement par virement bancaire — {{bank}}.",
       "depositMentionBefore": "Un acompte de",
       "depositMentionRate": "30%",
       "depositMentionAfter": "est exigible à la commande, le solde à la livraison.",
       "schedule": "Échéancier",
-      "footer": "SonnaLab — Le laboratoire d'idée qui transforme le digital.",
       "zoomIn": "Zoom avant",
       "zoomOut": "Zoom arrière"
+    }
+  },
+  "company": {
+    "title": "Entreprise",
+    "subtitle": "Fiche émetteur SonnaLab : en-tête et pied de page repris sur les devis, factures et autres documents générés.",
+    "loading": "Chargement de la fiche…",
+    "loadError": "Impossible de charger la fiche entreprise.",
+    "saved": "Fiche entreprise enregistrée.",
+    "saving": "Enregistrement…",
+    "unsaved": "Modifications non enregistrées",
+    "upToDate": "À jour",
+    "preview": {
+      "title": "Aperçu A4",
+      "body": "Contenu du document"
+    },
+    "sections": {
+      "header": {
+        "title": "En-tête",
+        "hint": "Logo, nom et coordonnées en haut de chaque document."
+      },
+      "footer": {
+        "title": "Pied de page",
+        "hint": "Slogan et mentions légales en bas de chaque page."
+      },
+      "payment": {
+        "title": "Règlement",
+        "hint": "Coordonnées bancaires citées dans les mentions de paiement."
+      },
+      "referent": {
+        "title": "Référent",
+        "hint": "Contact interne, non imprimé sur les documents."
+      }
+    },
+    "fields": {
+      "logo": "Logo",
+      "name": "Nom commercial",
+      "address_line1": "Adresse",
+      "address_line2": "Complément d'adresse",
+      "postal_code": "Code postal",
+      "city": "Ville",
+      "country": "Pays",
+      "phone": "Téléphone",
+      "contact_email": "E-mail de contact",
+      "website": "Site web",
+      "tagline": "Slogan",
+      "legal_name": "Raison sociale",
+      "legal_form": "Forme juridique",
+      "capital": "Capital social",
+      "rcs": "RCS",
+      "siret": "SIRET",
+      "vat_number": "N° de TVA intracommunautaire",
+      "iban": "IBAN",
+      "bic": "BIC",
+      "referent_first_name": "Prénom",
+      "referent_last_name": "Nom",
+      "referent_email": "E-mail",
+      "referent_phone": "Téléphone"
+    },
+    "placeholders": {
+      "name": "SonnaLab",
+      "address_line1": "Avenue des Grouettes",
+      "postal_code": "95000",
+      "city": "Cergy",
+      "country": "France",
+      "phone": "+33 7 53 31 56 03",
+      "contact_email": "contact@sonnalab.com",
+      "website": "https://sonnalab.com",
+      "legal_name": "SONNALAB",
+      "legal_form": "SAS",
+      "capital": "1 000 €",
+      "rcs": "RCS Cergy 920978210",
+      "siret": "92097821000010",
+      "vat_number": "FR00 920978210",
+      "iban": "FR76 …",
+      "bic": "BNPAFRPP"
     }
   }
 }

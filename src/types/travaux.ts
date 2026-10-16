@@ -34,6 +34,24 @@ export interface TravauxClient {
   referent_last_name: string | null;
   referent_email: string | null;
   referent_phone: string | null;
+  /** Coordonnées et mentions légales : en-tête / pied de page des documents (fiche émetteur). */
+  legal_name: string | null;
+  legal_form: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+  postal_code: string | null;
+  city: string | null;
+  country: string | null;
+  phone: string | null;
+  website: string | null;
+  rcs: string | null;
+  capital: string | null;
+  vat_number: string | null;
+  iban: string | null;
+  bic: string | null;
+  tagline: string | null;
+  /** « SONNALAB · Capital 1 000 € · RCS … · SIRET … » calculée par l'API. */
+  legal_line: string;
   is_issuer: boolean;
   initials: string;
   /** Chemin relatif à l'API (proxy ActiveStorage) — voir apiAssetUrl(). */
