@@ -5404,8 +5404,10 @@
 /* ── Menu avatar : séparateur avant la déconnexion ── */
 .dash-avatar-menu-sep { height: 1px; margin: 4px 0; background: #f0f0f0; }
 
-/* Ligne légale du pied de page (fiche émetteur) dans l'aperçu devis/facture */
+/* Pied de page de l'aperçu devis/facture (fiche émetteur) : TVA, puis site, adresse, slogan, ligne légale */
 .trv-doc__legal { margin: 2px 0 0; font-size: 11px; color: #737373; }
+.trv-doc__vat { margin: 0 0 8px; font-size: 11px; color: #a3a3a3; }
+.trv-doc__footer-lines { padding-top: 6px; border-top: 1px solid #e5e5e5; }
 
 /* ══ Entreprise (fiche émetteur) — aperçu A4 60 % · champs 40 % ══ */
 .co-layout { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 20px; align-items: start; }
@@ -5430,10 +5432,13 @@
 .co-sheet__zone { border-radius: 4px; outline: 2px dashed transparent; outline-offset: 6px; transition: outline-color 0.15s, background-color 0.15s; }
 .co-sheet__zone--active { outline-color: rgba(38, 52, 139, 0.45); background-color: rgba(229, 231, 241, 0.35); }
 .co-sheet__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding-bottom: 10px; border-bottom: 1px solid #e5e5e5; }
-.co-sheet__logo { display: block; max-width: 160px; max-height: 48px; object-fit: contain; object-position: left top; }
-.co-sheet__initials { display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 999px; background: #171717; color: #ffffff; font-size: 12px; font-weight: 700; }
-.co-sheet__identity { min-width: 0; max-width: 50%; text-align: right; }
-.co-sheet__name { margin: 0; font-size: 16px; font-weight: 700; line-height: 1.2; overflow-wrap: anywhere; }
+.co-sheet__party { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; max-width: 50%; }
+.co-sheet__party--right { align-items: flex-end; text-align: right; }
+.co-sheet__party--placeholder .co-sheet__meta { font-style: italic; color: #c4c4c4; }
+.co-sheet__logo { display: block; max-width: 160px; max-height: 48px; margin-bottom: 4px; object-fit: contain; object-position: left top; }
+.co-sheet__party--right .co-sheet__logo { object-position: right top; }
+.co-sheet__logo-slot { display: inline-flex; align-items: center; justify-content: center; width: 120px; height: 40px; margin-bottom: 4px; border: 1px dashed #d4d4d4; border-radius: 4px; font-size: 10px; color: #a3a3a3; }
+.co-sheet__name { margin: 0 0 4px; font-size: 16px; font-weight: 700; line-height: 1.2; overflow-wrap: anywhere; }
 .co-sheet__meta { margin: 2px 0 0; font-size: 10px; line-height: 1.25; color: #737373; overflow-wrap: anywhere; }
 .co-sheet__body { display: flex; flex-direction: column; gap: 28px; margin-top: 18px; }
 .co-sheet__body-label { margin: 24px 0 0; text-align: center; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #d4d4d4; }
@@ -5445,10 +5450,13 @@
 .co-sheet__table span:first-child { background: #fafafa; }
 .co-sheet__table span:last-child { border-bottom: 0; }
 .co-sheet__payment { margin: 28px 0 0; padding: 4px 0; text-align: center; font-size: 8px; color: #a3a3a3; }
-.co-sheet__foot { position: absolute; left: 57px; right: 57px; bottom: 30px; padding-top: 6px; border-top: 1px solid #e5e5e5; text-align: center; }
+.co-sheet__foot { position: absolute; left: 57px; right: 57px; bottom: 30px; text-align: center; }
 .co-sheet__foot p { margin: 0; line-height: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.co-sheet__slogan { font-size: 9px; font-style: italic; color: #a3a3a3; }
+.co-sheet__foot .co-sheet__vat { margin-bottom: 8px; font-size: 8px; color: #a3a3a3; }
+.co-sheet__foot-lines { padding-top: 6px; border-top: 1px solid #e5e5e5; }
 .co-sheet__url { font-size: 9px; font-weight: 700; color: #26348b; text-decoration: underline; }
+.co-sheet__address { font-size: 8.5px; color: #737373; }
+.co-sheet__slogan { font-size: 9px; font-style: italic; color: #a3a3a3; }
 .co-sheet__legal { font-size: 8px; color: #737373; }
 
 /* Profil */

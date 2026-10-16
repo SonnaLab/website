@@ -616,6 +616,7 @@
       "days": "Giorni",
       "price": "Prezzo",
       "vatMention": "IVA non applicabile – articolo 293 B del Codice generale delle imposte francese.",
+      "vatNumber": "Partita IVA intracomunitaria: {{number}}",
       "paymentMention": "Pagamento tramite bonifico bancario alle coordinate comunicate separatamente.",
       "paymentMentionBank": "Pagamento tramite bonifico bancario — {{bank}}.",
       "depositMentionBefore": "Un acconto del",
@@ -637,16 +638,23 @@
     "upToDate": "Aggiornato",
     "preview": {
       "title": "Anteprima A4",
-      "body": "Contenuto del documento"
+      "body": "Contenuto del documento",
+      "clientLogo": "Logo del cliente",
+      "clientPhone": "Telefono del cliente",
+      "clientEmail": "Email del cliente"
     },
     "sections": {
       "header": {
         "title": "Intestazione",
-        "hint": "Logo, nome e recapiti in cima a ogni documento."
+        "hint": "Logo, telefono ed email in alto a sinistra; il cliente destinatario compare a destra."
       },
       "footer": {
         "title": "Piè di pagina",
-        "hint": "Slogan e note legali in fondo a ogni pagina."
+        "hint": "Sito web, indirizzo, slogan e note legali in fondo a ogni pagina."
+      },
+      "vat": {
+        "title": "IVA",
+        "hint": "Riga sopra il piè di pagina. Senza numero: «IVA non applicabile – articolo 293 B del CGI»."
       },
       "payment": {
         "title": "Pagamento",

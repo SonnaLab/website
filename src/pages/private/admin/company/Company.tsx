@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Building2Icon } from '@icons';
+import { HotelIcon } from '@icons';
 
 import { apiAssetUrl, apiService } from '@/services/api';
 import type { TravauxClient, TravauxPayload } from '@/types/travaux';
@@ -27,25 +27,29 @@ const SECTIONS: { key: string; zone: LetterheadZone; fields: FieldDef[]; logo?: 
   {
     key: 'header', zone: 'header', logo: true, fields: [
       { name: 'name', maxLength: 255, full: true, required: true },
+      { name: 'phone', maxLength: 30, type: 'tel' },
+      { name: 'contact_email', maxLength: 255, type: 'email' },
+    ],
+  },
+  {
+    key: 'footer', zone: 'footer', fields: [
+      { name: 'website', maxLength: 255, type: 'url', full: true },
       { name: 'address_line1', maxLength: 255, full: true },
       { name: 'address_line2', maxLength: 255, full: true },
       { name: 'postal_code', maxLength: 20 },
       { name: 'city', maxLength: 120 },
       { name: 'country', maxLength: 120 },
-      { name: 'phone', maxLength: 30, type: 'tel' },
-      { name: 'contact_email', maxLength: 255, type: 'email' },
-      { name: 'website', maxLength: 255, type: 'url' },
-    ],
-  },
-  {
-    key: 'footer', zone: 'footer', fields: [
       { name: 'tagline', maxLength: 255, full: true },
       { name: 'legal_name', maxLength: 255 },
       { name: 'legal_form', maxLength: 50 },
       { name: 'capital', maxLength: 60 },
       { name: 'rcs', maxLength: 120 },
       { name: 'siret', maxLength: 20 },
-      { name: 'vat_number', maxLength: 40 },
+    ],
+  },
+  {
+    key: 'vat', zone: 'vat', fields: [
+      { name: 'vat_number', maxLength: 40, full: true },
     ],
   },
   {
@@ -149,7 +153,7 @@ export default function Company() {
     <div className="space-y-6">
       <header className="trk-header">
         <div className="trk-header__title">
-          <Building2Icon size={22} className="trk-header__icon" />
+          <HotelIcon size={22} className="trk-header__icon" />
           <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">{t('company.title')}</h1>
         </div>
         <p className="mt-1 text-muted-foreground text-sm">{t('company.subtitle')}</p>

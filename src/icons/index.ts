@@ -64,7 +64,7 @@ export {
   LockIcon,
   CheckCircleIcon,
   TrafficConeIcon,
-  Building2Icon,
+  HotelIcon,
   DownloadIcon,
   UploadIcon,
   WalletIcon,

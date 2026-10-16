@@ -616,6 +616,7 @@
       "days": "Days",
       "price": "Price",
       "vatMention": "VAT not applicable – article 293 B of the French General Tax Code.",
+      "vatNumber": "EU VAT number: {{number}}",
       "paymentMention": "Payment by bank transfer to the details provided separately.",
       "paymentMentionBank": "Payment by bank transfer — {{bank}}.",
       "depositMentionBefore": "A deposit of",
@@ -637,16 +638,23 @@
     "upToDate": "Up to date",
     "preview": {
       "title": "A4 preview",
-      "body": "Document content"
+      "body": "Document content",
+      "clientLogo": "Client logo",
+      "clientPhone": "Client phone",
+      "clientEmail": "Client email"
     },
     "sections": {
       "header": {
         "title": "Header",
-        "hint": "Logo, name and contact details at the top of every document."
+        "hint": "Logo, phone and email at the top left; the recipient client appears on the right."
       },
       "footer": {
         "title": "Footer",
-        "hint": "Tagline and legal notice at the bottom of every page."
+        "hint": "Website, address, tagline and legal notice at the bottom of every page."
+      },
+      "vat": {
+        "title": "VAT",
+        "hint": "Line above the footer. Without a number: “VAT not applicable – article 293 B of the French tax code”."
       },
       "payment": {
         "title": "Payment",

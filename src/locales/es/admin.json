@@ -616,6 +616,7 @@
       "days": "Días",
       "price": "Precio",
       "vatMention": "IVA no aplicable – artículo 293 B del Código General de Impuestos francés.",
+      "vatNumber": "N.º de IVA intracomunitario: {{number}}",
       "paymentMention": "Pago por transferencia bancaria a los datos comunicados por separado.",
       "paymentMentionBank": "Pago por transferencia bancaria — {{bank}}.",
       "depositMentionBefore": "Un anticipo del",
@@ -637,16 +638,23 @@
     "upToDate": "Al día",
     "preview": {
       "title": "Vista previa A4",
-      "body": "Contenido del documento"
+      "body": "Contenido del documento",
+      "clientLogo": "Logo del cliente",
+      "clientPhone": "Teléfono del cliente",
+      "clientEmail": "Email del cliente"
     },
     "sections": {
       "header": {
         "title": "Encabezado",
-        "hint": "Logo, nombre y datos de contacto en la parte superior de cada documento."
+        "hint": "Logo, teléfono y email arriba a la izquierda; el cliente destinatario aparece a la derecha."
       },
       "footer": {
         "title": "Pie de página",
-        "hint": "Eslogan y menciones legales al pie de cada página."
+        "hint": "Sitio web, dirección, eslogan y menciones legales al pie de cada página."
+      },
+      "vat": {
+        "title": "IVA",
+        "hint": "Línea encima del pie de página. Sin número: «IVA no aplicable – artículo 293 B del CGI»."
       },
       "payment": {
         "title": "Pago",

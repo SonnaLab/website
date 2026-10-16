@@ -23,7 +23,7 @@ import {
   SearchIcon,
   TrafficConeIcon,
   UsersIcon,
-  Building2Icon,
+  HotelIcon,
 } from '@icons';
 import type { TravauxClient } from '@/types/travaux';
 import { ClientAvatar } from './ClientAvatar';
@@ -86,7 +86,7 @@ export default function AdminTravauxClients() {
         </header>
         <div className="trv-header-actions">
           <button type="button" className="adm-btn adm-btn--ghost" onClick={() => navigate('/admin/entreprise')}>
-            <Building2Icon size={14} /> {t('travaux.clients.issuer')}
+            <HotelIcon size={14} /> {t('travaux.clients.issuer')}
           </button>
           <button type="button" className="adm-btn adm-btn--primary" onClick={() => { setEditClient(null); setFormOpen(true); }}>
             <PlusIcon size={14} /> {t('travaux.clients.new')}

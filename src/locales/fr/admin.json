@@ -617,6 +617,7 @@
       "days": "Jours",
       "price": "Prix",
       "vatMention": "TVA non applicable – article 293 B du Code général des impôts.",
+      "vatNumber": "N° de TVA intracommunautaire : {{number}}",
       "paymentMention": "Paiement par virement bancaire aux coordonnées communiquées séparément.",
       "paymentMentionBank": "Paiement par virement bancaire — {{bank}}.",
       "depositMentionBefore": "Un acompte de",
@@ -638,16 +639,23 @@
     "upToDate": "À jour",
     "preview": {
       "title": "Aperçu A4",
-      "body": "Contenu du document"
+      "body": "Contenu du document",
+      "clientLogo": "Logo du client",
+      "clientPhone": "Téléphone du client",
+      "clientEmail": "E-mail du client"
     },
     "sections": {
       "header": {
         "title": "En-tête",
-        "hint": "Logo, nom et coordonnées en haut de chaque document."
+        "hint": "Logo, téléphone et e-mail en haut à gauche ; le client destinataire s'affiche à droite."
       },
       "footer": {
         "title": "Pied de page",
-        "hint": "Slogan et mentions légales en bas de chaque page."
+        "hint": "Site web, adresse, slogan et mentions légales en bas de chaque page."
+      },
+      "vat": {
+        "title": "TVA",
+        "hint": "Ligne au-dessus du pied de page. Sans numéro : « TVA non applicable – article 293 B du CGI »."
       },
       "payment": {
         "title": "Règlement",

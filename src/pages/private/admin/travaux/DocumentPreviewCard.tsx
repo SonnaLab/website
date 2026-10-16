@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { apiAssetUrl } from '@/services/api';
 import { calculateDevis } from '@/lib/devisCalc';
-import { addressLines, bankLine, footerSlogan, footerWebsite, legalLine } from '@/lib/letterhead';
+import { addressLines, bankLine, footerAddress, footerSlogan, footerWebsite, legalLine, vatNumber } from '@/lib/letterhead';
 import type { TravauxClient, TravauxObjective, TravauxTask } from '@/types/travaux';
 import { formatDate, formatEuros } from './format';
 
@@ -52,6 +52,8 @@ export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
   const deliverableTitle = data.objective?.title || data.title || '—';
   const bank = bankLine(data.issuer);
   const legal = legalLine(data.issuer);
+  const address = footerAddress(data.issuer);
+  const vat = vatNumber(data.issuer);
 
   return (
     <div className="trv-doc">
@@ -115,7 +117,6 @@ export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
         </table>
 
         <div className="trv-doc__mentions">
-          <p>{t('travaux.document.vatMention')}</p>
           <p>{bank ? t('travaux.document.paymentMentionBank', { bank }) : t('travaux.document.paymentMention')}</p>
           <p>
             {t('travaux.document.depositMentionBefore')}{' '}
@@ -130,9 +131,15 @@ export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
           {t('travaux.document.schedule')} : <mark className="trv-doc__mark">{formatDate(data.dueDate)}</mark>
         </p>
         <div>
-          <p className="trv-doc__slogan">{footerSlogan(data.issuer)}</p>
-          <p className="trv-doc__url">{footerWebsite(data.issuer)}</p>
-          {legal && <p className="trv-doc__legal">{legal}</p>}
+          <p className="trv-doc__vat">
+            {vat ? t('travaux.document.vatNumber', { number: vat }) : t('travaux.document.vatMention')}
+          </p>
+          <div className="trv-doc__footer-lines">
+            <p className="trv-doc__url">{footerWebsite(data.issuer)}</p>
+            {address && <p className="trv-doc__legal">{address}</p>}
+            <p className="trv-doc__slogan">{footerSlogan(data.issuer)}</p>
+            {legal && <p className="trv-doc__legal">{legal}</p>}
+          </div>
         </div>
       </div>
     </div>

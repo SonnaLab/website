@@ -15,6 +15,7 @@ export interface LetterheadCompany {
   city?: string | null;
   country?: string | null;
   phone?: string | null;
+  referent_phone?: string | null;
   contact_email?: string | null;
   website?: string | null;
   siret?: string | null;
@@ -39,7 +40,12 @@ export function addressLines(c: LetterheadCompany | null | undefined): string[] 
   return [c.address_line1, c.address_line2, locality].filter(present).map((l) => l.trim());
 }
 
-/** « SONNALAB SAS · Capital 1 000 € · RCS … · SIRET … · TVA … ». */
+/** Adresse du pied de page, sur une ligne : « rue, CP Ville, Pays ». */
+export function footerAddress(c: LetterheadCompany | null | undefined): string {
+  return addressLines(c).join(', ');
+}
+
+/** « SONNALAB SAS · Capital 1 000 € · RCS … · SIRET … » (la TVA a sa propre ligne). */
 export function legalLine(c: LetterheadCompany | null | undefined): string {
   if (!c) return '';
   return join([
@@ -47,15 +53,27 @@ export function legalLine(c: LetterheadCompany | null | undefined): string {
     present(c.capital) ? `Capital ${c.capital.trim()}` : null,
     c.rcs,
     present(c.siret) ? `SIRET ${c.siret.trim()}` : null,
-    present(c.vat_number) ? `TVA ${c.vat_number.trim()}` : null,
   ], ' · ');
 }
 
-/** Lignes de contact de l'en-tête (sous le nom, alignées à droite). */
-export function contactLines(c: LetterheadCompany | null | undefined): string[] {
-  if (!c) return [];
-  return [...addressLines(c), join([c.phone, c.contact_email], ' · '), c.website ?? '']
-    .filter(present).map((l) => l.trim());
+/** Téléphone de l'entreprise, à défaut celui du référent (comme le PDF). */
+export function partyPhone(c: LetterheadCompany | null | undefined): string | null {
+  if (present(c?.phone)) return c!.phone!.trim();
+  return present(c?.referent_phone) ? c!.referent_phone!.trim() : null;
+}
+
+/** « téléphone | e-mail » sous le logo de l'émetteur. */
+export function issuerContact(c: LetterheadCompany | null | undefined): string {
+  if (!c) return '';
+  return join([partyPhone(c), c.contact_email], ' | ');
+}
+
+/**
+ * Numéro de TVA intracommunautaire, ou null : la ligne au-dessus du pied de
+ * page affiche alors « TVA non applicable – article 293 B du CGI ».
+ */
+export function vatNumber(c: LetterheadCompany | null | undefined): string | null {
+  return present(c?.vat_number) ? c!.vat_number!.trim() : null;
 }
 
 /** « Nom — slogan » ; texte historique tant que la fiche n'a pas de slogan. */

@@ -22,7 +22,7 @@ import {
   EyeIcon,
   TrafficConeIcon,
   UserIcon,
-  Building2Icon,
+  HotelIcon,
 } from '@icons';
 
 import { useAuth } from '@/components/providers/AuthProvider';
@@ -170,7 +170,7 @@ export function MemberLayout() {
                 </Link>
                 {isAdmin && (
                   <Link to="/admin/entreprise" className="dash-avatar-menu-item" onClick={() => setAvatarOpen(false)}>
-                    <Building2Icon size={14} />
+                    <HotelIcon size={14} />
                     {tA('nav.company')}
                   </Link>
                 )}

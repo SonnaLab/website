@@ -616,6 +616,7 @@
       "days": "Tage",
       "price": "Preis",
       "vatMention": "MwSt. nicht anwendbar – Artikel 293 B des französischen Steuergesetzbuchs.",
+      "vatNumber": "USt-IdNr.: {{number}}",
       "paymentMention": "Zahlung per Banküberweisung an die separat mitgeteilte Bankverbindung.",
       "paymentMentionBank": "Zahlung per Banküberweisung — {{bank}}.",
       "depositMentionBefore": "Eine Anzahlung von",
@@ -637,16 +638,23 @@
     "upToDate": "Aktuell",
     "preview": {
       "title": "A4-Vorschau",
-      "body": "Dokumentinhalt"
+      "body": "Dokumentinhalt",
+      "clientLogo": "Kundenlogo",
+      "clientPhone": "Telefon des Kunden",
+      "clientEmail": "E-Mail des Kunden"
     },
     "sections": {
       "header": {
         "title": "Kopfzeile",
-        "hint": "Logo, Name und Kontaktdaten oben auf jedem Dokument."
+        "hint": "Logo, Telefon und E-Mail oben links; der empfangende Kunde erscheint rechts."
       },
       "footer": {
         "title": "Fußzeile",
-        "hint": "Slogan und Pflichtangaben unten auf jeder Seite."
+        "hint": "Website, Adresse, Slogan und Pflichtangaben unten auf jeder Seite."
+      },
+      "vat": {
+        "title": "USt.",
+        "hint": "Zeile über der Fußzeile. Ohne Nummer: „Keine USt. – Artikel 293 B CGI“."
       },
       "payment": {
         "title": "Zahlung",
