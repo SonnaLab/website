@@ -9,7 +9,6 @@
     "users": "Users",
     "lesankofa": "Lesankofa",
     "billing": "Billing",
-    "projects": "Projects",
     "travaux": "Work"
   },
   "dashboard": {
@@ -39,10 +38,6 @@
       "billing": {
         "title": "Billing",
         "empty": "No recent documents."
-      },
-      "projects": {
-        "title": "Projects",
-        "empty": "No recent projects."
       },
       "seo": {
         "title": "SEO",

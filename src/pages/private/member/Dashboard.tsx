@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { CalendarIcon, FolderKanbanIcon, ReceiptIcon, FileTextIcon } from '@icons';
+import { CalendarIcon, ReceiptIcon, FileTextIcon } from '@icons';
 
 import { useAuth } from '@/components/providers/AuthProvider';
 import { apiService } from '@/services/api';
@@ -9,7 +9,6 @@ import { Card } from '@/components/ui/card';
 
 interface Counters {
   appointments: number;
-  projects:     number;
   invoices:     number;
   quotes:       number;
 }
@@ -17,23 +16,21 @@ interface Counters {
 export default function MemberDashboard() {
   const { t } = useTranslation('member');
   const { user } = useAuth();
-  const [counts, setCounts] = useState<Counters>({ appointments: 0, projects: 0, invoices: 0, quotes: 0 });
+  const [counts, setCounts] = useState<Counters>({ appointments: 0, invoices: 0, quotes: 0 });
 
   useEffect(() => {
     let cancelled = false;
     Promise.allSettled([
       apiService.listAppointments(),
-      apiService.listProjects(),
       apiService.listBillingDocuments(),
     ]).then((res) => {
       if (cancelled) return;
       const value = (i: number, key: string) =>
         res[i].status === 'fulfilled' ? ((res[i] as PromiseFulfilledResult<any>).value?.[key]?.length ?? 0) : 0;
       // Devis et factures arrivent dans une seule liste (documents Travaux du client).
-      const documents = res[2].status === 'fulfilled' ? res[2].value.documents : [];
+      const documents = res[1].status === 'fulfilled' ? res[1].value.documents : [];
       setCounts({
         appointments: value(0, 'appointments'),
-        projects:     value(1, 'projects'),
         invoices:     documents.filter((d) => d.kind === 'invoice').length,
         quotes:       documents.filter((d) => d.kind === 'quote').length,
       });
@@ -43,7 +40,6 @@ export default function MemberDashboard() {
 
   const cards = [
     { to: '/dashboard/appointments', label: t('dashboard.appointments'), value: counts.appointments, icon: CalendarIcon     },
-    { to: '/dashboard/projects',     label: t('dashboard.projects'),     value: counts.projects,     icon: FolderKanbanIcon },
     { to: '/dashboard/billing',      label: t('dashboard.quotes'),       value: counts.quotes,       icon: FileTextIcon     },
     { to: '/dashboard/billing',      label: t('dashboard.invoices'),     value: counts.invoices,     icon: ReceiptIcon      },
   ];

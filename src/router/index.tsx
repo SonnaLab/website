@@ -30,7 +30,6 @@ import ConfirmEmailPage from '@/pages/private/auth/ConfirmEmail';
 // Member
 import MemberDashboard from '@/pages/private/member/Dashboard';
 import MemberAppointments from '@/pages/private/member/Appointments';
-import { ProjectsList as MemberProjectsList, ProjectDetail as MemberProjectDetail } from '@/pages/private/member/Projects';
 import MemberBilling from '@/pages/private/member/Billing';
 
 // Admin
@@ -168,8 +167,6 @@ export const routeTree: RouteObject[] = [
         children: [
           { index: true,           element: <MemberDashboard /> },
           { path: 'appointments',  element: <MemberAppointments /> },
-          { path: 'projects',      element: <MemberProjectsList /> },
-          { path: 'projects/:id',  element: <MemberProjectDetail /> },
           { path: 'billing',       element: <MemberBilling /> },
         ],
       },

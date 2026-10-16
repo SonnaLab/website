@@ -10,7 +10,6 @@ import {
   NewsIcon,
   UsersIcon,
   ReceiptIcon,
-  FolderKanbanIcon,
   ArrowUpRightIcon,
   type IconProps,
 } from '@icons';
@@ -34,7 +33,6 @@ type WidgetKey =
   | 'news'
   | 'users'
   | 'billing'
-  | 'projects'
   | 'seo'
   | 'ouou';
 
@@ -48,10 +46,9 @@ const adminWidgetRows: AdminWidget[][] = [
   ],
   [
     { key: 'users',   to: '/admin/users',       icon: UsersIcon },
-    { key: 'billing', to: '/dashboard/billing', icon: ReceiptIcon },
+    { key: 'billing', to: '/admin/travaux',     icon: ReceiptIcon },
   ],
   [
-    { key: 'projects', to: '/dashboard/projects', icon: FolderKanbanIcon },
     { key: 'seo',      to: '/admin/seo',           icon: SearchIcon },
     { key: 'ouou',     to: '/admin/ouou',          icon: BotIcon },
   ],

@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboardIcon,
   CalendarIcon,
-  FolderKanbanIcon,
   ReceiptIcon,
   ServerIcon,
   LineChartIcon,
@@ -58,7 +57,6 @@ export function MemberLayout() {
   const memberNav: NavItem[] = [
     { to: '/dashboard',              end: true, label: t('nav.dashboard'),    icon: <LayoutDashboardIcon size={16} /> },
     { to: '/dashboard/appointments',            label: t('nav.appointments'), icon: <CalendarIcon        size={16} /> },
-    { to: '/dashboard/projects',                label: t('nav.projects'),     icon: <FolderKanbanIcon    size={16} /> },
     { to: '/dashboard/billing',                 label: t('nav.billing'),      icon: <ReceiptIcon         size={16} /> },
   ];
 
@@ -70,7 +68,6 @@ export function MemberLayout() {
     { to: '/admin/users',                     label: tA('nav.users'),          icon: <UsersIcon           size={16} /> },
     { to: '/admin/lesankofa',                  label: tA('nav.lesankofa'),      icon: <BrainIcon           size={16} /> },
     { to: '/admin/travaux',                   label: tA('nav.travaux'),        icon: <TrafficConeIcon     size={16} /> },
-    { to: '/dashboard/projects',              label: tA('nav.projects'),       icon: <FolderKanbanIcon    size={16} /> },
   ];
 
   const navItems = isAdmin ? adminNav : memberNav;

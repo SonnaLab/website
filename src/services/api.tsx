@@ -558,17 +558,6 @@ class ApiService {
     return res.data;
   }
 
-  // ==================== Member: Projects ====================
-
-  async listProjects() {
-    const res = await this.client.get('/api/v1/projects', { params: { include_associations: false } });
-    return res.data;
-  }
-  async getProject(id: string) {
-    const res = await this.client.get(`/api/v1/projects/${id}`, { params: { include_associations: true } });
-    return res.data;
-  }
-
   // ==================== Member: Billing (devis/factures Travaux du client) ====================
 
   async listBillingDocuments(): Promise<{ documents: TravauxInvoice[] }> {
@@ -603,18 +592,18 @@ class ApiService {
     return (await this.client.put('/api/v1/admin/travaux/issuer', toFormData('client', payload), MULTIPART)).data;
   }
 
-  // Projets : endpoints projets existants, rattachés à un client
+  // Projets d'un client : colonnes de l'onglet Livrables
   async adminTravauxProjects(clientId: string): Promise<{ projects: { id: string; name: string; status: string; progress: number; description?: string | null }[] }> {
-    return (await this.client.get('/api/v1/projects', { params: { client_id: clientId } })).data;
+    return (await this.client.get('/api/v1/admin/travaux/projects', { params: { client_id: clientId } })).data;
   }
   async adminTravauxCreateProject(payload: { client_id: string; name: string; description?: string }) {
-    return (await this.client.post('/api/v1/projects', { project: payload })).data;
+    return (await this.client.post('/api/v1/admin/travaux/projects', { project: payload })).data;
   }
   async adminTravauxUpdateProject(id: string, payload: { name?: string; description?: string; status?: string }) {
-    return (await this.client.patch(`/api/v1/projects/${id}`, { project: payload })).data;
+    return (await this.client.patch(`/api/v1/admin/travaux/projects/${id}`, { project: payload })).data;
   }
   async adminTravauxDeleteProject(id: string) {
-    return (await this.client.delete(`/api/v1/projects/${id}`)).data;
+    return (await this.client.delete(`/api/v1/admin/travaux/projects/${id}`)).data;
   }
 
   async adminTravauxObjectives(clientId: string, params?: { project_id?: string }): Promise<{ objectives: TravauxObjective[] }> {

@@ -1,11 +1,10 @@
 import { Link } from 'react-router-dom';
-import { CalendarIcon, FolderKanbanIcon, ReceiptIcon } from '@icons';
+import { CalendarIcon, ReceiptIcon } from '@icons';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { Card } from '@/components/ui/card';
 
 const memberLinks = [
   { to: '/dashboard/appointments', label: 'Rendez-vous', icon: CalendarIcon     },
-  { to: '/dashboard/projects',     label: 'Projets',     icon: FolderKanbanIcon },
   { to: '/dashboard/billing',      label: 'Facturation', icon: ReceiptIcon      },
 ];
 
