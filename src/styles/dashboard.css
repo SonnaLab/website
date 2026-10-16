@@ -5470,3 +5470,11 @@
   .co-fields { grid-template-columns: minmax(0, 1fr); }
   .co-profile .adm-form__row { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* Récapitulatif de l'assistant « Nouveau client » (Travaux) */
+.trv-recap { margin: 0; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden; }
+.trv-recap__row { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 12px; padding: 8px 12px; font-size: 13px; }
+.trv-recap__row + .trv-recap__row { border-top: 1px solid #f0f0f0; }
+.trv-recap dt { color: #6b7280; }
+.trv-recap dd { margin: 0; color: #111111; overflow-wrap: anywhere; }
+@media (max-width: 560px) { .trv-recap__row { grid-template-columns: minmax(0, 1fr); gap: 2px; } }

@@ -148,7 +148,9 @@
     "cancel": "Annulla",
     "delete": "Elimina",
     "edit": "Modifica",
-    "create": "Crea"
+    "create": "Crea",
+    "next": "Avanti",
+    "back": "Indietro"
   },
   "news": {
     "title": "Notizie",
@@ -465,6 +467,26 @@
         "noProjects": "Nessun progetto.",
         "noMembers": "Nessun account collegato.",
         "referent": "Referente"
+      },
+      "creating": "Creazione…",
+      "steps": {
+        "company": "Azienda",
+        "contact": "Recapiti",
+        "referent": "Referente",
+        "access": "Accesso"
+      },
+      "stepHints": {
+        "company": "Nome, SIRET e logo del cliente — riportati su preventivi e fatture.",
+        "contact": "Recapiti stampati in «All'attenzione di» sui documenti.",
+        "referent": "Interlocutore principale presso il cliente.",
+        "access": "Account membri che vedranno progetti e documenti di questo cliente, poi verifica prima della creazione."
+      },
+      "recap": {
+        "title": "Riepilogo",
+        "company": "Azienda",
+        "contact": "Contatto",
+        "referent": "Referente",
+        "members": "Account membri"
       }
     },
     "tabs": {

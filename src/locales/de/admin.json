@@ -148,7 +148,9 @@
     "cancel": "Abbrechen",
     "delete": "Löschen",
     "edit": "Bearbeiten",
-    "create": "Erstellen"
+    "create": "Erstellen",
+    "next": "Weiter",
+    "back": "Zurück"
   },
   "news": {
     "title": "News",
@@ -465,6 +467,26 @@
         "noProjects": "Keine Projekte.",
         "noMembers": "Kein verknüpftes Konto.",
         "referent": "Ansprechpartner"
+      },
+      "creating": "Wird erstellt…",
+      "steps": {
+        "company": "Unternehmen",
+        "contact": "Kontaktdaten",
+        "referent": "Ansprechpartner",
+        "access": "Zugang"
+      },
+      "stepHints": {
+        "company": "Name, SIRET und Logo des Kunden — erscheinen auf Angeboten und Rechnungen.",
+        "contact": "Angaben unter „Zu Händen von“ auf den Dokumenten.",
+        "referent": "Hauptansprechpartner beim Kunden.",
+        "access": "Mitgliedskonten, die Projekte und Dokumente dieses Kunden sehen, dann Prüfung vor dem Erstellen."
+      },
+      "recap": {
+        "title": "Zusammenfassung",
+        "company": "Unternehmen",
+        "contact": "Kontakt",
+        "referent": "Ansprechpartner",
+        "members": "Mitgliedskonten"
       }
     },
     "tabs": {

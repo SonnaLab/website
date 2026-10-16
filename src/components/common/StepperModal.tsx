@@ -19,6 +19,9 @@ interface StepperModalProps {
    * étape intermédiaire, pas seulement sur la dernière. */
   nextLabel?: string;
   nextDisabled?: boolean;
+  /** Libellés traduits des boutons « Retour » et « Fermer ». */
+  backLabel?: string;
+  closeLabel?: string;
   /** Étape sur laquelle le bouton "Suivant" est remplacé par une action de
    * validation (ex: "Enregistrer"). Par défaut, la dernière étape n'a que
    * "Fermer". */
@@ -38,6 +41,7 @@ interface StepperModalProps {
 export function StepperModal({
   open, onClose, title, subtitle, badge, size = 'lg',
   steps, currentStep, onBack, onNext, nextLabel = 'Suivant', nextDisabled,
+  backLabel = 'Retour', closeLabel = 'Fermer',
   finalStepLabel, onFinalStep, finalStepDisabled,
   children,
 }: StepperModalProps) {
@@ -56,14 +60,14 @@ export function StepperModal({
       footer={
         <div className="flex justify-between w-full">
           {isFirst
-            ? <Button variant="outline" onClick={onClose}>Fermer</Button>
-            : <Button variant="outline" onClick={onBack}>Retour</Button>}
+            ? <Button variant="outline" onClick={onClose}>{closeLabel}</Button>
+            : <Button variant="outline" onClick={onBack}>{backLabel}</Button>}
           {showFinalAction ? (
             <Button onClick={onFinalStep} disabled={finalStepDisabled}>{finalStepLabel}</Button>
           ) : !isLast ? (
             <Button onClick={onNext} disabled={nextDisabled}>{nextLabel}</Button>
           ) : (
-            <Button onClick={onClose}>Fermer</Button>
+            <Button onClick={onClose}>{closeLabel}</Button>
           )}
         </div>
       }

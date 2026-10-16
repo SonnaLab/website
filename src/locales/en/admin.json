@@ -148,7 +148,9 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "edit": "Edit",
-    "create": "Create"
+    "create": "Create",
+    "next": "Next",
+    "back": "Back"
   },
   "news": {
     "title": "News",
@@ -465,6 +467,26 @@
         "noProjects": "No projects.",
         "noMembers": "No linked account.",
         "referent": "Contact"
+      },
+      "creating": "Creating…",
+      "steps": {
+        "company": "Company",
+        "contact": "Contact details",
+        "referent": "Contact person",
+        "access": "Access"
+      },
+      "stepHints": {
+        "company": "Client name, SIRET and logo — shown on its quotes and invoices.",
+        "contact": "Details printed under “Attention of” on documents.",
+        "referent": "Main contact person at the client.",
+        "access": "Member accounts that will see this client's projects and documents, then a final check before creating."
+      },
+      "recap": {
+        "title": "Summary",
+        "company": "Company",
+        "contact": "Contact",
+        "referent": "Contact person",
+        "members": "Member accounts"
       }
     },
     "tabs": {

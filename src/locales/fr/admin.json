@@ -149,7 +149,9 @@
     "cancel": "Annuler",
     "delete": "Supprimer",
     "edit": "Modifier",
-    "create": "Créer"
+    "create": "Créer",
+    "next": "Suivant",
+    "back": "Retour"
   },
   "news": {
     "title": "News",
@@ -466,6 +468,26 @@
         "noProjects": "Aucun projet.",
         "noMembers": "Aucun compte rattaché.",
         "referent": "Référent"
+      },
+      "creating": "Création…",
+      "steps": {
+        "company": "Entreprise",
+        "contact": "Coordonnées",
+        "referent": "Référent",
+        "access": "Accès"
+      },
+      "stepHints": {
+        "company": "Nom, SIRET et logo du client — repris sur ses devis et factures.",
+        "contact": "Coordonnées imprimées dans « À l'attention de » sur les documents.",
+        "referent": "Interlocuteur principal chez le client.",
+        "access": "Comptes membres qui verront les projets et documents de ce client, puis vérification avant création."
+      },
+      "recap": {
+        "title": "Récapitulatif",
+        "company": "Entreprise",
+        "contact": "Contact",
+        "referent": "Référent",
+        "members": "Comptes membres"
       }
     },
     "tabs": {
