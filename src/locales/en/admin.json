@@ -376,7 +376,8 @@
       "list": "Users",
       "all": "All",
       "companies": "Clients",
-      "teams": "Teams"
+      "teams": "Teams",
+      "acquisition": "Acquisition"
     },
     "kpis": {
       "total": "Users",
@@ -414,7 +415,8 @@
       "lastSignIn": "Last sign-in"
     },
     "heading": "User management",
-    "teamsEmpty": "No account belongs to a company yet."
+    "teamsEmpty": "No account belongs to a company yet.",
+    "acquisitionEmpty": "No account is waiting for a company."
   },
   "impersonation": {
     "banner": "You are signed in as {{name}}.",
@@ -499,7 +501,7 @@
       "stepHints": {
         "company": "Client name, SIRET and logo — shown on its quotes and invoices.",
         "contact": "Details printed under “Attention of” on documents.",
-        "referent": "Main contact person at the client.",
+        "referent": "The client's main contact: part of the company's team (an account is created if there is none).",
         "access": "Member accounts that will see this client's projects and documents, then a final check before creating."
       },
       "recap": {

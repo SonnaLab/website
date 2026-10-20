@@ -21,8 +21,10 @@
   --dash-nav-fg:            #555;
   --dash-nav-hover-bg:      #f3f4f6;
   --dash-nav-hover-fg:      #111;
-  --dash-nav-active-bg:     #000000;
-  --dash-nav-active-fg:     #ffffff;
+  /* Active menu (as on Élance): light tile, black 3px bar on its left. */
+  --dash-nav-active-bg:     #eef0f2;
+  --dash-nav-active-fg:     #111111;
+  --dash-nav-active-bar:    #111111;
   --dash-nav-section-fg:    #9ca3af;
   --dash-nav-radius:        6px;
 }
@@ -211,8 +213,8 @@
 }
 
 .dash-nav-link.active:hover {
-  background: #222;
-  color: #fff;
+  background: #e6e8eb;
+  color: var(--dash-nav-active-fg);
 }
 
 .dash-nav-link svg {
@@ -406,11 +408,12 @@
   --dash-sidebar-border: #e8eaed;
   --dash-topbar-bg: #ffffff;
   --dash-topbar-border: #e8eaed;
-  --dash-nav-fg: #111111;
+  --dash-nav-fg: #4b5563;
   --dash-nav-hover-bg: #f3f4f6;
   --dash-nav-hover-fg: #000000;
-  --dash-nav-active-bg: #000000;
-  --dash-nav-active-fg: #ffffff;
+  --dash-nav-active-bg: #eef0f2;
+  --dash-nav-active-fg: #111111;
+  --dash-nav-active-bar: #111111;
   --dash-nav-radius: 6px;
 }
 
@@ -690,12 +693,18 @@
 .dash-nav-link.active:hover {
   background: var(--dash-nav-active-bg);
   color: var(--dash-nav-active-fg);
+  font-weight: 600;
+  box-shadow: inset 3px 0 0 var(--dash-nav-active-bar);
+}
+
+.dash-nav-link.active:hover {
+  background: #e6e8eb;
 }
 
 .dash-nav-link svg {
   display: block;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   opacity: 1;
 }
 
@@ -5604,8 +5613,8 @@
   height: 28px;
   border: 0;
   border-radius: var(--dash-nav-radius);
-  background: var(--dash-nav-active-bg);
-  color: var(--dash-nav-active-fg);
+  background: #111111;
+  color: #ffffff;
   cursor: pointer;
   transition: opacity 120ms ease;
 }

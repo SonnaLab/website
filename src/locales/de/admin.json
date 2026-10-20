@@ -376,7 +376,8 @@
       "list": "Benutzer",
       "all": "Alle",
       "companies": "Kunden",
-      "teams": "Teams"
+      "teams": "Teams",
+      "acquisition": "Akquise"
     },
     "kpis": {
       "total": "Benutzer",
@@ -414,7 +415,8 @@
       "lastSignIn": "Letzte Anmeldung"
     },
     "heading": "Verwaltung der Benutzer",
-    "teamsEmpty": "Noch kein Konto gehört zu einem Unternehmen."
+    "teamsEmpty": "Noch kein Konto gehört zu einem Unternehmen.",
+    "acquisitionEmpty": "Kein Konto wartet auf ein Unternehmen."
   },
   "impersonation": {
     "banner": "Sie sind als {{name}} angemeldet.",
@@ -499,7 +501,7 @@
       "stepHints": {
         "company": "Name, SIRET und Logo des Kunden — erscheinen auf Angeboten und Rechnungen.",
         "contact": "Angaben unter „Zu Händen von“ auf den Dokumenten.",
-        "referent": "Hauptansprechpartner beim Kunden.",
+        "referent": "Hauptansprechpartner beim Kunden: gehört zum Team des Unternehmens (ein Konto wird angelegt, falls keines existiert).",
         "access": "Mitgliedskonten, die Projekte und Dokumente dieses Kunden sehen, dann Prüfung vor dem Erstellen."
       },
       "recap": {

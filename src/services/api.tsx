@@ -335,6 +335,8 @@ export interface AdminUsersOverview {
   /** Client companies (Travaux) and the accounts attached to them. */
   companies: number;
   company_members: number;
+  /** Sign-ups not attached to a company yet (tab « Acquisition »). */
+  acquisition: number;
 }
 
 export interface AdminImpersonateResponse {
@@ -703,7 +705,7 @@ class ApiService {
   async adminUsersOverview(): Promise<AdminUsersOverview> {
     return (await this.client.get('/api/v1/admin/users/overview')).data;
   }
-  async adminUsersList(params?: { role?: AuthRole; q?: string; page?: number; per_page?: number; active?: 'true'; unconfirmed?: boolean; with_client?: 'true'; client_id?: string }): Promise<AdminUsersListResponse> {
+  async adminUsersList(params?: { role?: AuthRole; q?: string; page?: number; per_page?: number; active?: 'true'; unconfirmed?: boolean; with_client?: 'true'; client_id?: string; segment?: 'active' | 'acquisition' }): Promise<AdminUsersListResponse> {
     return (await this.client.get('/api/v1/admin/users', { params })).data;
   }
   async adminUserDetail(id: string): Promise<{ user: AdminUser }> {

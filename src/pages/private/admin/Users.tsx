@@ -16,7 +16,7 @@ import {
 } from '@/components/common/DataTable';
 import {
   UsersIcon, LayoutDashboardIcon, ShieldIcon, UserIcon, CheckCircleIcon, LockIcon,
-  SearchIcon, EyeIcon, ArrowRightIcon, ChevronLeftIcon, ChevronRightIcon,
+  SearchIcon, EyeIcon, ArrowUpRightIcon, ChevronLeftIcon, ChevronRightIcon, TrendingUpIcon,
   HotelIcon, PenLineIcon, PlusIcon, TrafficConeIcon,
 } from '@icons';
 import type { TravauxClient } from '@/types/travaux';
@@ -49,8 +49,8 @@ function Pagination({
 
 // ── Utilisateurs (table) ─────────────────────────────────────────────────────
 
-/** The accounts table; the page's tab picks the role, or the companies' teams. */
-function UsersListTab({ role = '', withClient = false }: { role?: AuthRole | ''; withClient?: boolean }) {
+/** The accounts table; the page's tab picks the role, the companies' teams or the acquisition. */
+function UsersListTab({ role = '', withClient = false, segment }: { role?: AuthRole | ''; withClient?: boolean; segment?: 'active' | 'acquisition' }) {
   const { t } = useTranslation('admin');
   const navigate = useNavigate();
   const { user: currentUser, impersonate } = useAuth();
@@ -67,11 +67,11 @@ function UsersListTab({ role = '', withClient = false }: { role?: AuthRole | '';
   const load = useCallback((p: number, q: string, r: AuthRole | '') => {
     setLoading(true);
     setErr(false);
-    apiService.adminUsersList({ page: p, per_page: PER_PAGE, q: q || undefined, role: r || undefined, with_client: withClient ? 'true' : undefined })
+    apiService.adminUsersList({ page: p, per_page: PER_PAGE, q: q || undefined, role: r || undefined, with_client: withClient ? 'true' : undefined, segment })
       .then((res) => { setUsers(res.users); setTotal(res.meta.total); })
       .catch(() => setErr(true))
       .finally(() => setLoading(false));
-  }, [withClient]);
+  }, [withClient, segment]);
 
   useEffect(() => { load(page, search, role); }, [page, load]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -133,7 +133,7 @@ function UsersListTab({ role = '', withClient = false }: { role?: AuthRole | '';
             </DataTableHead>
             <DataTableBody>
               {users.length === 0 ? (
-                <DataTableEmpty icon={<UsersIcon size={28} />} label={withClient ? t('users.teamsEmpty') : t('users.empty')} />
+                <DataTableEmpty icon={<UsersIcon size={28} />} label={withClient ? t('users.teamsEmpty') : segment === 'acquisition' ? t('users.acquisitionEmpty') : t('users.empty')} />
               ) : users.map((u) => {
                 const isSelf = u.id === currentUser?.id;
                 const canImpersonate = !isSelf && u.role !== 'admin' && !u.locked;
@@ -174,7 +174,7 @@ function UsersListTab({ role = '', withClient = false }: { role?: AuthRole | '';
                           disabled={!canImpersonate || impersonatingId === u.id}
                           title={isSelf ? t('users.cantImpersonateSelf') : u.role === 'admin' ? t('users.cantImpersonateAdmin') : t('users.impersonate')}
                         >
-                          <ArrowRightIcon size={13} />
+                          <ArrowUpRightIcon size={13} />
                         </button>
                       </div>
                     </DataTableTd>
@@ -310,7 +310,7 @@ function CompaniesTab({ reloadKey, onEdit }: { reloadKey: number; onEdit: (id: s
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
-const TAB_KEYS = ['all', 'admins', 'clients', 'teams'] as const;
+const TAB_KEYS = ['all', 'admins', 'clients', 'teams', 'acquisition'] as const;
 type UsersTab = typeof TAB_KEYS[number];
 
 export default function AdminUsers() {
@@ -364,15 +364,18 @@ export default function AdminUsers() {
         <StatCard icon={<UserIcon size={18} />} label={t('users.kpis.new30d')} value={kpis?.new_last_30_days ?? '—'} />
       </StatRow>
 
-      {/* Clients are the companies; Équipes, the accounts belonging to them. */}
+      {/* Clients are the companies; Équipes, the accounts belonging to them;
+          Acquisition, the sign-ups no company holds yet (not active clients). */}
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
-          <TabsTrigger value="all" icon={<UsersIcon size={14} />} count={kpis?.total}>{t('users.tabs.all')}</TabsTrigger>
+          <TabsTrigger value="all" icon={<UsersIcon size={14} />} count={kpis ? kpis.total - kpis.acquisition : undefined}>{t('users.tabs.all')}</TabsTrigger>
           <TabsTrigger value="admins" icon={<ShieldIcon size={14} />} count={kpis?.admins}>{t('users.kpis.admins')}</TabsTrigger>
           <TabsTrigger value="clients" icon={<HotelIcon size={14} />} count={kpis?.companies}>{t('users.tabs.companies')}</TabsTrigger>
           <TabsTrigger value="teams" icon={<LayoutDashboardIcon size={14} />} count={kpis?.company_members}>{t('users.tabs.teams')}</TabsTrigger>
+          <TabsTrigger value="acquisition" icon={<TrendingUpIcon size={14} />} count={kpis?.acquisition}>{t('users.tabs.acquisition')}</TabsTrigger>
         </TabsList>
-        {tab === 'all' && <UsersListTab key="all" />}
+        {tab === 'all' && <UsersListTab key="all" segment="active" />}
+        {tab === 'acquisition' && <UsersListTab key="acquisition" segment="acquisition" />}
         {tab === 'admins' && <UsersListTab key="admins" role="admin" />}
         {tab === 'teams' && <UsersListTab key="teams" withClient />}
         {tab === 'clients' && <CompaniesTab reloadKey={reloadKey} onEdit={openEdit} />}

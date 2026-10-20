@@ -377,7 +377,8 @@
       "list": "Utilisateurs",
       "all": "Tous",
       "companies": "Clients",
-      "teams": "Équipes"
+      "teams": "Équipes",
+      "acquisition": "Acquisition"
     },
     "kpis": {
       "total": "Utilisateurs",
@@ -415,7 +416,8 @@
       "lastSignIn": "Dernière connexion"
     },
     "heading": "Gestion des utilisateurs",
-    "teamsEmpty": "Aucun compte rattaché à une entreprise."
+    "teamsEmpty": "Aucun compte rattaché à une entreprise.",
+    "acquisitionEmpty": "Aucun compte en attente d’entreprise."
   },
   "impersonation": {
     "banner": "Vous êtes connecté(e) en tant que {{name}}.",
@@ -500,7 +502,7 @@
       "stepHints": {
         "company": "Nom, SIRET et logo du client — repris sur ses devis et factures.",
         "contact": "Coordonnées imprimées dans « À l'attention de » sur les documents.",
-        "referent": "Interlocuteur principal chez le client.",
+        "referent": "Interlocuteur principal chez le client : il fait partie de l'équipe de l'entreprise (son compte est créé s'il n'existe pas).",
         "access": "Comptes membres qui verront les projets et documents de ce client, puis vérification avant création."
       },
       "recap": {

@@ -376,7 +376,8 @@
       "list": "Utenti",
       "all": "Tutti",
       "companies": "Clienti",
-      "teams": "Team"
+      "teams": "Team",
+      "acquisition": "Acquisizione"
     },
     "kpis": {
       "total": "Utenti",
@@ -414,7 +415,8 @@
       "lastSignIn": "Ultimo accesso"
     },
     "heading": "Gestione degli utenti",
-    "teamsEmpty": "Nessun account appartiene ancora a un'azienda."
+    "teamsEmpty": "Nessun account appartiene ancora a un'azienda.",
+    "acquisitionEmpty": "Nessun account in attesa di un’azienda."
   },
   "impersonation": {
     "banner": "Hai effettuato l'accesso come {{name}}.",
@@ -499,7 +501,7 @@
       "stepHints": {
         "company": "Nome, SIRET e logo del cliente — riportati su preventivi e fatture.",
         "contact": "Recapiti stampati in «All'attenzione di» sui documenti.",
-        "referent": "Interlocutore principale presso il cliente.",
+        "referent": "Referente principale del cliente: fa parte del team dell'azienda (il suo account viene creato se non esiste).",
         "access": "Account membri che vedranno progetti e documenti di questo cliente, poi verifica prima della creazione."
       },
       "recap": {

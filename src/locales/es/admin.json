@@ -376,7 +376,8 @@
       "list": "Usuarios",
       "all": "Todos",
       "companies": "Clientes",
-      "teams": "Equipos"
+      "teams": "Equipos",
+      "acquisition": "Captación"
     },
     "kpis": {
       "total": "Usuarios",
@@ -414,7 +415,8 @@
       "lastSignIn": "Último acceso"
     },
     "heading": "Gestión de los usuarios",
-    "teamsEmpty": "Ninguna cuenta pertenece aún a una empresa."
+    "teamsEmpty": "Ninguna cuenta pertenece aún a una empresa.",
+    "acquisitionEmpty": "Ninguna cuenta espera una empresa."
   },
   "impersonation": {
     "banner": "Has iniciado sesión como {{name}}.",
@@ -499,7 +501,7 @@
       "stepHints": {
         "company": "Nombre, SIRET y logo del cliente — aparecen en sus presupuestos y facturas.",
         "contact": "Datos impresos en «A la atención de» en los documentos.",
-        "referent": "Interlocutor principal en el cliente.",
+        "referent": "Interlocutor principal del cliente: forma parte del equipo de la empresa (se crea su cuenta si no existe).",
         "access": "Cuentas de miembros que verán los proyectos y documentos de este cliente, y revisión antes de crear."
       },
       "recap": {
