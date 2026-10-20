@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 
 import { Modal } from '@/components/common/Modal';
 import { apiService } from '@/services/api';
-import { calculateDevis } from '@/lib/devisCalc';
+import { calculateDevis, formatDays } from '@/lib/devisCalc';
 import { PenLineIcon, PlusIcon, TargetIcon } from '@icons';
 import type {
   KanbanColumn,
@@ -547,7 +547,7 @@ function GenerateDevisModal({
                   {calc.allocations.map(({ task, days, price }) => (
                     <tr key={task.id}>
                       <td>{task.title} <span className="trv-muted">({t(`travaux.tracking.columns.${task.column}`)})</span></td>
-                      <td className="trv-right trv-num">{days}</td>
+                      <td className="trv-right trv-num">{formatDays(days)}</td>
                       <td className="trv-right trv-num">{formatEuros(price)}</td>
                     </tr>
                   ))}

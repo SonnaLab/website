@@ -68,3 +68,8 @@ export function dueDateCountdown(dueDate: string, from: Date = new Date()): stri
   const days = Math.round((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
   return days >= 0 ? `J-${days}` : `J+${Math.abs(days)}`;
 }
+
+/** « 2,6 » : virgule décimale, comme sur le PDF. */
+export function formatDays(days: number): string {
+  return days.toFixed(1).replace('.', ',');
+}

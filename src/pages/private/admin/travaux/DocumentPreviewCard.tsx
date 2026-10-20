@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { apiAssetUrl } from '@/services/api';
-import { calculateDevis } from '@/lib/devisCalc';
+import { calculateDevis, formatDays } from '@/lib/devisCalc';
 import { addressLines, bankLine, footerAddress, footerSlogan, footerWebsite, legalLine, vatNumber } from '@/lib/letterhead';
 import type { TravauxClient, TravauxObjective, TravauxTask } from '@/types/travaux';
 import { formatDate, formatEuros } from './format';
@@ -94,7 +94,7 @@ export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
                     <p className="trv-doc__task-title">{task.title}</p>
                     {task.description && <p className="trv-doc__task-desc">{task.description}</p>}
                   </td>
-                  <td className="trv-right trv-doc__muted">{days.toFixed(1)}</td>
+                  <td className="trv-right trv-doc__muted">{formatDays(days)}</td>
                   <td className="trv-right trv-num">{formatEuros(price)}</td>
                 </tr>
               ))
