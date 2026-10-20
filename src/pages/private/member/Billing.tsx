@@ -104,7 +104,7 @@ export default function MemberBilling() {
 
   return (
     <div className="dash-page">
-      <PageHeader icon={<FileTextIcon size={26} />} title={t('billing.heading')} description={t('billing.subtitle')} />
+      <PageHeader title={t('billing.heading')} description={t('billing.subtitle')} />
 
       <StatRow>
         <StatCard icon={<ReceiptIcon size={18} />} label={t('billing.invoices')} value={invoices.length} loading={loading} />

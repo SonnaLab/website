@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CalendarIcon, ReceiptIcon, FileTextIcon, TrendingUpIcon } from '@icons';
+import { CalendarIcon, ReceiptIcon, FileTextIcon } from '@icons';
 
 import { useAuth } from '@/components/providers/AuthProvider';
 import { apiService } from '@/services/api';
@@ -41,7 +41,6 @@ export default function MemberDashboard() {
   return (
     <div className="dash-page">
       <PageHeader
-        icon={<TrendingUpIcon size={26} />}
         title={t('dashboard.title', { name: user?.first_name || user?.email })}
         description={t('dashboard.subtitle')}
       />

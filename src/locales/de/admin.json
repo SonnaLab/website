@@ -70,7 +70,7 @@
     "commit": "Commit",
     "statusUp": "OK",
     "statusDown": "Nicht verfügbar",
-    "heading": "Zustand der Plattform",
+    "heading": "Verwaltung der Infrastruktur",
     "stats": {
       "environment": "Umgebung",
       "dbLatency": "DB-Latenz",
@@ -108,7 +108,7 @@
     "noData": "Keine Daten.",
     "loadError": "Ladefehler.",
     "viewDetails": "Details",
-    "heading": "Besucher der Website"
+    "heading": "Verwaltung der Cookies"
   },
   "ouou": {
     "title": "OUOU — KI-Assistent",
@@ -124,7 +124,8 @@
     "archive": "Archivieren",
     "quotaTitle": "Kontingent",
     "quotaUsed": "{{used}} / {{max}}",
-    "quotaExhausted": "Kontingent erschöpft"
+    "quotaExhausted": "Kontingent erschöpft",
+    "heading": "Verwaltung des OUOU-Assistenten"
   },
   "seo": {
     "title": "SEO",
@@ -147,7 +148,7 @@
     "intent": "Absicht",
     "rank": "Rang",
     "volume": "Volumen",
-    "heading": "Suchmaschinenoptimierung"
+    "heading": "Verwaltung der SEO"
   },
   "common": {
     "loading": "Lädt…",
@@ -357,7 +358,7 @@
       "themesPlaceholder": "Tech, Innovation, Design, Generative KI…",
       "frequencyPlaceholder": "2 Artikel / Woche"
     },
-    "heading": "Artikel und Veröffentlichungen"
+    "heading": "Verwaltung der News"
   },
   "users": {
     "title": "Benutzer",
@@ -409,7 +410,7 @@
       "signInCount": "Anmeldungen",
       "lastSignIn": "Letzte Anmeldung"
     },
-    "heading": "Konten und Rollen"
+    "heading": "Verwaltung der Benutzer"
   },
   "impersonation": {
     "banner": "Sie sind als {{name}} angemeldet.",
@@ -517,7 +518,7 @@
         "sourceCompanies": "Quelle: annuaire des entreprises (data.gouv.fr)",
         "sourceAddresses": "Quelle: Base Adresse Nationale (IGN Géoplateforme)"
       },
-      "heading": "Kunden",
+      "heading": "Verwaltung der Arbeiten",
       "stats": {
         "clients": "Kunden"
       }
@@ -780,10 +781,11 @@
       "title": "Unternehmensverzeichnis",
       "hint": "Finden Sie Ihr Unternehmen: SIRET, Firmenname und Adresse werden ausgefüllt. Prüfen und speichern.",
       "imported": "„{{name}}“ übernommen: prüfen und speichern."
-    }
+    },
+    "heading": "Verwaltung des Unternehmens"
   },
   "lesankofa": {
-    "heading": "Künstliche Intelligenz",
+    "heading": "Verwaltung von Lesankofa",
     "subtitle": "Modelle, Aufgaben, Infrastruktur und Kunden der Lesankofa-KI.",
     "stats": {
       "models": "Aktive Modelle",

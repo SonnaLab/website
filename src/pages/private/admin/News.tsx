@@ -127,7 +127,7 @@ export default function AdminNews() {
 
   return (
     <div className="dash-page">
-      <PageHeader icon={<PenLineIcon size={26} />} title={t('news.heading')} description={t('news.subtitle')} />
+      <PageHeader title={t('news.heading')} description={t('news.subtitle')} />
 
       <AdminNewsKpis refreshKey={kpiKey} />
 

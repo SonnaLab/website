@@ -70,7 +70,7 @@
     "commit": "Commit",
     "statusUp": "OK",
     "statusDown": "Indisponible",
-    "heading": "Santé de la plateforme",
+    "heading": "Gestion de l'infrastructure",
     "stats": {
       "environment": "Environnement",
       "dbLatency": "Latence BDD",
@@ -109,7 +109,7 @@
     "noData": "Aucune donnée disponible.",
     "loadError": "Erreur de chargement.",
     "viewDetails": "Détails",
-    "heading": "Audience du site"
+    "heading": "Gestion des cookies"
   },
   "ouou": {
     "title": "OUOU — Assistant IA",
@@ -125,7 +125,8 @@
     "archive": "Archiver",
     "quotaTitle": "Quota",
     "quotaUsed": "{{used}} / {{max}}",
-    "quotaExhausted": "Quota épuisé"
+    "quotaExhausted": "Quota épuisé",
+    "heading": "Gestion de l'assistant OUOU"
   },
   "seo": {
     "title": "SEO",
@@ -148,7 +149,7 @@
     "intent": "Intention",
     "rank": "Rang",
     "volume": "Volume",
-    "heading": "Référencement"
+    "heading": "Gestion du SEO"
   },
   "common": {
     "loading": "Chargement…",
@@ -358,7 +359,7 @@
       "themesPlaceholder": "Tech, Innovation, Design, IA générative…",
       "frequencyPlaceholder": "2 articles / semaine"
     },
-    "heading": "Articles et publications"
+    "heading": "Gestion des news"
   },
   "users": {
     "title": "Utilisateurs",
@@ -410,7 +411,7 @@
       "signInCount": "Connexions",
       "lastSignIn": "Dernière connexion"
     },
-    "heading": "Comptes et rôles"
+    "heading": "Gestion des utilisateurs"
   },
   "impersonation": {
     "banner": "Vous êtes connecté(e) en tant que {{name}}.",
@@ -518,7 +519,7 @@
         "sourceCompanies": "Source : annuaire des entreprises (data.gouv.fr)",
         "sourceAddresses": "Source : Base Adresse Nationale (Géoplateforme IGN)"
       },
-      "heading": "Clients",
+      "heading": "Gestion des Travaux",
       "stats": {
         "clients": "Clients"
       }
@@ -781,10 +782,11 @@
       "title": "Annuaire des entreprises",
       "hint": "Retrouvez votre entreprise : SIRET, raison sociale et adresse se remplissent. Vérifiez puis enregistrez.",
       "imported": "« {{name}} » importée : vérifiez puis enregistrez."
-    }
+    },
+    "heading": "Gestion de l'entreprise"
   },
   "lesankofa": {
-    "heading": "Intelligence artificielle",
+    "heading": "Gestion de Lesankofa",
     "subtitle": "Modèles, tâches, infrastructure et clients de l’IA Lesankofa.",
     "stats": {
       "models": "Modèles actifs",

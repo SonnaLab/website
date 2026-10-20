@@ -12,7 +12,6 @@ import {
   UsersIcon,
   ReceiptIcon,
   ArrowUpRightIcon,
-  TrendingUpIcon,
   BriefcaseIcon,
   type IconProps,
 } from '@icons';
@@ -72,7 +71,6 @@ export default function AdminDashboard() {
   return (
     <div className="dash-page">
       <PageHeader
-        icon={<TrendingUpIcon size={26} />}
         title={<HighlightText text={t('dashboard.title', { name: displayName })} />}
         description={t('dashboard.subtitle')}
       />

@@ -17,7 +17,6 @@ import {
 import { PageHeader } from '@/components/private/common/PageHeader';
 import { StatCard, StatRow } from '@/components/private/common/StatRow';
 import {
-  BriefcaseIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   EyeIcon,
@@ -87,7 +86,6 @@ export default function AdminTravauxClients() {
   return (
     <div className="dash-page">
       <PageHeader
-        icon={<BriefcaseIcon size={26} />}
         title={t('travaux.clients.heading')}
         description={t('travaux.subtitle')}
         actions={

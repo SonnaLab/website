@@ -32,7 +32,8 @@
       "upcoming": "Próximas",
       "past": "Pasadas",
       "cancelled": "Canceladas"
-    }
+    },
+    "heading": "Gestión de las citas"
   },
   "billing": {
     "title": "Facturación",
@@ -61,7 +62,7 @@
       "overdue": "Vencido",
       "cancelled": "Cancelado"
     },
-    "heading": "Mis presupuestos y facturas",
+    "heading": "Gestión de la facturación",
     "stats": {
       "toPay": "Pendiente",
       "paid": "Pagado"
@@ -91,6 +92,7 @@
     "save": "Guardar",
     "saving": "Guardando…",
     "saved": "Perfil actualizado.",
-    "saveError": "No se pudo guardar el perfil."
+    "saveError": "No se pudo guardar el perfil.",
+    "heading": "Gestión del perfil"
   }
 }

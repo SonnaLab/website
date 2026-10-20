@@ -70,7 +70,7 @@
     "commit": "Commit",
     "statusUp": "OK",
     "statusDown": "Non disponibile",
-    "heading": "Stato della piattaforma",
+    "heading": "Gestione dell'infrastruttura",
     "stats": {
       "environment": "Ambiente",
       "dbLatency": "Latenza DB",
@@ -108,7 +108,7 @@
     "noData": "Nessun dato.",
     "loadError": "Errore.",
     "viewDetails": "Dettagli",
-    "heading": "Pubblico del sito"
+    "heading": "Gestione dei cookie"
   },
   "ouou": {
     "title": "OUOU — Assistente IA",
@@ -124,7 +124,8 @@
     "archive": "Archivia",
     "quotaTitle": "Quota",
     "quotaUsed": "{{used}} / {{max}}",
-    "quotaExhausted": "Quota esaurita"
+    "quotaExhausted": "Quota esaurita",
+    "heading": "Gestione dell'assistente OUOU"
   },
   "seo": {
     "title": "SEO",
@@ -147,7 +148,7 @@
     "intent": "Intento",
     "rank": "Posizione",
     "volume": "Volume",
-    "heading": "Posizionamento"
+    "heading": "Gestione della SEO"
   },
   "common": {
     "loading": "Caricamento…",
@@ -357,7 +358,7 @@
       "themesPlaceholder": "Tech, Innovazione, Design, IA generativa…",
       "frequencyPlaceholder": "2 articoli / settimana"
     },
-    "heading": "Articoli e pubblicazioni"
+    "heading": "Gestione delle news"
   },
   "users": {
     "title": "Utenti",
@@ -409,7 +410,7 @@
       "signInCount": "Accessi",
       "lastSignIn": "Ultimo accesso"
     },
-    "heading": "Account e ruoli"
+    "heading": "Gestione degli utenti"
   },
   "impersonation": {
     "banner": "Hai effettuato l'accesso come {{name}}.",
@@ -517,7 +518,7 @@
         "sourceCompanies": "Fonte: annuaire des entreprises (data.gouv.fr)",
         "sourceAddresses": "Fonte: Base Adresse Nationale (Géoplateforme IGN)"
       },
-      "heading": "Clienti",
+      "heading": "Gestione dei lavori",
       "stats": {
         "clients": "Clienti"
       }
@@ -780,10 +781,11 @@
       "title": "Elenco delle imprese",
       "hint": "Trova la tua impresa: SIRET, ragione sociale e indirizzo vengono compilati. Verifica e salva.",
       "imported": "«{{name}}» importata: verifica e salva."
-    }
+    },
+    "heading": "Gestione dell'azienda"
   },
   "lesankofa": {
-    "heading": "Intelligenza artificiale",
+    "heading": "Gestione di Lesankofa",
     "subtitle": "Modelli, attività, infrastruttura e clienti dell’IA Lesankofa.",
     "stats": {
       "models": "Modelli attivi",

@@ -53,8 +53,7 @@ export default function Profile() {
       <Breadcrumbs items={[{ label: t('nav.dashboard'), to: getDashboardPath(user?.role) }, { label: t('profile.title') }]} />
       <PageHeader
         badge={{ icon: UserIcon, label: t('nav.account') }}
-        icon={<UserIcon size={26} />}
-        title={t('profile.title')}
+        title={t('profile.heading')}
         description={t('profile.subtitle')}
       />
 

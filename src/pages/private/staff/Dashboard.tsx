@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { CalendarIcon, LayoutDashboardIcon, ReceiptIcon, TrendingUpIcon } from '@icons';
+import { CalendarIcon, LayoutDashboardIcon, ReceiptIcon } from '@icons';
 import { PageHeader } from '@/components/private/common/PageHeader';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { Card } from '@/components/ui/card';
@@ -16,7 +16,6 @@ export default function StaffDashboard() {
     <div className="dash-page">
       <PageHeader
         badge={{ icon: LayoutDashboardIcon, label: 'Staff' }}
-        icon={<TrendingUpIcon size={26} />}
         title={`Bienvenue, ${user?.first_name || user?.email}`}
         description="Espace Staff SonnaLab"
       />

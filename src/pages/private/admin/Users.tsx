@@ -241,7 +241,7 @@ export default function AdminUsers() {
 
   return (
     <div className="dash-page">
-      <PageHeader icon={<ShieldIcon size={26} />} title={t('users.heading')} description={t('users.subtitle')} />
+      <PageHeader title={t('users.heading')} description={t('users.subtitle')} />
 
       <StatRow>
         <StatCard icon={<UsersIcon size={18} />} label={t('users.kpis.total')} value={kpis?.total ?? '—'} />

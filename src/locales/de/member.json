@@ -32,7 +32,8 @@
       "upcoming": "Anstehend",
       "past": "Vergangen",
       "cancelled": "Abgesagt"
-    }
+    },
+    "heading": "Verwaltung der Termine"
   },
   "billing": {
     "title": "Abrechnung",
@@ -61,7 +62,7 @@
       "overdue": "Überfällig",
       "cancelled": "Storniert"
     },
-    "heading": "Meine Angebote und Rechnungen",
+    "heading": "Verwaltung der Abrechnung",
     "stats": {
       "toPay": "Offen",
       "paid": "Bezahlt"
@@ -91,6 +92,7 @@
     "save": "Speichern",
     "saving": "Wird gespeichert…",
     "saved": "Profil aktualisiert.",
-    "saveError": "Profil konnte nicht gespeichert werden."
+    "saveError": "Profil konnte nicht gespeichert werden.",
+    "heading": "Verwaltung des Profils"
   }
 }

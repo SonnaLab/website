@@ -5,7 +5,7 @@ import { apiService } from '@/services/api';
 import { PageHeader } from '@/components/private/common/PageHeader';
 import { StatCard, StatRow } from '@/components/private/common/StatRow';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
-import { CookieIcon, GlobeIcon, ZapIcon, UsersIcon, BotIcon, LayersIcon, FileTextIcon, TrendingUpIcon, LineChartIcon, ClockIcon } from '@icons';
+import { CookieIcon, GlobeIcon, ZapIcon, UsersIcon, BotIcon, LayersIcon, FileTextIcon, TrendingUpIcon, ClockIcon } from '@icons';
 
 import {
   GeoTab, RealtimeTab, VisitorsTab, BotsTab,
@@ -34,7 +34,7 @@ export default function AdminCookies() {
 
   return (
     <div className="dash-page">
-      <PageHeader icon={<LineChartIcon size={26} />} title={t('tracking.heading')} description={t('tracking.subtitle')} />
+      <PageHeader title={t('tracking.heading')} description={t('tracking.subtitle')} />
 
       {/* The day's figures; sessions and 7-day page views are in their tabs. */}
       <StatRow>

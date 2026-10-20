@@ -32,7 +32,8 @@
       "upcoming": "Upcoming",
       "past": "Past",
       "cancelled": "Cancelled"
-    }
+    },
+    "heading": "Appointment management"
   },
   "billing": {
     "title": "Billing",
@@ -61,7 +62,7 @@
       "overdue": "Overdue",
       "cancelled": "Cancelled"
     },
-    "heading": "My quotes and invoices",
+    "heading": "Billing management",
     "stats": {
       "toPay": "To pay",
       "paid": "Paid"
@@ -91,6 +92,7 @@
     "save": "Save",
     "saving": "Saving…",
     "saved": "Profile updated.",
-    "saveError": "Could not save your profile."
+    "saveError": "Could not save your profile.",
+    "heading": "Profile management"
   }
 }

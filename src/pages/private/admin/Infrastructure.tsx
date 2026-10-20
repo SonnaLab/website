@@ -40,7 +40,6 @@ export default function AdminInfrastructure() {
   return (
     <div className="dash-page">
       <PageHeader
-        icon={<ActivityIcon size={26} />}
         title={t('infrastructure.heading')}
         description={t('infrastructure.subtitle')}
         actions={

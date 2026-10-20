@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { HotelIcon, TrafficConeIcon } from '@icons';
+import { TrafficConeIcon } from '@icons';
 
 import { apiAssetUrl, apiService } from '@/services/api';
 import type { TravauxClient, TravauxPayload } from '@/types/travaux';
@@ -192,8 +192,7 @@ export default function Company() {
       <Breadcrumbs items={[{ label: t('nav.travaux'), to: '/admin/travaux' }, { label: t('company.title') }]} />
       <PageHeader
         badge={{ icon: TrafficConeIcon, label: t('nav.travaux') }}
-        icon={<HotelIcon size={26} />}
-        title={t('company.title')}
+        title={t('company.heading')}
         description={t('company.subtitle')}
       />
 

@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/private/common/PageHeader';
 import { StatCard, StatRow } from '@/components/private/common/StatRow';
 import { useModal } from '@/components/providers/ModalProvider';
-import { CalendarDaysIcon, CalendarIcon, CheckCircleIcon, PlusIcon, XCircleIcon } from '@icons';
+import { CalendarIcon, CheckCircleIcon, PlusIcon, XCircleIcon } from '@icons';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 interface Appointment {
@@ -57,8 +57,7 @@ export default function MemberAppointments() {
   return (
     <div className="dash-page">
       <PageHeader
-        icon={<CalendarDaysIcon size={26} />}
-        title={t('appointments.title')}
+        title={t('appointments.heading')}
         description={t('appointments.subtitle')}
         actions={
           <button type="button" className="adm-btn adm-btn--primary" onClick={() => openConsultationModal()}>

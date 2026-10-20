@@ -32,7 +32,8 @@
       "upcoming": "In arrivo",
       "past": "Passati",
       "cancelled": "Annullati"
-    }
+    },
+    "heading": "Gestione degli appuntamenti"
   },
   "billing": {
     "title": "Fatturazione",
@@ -61,7 +62,7 @@
       "overdue": "Scaduto",
       "cancelled": "Annullato"
     },
-    "heading": "I miei preventivi e fatture",
+    "heading": "Gestione della fatturazione",
     "stats": {
       "toPay": "Da pagare",
       "paid": "Pagato"
@@ -91,6 +92,7 @@
     "save": "Salva",
     "saving": "Salvataggio…",
     "saved": "Profilo aggiornato.",
-    "saveError": "Impossibile salvare il profilo."
+    "saveError": "Impossibile salvare il profilo.",
+    "heading": "Gestione del profilo"
   }
 }

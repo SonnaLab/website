@@ -32,7 +32,8 @@
       "upcoming": "À venir",
       "past": "Passés",
       "cancelled": "Annulés"
-    }
+    },
+    "heading": "Gestion des rendez-vous"
   },
   "billing": {
     "title": "Facturation",
@@ -61,7 +62,7 @@
       "overdue": "En retard",
       "cancelled": "Annulé"
     },
-    "heading": "Mes devis et factures",
+    "heading": "Gestion de la facturation",
     "stats": {
       "toPay": "À régler",
       "paid": "Réglé"
@@ -91,6 +92,7 @@
     "save": "Enregistrer",
     "saving": "Enregistrement…",
     "saved": "Profil mis à jour.",
-    "saveError": "Impossible d'enregistrer le profil."
+    "saveError": "Impossible d'enregistrer le profil.",
+    "heading": "Gestion du profil"
   }
 }

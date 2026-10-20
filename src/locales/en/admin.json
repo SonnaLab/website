@@ -70,7 +70,7 @@
     "commit": "Commit",
     "statusUp": "OK",
     "statusDown": "Down",
-    "heading": "Platform health",
+    "heading": "Infrastructure management",
     "stats": {
       "environment": "Environment",
       "dbLatency": "DB latency",
@@ -108,7 +108,7 @@
     "noData": "No data available.",
     "loadError": "Loading error.",
     "viewDetails": "Details",
-    "heading": "Site audience"
+    "heading": "Cookie management"
   },
   "ouou": {
     "title": "OUOU — AI Assistant",
@@ -124,7 +124,8 @@
     "archive": "Archive",
     "quotaTitle": "Quota",
     "quotaUsed": "{{used}} / {{max}}",
-    "quotaExhausted": "Quota exhausted"
+    "quotaExhausted": "Quota exhausted",
+    "heading": "OUOU assistant management"
   },
   "seo": {
     "title": "SEO",
@@ -147,7 +148,7 @@
     "intent": "Intent",
     "rank": "Rank",
     "volume": "Volume",
-    "heading": "Search optimisation"
+    "heading": "SEO management"
   },
   "common": {
     "loading": "Loading…",
@@ -357,7 +358,7 @@
       "themesPlaceholder": "Tech, Innovation, Design, Generative AI…",
       "frequencyPlaceholder": "2 articles / week"
     },
-    "heading": "Articles and publications"
+    "heading": "News management"
   },
   "users": {
     "title": "Users",
@@ -409,7 +410,7 @@
       "signInCount": "Sign-ins",
       "lastSignIn": "Last sign-in"
     },
-    "heading": "Accounts and roles"
+    "heading": "User management"
   },
   "impersonation": {
     "banner": "You are signed in as {{name}}.",
@@ -517,7 +518,7 @@
         "sourceCompanies": "Source: annuaire des entreprises (data.gouv.fr)",
         "sourceAddresses": "Source: Base Adresse Nationale (IGN Géoplateforme)"
       },
-      "heading": "Clients",
+      "heading": "Work management",
       "stats": {
         "clients": "Clients"
       }
@@ -780,10 +781,11 @@
       "title": "Company directory",
       "hint": "Find your company: SIRET, legal name and address are filled in. Check, then save.",
       "imported": "“{{name}}” imported: check, then save."
-    }
+    },
+    "heading": "Company management"
   },
   "lesankofa": {
-    "heading": "Artificial intelligence",
+    "heading": "Lesankofa management",
     "subtitle": "Models, tasks, infrastructure and clients of the Lesankofa AI.",
     "stats": {
       "models": "Active models",

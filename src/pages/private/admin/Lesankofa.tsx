@@ -35,7 +35,6 @@ import {
   ChevronRightIcon,
   MegaphoneIcon,
   MegaphoneOffIcon,
-  SparklesIcon,
 } from '@icons';
 
 // ─────────────────────────────────────────────
@@ -1869,7 +1868,6 @@ export default function AdminLesankofa() {
   return (
     <div className="dash-page">
       <PageHeader
-        icon={<SparklesIcon size={26} />}
         title={t('lesankofa.heading')}
         description={t('lesankofa.subtitle')}
         actions={<GenerationControlToggle />}

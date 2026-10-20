@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SendIcon, PlusIcon, ArchiveIcon, BotIcon, TerminalIcon } from '@icons';
+import { SendIcon, PlusIcon, ArchiveIcon, BotIcon } from '@icons';
 import { PageHeader } from '@/components/private/common/PageHeader';
 import { toast } from 'sonner';
 
@@ -83,8 +83,7 @@ export default function AdminOuou() {
     <div className="dash-page">
       <PageHeader
         badge={{ icon: BotIcon, label: t('nav.ouou') }}
-        icon={<TerminalIcon size={26} />}
-        title={t('ouou.title')}
+        title={t('ouou.heading')}
         description={t('ouou.subtitle')}
         actions={
           <CreateConversationDialog

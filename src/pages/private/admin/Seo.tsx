@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { GlobeIcon, PlusIcon, RefreshCwIcon, SearchIcon, Trash2Icon } from '@icons';
+import { PlusIcon, RefreshCwIcon, SearchIcon, Trash2Icon } from '@icons';
 import { PageHeader } from '@/components/private/common/PageHeader';
 import { toast } from 'sonner';
 
@@ -28,7 +28,6 @@ export default function AdminSeo() {
     <div className="dash-page">
       <PageHeader
         badge={{ icon: SearchIcon, label: t('nav.seo') }}
-        icon={<GlobeIcon size={26} />}
         title={t('seo.heading')}
         description={t('seo.subtitle')}
       />

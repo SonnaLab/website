@@ -200,7 +200,7 @@ export function MemberLayout() {
                     'dash-nav-link' + (isActive ? ' active' : '')
                   }
                 >
-                  <span className="dash-nav-icon"><item.icon size={20} /></span>
+                  <span className="dash-nav-icon"><item.icon size={24} /></span>
                   <span className="dash-nav-label">{item.label}</span>
                 </NavLink>
               </Fragment>

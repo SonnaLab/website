@@ -70,7 +70,7 @@
     "commit": "Commit",
     "statusUp": "OK",
     "statusDown": "No disponible",
-    "heading": "Estado de la plataforma",
+    "heading": "Gestión de la infraestructura",
     "stats": {
       "environment": "Entorno",
       "dbLatency": "Latencia BD",
@@ -108,7 +108,7 @@
     "noData": "Sin datos.",
     "loadError": "Error de carga.",
     "viewDetails": "Detalles",
-    "heading": "Audiencia del sitio"
+    "heading": "Gestión de las cookies"
   },
   "ouou": {
     "title": "OUOU — Asistente IA",
@@ -124,7 +124,8 @@
     "archive": "Archivar",
     "quotaTitle": "Cuota",
     "quotaUsed": "{{used}} / {{max}}",
-    "quotaExhausted": "Cuota agotada"
+    "quotaExhausted": "Cuota agotada",
+    "heading": "Gestión del asistente OUOU"
   },
   "seo": {
     "title": "SEO",
@@ -147,7 +148,7 @@
     "intent": "Intención",
     "rank": "Posición",
     "volume": "Volumen",
-    "heading": "Posicionamiento"
+    "heading": "Gestión del SEO"
   },
   "common": {
     "loading": "Cargando…",
@@ -357,7 +358,7 @@
       "themesPlaceholder": "Tech, Innovación, Diseño, IA generativa…",
       "frequencyPlaceholder": "2 artículos / semana"
     },
-    "heading": "Artículos y publicaciones"
+    "heading": "Gestión de las noticias"
   },
   "users": {
     "title": "Usuarios",
@@ -409,7 +410,7 @@
       "signInCount": "Inicios de sesión",
       "lastSignIn": "Último acceso"
     },
-    "heading": "Cuentas y roles"
+    "heading": "Gestión de los usuarios"
   },
   "impersonation": {
     "banner": "Has iniciado sesión como {{name}}.",
@@ -517,7 +518,7 @@
         "sourceCompanies": "Fuente: annuaire des entreprises (data.gouv.fr)",
         "sourceAddresses": "Fuente: Base Adresse Nationale (Géoplateforme IGN)"
       },
-      "heading": "Clientes",
+      "heading": "Gestión de los trabajos",
       "stats": {
         "clients": "Clientes"
       }
@@ -780,10 +781,11 @@
       "title": "Directorio de empresas",
       "hint": "Busque su empresa: se rellenan el SIRET, la razón social y la dirección. Compruebe y guarde.",
       "imported": "«{{name}}» importada: compruebe y guarde."
-    }
+    },
+    "heading": "Gestión de la empresa"
   },
   "lesankofa": {
-    "heading": "Inteligencia artificial",
+    "heading": "Gestión de Lesankofa",
     "subtitle": "Modelos, tareas, infraestructura y clientes de la IA Lesankofa.",
     "stats": {
       "models": "Modelos activos",
