@@ -1200,6 +1200,12 @@
   font-size: 13px;
 }
 
+.adm-table__empty-hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+}
+
 .adm-table__empty-icon {
   display: flex;
   justify-content: center;
@@ -1612,6 +1618,20 @@
 .adm-btn--danger:hover {
   background: #fef2f2;
   border-color: #fecaca;
+}
+.adm-btn--danger-solid {
+  background: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+}
+.adm-btn--danger-solid:hover {
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+.adm-confirm__message {
+  margin: 0;
+  font-size: 14px;
+  color: #4b5563;
 }
 
 .adm-btn--sm  { padding: 5px 10px; font-size: 12px; }
@@ -5291,6 +5311,7 @@
 .adm-modal--xl { max-width: 1120px; }
 
 .trv-page { display: flex; flex-direction: column; gap: 20px; }
+.trv-page > .dash-crumbs { margin-bottom: 0; }
 .trv-header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .trv-header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .trv-back { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #6b7280; text-decoration: none; }
@@ -5317,7 +5338,26 @@
 .trv-inline-stats__label { color: #9ca3af; font-size: 12px; }
 .trv-inline-stats__item strong { font-weight: 600; color: #111111; }
 /* Client page: the tabs, and the current tab's « Nouveau … » on the right. */
-.trv-tabs-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+/* Tabs on the left, the tab's « Nouveau … » on the right, one shared rule underneath. */
+.trv-tabs-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; border-bottom: 2px solid #e8eaed; }
+.trv-tabs-bar > .adm-tabs__list { position: relative; flex: 1 1 auto; min-width: 0; width: auto; margin-bottom: -2px; border-bottom: none; overflow-x: auto; scrollbar-width: none; }
+.trv-tabs-bar > .adm-tabs__list::-webkit-scrollbar { display: none; }
+.trv-tabs-bar .adm-tabs__trigger { margin-bottom: 0; }
+.trv-tabs-bar__new { flex-shrink: 0; margin-bottom: 4px; padding: 7px 12px; }
+.trv-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.trv-doc-ref { padding: 0; border: none; background: none; color: #26348b; font: inherit; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; cursor: pointer; }
+.trv-doc-ref:hover { text-decoration: underline; }
+@media (max-width: 900px) {
+  /* Five figures on two columns: the last one takes the whole row. */
+  .trv-stats > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+@media (max-width: 640px) {
+  .trv-stats { gap: 8px; }
+  .trv-stats .admin-news-overview__stat-card { padding: 12px 14px; }
+  .trv-stats .admin-news-overview__stat-value { font-size: 1.25rem; }
+  .trv-tabs-bar__new { padding: 7px 9px; }
+  .trv-tabs-bar__new-label { display: none; }
+}
 .trv-client-cell__name { font-weight: 600; color: #111111; }
 .trv-avatar { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 32px; height: 32px; border-radius: 999px; background: #111111; color: #ffffff; font-size: 12px; font-weight: 700; }
 .trv-avatar--lg { width: 44px; height: 44px; font-size: 15px; }
@@ -5351,13 +5391,18 @@
 
 .trv-card { background: #ffffff; border: 1px solid #e8eaed; border-radius: 10px; overflow: hidden; cursor: pointer; transition: box-shadow 0.15s; }
 .trv-card:hover { box-shadow: 0 4px 12px rgba(16, 24, 40, 0.08); }
-.trv-card__head { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-bottom: 1px solid #f0f2f4; }
+.trv-card__head { display: flex; align-items: flex-start; gap: 10px; padding: 12px 16px; border-bottom: 1px solid #f0f2f4; }
 .trv-card__ordinal { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 6px; border-radius: 6px; background: #26348b; color: #ffffff; font-size: 12px; font-weight: 700; flex-shrink: 0; }
-.trv-card__title { font-size: 14px; font-weight: 600; color: #111111; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.trv-card__title { display: -webkit-box; padding-top: 2px; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; font-size: 14px; font-weight: 600; line-height: 1.4; color: #111111; }
 .trv-card__body { display: flex; flex-direction: column; gap: 10px; padding: 12px 16px; }
 .trv-card__desc { font-size: 13px; color: #4b5563; margin: 0; }
+.trv-card__desc--clamp { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-height: 1.5; }
+.trv-card__progress { display: flex; align-items: center; gap: 10px; }
+.trv-card__percent { flex-shrink: 0; min-width: 36px; text-align: right; font-size: 12px; font-weight: 600; color: #6b7280; font-variant-numeric: tabular-nums; }
 .trv-card__foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 16px; border-top: 1px solid #f0f2f4; }
-.trv-due { font-size: 12px; font-weight: 600; color: #dc2626; }
+.trv-due { font-size: 12px; font-weight: 600; color: #6b7280; white-space: nowrap; }
+.trv-due--soon { color: #d97706; }
+.trv-due--late { color: #dc2626; }
 
 /* Tâches : kanban */
 .trv-kanban { display: grid; grid-template-columns: repeat(4, minmax(220px, 1fr)); gap: 14px; overflow-x: auto; }

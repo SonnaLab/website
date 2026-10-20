@@ -109,12 +109,13 @@ export function DataTableSelectTd({ checked, onChange, ariaLabel }: DataTableSel
 }
 
 /* ── Empty state ── */
-export function DataTableEmpty({ icon, label }: { icon?: ReactNode; label: string }) {
+export function DataTableEmpty({ icon, label, hint }: { icon?: ReactNode; label: string; hint?: string }) {
   return (
     <tr>
       <td colSpan={100} className="adm-table__empty">
         {icon && <span className="adm-table__empty-icon">{icon}</span>}
         <span>{label}</span>
+        {hint && <span className="adm-table__empty-hint">{hint}</span>}
       </td>
     </tr>
   );

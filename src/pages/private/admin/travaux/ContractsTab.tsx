@@ -21,6 +21,7 @@ import type { TravauxResource } from './useTravauxData';
 import type { TravauxTabHandle } from './tabHandle';
 import { FileDropzone } from './FileDropzone';
 import { apiErrorMessage, formatCents, formatDate } from './format';
+import { useConfirmDelete } from './useConfirmDelete';
 
 const STATUSES: ContractStatus[] = ['draft', 'active', 'expired', 'terminated'];
 const STATUS_VARIANT: Record<ContractStatus, 'default' | 'success' | 'warning' | 'danger'> = {
@@ -38,12 +39,13 @@ export const ContractsTab = forwardRef<TravauxTabHandle, ContractsTabProps>(func
   ref,
 ) {
   const { t } = useTranslation('admin');
+  const confirmDelete = useConfirmDelete();
   const [newOpen, setNewOpen] = useState(false);
   const [preview, setPreview] = useState<TravauxContract | null>(null);
   useImperativeHandle(ref, () => ({ openNew: () => setNewOpen(true) }));
 
   async function remove(c: TravauxContract) {
-    if (!window.confirm(t('travaux.common.confirmDelete'))) return;
+    if (!(await confirmDelete())) return;
     try {
       await apiService.adminTravauxDeleteContract(c.id);
       await reload(['contracts']);

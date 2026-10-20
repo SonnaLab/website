@@ -1,10 +1,11 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/common/Tabs';
 import {
   FileSignatureIcon,
+  FileTextIcon,
   KanbanIcon,
   PlusIcon,
   ReceiptIcon,
@@ -22,12 +23,12 @@ import { TasksTab } from './TasksTab';
 import type { TravauxTabHandle } from './tabHandle';
 import { useTravauxData } from './useTravauxData';
 
-type TabKey = 'objectives' | 'tracking' | 'invoices' | 'contracts' | 'payments';
-const TAB_KEYS: TabKey[] = ['objectives', 'tracking', 'invoices', 'contracts', 'payments'];
+type TabKey = 'objectives' | 'tracking' | 'quotes' | 'invoices' | 'contracts' | 'payments';
+const TAB_KEYS: TabKey[] = ['objectives', 'tracking', 'quotes', 'invoices', 'contracts', 'payments'];
 
 /**
  * Travaux d'un client (action « plot » du tableau des clients) : livrables
- * par projet, kanban des tâches, devis/factures, contrats et paiements.
+ * par projet, kanban des tâches, devis, factures, contrats et paiements.
  * L'onglet actif est dans l'URL (?tab=) pour pouvoir y revenir directement.
  */
 export default function AdminClientTravaux() {
@@ -45,18 +46,28 @@ export default function AdminClientTravaux() {
   const consumeAutoPreview = useCallback(() => setAutoPreviewId(null), []);
 
   const data = useTravauxData(clientId);
+  // On a phone the tabs scroll sideways: keep the open one in view (e.g. ?tab=quotes).
+  const tabsBar = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const list = tabsBar.current?.querySelector<HTMLElement>('.adm-tabs__list');
+    const active = list?.querySelector<HTMLElement>('.adm-tabs__trigger--active');
+    if (list && active) list.scrollLeft = active.offsetLeft - (list.clientWidth - active.offsetWidth) / 2;
+  }, [tab, data.loading]);
   const refs: Record<TabKey, React.RefObject<TravauxTabHandle>> = {
     objectives: useRef<TravauxTabHandle>(null),
     tracking:   useRef<TravauxTabHandle>(null),
+    quotes:     useRef<TravauxTabHandle>(null),
     invoices:   useRef<TravauxTabHandle>(null),
     contracts:  useRef<TravauxTabHandle>(null),
     payments:   useRef<TravauxTabHandle>(null),
   };
 
-  const NEW_LABEL: Record<TabKey, string> = {
+  // Invoices have no « Nouveau » button: they are generated from a quote.
+  const NEW_LABEL: Record<TabKey, string | null> = {
     objectives: t('travaux.objectives.new'),
     tracking:   t('travaux.tracking.new'),
-    invoices:   t('travaux.invoices.new'),
+    quotes:     t('travaux.invoices.new'),
+    invoices:   null,
     contracts:  t('travaux.contracts.new'),
     payments:   t('travaux.payments.new'),
   };
@@ -76,12 +87,35 @@ export default function AdminClientTravaux() {
     { label: t('travaux.clients.table.paid'), value: formatCents(paid) },
   ];
 
+  const quotes = data.invoices.filter((i) => i.kind === 'quote');
+  const invoices = data.invoices.filter((i) => i.kind === 'invoice');
+  const documentsTab = (kind: 'quote' | 'invoice') => (
+    <InvoicesTab
+      ref={refs[kind === 'quote' ? 'quotes' : 'invoices']}
+      kind={kind}
+      clientId={clientId}
+      client={client}
+      issuer={data.issuer}
+      invoices={data.invoices}
+      objectives={data.objectives}
+      tasks={data.tasks}
+      reload={data.reload}
+      autoPreviewId={autoPreviewId}
+      onAutoPreviewConsumed={consumeAutoPreview}
+      onInvoiceGenerated={(invoice) => {
+        setAutoPreviewId(invoice.id);
+        setTab('invoices');
+      }}
+    />
+  );
+  const newLabel = NEW_LABEL[tab];
+
   return (
-    <div className="space-y-6">
+    <div className="trv-page">
       <Breadcrumbs items={[{ label: t('nav.travaux'), to: '/admin/travaux' }, { label: client?.name ?? '…' }]} />
 
       {/* The client's figures, as on the News page (its name is in the trail). */}
-      <div className="admin-news-overview__stats">
+      <div className="admin-news-overview__stats trv-stats">
         {stats.map(({ label, value, danger }) => (
           <div key={label} className={`admin-news-overview__stat-card${danger ? ' admin-news-overview__stat-card--danger' : ''}`}>
             <span className="admin-news-overview__stat-value">{data.loading ? '—' : value}</span>
@@ -95,17 +129,20 @@ export default function AdminClientTravaux() {
         <p className="trk-loading">{t('common.loading')}</p>
       ) : (
         <Tabs value={tab} onValueChange={setTab}>
-          <div className="trv-tabs-bar">
+          <div className="trv-tabs-bar" ref={tabsBar}>
             <TabsList>
               <TabsTrigger value="objectives" icon={<TargetIcon size={14} />} count={data.objectives.length}>{t('travaux.tabs.objectives')}</TabsTrigger>
               <TabsTrigger value="tracking" icon={<KanbanIcon size={14} />} count={data.tasks.length}>{t('travaux.tabs.tracking')}</TabsTrigger>
-              <TabsTrigger value="invoices" icon={<ReceiptIcon size={14} />} count={data.invoices.length}>{t('travaux.tabs.invoices')}</TabsTrigger>
+              <TabsTrigger value="quotes" icon={<FileTextIcon size={14} />} count={quotes.length}>{t('travaux.tabs.quotes')}</TabsTrigger>
+              <TabsTrigger value="invoices" icon={<ReceiptIcon size={14} />} count={invoices.length}>{t('travaux.tabs.invoices')}</TabsTrigger>
               <TabsTrigger value="contracts" icon={<FileSignatureIcon size={14} />} count={data.contracts.length}>{t('travaux.tabs.contracts')}</TabsTrigger>
               <TabsTrigger value="payments" icon={<WalletIcon size={14} />} count={data.payments.length}>{t('travaux.tabs.payments')}</TabsTrigger>
             </TabsList>
-            <button type="button" className="adm-btn adm-btn--primary" onClick={() => refs[tab].current?.openNew()}>
-              <PlusIcon size={14} /> {NEW_LABEL[tab]}
-            </button>
+            {newLabel && (
+              <button type="button" className="adm-btn adm-btn--primary trv-tabs-bar__new" title={newLabel} onClick={() => refs[tab].current?.openNew()}>
+                <PlusIcon size={14} /> <span className="trv-tabs-bar__new-label">{newLabel}</span>
+              </button>
+            )}
           </div>
 
           <TabsContent value="objectives">
@@ -121,27 +158,15 @@ export default function AdminClientTravaux() {
               reload={data.reload}
               onDevisCreated={(invoice: TravauxInvoice) => {
                 setAutoPreviewId(invoice.id);
-                setTab('invoices');
+                setTab('quotes');
               }}
             />
           </TabsContent>
           <TabsContent value="tracking">
             <TasksTab ref={refs.tracking} clientId={clientId} tasks={data.tasks} objectives={data.objectives} reload={data.reload} />
           </TabsContent>
-          <TabsContent value="invoices">
-            <InvoicesTab
-              ref={refs.invoices}
-              clientId={clientId}
-              client={client}
-              issuer={data.issuer}
-              invoices={data.invoices}
-              objectives={data.objectives}
-              tasks={data.tasks}
-              reload={data.reload}
-              autoPreviewId={autoPreviewId}
-              onAutoPreviewConsumed={consumeAutoPreview}
-            />
-          </TabsContent>
+          <TabsContent value="quotes">{documentsTab('quote')}</TabsContent>
+          <TabsContent value="invoices">{documentsTab('invoice')}</TabsContent>
           <TabsContent value="contracts">
             <ContractsTab ref={refs.contracts} clientId={clientId} contracts={data.contracts} reload={data.reload} />
           </TabsContent>

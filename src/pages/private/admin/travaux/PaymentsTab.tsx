@@ -20,6 +20,7 @@ import type { PaymentMethod, PaymentStatus, TravauxInvoice, TravauxPayment } fro
 import type { TravauxResource } from './useTravauxData';
 import type { TravauxTabHandle } from './tabHandle';
 import { apiErrorMessage, formatCents, formatDate } from './format';
+import { useConfirmDelete } from './useConfirmDelete';
 
 const METHODS: PaymentMethod[] = ['transfer', 'card', 'check', 'other'];
 const STATUSES: PaymentStatus[] = ['pending', 'completed', 'failed'];
@@ -39,11 +40,12 @@ export const PaymentsTab = forwardRef<TravauxTabHandle, PaymentsTabProps>(functi
   ref,
 ) {
   const { t } = useTranslation('admin');
+  const confirmDelete = useConfirmDelete();
   const [newOpen, setNewOpen] = useState(false);
   useImperativeHandle(ref, () => ({ openNew: () => setNewOpen(true) }));
 
   async function remove(p: TravauxPayment) {
-    if (!window.confirm(t('travaux.common.confirmDelete'))) return;
+    if (!(await confirmDelete())) return;
     try {
       await apiService.adminTravauxDeletePayment(p.id);
       await reload(['payments', 'client']);

@@ -149,6 +149,7 @@
     "delete": "Elimina",
     "edit": "Modifica",
     "create": "Crea",
+    "confirm": "Conferma",
     "next": "Avanti",
     "back": "Indietro"
   },
@@ -414,6 +415,7 @@
       "amount": "Importo",
       "none": "Nessuno",
       "confirmDelete": "Confermare l'eliminazione?",
+      "confirmDeleteHint": "Questa azione è definitiva.",
       "back": "Clienti",
       "removeFile": "Rimuovi il file"
     },
@@ -508,6 +510,7 @@
     "tabs": {
       "objectives": "Deliverable",
       "tracking": "Attività",
+      "quotes": "Preventivi",
       "invoices": "Fatture",
       "contracts": "Contratti",
       "payments": "Pagamenti"
@@ -569,6 +572,11 @@
     "invoices": {
       "new": "Nuovo preventivo",
       "empty": "Nessun preventivo né fattura.",
+      "emptyQuotes": "Nessun preventivo.",
+      "emptyInvoices": "Nessuna fattura.",
+      "fromQuote": "Le fatture si generano da un preventivo: scheda Preventivi, «Genera la fattura».",
+      "quoteRef": "Preventivo",
+      "invoiceRef": "Fattura",
       "kind": "Tipo",
       "kinds": {
         "quote": "Preventivo",
@@ -595,6 +603,7 @@
       "terms": "Condizioni",
       "generateInvoice": "Genera la fattura",
       "generateInvoiceError": "Impossibile generare la fattura.",
+      "invoiceGenerated": "Fattura generata.",
       "download": "Scarica",
       "downloadError": "Impossibile scaricare il PDF.",
       "send": "Invia",

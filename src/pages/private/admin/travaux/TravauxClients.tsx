@@ -75,14 +75,14 @@ export default function AdminTravauxClients() {
   const referentOf = (c: TravauxClient) => [c.referent_first_name, c.referent_last_name].filter(Boolean).join(' ');
 
   return (
-    <div className="space-y-6">
+    <div className="trv-page">
       <div className="trv-header-row">
-        <header className="trk-header">
-          <div className="trk-header__title">
-            <TrafficConeIcon size={22} className="trk-header__icon" />
-            <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">{t('travaux.title')}</h1>
+        <header className="admin-news__header">
+          <div className="admin-news__header-title">
+            <TrafficConeIcon size={22} />
+            <h1>{t('travaux.title')}</h1>
           </div>
-          <p className="mt-1 text-muted-foreground text-sm">{t('travaux.subtitle')}</p>
+          <p className="admin-news__header-sub">{t('travaux.subtitle')}</p>
         </header>
         <div className="trv-header-actions">
           <button type="button" className="adm-btn adm-btn--ghost" onClick={() => navigate('/admin/entreprise')}>

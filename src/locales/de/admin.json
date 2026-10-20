@@ -149,6 +149,7 @@
     "delete": "Löschen",
     "edit": "Bearbeiten",
     "create": "Erstellen",
+    "confirm": "Bestätigen",
     "next": "Weiter",
     "back": "Zurück"
   },
@@ -414,6 +415,7 @@
       "amount": "Betrag",
       "none": "Keine",
       "confirmDelete": "Löschen bestätigen?",
+      "confirmDeleteHint": "Dies kann nicht rückgängig gemacht werden.",
       "back": "Kunden",
       "removeFile": "Datei entfernen"
     },
@@ -508,6 +510,7 @@
     "tabs": {
       "objectives": "Liefergegenstände",
       "tracking": "Aufgaben",
+      "quotes": "Angebote",
       "invoices": "Rechnungen",
       "contracts": "Verträge",
       "payments": "Zahlungen"
@@ -569,6 +572,11 @@
     "invoices": {
       "new": "Neues Angebot",
       "empty": "Keine Angebote oder Rechnungen.",
+      "emptyQuotes": "Keine Angebote.",
+      "emptyInvoices": "Keine Rechnungen.",
+      "fromQuote": "Rechnungen werden aus einem Angebot erstellt: Reiter Angebote, „Rechnung erstellen“.",
+      "quoteRef": "Angebot",
+      "invoiceRef": "Rechnung",
       "kind": "Typ",
       "kinds": {
         "quote": "Angebot",
@@ -595,6 +603,7 @@
       "terms": "Bedingungen",
       "generateInvoice": "Rechnung erstellen",
       "generateInvoiceError": "Rechnung konnte nicht erstellt werden.",
+      "invoiceGenerated": "Rechnung erstellt.",
       "download": "Herunterladen",
       "downloadError": "PDF konnte nicht heruntergeladen werden.",
       "send": "Senden",

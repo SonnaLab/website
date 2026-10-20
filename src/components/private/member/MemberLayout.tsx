@@ -27,6 +27,7 @@ import {
 } from '@icons';
 
 import { useAuth } from '@/components/providers/AuthProvider';
+import { ConfirmProvider } from '@/components/common/ConfirmDialog';
 import { getDashboardPath } from '@/utils/auth';
 import sonnaLabLogo from '@/assets/logo/bSonnaLab.png';
 
@@ -248,7 +249,9 @@ export function MemberLayout() {
         {/* ── Main content ── */}
         <main className="dash-main">
           <div className="dash-main__inner">
-            <Outlet />
+            <ConfirmProvider>
+              <Outlet />
+            </ConfirmProvider>
           </div>
         </main>
       </div>

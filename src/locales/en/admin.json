@@ -149,6 +149,7 @@
     "delete": "Delete",
     "edit": "Edit",
     "create": "Create",
+    "confirm": "Confirm",
     "next": "Next",
     "back": "Back"
   },
@@ -414,6 +415,7 @@
       "amount": "Amount",
       "none": "None",
       "confirmDelete": "Confirm deletion?",
+      "confirmDeleteHint": "This cannot be undone.",
       "back": "Clients",
       "removeFile": "Remove file"
     },
@@ -508,6 +510,7 @@
     "tabs": {
       "objectives": "Deliverables",
       "tracking": "Tasks",
+      "quotes": "Quotes",
       "invoices": "Invoices",
       "contracts": "Contracts",
       "payments": "Payments"
@@ -569,6 +572,11 @@
     "invoices": {
       "new": "New quote",
       "empty": "No quotes or invoices.",
+      "emptyQuotes": "No quotes.",
+      "emptyInvoices": "No invoices.",
+      "fromQuote": "Invoices are generated from a quote: Quotes tab, “Generate invoice”.",
+      "quoteRef": "Quote",
+      "invoiceRef": "Invoice",
       "kind": "Type",
       "kinds": {
         "quote": "Quote",
@@ -595,6 +603,7 @@
       "terms": "Terms",
       "generateInvoice": "Generate the invoice",
       "generateInvoiceError": "Could not generate the invoice.",
+      "invoiceGenerated": "Invoice generated.",
       "download": "Download",
       "downloadError": "Could not download the PDF.",
       "send": "Send",

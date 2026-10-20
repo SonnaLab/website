@@ -16,6 +16,7 @@ import {
 import { FileDropzone } from './FileDropzone';
 import { LookupInput } from './LookupInput';
 import { apiErrorMessage } from './format';
+import { useConfirmDelete } from './useConfirmDelete';
 
 const STEPS = ['company', 'contact', 'referent', 'access'] as const;
 
@@ -43,6 +44,7 @@ export function ClientFormModal({
   onDeleted?: () => void;
 }) {
   const { t } = useTranslation('admin');
+  const confirmDelete = useConfirmDelete();
   const isEdit = !!client;
   const [step, setStep] = useState(0);
   const stepFormRef = useRef<HTMLFormElement>(null);
@@ -130,7 +132,7 @@ export function ClientFormModal({
   }
 
   async function remove() {
-    if (!client || !window.confirm(t('travaux.common.confirmDelete'))) return;
+    if (!client || !(await confirmDelete())) return;
     setDeleting(true);
     try {
       await apiService.adminTravauxDeleteClient(client.id);

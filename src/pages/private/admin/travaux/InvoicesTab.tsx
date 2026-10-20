@@ -18,6 +18,7 @@ import { apiAssetUrl, apiService, saveBlob } from '@/services/api';
 import { calculateDevis, dueDateCountdown } from '@/lib/devisCalc';
 import { DownloadIcon, EyeIcon, FileTextIcon, PaperclipIcon, PenLineIcon, ReceiptIcon, SendIcon, Trash2Icon } from '@icons';
 import type {
+  InvoiceKind,
   InvoiceStatus,
   TravauxClient,
   TravauxInvoice,
@@ -29,49 +30,64 @@ import type { TravauxTabHandle } from './tabHandle';
 import { DocumentPreviewCard, type DocumentPreviewData } from './DocumentPreviewCard';
 import { DocumentPreviewFrame } from './DocumentPreviewFrame';
 import { FileDropzone } from './FileDropzone';
-import { apiErrorMessage, formatCents, formatDate, formatEuros, todayIso } from './format';
+import { apiErrorMessage, dueTone, formatCents, formatDate, formatEuros, todayIso } from './format';
+import { useConfirmDelete } from './useConfirmDelete';
 
 const STATUSES: InvoiceStatus[] = ['draft', 'sent', 'accepted', 'paid', 'overdue', 'cancelled'];
 const STATUS_VARIANT: Record<InvoiceStatus, 'default' | 'info' | 'success' | 'danger' | 'warning'> = {
-  draft: 'default', sent: 'info', accepted: 'info', paid: 'success', overdue: 'danger', cancelled: 'warning',
+  draft: 'default', sent: 'info', accepted: 'success', paid: 'success', overdue: 'danger', cancelled: 'warning',
+};
+
+// Past its due date, a document still waiting on the client shows in red.
+const SETTLED: Record<InvoiceKind, InvoiceStatus[]> = {
+  quote: ['accepted', 'cancelled'],
+  invoice: ['paid', 'cancelled'],
 };
 
 interface InvoicesTabProps {
+  /** Onglet Devis (quote) ou Factures (invoice). */
+  kind: InvoiceKind;
   clientId: string;
   client: TravauxClient | null;
   issuer: TravauxClient | null;
+  /** Tous les documents du client (devis et factures, pour les renvois). */
   invoices: TravauxInvoice[];
   objectives: TravauxObjective[];
   tasks: TravauxTask[];
   reload: (resources?: TravauxResource[]) => Promise<void>;
-  /** Défini juste après « Générer un devis » : ouvre l'aperçu de ce devis. */
+  /** Défini juste après « Générer un devis » / « Générer la facture » : ouvre son aperçu. */
   autoPreviewId: string | null;
   onAutoPreviewConsumed: () => void;
+  /** La facture tirée d'un devis : la page passe à l'onglet Factures. */
+  onInvoiceGenerated?: (invoice: TravauxInvoice) => void;
 }
 
 export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(function InvoicesTab(
-  { clientId, client, issuer, invoices, objectives, tasks, reload, autoPreviewId, onAutoPreviewConsumed },
+  { kind, clientId, client, issuer, invoices, objectives, tasks, reload, autoPreviewId, onAutoPreviewConsumed, onInvoiceGenerated },
   ref,
 ) {
   const { t } = useTranslation('admin');
+  const confirmDelete = useConfirmDelete();
   const [newOpen, setNewOpen] = useState(false);
   const [preview, setPreview] = useState<TravauxInvoice | null>(null);
   const [edit, setEdit] = useState<TravauxInvoice | null>(null);
   const [send, setSend] = useState<TravauxInvoice | null>(null);
   const [generating, setGenerating] = useState(false);
   useImperativeHandle(ref, () => ({ openNew: () => setNewOpen(true) }));
+  const rows = invoices.filter((i) => i.kind === kind);
+  const byId = new Map(invoices.map((i) => [i.id, i]));
 
   useEffect(() => {
     if (!autoPreviewId) return;
-    const invoice = invoices.find((i) => i.id === autoPreviewId);
+    const invoice = invoices.find((i) => i.id === autoPreviewId && i.kind === kind);
     if (invoice) {
       setPreview(invoice);
       onAutoPreviewConsumed();
     }
-  }, [autoPreviewId, invoices, onAutoPreviewConsumed]);
+  }, [autoPreviewId, invoices, kind, onAutoPreviewConsumed]);
 
   async function remove(invoice: TravauxInvoice) {
-    if (!window.confirm(t('travaux.common.confirmDelete'))) return;
+    if (!(await confirmDelete())) return;
     try {
       await apiService.adminTravauxDeleteInvoice(invoice.id);
       await reload(['invoices', 'payments', 'client']);
@@ -87,7 +103,10 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
     try {
       const { invoice } = await apiService.adminTravauxGenerateInvoice(quote.id);
       await reload(['invoices']);
-      setPreview(invoice);
+      setPreview(null);
+      toast.success(t('travaux.invoices.invoiceGenerated'));
+      if (onInvoiceGenerated) onInvoiceGenerated(invoice);
+      else setPreview(invoice);
     } catch (err) {
       toast.error(apiErrorMessage(err, t('travaux.invoices.generateInvoiceError')));
     } finally {
@@ -115,57 +134,77 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
         <DataTable>
           <DataTableHead>
             <DataTableRow>
-              <DataTableTh>{t('travaux.invoices.kind')}</DataTableTh>
               <DataTableTh>{t('travaux.invoices.number')}</DataTableTh>
               <DataTableTh>{t('travaux.common.title')}</DataTableTh>
               <DataTableTh>{t('travaux.invoices.amount')}</DataTableTh>
               <DataTableTh>{t('travaux.invoices.dueDate')}</DataTableTh>
               <DataTableTh>{t('travaux.common.status')}</DataTableTh>
+              <DataTableTh>{t(kind === 'quote' ? 'travaux.invoices.invoiceRef' : 'travaux.invoices.quoteRef')}</DataTableTh>
               <DataTableTh>{t('travaux.invoices.document')}</DataTableTh>
               <DataTableTh>{t('travaux.clients.table.actions')}</DataTableTh>
             </DataTableRow>
           </DataTableHead>
           <DataTableBody>
-            {invoices.length === 0 && <DataTableEmpty icon={<ReceiptIcon size={28} />} label={t('travaux.invoices.empty')} />}
-            {invoices.map((i) => (
-              <DataTableRow key={i.id} onClick={() => setPreview(i)}>
-                <DataTableTd>
-                  <StatusBadge label={t(`travaux.invoices.kinds.${i.kind}`)} variant={i.kind === 'invoice' ? 'success' : 'default'} />
-                </DataTableTd>
-                <DataTableTd className="trv-num">{i.printed_number.replace(/V\d+$/, '')}<span className="trv-muted">V{i.current_version}</span></DataTableTd>
-                <DataTableTd><span className="trv-client-cell__name">{i.title}</span></DataTableTd>
-                <DataTableTd className="trv-num">{formatCents(i.amount_cents)}</DataTableTd>
-                <DataTableTd className="trv-num">
-                  {i.due_on ? <>{formatDate(i.due_on)} <span className="trv-muted">({dueDateCountdown(i.due_on)})</span></> : '—'}
-                </DataTableTd>
-                <DataTableTd><StatusBadge label={t(`travaux.invoices.statuses.${i.status}`)} variant={STATUS_VARIANT[i.status]} /></DataTableTd>
-                <DataTableTd>
-                  {i.file_path ? (
-                    <a className="trv-link" href={apiAssetUrl(i.file_path) ?? undefined} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} title={i.file_name ?? ''}>
-                      <PaperclipIcon size={13} />
-                    </a>
-                  ) : '—'}
-                </DataTableTd>
-                <DataTableTd>
-                  <div className="adm-table__actions" onClick={(e) => e.stopPropagation()}>
-                    <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title={t('travaux.common.view')} onClick={() => setPreview(i)}>
-                      <EyeIcon size={13} />
-                    </button>
-                    {i.kind === 'quote' && !i.generated_invoice_id && (
-                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title={t('travaux.invoices.generateInvoice')} disabled={generating} onClick={() => generateInvoice(i)}>
-                        <FileTextIcon size={13} />
+            {rows.length === 0 && (
+              <DataTableEmpty
+                icon={<ReceiptIcon size={28} />}
+                label={t(kind === 'quote' ? 'travaux.invoices.emptyQuotes' : 'travaux.invoices.emptyInvoices')}
+                hint={kind === 'invoice' ? t('travaux.invoices.fromQuote') : undefined}
+              />
+            )}
+            {rows.map((i) => {
+              // Devis → sa facture ; facture → son devis d'origine.
+              const linked = byId.get((kind === 'quote' ? i.generated_invoice_id : i.source_quote_id) ?? '');
+              return (
+                <DataTableRow key={i.id} onClick={() => setPreview(i)}>
+                  <DataTableTd className="trv-num">{i.printed_number.replace(/V\d+$/, '')}<span className="trv-muted">V{i.current_version}</span></DataTableTd>
+                  <DataTableTd><span className="trv-client-cell__name">{i.title}</span></DataTableTd>
+                  <DataTableTd className="trv-num">{formatCents(i.amount_cents)}</DataTableTd>
+                  <DataTableTd className="trv-num">
+                    {i.due_on ? (
+                      <>
+                        {formatDate(i.due_on)}{' '}
+                        <span className={dueTone(i.due_on, SETTLED[kind].includes(i.status)) === 'late' ? 'trv-due trv-due--late' : 'trv-muted'}>
+                          ({dueDateCountdown(i.due_on)})
+                        </span>
+                      </>
+                    ) : '—'}
+                  </DataTableTd>
+                  <DataTableTd><StatusBadge label={t(`travaux.invoices.statuses.${i.status}`)} variant={STATUS_VARIANT[i.status]} /></DataTableTd>
+                  <DataTableTd onClick={(e) => e.stopPropagation()}>
+                    {linked ? (
+                      <button type="button" className="trv-doc-ref" onClick={() => setPreview(linked)}>
+                        {linked.printed_number.replace(/V\d+$/, '')}
                       </button>
-                    )}
-                    <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title={t('common.edit')} onClick={() => setEdit(i)}>
-                      <PenLineIcon size={13} />
-                    </button>
-                    <button type="button" className="adm-btn adm-btn--danger adm-btn--xs" title={t('common.delete')} onClick={() => remove(i)}>
-                      <Trash2Icon size={13} />
-                    </button>
-                  </div>
-                </DataTableTd>
-              </DataTableRow>
-            ))}
+                    ) : kind === 'quote' ? (
+                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" disabled={generating} onClick={() => generateInvoice(i)}>
+                        <FileTextIcon size={13} /> {t('travaux.invoices.generateInvoice')}
+                      </button>
+                    ) : (i.source_quote_number ?? '—')}
+                  </DataTableTd>
+                  <DataTableTd>
+                    {i.file_path ? (
+                      <a className="trv-link" href={apiAssetUrl(i.file_path) ?? undefined} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} title={i.file_name ?? ''}>
+                        <PaperclipIcon size={13} />
+                      </a>
+                    ) : '—'}
+                  </DataTableTd>
+                  <DataTableTd onClick={(e) => e.stopPropagation()}>
+                    <div className="adm-table__actions">
+                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title={t('travaux.common.view')} onClick={() => setPreview(i)}>
+                        <EyeIcon size={13} />
+                      </button>
+                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title={t('common.edit')} onClick={() => setEdit(i)}>
+                        <PenLineIcon size={13} />
+                      </button>
+                      <button type="button" className="adm-btn adm-btn--danger adm-btn--xs" title={t('common.delete')} onClick={() => remove(i)}>
+                        <Trash2Icon size={13} />
+                      </button>
+                    </div>
+                  </DataTableTd>
+                </DataTableRow>
+              );
+            })}
           </DataTableBody>
         </DataTable>
       </Card>

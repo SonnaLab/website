@@ -21,6 +21,15 @@ export function todayIso(): string {
   return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
 }
 
+/** Colour of a due date: past (red) or within a week (amber), unless the
+ * work is done. */
+export function dueTone(dueOn: string | null | undefined, done: boolean): 'late' | 'soon' | 'ok' {
+  if (!dueOn || done) return 'ok';
+  const today = todayIso();
+  if (dueOn < today) return 'late';
+  return dueOn <= addDaysIso(7) ? 'soon' : 'ok';
+}
+
 export function addDaysIso(days: number): string {
   const d = new Date();
   d.setDate(d.getDate() + days);

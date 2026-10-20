@@ -150,6 +150,7 @@
     "delete": "Supprimer",
     "edit": "Modifier",
     "create": "Créer",
+    "confirm": "Confirmer",
     "next": "Suivant",
     "back": "Retour"
   },
@@ -415,6 +416,7 @@
       "amount": "Montant",
       "none": "Aucun",
       "confirmDelete": "Confirmer la suppression ?",
+      "confirmDeleteHint": "Cette action est définitive.",
       "back": "Clients",
       "removeFile": "Retirer le fichier"
     },
@@ -509,6 +511,7 @@
     "tabs": {
       "objectives": "Livrables",
       "tracking": "Tâches",
+      "quotes": "Devis",
       "invoices": "Factures",
       "contracts": "Contrats",
       "payments": "Paiements"
@@ -570,6 +573,11 @@
     "invoices": {
       "new": "Nouveau devis",
       "empty": "Aucun devis ni facture.",
+      "emptyQuotes": "Aucun devis.",
+      "emptyInvoices": "Aucune facture.",
+      "fromQuote": "Les factures se génèrent depuis un devis : onglet Devis, « Générer la facture ».",
+      "quoteRef": "Devis",
+      "invoiceRef": "Facture",
       "kind": "Type",
       "kinds": {
         "quote": "Devis",
@@ -596,6 +604,7 @@
       "terms": "Conditions",
       "generateInvoice": "Générer la facture",
       "generateInvoiceError": "Impossible de générer la facture.",
+      "invoiceGenerated": "Facture générée.",
       "download": "Télécharger",
       "downloadError": "Impossible de télécharger le PDF.",
       "send": "Envoyer",

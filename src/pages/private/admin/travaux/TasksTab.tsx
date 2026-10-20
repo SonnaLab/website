@@ -9,6 +9,7 @@ import type { KanbanColumn, TaskPriority, TravauxObjective, TravauxTask } from '
 import type { TravauxResource } from './useTravauxData';
 import type { TravauxTabHandle } from './tabHandle';
 import { apiErrorMessage } from './format';
+import { useConfirmDelete } from './useConfirmDelete';
 
 const COLUMNS: KanbanColumn[] = ['todo', 'in_progress', 'review', 'done'];
 const PRIORITIES: TaskPriority[] = ['low', 'medium', 'high', 'urgent'];
@@ -29,6 +30,7 @@ export const TasksTab = forwardRef<TravauxTabHandle, TasksTabProps>(function Tas
   ref,
 ) {
   const { t } = useTranslation('admin');
+  const confirmDelete = useConfirmDelete();
   const [createOpen, setCreateOpen] = useState(false);
   const [editTask, setEditTask] = useState<TravauxTask | null>(null);
   const [dragOver, setDragOver] = useState<KanbanColumn | null>(null);
@@ -84,7 +86,7 @@ export const TasksTab = forwardRef<TravauxTabHandle, TasksTabProps>(function Tas
                       type="button"
                       className="trv-task__delete"
                       title={t('common.delete')}
-                      onClick={(e) => { e.stopPropagation(); if (window.confirm(t('travaux.common.confirmDelete'))) remove(task.id); }}
+                      onClick={(e) => { e.stopPropagation(); void confirmDelete().then((ok) => ok && remove(task.id)); }}
                     >
                       <Trash2Icon size={13} />
                     </button>
@@ -130,6 +132,7 @@ function TaskFormModal({
   onDelete?: () => void;
 }) {
   const { t } = useTranslation('admin');
+  const confirmDelete = useConfirmDelete();
   const isEdit = !!task;
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -170,7 +173,7 @@ function TaskFormModal({
       footer={
         <>
           {isEdit && onDelete && (
-            <button type="button" className="adm-btn adm-btn--danger trv-mr-auto" onClick={() => window.confirm(t('travaux.common.confirmDelete')) && onDelete()}>
+            <button type="button" className="adm-btn adm-btn--danger trv-mr-auto" onClick={() => void confirmDelete().then((ok) => ok && onDelete())}>
               {t('common.delete')}
             </button>
           )}

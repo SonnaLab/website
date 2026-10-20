@@ -17,7 +17,8 @@ import type {
 } from '@/types/travaux';
 import type { TravauxProject, TravauxResource } from './useTravauxData';
 import type { TravauxTabHandle } from './tabHandle';
-import { addDaysIso, apiErrorMessage, formatDate, formatEuros } from './format';
+import { addDaysIso, apiErrorMessage, dueTone, formatDate, formatEuros } from './format';
+import { useConfirmDelete } from './useConfirmDelete';
 
 const STATUSES: ObjectiveStatus[] = ['planned', 'in_progress', 'done', 'at_risk'];
 const COLUMN_ORDER: KanbanColumn[] = ['todo', 'in_progress', 'review', 'done'];
@@ -45,6 +46,7 @@ export const ObjectivesTab = forwardRef<TravauxTabHandle, ObjectivesTabProps>(fu
   ref,
 ) {
   const { t } = useTranslation('admin');
+  const confirmDelete = useConfirmDelete();
   const [createOpen, setCreateOpen] = useState(false);
   const [editObjective, setEditObjective] = useState<TravauxObjective | null>(null);
   const [detailObjective, setDetailObjective] = useState<TravauxObjective | null>(null);
@@ -79,7 +81,7 @@ export const ObjectivesTab = forwardRef<TravauxTabHandle, ObjectivesTabProps>(fu
   }
 
   async function removeObjective(o: TravauxObjective) {
-    if (!window.confirm(t('travaux.common.confirmDelete'))) return;
+    if (!(await confirmDelete())) return;
     try {
       await apiService.adminTravauxDeleteObjective(o.id);
       await reload(['objectives']);
@@ -107,11 +109,16 @@ export const ObjectivesTab = forwardRef<TravauxTabHandle, ObjectivesTabProps>(fu
           <span className="trv-card__title">{o.title}</span>
         </div>
         <div className="trv-card__body">
-          {o.description && <p className="trv-card__desc">{o.description}</p>}
-          <div className="trv-progress"><div className="trv-progress__bar" style={{ width: `${o.progress}%` }} /></div>
+          {o.description && <p className="trv-card__desc trv-card__desc--clamp">{o.description}</p>}
+          <div className="trv-card__progress">
+            <div className="trv-progress"><div className="trv-progress__bar" style={{ width: `${o.progress}%` }} /></div>
+            <span className="trv-card__percent">{o.progress} %</span>
+          </div>
         </div>
         <div className="trv-card__foot">
-          <span className="trv-due">{o.due_on ? `${t('travaux.objectives.dueDate')} : ${formatDate(o.due_on)}` : ''}</span>
+          <span className={`trv-due trv-due--${dueTone(o.due_on, o.status === 'done')}`}>
+            {o.due_on ? `${t('travaux.objectives.dueDate')} : ${formatDate(o.due_on)}` : ''}
+          </span>
           <span className="trv-chip-row">
             <span className={`trv-pill trv-pill--${o.status}`}>{t(`travaux.objectives.statuses.${o.status}`)}</span>
             <span className={`trv-pill trv-pill--${o.format}`}>{t(`travaux.objectives.formats.${o.format}`)}</span>
@@ -123,7 +130,7 @@ export const ObjectivesTab = forwardRef<TravauxTabHandle, ObjectivesTabProps>(fu
 
   return (
     <div className="adm-form">
-      <div className="trv-header-row">
+      <div className="trv-toolbar">
         <p className="trv-info">{t('travaux.projects.hint')}</p>
         <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => setProjectModal({ open: true, project: null })}>
           <PlusIcon size={13} /> {t('travaux.projects.new')}
@@ -212,6 +219,7 @@ function ProjectFormModal({
   onSaved: () => Promise<void>;
 }) {
   const { t } = useTranslation('admin');
+  const confirmDelete = useConfirmDelete();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [saving, setSaving] = useState(false);
@@ -237,7 +245,7 @@ function ProjectFormModal({
   }
 
   async function remove() {
-    if (!project || !window.confirm(t('travaux.common.confirmDelete'))) return;
+    if (!project || !(await confirmDelete())) return;
     try {
       await apiService.adminTravauxDeleteProject(project.id);
       await onSaved();
@@ -415,11 +423,11 @@ function ObjectiveDetailModal({
             <span className={`trv-pill trv-pill--${objective.status}`}>{t(`travaux.objectives.statuses.${objective.status}`)}</span>
             <span className={`trv-pill trv-pill--${objective.format}`}>{t(`travaux.objectives.formats.${objective.format}`)}</span>
             {objective.project_name && <span className="trv-pill trv-pill--soft">{objective.project_name}</span>}
-            {objective.due_on && <span className="trv-due">{t('travaux.objectives.dueDate')} : {formatDate(objective.due_on)}</span>}
+            {objective.due_on && <span className={`trv-due trv-due--${dueTone(objective.due_on, objective.status === 'done')}`}>{t('travaux.objectives.dueDate')} : {formatDate(objective.due_on)}</span>}
           </div>
           {objective.description && <p className="trv-card__desc">{objective.description}</p>}
           <div>
-            <div className="trv-progress-label"><span>{t('travaux.objectives.progress')}</span><span>{objective.progress}%</span></div>
+            <div className="trv-progress-label"><span>{t('travaux.objectives.progress')}</span><span>{objective.progress} %</span></div>
             <div className="trv-progress"><div className="trv-progress__bar" style={{ width: `${objective.progress}%` }} /></div>
           </div>
           <div>

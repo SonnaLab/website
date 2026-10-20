@@ -149,6 +149,7 @@
     "delete": "Eliminar",
     "edit": "Editar",
     "create": "Crear",
+    "confirm": "Confirmar",
     "next": "Siguiente",
     "back": "Atrás"
   },
@@ -414,6 +415,7 @@
       "amount": "Importe",
       "none": "Ninguno",
       "confirmDelete": "¿Confirmar la eliminación?",
+      "confirmDeleteHint": "Esta acción es definitiva.",
       "back": "Clientes",
       "removeFile": "Quitar el archivo"
     },
@@ -508,6 +510,7 @@
     "tabs": {
       "objectives": "Entregables",
       "tracking": "Tareas",
+      "quotes": "Presupuestos",
       "invoices": "Facturas",
       "contracts": "Contratos",
       "payments": "Pagos"
@@ -569,6 +572,11 @@
     "invoices": {
       "new": "Nuevo presupuesto",
       "empty": "Sin presupuestos ni facturas.",
+      "emptyQuotes": "No hay presupuestos.",
+      "emptyInvoices": "No hay facturas.",
+      "fromQuote": "Las facturas se generan desde un presupuesto: pestaña Presupuestos, «Generar la factura».",
+      "quoteRef": "Presupuesto",
+      "invoiceRef": "Factura",
       "kind": "Tipo",
       "kinds": {
         "quote": "Presupuesto",
@@ -595,6 +603,7 @@
       "terms": "Condiciones",
       "generateInvoice": "Generar la factura",
       "generateInvoiceError": "No se pudo generar la factura.",
+      "invoiceGenerated": "Factura generada.",
       "download": "Descargar",
       "downloadError": "No se pudo descargar el PDF.",
       "send": "Enviar",
