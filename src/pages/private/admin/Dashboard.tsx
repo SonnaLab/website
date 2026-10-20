@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { ComponentType } from 'react';
@@ -11,10 +12,17 @@ import {
   UsersIcon,
   ReceiptIcon,
   ArrowUpRightIcon,
+  TrendingUpIcon,
+  BriefcaseIcon,
   type IconProps,
 } from '@icons';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { HighlightText } from '@/components/utils/HighlightText';
+import { PageHeader } from '@/components/private/common/PageHeader';
+import { StatCard, StatRow } from '@/components/private/common/StatRow';
+import { apiService } from '@/services/api';
+import { formatCents } from './travaux/format';
+import { useTravauxTotals } from './travaux/useTravauxTotals';
 
 interface AdminWidget {
   key: WidgetKey;
@@ -58,15 +66,25 @@ export default function AdminDashboard() {
   const { t } = useTranslation('admin');
   const { user } = useAuth();
   const displayName = user?.first_name || user?.email || t('dashboard.fallbackName');
+  const figures = useDashboardFigures();
+  const travaux = useTravauxTotals();
 
   return (
-    <div className="admin-dashboard">
-      <header className="admin-dashboard__header">
-        <h1 className="admin-dashboard__title">
-          <HighlightText text={t('dashboard.title', { name: displayName })} />
-        </h1>
-        <p className="admin-dashboard__subtitle">{t('dashboard.subtitle')}</p>
-      </header>
+    <div className="dash-page">
+      <PageHeader
+        icon={<TrendingUpIcon size={26} />}
+        title={<HighlightText text={t('dashboard.title', { name: displayName })} />}
+        description={t('dashboard.subtitle')}
+      />
+
+      {/* One figure per menu; each tile opens it. */}
+      <StatRow>
+        <StatCard to="/admin/cookies" icon={<CookieIcon size={18} />} label={t('tracking.visitorsToday')} value={figures.visitorsToday ?? '—'} />
+        <StatCard to="/admin/news" icon={<NewsIcon size={18} />} label={t('news.overview.stats.published')} value={figures.published ?? '—'} />
+        <StatCard to="/admin/users" icon={<UsersIcon size={18} />} label={t('users.kpis.total')} value={figures.users ?? '—'} />
+        <StatCard to="/admin/travaux" icon={<BriefcaseIcon size={18} />} label={t('travaux.clients.stats.clients')} value={travaux?.clients ?? '—'} />
+        <StatCard to="/admin/travaux" icon={<ReceiptIcon size={18} />} label={t('travaux.clients.table.invoiced')} value={travaux ? formatCents(travaux.invoicedCents) : '—'} />
+      </StatRow>
 
       <section className="admin-dashboard__section" aria-label={t('dashboard.latest')}>
         <div className="admin-dashboard__section-head">
@@ -129,4 +147,21 @@ export default function AdminDashboard() {
       </section>
     </div>
   );
+}
+
+/** Today's visitors, published articles and accounts (each from its menu's API). */
+function useDashboardFigures() {
+  const [figures, setFigures] = useState<{ visitorsToday?: number; published?: number; users?: number }>({});
+  useEffect(() => {
+    let alive = true;
+    const set = (patch: typeof figures) => { if (alive) setFigures((f) => ({ ...f, ...patch })); };
+    apiService.analyticsOverview('sonnalab.com').then((k) => set({ visitorsToday: k?.visitors_today })).catch(() => {});
+    apiService.adminNewsStats().then((r) => {
+      const stats = r?.stats ?? r ?? {};
+      set({ published: stats.published ?? stats.published_articles });
+    }).catch(() => {});
+    apiService.adminUsersOverview().then((k) => set({ users: k.total })).catch(() => {});
+    return () => { alive = false; };
+  }, []);
+  return figures;
 }

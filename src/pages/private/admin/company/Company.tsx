@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { HotelIcon } from '@icons';
+import { HotelIcon, TrafficConeIcon } from '@icons';
 
 import { apiAssetUrl, apiService } from '@/services/api';
 import type { TravauxClient, TravauxPayload } from '@/types/travaux';
@@ -11,6 +11,7 @@ import { apiErrorMessage } from '../travaux/format';
 import { LetterheadSheet, type LetterheadZone } from './LetterheadSheet';
 import { LookupInput } from '../travaux/LookupInput';
 import { Breadcrumbs } from '@/components/private/common/Breadcrumbs';
+import { PageHeader } from '@/components/private/common/PageHeader';
 import { normalizeCompanyAddress, searchCompanies, type CompanySuggestion } from '@/lib/publicDirectories';
 
 const FIELDS = [
@@ -186,16 +187,15 @@ export default function Company() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="dash-page">
       {/* Issuer of the Travaux documents; reached from the avatar menu. */}
       <Breadcrumbs items={[{ label: t('nav.travaux'), to: '/admin/travaux' }, { label: t('company.title') }]} />
-      <header className="admin-news__header">
-        <div className="admin-news__header-title">
-          <HotelIcon size={22} />
-          <h1>{t('company.title')}</h1>
-        </div>
-        <p className="admin-news__header-sub">{t('company.subtitle')}</p>
-      </header>
+      <PageHeader
+        badge={{ icon: TrafficConeIcon, label: t('nav.travaux') }}
+        icon={<HotelIcon size={26} />}
+        title={t('company.title')}
+        description={t('company.subtitle')}
+      />
 
       <div className="co-layout">
         <section className="co-layout__preview" aria-label={t('company.preview.title')}>

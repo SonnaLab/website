@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { apiService } from '@/services/api';
-import { Card } from '@/components/ui/card';
+import { PageHeader } from '@/components/private/common/PageHeader';
+import { StatCard, StatRow } from '@/components/private/common/StatRow';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
-import { CookieIcon, GlobeIcon, ZapIcon, UsersIcon, BotIcon, LayersIcon, FileTextIcon, TrendingUpIcon, LineChartIcon, CalendarIcon } from '@icons';
+import { CookieIcon, GlobeIcon, ZapIcon, UsersIcon, BotIcon, LayersIcon, FileTextIcon, TrendingUpIcon, LineChartIcon, ClockIcon } from '@icons';
 
 import {
   GeoTab, RealtimeTab, VisitorsTab, BotsTab,
@@ -32,55 +33,17 @@ export default function AdminCookies() {
   }, []);
 
   return (
-    <div className="space-y-6">
-      <header className="trk-header">
-        <div className="trk-header__title">
-          <CookieIcon size={22} className="trk-header__icon" />
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">
-            {t('tracking.title')}
-          </h1>
-        </div>
-        <p className="mt-1 text-muted-foreground text-sm">{t('tracking.subtitle')}</p>
-      </header>
+    <div className="dash-page">
+      <PageHeader icon={<LineChartIcon size={26} />} title={t('tracking.heading')} description={t('tracking.subtitle')} />
 
-      {/* ── 7 KPIs ── */}
-      <div className="trk-kpi-row">
-        <Card className="trk-kpi-card">
-          <div className="trk-kpi-icon-wrap trk-kpi-icon-wrap--accent"><ZapIcon size={16} /></div>
-          <p className="trk-kpi-value trk-kpi-value--accent">{kpis?.realtime_active ?? '—'}</p>
-          <p className="trk-kpi-label">{t('tracking.activeNow')}</p>
-        </Card>
-        <Card className="trk-kpi-card">
-          <div className="trk-kpi-icon-wrap"><UsersIcon size={16} /></div>
-          <p className="trk-kpi-value">{kpis?.visitors_today ?? '—'}</p>
-          <p className="trk-kpi-label">{t('tracking.visitorsToday')}</p>
-        </Card>
-        <Card className="trk-kpi-card">
-          <div className="trk-kpi-icon-wrap"><LayersIcon size={16} /></div>
-          <p className="trk-kpi-value">{kpis?.sessions_today ?? '—'}</p>
-          <p className="trk-kpi-label">{t('tracking.sessionsToday')}</p>
-        </Card>
-        <Card className="trk-kpi-card">
-          <div className="trk-kpi-icon-wrap"><FileTextIcon size={16} /></div>
-          <p className="trk-kpi-value">{kpis?.pageviews_today ?? '—'}</p>
-          <p className="trk-kpi-label">{t('tracking.pageviewsToday')}</p>
-        </Card>
-        <Card className="trk-kpi-card">
-          <div className="trk-kpi-icon-wrap"><TrendingUpIcon size={16} /></div>
-          <p className="trk-kpi-value">{kpis?.bounce_rate != null ? `${kpis.bounce_rate}%` : '—'}</p>
-          <p className="trk-kpi-label">{t('tracking.bounceRate')}</p>
-        </Card>
-        <Card className="trk-kpi-card">
-          <div className="trk-kpi-icon-wrap"><LineChartIcon size={16} /></div>
-          <p className="trk-kpi-value">{fmt_dur(kpis?.avg_duration_seconds)}</p>
-          <p className="trk-kpi-label">{t('tracking.avgDuration')}</p>
-        </Card>
-        <Card className="trk-kpi-card">
-          <div className="trk-kpi-icon-wrap"><CalendarIcon size={16} /></div>
-          <p className="trk-kpi-value">{kpis?.pageviews_7d ?? '—'}</p>
-          <p className="trk-kpi-label">{t('tracking.pageviews7d')}</p>
-        </Card>
-      </div>
+      {/* The day's figures; sessions and 7-day page views are in their tabs. */}
+      <StatRow>
+        <StatCard icon={<ZapIcon size={18} />} label={t('tracking.activeNow')} value={kpis?.realtime_active ?? '—'} tone={kpis?.realtime_active ? 'success' : undefined} />
+        <StatCard icon={<UsersIcon size={18} />} label={t('tracking.visitorsToday')} value={kpis?.visitors_today ?? '—'} />
+        <StatCard icon={<FileTextIcon size={18} />} label={t('tracking.pageviewsToday')} value={kpis?.pageviews_today ?? '—'} />
+        <StatCard icon={<TrendingUpIcon size={18} />} label={t('tracking.bounceRate')} value={kpis?.bounce_rate != null ? `${kpis.bounce_rate}%` : '—'} />
+        <StatCard icon={<ClockIcon size={18} />} label={t('tracking.avgDuration')} value={fmt_dur(kpis?.avg_duration_seconds)} />
+      </StatRow>
 
       {/* ── 8 Tabs ── */}
       <Tabs value={tab} onValueChange={setTab}>

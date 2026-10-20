@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/common/Tabs';
 import {
+  CheckCircleIcon,
   FileSignatureIcon,
   FileTextIcon,
+  FolderKanbanIcon,
   KanbanIcon,
+  PenLineIcon,
   PlusIcon,
   ReceiptIcon,
   TargetIcon,
@@ -14,6 +17,10 @@ import {
 } from '@icons';
 import type { TravauxInvoice } from '@/types/travaux';
 import { Breadcrumbs } from '@/components/private/common/Breadcrumbs';
+import { PageHeader } from '@/components/private/common/PageHeader';
+import { StatCard, StatRow } from '@/components/private/common/StatRow';
+import { ClientAvatar } from './ClientAvatar';
+import { ClientFormModal } from './ClientFormModal';
 import { formatCents } from './format';
 import { ContractsTab } from './ContractsTab';
 import { InvoicesTab } from './InvoicesTab';
@@ -34,6 +41,7 @@ const TAB_KEYS: TabKey[] = ['objectives', 'tracking', 'quotes', 'invoices', 'con
 export default function AdminClientTravaux() {
   const { t } = useTranslation('admin');
   const { clientId } = useParams<{ clientId: string }>();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const urlTab = searchParams.get('tab') as TabKey | null;
   const tab: TabKey = urlTab && TAB_KEYS.includes(urlTab) ? urlTab : 'objectives';
@@ -43,6 +51,7 @@ export default function AdminClientTravaux() {
     return params;
   });
   const [autoPreviewId, setAutoPreviewId] = useState<string | null>(null);
+  const [editOpen, setEditOpen] = useState(false);
   const consumeAutoPreview = useCallback(() => setAutoPreviewId(null), []);
 
   const data = useTravauxData(clientId);
@@ -74,18 +83,10 @@ export default function AdminClientTravaux() {
 
   if (!clientId) return null;
   const { client } = data;
-  // Same figures as the clients table (API stats_for), plus the open tasks.
   const invoiced = data.invoices
     .filter((i) => i.kind === 'invoice' && !['draft', 'cancelled'].includes(i.status))
     .reduce((sum, i) => sum + i.amount_cents, 0);
   const paid = data.payments.filter((p) => p.status === 'completed').reduce((sum, p) => sum + p.amount_cents, 0);
-  const stats: { label: string; value: string | number; danger?: boolean }[] = [
-    { label: t('travaux.clients.table.projects'), value: data.projects.length },
-    { label: t('travaux.clients.table.inProgress'), value: data.objectives.filter((o) => o.status !== 'done').length },
-    { label: t('travaux.stats.openTasks'), value: data.tasks.filter((task) => task.column !== 'done').length },
-    { label: t('travaux.clients.table.invoiced'), value: formatCents(invoiced) },
-    { label: t('travaux.clients.table.paid'), value: formatCents(paid) },
-  ];
 
   const quotes = data.invoices.filter((i) => i.kind === 'quote');
   const invoices = data.invoices.filter((i) => i.kind === 'invoice');
@@ -111,18 +112,38 @@ export default function AdminClientTravaux() {
   const newLabel = NEW_LABEL[tab];
 
   return (
-    <div className="trv-page">
+    <div className="dash-page">
       <Breadcrumbs items={[{ label: t('nav.travaux'), to: '/admin/travaux' }, { label: client?.name ?? '…' }]} />
 
-      {/* The client's figures, as on the News page (its name is in the trail). */}
-      <div className="admin-news-overview__stats trv-stats">
-        {stats.map(({ label, value, danger }) => (
-          <div key={label} className={`admin-news-overview__stat-card${danger ? ' admin-news-overview__stat-card--danger' : ''}`}>
-            <span className="admin-news-overview__stat-value">{data.loading ? '—' : value}</span>
-            <span className="admin-news-overview__stat-label">{label}</span>
-          </div>
-        ))}
-      </div>
+      <PageHeader
+        icon={client ? <ClientAvatar client={client} size="lg" /> : undefined}
+        title={client?.name ?? '…'}
+        description={t('travaux.clientPage.subtitle')}
+        actions={
+          <>
+            {client && (
+              <button type="button" className="adm-btn adm-btn--ghost" onClick={() => setEditOpen(true)}>
+                <PenLineIcon size={14} /> {t('travaux.clients.actions.edit')}
+              </button>
+            )}
+            {/* The open tab's « Nouveau … » (invoices come from a quote). */}
+            {newLabel && !data.loading && (
+              <button type="button" className="adm-btn adm-btn--primary" onClick={() => refs[tab].current?.openNew()}>
+                <PlusIcon size={14} /> {newLabel}
+              </button>
+            )}
+          </>
+        }
+      />
+
+      {/* Same figures as the clients table (API stats_for), plus the open tasks. */}
+      <StatRow>
+        <StatCard loading={data.loading} icon={<FolderKanbanIcon size={18} />} label={t('travaux.clients.table.projects')} value={data.projects.length} />
+        <StatCard loading={data.loading} icon={<TargetIcon size={18} />} label={t('travaux.clients.table.inProgress')} value={data.objectives.filter((o) => o.status !== 'done').length} />
+        <StatCard loading={data.loading} icon={<CheckCircleIcon size={18} />} label={t('travaux.stats.openTasks')} value={data.tasks.filter((task) => task.column !== 'done').length} />
+        <StatCard loading={data.loading} icon={<ReceiptIcon size={18} />} label={t('travaux.clients.table.invoiced')} value={formatCents(invoiced)} />
+        <StatCard loading={data.loading} icon={<WalletIcon size={18} />} label={t('travaux.clients.table.paid')} value={formatCents(paid)} tone={paid ? 'success' : undefined} />
+      </StatRow>
 
       {data.error && <p className="trv-error">{t('common.error')}</p>}
       {data.loading ? (
@@ -138,11 +159,6 @@ export default function AdminClientTravaux() {
               <TabsTrigger value="contracts" icon={<FileSignatureIcon size={14} />} count={data.contracts.length}>{t('travaux.tabs.contracts')}</TabsTrigger>
               <TabsTrigger value="payments" icon={<WalletIcon size={14} />} count={data.payments.length}>{t('travaux.tabs.payments')}</TabsTrigger>
             </TabsList>
-            {newLabel && (
-              <button type="button" className="adm-btn adm-btn--primary trv-tabs-bar__new" title={newLabel} onClick={() => refs[tab].current?.openNew()}>
-                <PlusIcon size={14} /> <span className="trv-tabs-bar__new-label">{newLabel}</span>
-              </button>
-            )}
           </div>
 
           <TabsContent value="objectives">
@@ -175,6 +191,14 @@ export default function AdminClientTravaux() {
           </TabsContent>
         </Tabs>
       )}
+
+      <ClientFormModal
+        open={editOpen}
+        client={client}
+        onClose={() => setEditOpen(false)}
+        onSaved={() => { setEditOpen(false); void data.reload(['client']); }}
+        onDeleted={() => navigate('/admin/travaux')}
+      />
     </div>
   );
 }

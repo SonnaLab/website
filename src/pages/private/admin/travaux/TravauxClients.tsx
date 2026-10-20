@@ -14,22 +14,30 @@ import {
   DataTableTd,
   DataTableTh,
 } from '@/components/common/DataTable';
+import { PageHeader } from '@/components/private/common/PageHeader';
+import { StatCard, StatRow } from '@/components/private/common/StatRow';
 import {
+  BriefcaseIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   EyeIcon,
+  FolderKanbanIcon,
   PenLineIcon,
   PlusIcon,
+  ReceiptIcon,
   SearchIcon,
+  TargetIcon,
   TrafficConeIcon,
   UsersIcon,
   HotelIcon,
+  WalletIcon,
 } from '@icons';
 import type { TravauxClient } from '@/types/travaux';
 import { ClientAvatar } from './ClientAvatar';
 import { ClientDetailModal } from './ClientDetailModal';
 import { ClientFormModal } from './ClientFormModal';
 import { formatCents } from './format';
+import { useTravauxTotals } from './useTravauxTotals';
 
 const PER_PAGE = 20;
 
@@ -49,6 +57,8 @@ export default function AdminTravauxClients() {
   const [viewId, setViewId] = useState<string | null>(null);
   const [editClient, setEditClient] = useState<TravauxClient | null>(null);
   const [formOpen, setFormOpen] = useState(false);
+  // Refetched with the list, so a new or deleted client shows in the totals.
+  const totals = useTravauxTotals(clients);
 
   const load = useCallback((p: number, q: string) => {
     setLoading(true);
@@ -75,24 +85,31 @@ export default function AdminTravauxClients() {
   const referentOf = (c: TravauxClient) => [c.referent_first_name, c.referent_last_name].filter(Boolean).join(' ');
 
   return (
-    <div className="trv-page">
-      <div className="trv-header-row">
-        <header className="admin-news__header">
-          <div className="admin-news__header-title">
-            <TrafficConeIcon size={22} />
-            <h1>{t('travaux.title')}</h1>
-          </div>
-          <p className="admin-news__header-sub">{t('travaux.subtitle')}</p>
-        </header>
-        <div className="trv-header-actions">
-          <button type="button" className="adm-btn adm-btn--ghost" onClick={() => navigate('/admin/entreprise')}>
-            <HotelIcon size={14} /> {t('travaux.clients.issuer')}
-          </button>
-          <button type="button" className="adm-btn adm-btn--primary" onClick={() => { setEditClient(null); setFormOpen(true); }}>
-            <PlusIcon size={14} /> {t('travaux.clients.new')}
-          </button>
-        </div>
-      </div>
+    <div className="dash-page">
+      <PageHeader
+        icon={<BriefcaseIcon size={26} />}
+        title={t('travaux.clients.heading')}
+        description={t('travaux.subtitle')}
+        actions={
+          <>
+            <button type="button" className="adm-btn adm-btn--ghost" onClick={() => navigate('/admin/entreprise')}>
+              <HotelIcon size={14} /> {t('travaux.clients.issuer')}
+            </button>
+            <button type="button" className="adm-btn adm-btn--primary" onClick={() => { setEditClient(null); setFormOpen(true); }}>
+              <PlusIcon size={14} /> {t('travaux.clients.new')}
+            </button>
+          </>
+        }
+      />
+
+      {/* Every client's figures, summed (the table shows them per client). */}
+      <StatRow>
+        <StatCard icon={<UsersIcon size={18} />} label={t('travaux.clients.stats.clients')} value={totals?.clients ?? '—'} />
+        <StatCard icon={<FolderKanbanIcon size={18} />} label={t('travaux.clients.table.projects')} value={totals?.projects ?? '—'} />
+        <StatCard icon={<TargetIcon size={18} />} label={t('travaux.clients.table.inProgress')} value={totals?.inProgress ?? '—'} />
+        <StatCard icon={<ReceiptIcon size={18} />} label={t('travaux.clients.table.invoiced')} value={totals ? formatCents(totals.invoicedCents) : '—'} />
+        <StatCard icon={<WalletIcon size={18} />} label={t('travaux.clients.table.paid')} value={totals ? formatCents(totals.paidCents) : '—'} tone={totals?.paidCents ? 'success' : undefined} />
+      </StatRow>
 
       <div className="adm-toolbar">
         <div className="adm-toolbar__search-group">

@@ -52,7 +52,7 @@
   },
   "infrastructure": {
     "title": "Infrastruktur",
-    "subtitle": "Anwendungsstatus in Echtzeit.",
+    "subtitle": "Anwendung, Datenbank, Job-Warteschlangen und Deployment in Echtzeit.",
     "refresh": "Aktualisieren",
     "app": "Anwendung",
     "database": "Datenbank",
@@ -69,7 +69,13 @@
     "slot": "Slot",
     "commit": "Commit",
     "statusUp": "OK",
-    "statusDown": "Nicht verfügbar"
+    "statusDown": "Nicht verfügbar",
+    "heading": "Zustand der Plattform",
+    "stats": {
+      "environment": "Umgebung",
+      "dbLatency": "DB-Latenz",
+      "failedJobs": "Fehlgeschlagene Jobs"
+    }
   },
   "tracking": {
     "title": "Cookies & Einwilligung",
@@ -101,7 +107,8 @@
     "duration": "Dauer",
     "noData": "Keine Daten.",
     "loadError": "Ladefehler.",
-    "viewDetails": "Details"
+    "viewDetails": "Details",
+    "heading": "Besucher der Website"
   },
   "ouou": {
     "title": "OUOU — KI-Assistent",
@@ -139,7 +146,8 @@
     "keyword": "Keyword",
     "intent": "Absicht",
     "rank": "Rang",
-    "volume": "Volumen"
+    "volume": "Volumen",
+    "heading": "Suchmaschinenoptimierung"
   },
   "common": {
     "loading": "Lädt…",
@@ -155,7 +163,7 @@
   },
   "news": {
     "title": "News",
-    "subtitle": "Verwaltung von Artikeln und Veröffentlichungen.",
+    "subtitle": "Redaktion, KI-Generierung, Kalender und Redaktionsstrategie.",
     "empty": "Noch keine Artikel.",
     "tabs": {
       "overview": "Übersicht",
@@ -348,11 +356,12 @@
       "keywordsPlaceholder": "KI, Labor, Digital…",
       "themesPlaceholder": "Tech, Innovation, Design, Generative KI…",
       "frequencyPlaceholder": "2 Artikel / Woche"
-    }
+    },
+    "heading": "Artikel und Veröffentlichungen"
   },
   "users": {
     "title": "Benutzer",
-    "subtitle": "Konten- und Rollenverwaltung.",
+    "subtitle": "Konten, Rollen, Bestätigungen und Zugang zur Plattform.",
     "empty": "Keine Benutzer vorhanden.",
     "searchPlaceholder": "Suche nach Name oder E-Mail…",
     "allRoles": "Alle Rollen",
@@ -363,7 +372,8 @@
     "impersonateError": "Anmeldung als dieser Benutzer nicht möglich",
     "tabs": {
       "overview": "Übersicht",
-      "list": "Benutzer"
+      "list": "Benutzer",
+      "all": "Alle"
     },
     "kpis": {
       "total": "Benutzer",
@@ -398,7 +408,8 @@
       "company": "Unternehmen",
       "signInCount": "Anmeldungen",
       "lastSignIn": "Letzte Anmeldung"
-    }
+    },
+    "heading": "Konten und Rollen"
   },
   "impersonation": {
     "banner": "Sie sind als {{name}} angemeldet.",
@@ -505,6 +516,10 @@
         "imported": "Aus dem Register übernommen: {{name}}. Kontaktdaten im nächsten Schritt prüfen.",
         "sourceCompanies": "Quelle: annuaire des entreprises (data.gouv.fr)",
         "sourceAddresses": "Quelle: Base Adresse Nationale (IGN Géoplateforme)"
+      },
+      "heading": "Kunden",
+      "stats": {
+        "clients": "Kunden"
       }
     },
     "tabs": {
@@ -675,6 +690,9 @@
     },
     "stats": {
       "openTasks": "Offene Aufgaben"
+    },
+    "clientPage": {
+      "subtitle": "Lieferungen, Aufgaben, Angebote, Rechnungen, Verträge und Zahlungen des Kunden."
     }
   },
   "company": {
@@ -762,6 +780,16 @@
       "title": "Unternehmensverzeichnis",
       "hint": "Finden Sie Ihr Unternehmen: SIRET, Firmenname und Adresse werden ausgefüllt. Prüfen und speichern.",
       "imported": "„{{name}}“ übernommen: prüfen und speichern."
+    }
+  },
+  "lesankofa": {
+    "heading": "Künstliche Intelligenz",
+    "subtitle": "Modelle, Aufgaben, Infrastruktur und Kunden der Lesankofa-KI.",
+    "stats": {
+      "models": "Aktive Modelle",
+      "requests": "Anfragen heute",
+      "tokens": "Tokens heute",
+      "clients": "Aktive Kunden"
     }
   }
 }

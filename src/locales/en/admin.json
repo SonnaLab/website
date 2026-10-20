@@ -52,7 +52,7 @@
   },
   "infrastructure": {
     "title": "Infrastructure",
-    "subtitle": "Real-time application health.",
+    "subtitle": "Application, database, job queues and deployment, in real time.",
     "refresh": "Refresh",
     "app": "Application",
     "database": "Database",
@@ -69,7 +69,13 @@
     "slot": "Slot",
     "commit": "Commit",
     "statusUp": "OK",
-    "statusDown": "Down"
+    "statusDown": "Down",
+    "heading": "Platform health",
+    "stats": {
+      "environment": "Environment",
+      "dbLatency": "DB latency",
+      "failedJobs": "Failed jobs"
+    }
   },
   "tracking": {
     "title": "Cookies & consent",
@@ -101,7 +107,8 @@
     "duration": "Duration",
     "noData": "No data available.",
     "loadError": "Loading error.",
-    "viewDetails": "Details"
+    "viewDetails": "Details",
+    "heading": "Site audience"
   },
   "ouou": {
     "title": "OUOU — AI Assistant",
@@ -139,7 +146,8 @@
     "keyword": "Keyword",
     "intent": "Intent",
     "rank": "Rank",
-    "volume": "Volume"
+    "volume": "Volume",
+    "heading": "Search optimisation"
   },
   "common": {
     "loading": "Loading…",
@@ -155,7 +163,7 @@
   },
   "news": {
     "title": "News",
-    "subtitle": "Manage articles and publications.",
+    "subtitle": "Writing, AI generation, calendar and editorial strategy.",
     "empty": "No articles yet.",
     "tabs": {
       "overview": "Overview",
@@ -348,11 +356,12 @@
       "keywordsPlaceholder": "AI, lab, digital…",
       "themesPlaceholder": "Tech, Innovation, Design, Generative AI…",
       "frequencyPlaceholder": "2 articles / week"
-    }
+    },
+    "heading": "Articles and publications"
   },
   "users": {
     "title": "Users",
-    "subtitle": "Account and role management.",
+    "subtitle": "Accounts, roles, confirmations and platform access.",
     "empty": "No users to display.",
     "searchPlaceholder": "Search by name or email…",
     "allRoles": "All roles",
@@ -363,7 +372,8 @@
     "impersonateError": "Could not sign in as this user",
     "tabs": {
       "overview": "Overview",
-      "list": "Users"
+      "list": "Users",
+      "all": "All"
     },
     "kpis": {
       "total": "Users",
@@ -398,7 +408,8 @@
       "company": "Company",
       "signInCount": "Sign-ins",
       "lastSignIn": "Last sign-in"
-    }
+    },
+    "heading": "Accounts and roles"
   },
   "impersonation": {
     "banner": "You are signed in as {{name}}.",
@@ -505,6 +516,10 @@
         "imported": "Imported from the register: {{name}}. Check the contact details in the next step.",
         "sourceCompanies": "Source: annuaire des entreprises (data.gouv.fr)",
         "sourceAddresses": "Source: Base Adresse Nationale (IGN Géoplateforme)"
+      },
+      "heading": "Clients",
+      "stats": {
+        "clients": "Clients"
       }
     },
     "tabs": {
@@ -675,6 +690,9 @@
     },
     "stats": {
       "openTasks": "Open tasks"
+    },
+    "clientPage": {
+      "subtitle": "The client’s deliverables, tasks, quotes, invoices, contracts and payments."
     }
   },
   "company": {
@@ -762,6 +780,16 @@
       "title": "Company directory",
       "hint": "Find your company: SIRET, legal name and address are filled in. Check, then save.",
       "imported": "“{{name}}” imported: check, then save."
+    }
+  },
+  "lesankofa": {
+    "heading": "Artificial intelligence",
+    "subtitle": "Models, tasks, infrastructure and clients of the Lesankofa AI.",
+    "stats": {
+      "models": "Active models",
+      "requests": "Requests today",
+      "tokens": "Tokens today",
+      "clients": "Active clients"
     }
   }
 }

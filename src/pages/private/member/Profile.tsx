@@ -7,6 +7,7 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { apiService, type ProfilePayload } from '@/services/api';
 import { Card } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/private/common/Breadcrumbs';
+import { PageHeader } from '@/components/private/common/PageHeader';
 import { getDashboardPath } from '@/utils/auth';
 
 const LANGUAGES = ['fr', 'en'] as const;
@@ -47,16 +48,15 @@ export default function Profile() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="dash-page">
       {/* Reached from the avatar menu: the way back to the dashboard. */}
       <Breadcrumbs items={[{ label: t('nav.dashboard'), to: getDashboardPath(user?.role) }, { label: t('profile.title') }]} />
-      <header className="trk-header">
-        <div className="trk-header__title">
-          <UserIcon size={22} className="trk-header__icon" />
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">{t('profile.title')}</h1>
-        </div>
-        <p className="mt-1 text-muted-foreground text-sm">{t('profile.subtitle')}</p>
-      </header>
+      <PageHeader
+        badge={{ icon: UserIcon, label: t('nav.account') }}
+        icon={<UserIcon size={26} />}
+        title={t('profile.title')}
+        description={t('profile.subtitle')}
+      />
 
       <Card className="p-6 co-profile">
         <form className="adm-form" onSubmit={submit}>

@@ -5338,26 +5338,14 @@
 .trv-inline-stats__label { color: #9ca3af; font-size: 12px; }
 .trv-inline-stats__item strong { font-weight: 600; color: #111111; }
 /* Client page: the tabs, and the current tab's « Nouveau … » on the right. */
-/* Tabs on the left, the tab's « Nouveau … » on the right, one shared rule underneath. */
+/* The client page's tabs, scrolled sideways on a phone (the open one kept in view). */
 .trv-tabs-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; border-bottom: 2px solid #e8eaed; }
 .trv-tabs-bar > .adm-tabs__list { position: relative; flex: 1 1 auto; min-width: 0; width: auto; margin-bottom: -2px; border-bottom: none; overflow-x: auto; scrollbar-width: none; }
 .trv-tabs-bar > .adm-tabs__list::-webkit-scrollbar { display: none; }
 .trv-tabs-bar .adm-tabs__trigger { margin-bottom: 0; }
-.trv-tabs-bar__new { flex-shrink: 0; margin-bottom: 4px; padding: 7px 12px; }
 .trv-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .trv-doc-ref { padding: 0; border: none; background: none; color: #26348b; font: inherit; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; cursor: pointer; }
 .trv-doc-ref:hover { text-decoration: underline; }
-@media (max-width: 900px) {
-  /* Five figures on two columns: the last one takes the whole row. */
-  .trv-stats > :last-child:nth-child(odd) { grid-column: 1 / -1; }
-}
-@media (max-width: 640px) {
-  .trv-stats { gap: 8px; }
-  .trv-stats .admin-news-overview__stat-card { padding: 12px 14px; }
-  .trv-stats .admin-news-overview__stat-value { font-size: 1.25rem; }
-  .trv-tabs-bar__new { padding: 7px 9px; }
-  .trv-tabs-bar__new-label { display: none; }
-}
 .trv-client-cell__name { font-weight: 600; color: #111111; }
 .trv-avatar { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 32px; height: 32px; border-radius: 999px; background: #111111; color: #ffffff; font-size: 12px; font-weight: 700; }
 .trv-avatar--lg { width: 44px; height: 44px; font-size: 15px; }
@@ -5689,3 +5677,59 @@
   .dash-crumbs__current { max-width: 220px; }
 }
 
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Page pattern — every back-office menu (as on Élance):
+   badge (menu) · icon + big title · description | CTA, then the stat row,
+   then the tabs. Components: PageHeader, StatRow/StatCard.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.dash-page { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+.dash-page > .dash-crumbs { margin-bottom: -8px; }
+
+.dash-page-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+.dash-page-header__main { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 0; }
+.dash-page-header__badge { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 6px; padding: 5px 11px; border-radius: 999px; background: #111111; color: #ffffff; font-size: 12px; font-weight: 600; line-height: 1; }
+.dash-page-header__title { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.dash-page-header__icon { display: inline-flex; flex-shrink: 0; color: #111111; }
+.dash-page-header__title h1 { margin: 0; font-size: clamp(1.5rem, 2.2vw, 1.9rem); font-weight: 700; line-height: 1.15; color: #111111; overflow-wrap: anywhere; }
+.dash-page-header__desc { margin: 0; max-width: 72ch; font-size: 14px; line-height: 1.5; color: #6b7280; }
+.dash-page-header__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+
+.dash-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.dash-stat { display: flex; align-items: center; gap: 14px; min-width: 0; padding: 14px 16px; border: 1px solid #e8eaed; border-radius: 10px; background: #ffffff; color: inherit; text-decoration: none; }
+.dash-stat--link { transition: border-color 0.15s, box-shadow 0.15s; }
+.dash-stat--link:hover { border-color: #d1d5db; box-shadow: 0 4px 12px rgba(16, 24, 40, 0.06); }
+.dash-stat__icon { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 42px; height: 42px; border-radius: 9px; background: #f3f4f6; color: #111111; }
+.dash-stat__body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.dash-stat__value { font-size: 1.4rem; font-weight: 700; line-height: 1.1; color: #111111; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dash-stat__label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; color: #6b7280; }
+.dash-stat--danger .dash-stat__value { color: #dc2626; }
+.dash-stat--danger .dash-stat__icon { background: #fef2f2; color: #dc2626; }
+.dash-stat--success .dash-stat__value { color: #16a34a; }
+.dash-stat--success .dash-stat__icon { background: #f0fdf4; color: #16a34a; }
+.dash-stat--warning .dash-stat__value { color: #d97706; }
+.dash-stat--warning .dash-stat__icon { background: #fffbeb; color: #d97706; }
+
+@media (max-width: 640px) {
+  .dash-page { gap: 20px; }
+  .dash-page-header__actions { width: 100%; }
+  .dash-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .dash-stats > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .dash-stat { gap: 10px; padding: 10px 12px; }
+  .dash-stat__icon { width: 34px; height: 34px; }
+  .dash-stat__value { font-size: 1.15rem; }
+}
+
+/* Infrastructure — one panel per service. */
+.infra-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.infra-panel { display: flex; flex-direction: column; gap: 12px; padding: 18px 20px; border: 1px solid #e8eaed; border-radius: 10px; background: #ffffff; }
+.infra-panel--wide { grid-column: 1 / -1; }
+.infra-panel__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 10px; border-bottom: 1px solid #f0f2f4; }
+.infra-panel__head h3 { margin: 0; font-size: 14px; font-weight: 700; color: #111111; }
+.infra-panel__rows { display: flex; flex-direction: column; gap: 8px; margin: 0; }
+.infra-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; font-size: 13px; }
+.infra-row dt { color: #6b7280; }
+.infra-row dd { margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; color: #111111; text-align: right; overflow-wrap: anywhere; }
+@media (max-width: 760px) { .infra-grid { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .dash-stat__label { white-space: normal; } }

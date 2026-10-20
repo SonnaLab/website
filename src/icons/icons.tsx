@@ -636,3 +636,47 @@ export function MinusIcon(p: IconProps) {
     </svg>
   );
 }
+
+/* Activité — titre de la page Infrastructure (lucide Activity). */
+export function ActivityIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" />
+    </svg>
+  );
+}
+
+/* Étincelles — titre de la page Lesankofa (lucide Sparkles). */
+export function SparklesIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+      <path d="M20 3v4" />
+      <path d="M22 5h-4" />
+      <path d="M4 17v2" />
+      <path d="M5 18H3" />
+    </svg>
+  );
+}
+
+/* Mallette — titre de la liste des clients Travaux (lucide BriefcaseBusiness). */
+export function BriefcaseIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <path d="M12 12h.01" />
+      <path d="M16 6V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+      <path d="M22 13a18.15 18.15 0 0 1-20 0" />
+      <rect width="20" height="14" x="2" y="6" rx="2" />
+    </svg>
+  );
+}
+
+/* Horloge — durée moyenne des visites (lucide Clock). */
+export function ClockIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+  );
+}

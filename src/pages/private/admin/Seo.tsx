@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PlusIcon, RefreshCwIcon, Trash2Icon } from '@icons';
+import { GlobeIcon, PlusIcon, RefreshCwIcon, SearchIcon, Trash2Icon } from '@icons';
+import { PageHeader } from '@/components/private/common/PageHeader';
 import { toast } from 'sonner';
 
 import { apiService } from '@/services/api';
@@ -24,11 +25,13 @@ interface Keyword { id: string; keyword: string; locale: string; intent?: string
 export default function AdminSeo() {
   const { t } = useTranslation('admin');
   return (
-    <div className="space-y-6">
-      <header>
-        <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">{t('seo.title')}</h1>
-        <p className="mt-1 text-muted-foreground text-sm">{t('seo.subtitle')}</p>
-      </header>
+    <div className="dash-page">
+      <PageHeader
+        badge={{ icon: SearchIcon, label: t('nav.seo') }}
+        icon={<GlobeIcon size={26} />}
+        title={t('seo.heading')}
+        description={t('seo.subtitle')}
+      />
 
       <Tabs defaultValue="pages">
         <TabsList>

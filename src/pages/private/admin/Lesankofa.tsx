@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 import { apiService } from '@/services/api';
 import { BaseTab } from '@/components/common/BaseTab';
 import { Modal } from '@/components/common/Modal';
 import { StepperModal } from '@/components/common/StepperModal';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
+import { PageHeader } from '@/components/private/common/PageHeader';
+import { StatCard, StatRow } from '@/components/private/common/StatRow';
 import { DataTable, DataTableHead, DataTableBody, DataTableRow, DataTableTh, DataTableTd, DataTableEmpty } from '@/components/common/DataTable';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -32,6 +35,7 @@ import {
   ChevronRightIcon,
   MegaphoneIcon,
   MegaphoneOffIcon,
+  SparklesIcon,
 } from '@icons';
 
 // ─────────────────────────────────────────────
@@ -198,15 +202,13 @@ const MODEL_PER_PAGE = 10;
 // Overview Tab (KPIs only)
 // ─────────────────────────────────────────────
 
-function OverviewTab() {
+/** The page's stat row figures (models, today's requests and tokens, active clients). */
+function useLesankofaOverview() {
   const [stats,       setStats]       = useState<AIStatsRow | null>(null);
   const [clientCount, setClientCount] = useState<number | null>(null);
-  const [loading,     setLoading]     = useState(true);
   const [error,       setError]       = useState<string | null>(null);
 
-  const load = () => {
-    setLoading(true);
-    setError(null);
+  useEffect(() => {
     Promise.all([
       apiService.adminLesankofaModelStats(),
       apiService.adminLesankofaClients().catch(() => null),
@@ -216,21 +218,15 @@ function OverviewTab() {
         const clients: AIClientRow[] = c?.clients ?? c ?? [];
         setClientCount(clients.filter((cl: AIClientRow) => cl.is_active).length);
       })
-      .catch(e => setError(e.message))
-      .finally(() => setLoading(false));
-  };
+      .catch(e => setError(e.message));
+  }, []);
 
-  useEffect(() => { load(); }, []);
+  return { stats, clientCount, error };
+}
 
+function OverviewTab({ error }: { error: string | null }) {
   return (
     <div className="space-y-6">
-      <div className="flex items-stretch gap-3 overflow-x-auto">
-        <KpiCard label="Modèles actifs"       value={stats ? String(stats.active_models)         : '—'} icon={<BrainIcon  size={16} />} />
-        <KpiCard label="Requêtes aujourd'hui" value={stats ? String(stats.total_requests_today)  : '—'} icon={<ZapIcon    size={16} />} />
-        <KpiCard label="Tokens aujourd'hui"   value={stats ? fmtNum(stats.total_tokens_today)    : '—'} icon={<LayersIcon size={16} />} />
-        <KpiCard label="Clients actifs"       value={clientCount !== null ? String(clientCount) : '—'} icon={<UsersIcon  size={16} />} />
-      </div>
-
       {error && (
         <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-4 py-3">
           Erreur API AI : {error}
@@ -1769,18 +1765,6 @@ function ModelTab() {
 // KPI card helper
 // ─────────────────────────────────────────────
 
-function KpiCard({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) {
-  return (
-    <Card className="flex-1 min-w-0 p-4 space-y-1">
-      <div className="flex items-center gap-2 text-muted-foreground text-xs">
-        {icon}
-        <span>{label}</span>
-      </div>
-      <p className="text-2xl font-bold text-foreground">{value}</p>
-    </Card>
-  );
-}
-
 function fmtNum(n: number) {
   return new Intl.NumberFormat('fr').format(n);
 }
@@ -1867,7 +1851,9 @@ function readHashTab(): TabValue {
 }
 
 export default function AdminLesankofa() {
+  const { t } = useTranslation('admin');
   const [tab, setTab] = useState<TabValue>(readHashTab);
+  const { stats, clientCount, error } = useLesankofaOverview();
 
   useEffect(() => {
     const onPop = () => setTab(readHashTab());
@@ -1881,17 +1867,20 @@ export default function AdminLesankofa() {
   };
 
   return (
-    <div className="admin-news">
-      <header className="admin-news__header admin-news__header--with-toggle">
-        <div>
-          <div className="admin-news__header-title">
-            <BrainIcon size={22} />
-            <h1>Lesankofa AI</h1>
-          </div>
-          <p className="admin-news__header-sub">Tableau de bord IA — modèles, tâches, infrastructure, clients</p>
-        </div>
-        <GenerationControlToggle />
-      </header>
+    <div className="dash-page">
+      <PageHeader
+        icon={<SparklesIcon size={26} />}
+        title={t('lesankofa.heading')}
+        description={t('lesankofa.subtitle')}
+        actions={<GenerationControlToggle />}
+      />
+
+      <StatRow>
+        <StatCard icon={<BrainIcon size={18} />} label={t('lesankofa.stats.models')} value={stats ? stats.active_models : '—'} />
+        <StatCard icon={<ZapIcon size={18} />} label={t('lesankofa.stats.requests')} value={stats ? stats.total_requests_today : '—'} />
+        <StatCard icon={<LayersIcon size={18} />} label={t('lesankofa.stats.tokens')} value={stats ? fmtNum(stats.total_tokens_today) : '—'} />
+        <StatCard icon={<UsersIcon size={18} />} label={t('lesankofa.stats.clients')} value={clientCount ?? '—'} />
+      </StatRow>
 
       <Tabs value={tab} onValueChange={handleTabChange}>
         <TabsList>
@@ -1904,7 +1893,7 @@ export default function AdminLesankofa() {
         </TabsList>
 
         <TabsContent value="overview">
-          <OverviewTab />
+          <OverviewTab error={error} />
         </TabsContent>
         <TabsContent value="tasks">
           <TasksTab />

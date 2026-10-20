@@ -26,11 +26,17 @@
     "location": "Lieu",
     "actions": "Actions",
     "cancel": "Annuler",
-    "confirmCancel": "Annuler ce rendez-vous ?"
+    "confirmCancel": "Annuler ce rendez-vous ?",
+    "subtitle": "Vos rendez-vous avec l’équipe SonnaLab.",
+    "stats": {
+      "upcoming": "À venir",
+      "past": "Passés",
+      "cancelled": "Annulés"
+    }
   },
   "billing": {
     "title": "Facturation",
-    "subtitle": "Vos factures et devis",
+    "subtitle": "Consultez et téléchargez vos documents SonnaLab.",
     "quotes": "Devis",
     "invoices": "Factures",
     "number": "Numéro",
@@ -54,6 +60,11 @@
       "paid": "Payé",
       "overdue": "En retard",
       "cancelled": "Annulé"
+    },
+    "heading": "Mes devis et factures",
+    "stats": {
+      "toPay": "À régler",
+      "paid": "Réglé"
     }
   },
   "profile": {

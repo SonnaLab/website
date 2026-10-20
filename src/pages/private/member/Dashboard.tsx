@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { CalendarIcon, ReceiptIcon, FileTextIcon } from '@icons';
+import { CalendarIcon, ReceiptIcon, FileTextIcon, TrendingUpIcon } from '@icons';
 
 import { useAuth } from '@/components/providers/AuthProvider';
 import { apiService } from '@/services/api';
-import { Card } from '@/components/ui/card';
+import { PageHeader } from '@/components/private/common/PageHeader';
+import { StatCard, StatRow } from '@/components/private/common/StatRow';
 
 interface Counters {
   appointments: number;
@@ -38,36 +38,19 @@ export default function MemberDashboard() {
     return () => { cancelled = true; };
   }, []);
 
-  const cards = [
-    { to: '/dashboard/appointments', label: t('dashboard.appointments'), value: counts.appointments, icon: CalendarIcon     },
-    { to: '/dashboard/billing',      label: t('dashboard.quotes'),       value: counts.quotes,       icon: FileTextIcon     },
-    { to: '/dashboard/billing',      label: t('dashboard.invoices'),     value: counts.invoices,     icon: ReceiptIcon      },
-  ];
-
   return (
-    <div className="space-y-8">
-      <header>
-        <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">
-          {t('dashboard.title', { name: user?.first_name || user?.email })}
-        </h1>
-        <p className="mt-1 text-muted-foreground">{t('dashboard.subtitle')}</p>
-      </header>
+    <div className="dash-page">
+      <PageHeader
+        icon={<TrendingUpIcon size={26} />}
+        title={t('dashboard.title', { name: user?.first_name || user?.email })}
+        description={t('dashboard.subtitle')}
+      />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {cards.map(({ to, label, value, icon: Icon }) => (
-          <Link key={label} to={to}>
-            <Card className="p-5 hover:bg-secondary transition-colors">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">{label}</p>
-                  <p className="mt-2 text-3xl font-semibold text-foreground">{value}</p>
-                </div>
-                <Icon className="size-5 text-muted-foreground" />
-              </div>
-            </Card>
-          </Link>
-        ))}
-      </div>
+      <StatRow>
+        <StatCard to="/dashboard/appointments" icon={<CalendarIcon size={18} />} label={t('dashboard.appointments')} value={counts.appointments} />
+        <StatCard to="/dashboard/billing" icon={<FileTextIcon size={18} />} label={t('dashboard.quotes')} value={counts.quotes} />
+        <StatCard to="/dashboard/billing" icon={<ReceiptIcon size={18} />} label={t('dashboard.invoices')} value={counts.invoices} />
+      </StatRow>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -7,7 +7,9 @@ import { apiService, type AdminUser, type AdminUsersOverview, type AuthRole } fr
 import { useAuth } from '@/components/providers/AuthProvider';
 import { getDashboardPath } from '@/utils/auth';
 import { Card } from '@/components/ui/card';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/common/Tabs';
+import { PageHeader } from '@/components/private/common/PageHeader';
+import { StatCard, StatRow } from '@/components/private/common/StatRow';
 import { Modal } from '@/components/common/Modal';
 import {
   DataTable, DataTableHead, DataTableBody, DataTableRow, DataTableTh, DataTableTd, DataTableEmpty,
@@ -40,68 +42,10 @@ function Pagination({
   );
 }
 
-// ── Vue d'ensemble ───────────────────────────────────────────────────────────
-
-function OverviewTab() {
-  const { t } = useTranslation('admin');
-  const [kpis, setKpis] = useState<AdminUsersOverview | null>(null);
-  const [err, setErr] = useState(false);
-
-  useEffect(() => {
-    apiService.adminUsersOverview().then(setKpis).catch(() => setErr(true));
-  }, []);
-
-  if (err) return <p className="trk-empty">{t('tracking.loadError')}</p>;
-
-  return (
-    <div className="trk-kpi-row">
-      <Card className="trk-kpi-card">
-        <div className="trk-kpi-icon-wrap trk-kpi-icon-wrap--accent"><UsersIcon size={16} /></div>
-        <p className="trk-kpi-value trk-kpi-value--accent">{kpis?.total ?? '—'}</p>
-        <p className="trk-kpi-label">{t('users.kpis.total')}</p>
-      </Card>
-      <Card className="trk-kpi-card">
-        <div className="trk-kpi-icon-wrap"><ShieldIcon size={16} /></div>
-        <p className="trk-kpi-value">{kpis?.admins ?? '—'}</p>
-        <p className="trk-kpi-label">{t('users.kpis.admins')}</p>
-      </Card>
-      <Card className="trk-kpi-card">
-        <div className="trk-kpi-icon-wrap"><LayoutDashboardIcon size={16} /></div>
-        <p className="trk-kpi-value">{kpis?.staff ?? '—'}</p>
-        <p className="trk-kpi-label">{t('users.kpis.staff')}</p>
-      </Card>
-      <Card className="trk-kpi-card">
-        <div className="trk-kpi-icon-wrap"><UserIcon size={16} /></div>
-        <p className="trk-kpi-value">{kpis?.clients ?? '—'}</p>
-        <p className="trk-kpi-label">{t('users.kpis.clients')}</p>
-      </Card>
-      <Card className="trk-kpi-card">
-        <div className="trk-kpi-icon-wrap"><CheckCircleIcon size={16} /></div>
-        <p className="trk-kpi-value">{kpis?.confirmed ?? '—'}</p>
-        <p className="trk-kpi-label">{t('users.kpis.confirmed')}</p>
-      </Card>
-      <Card className="trk-kpi-card">
-        <div className="trk-kpi-icon-wrap"><LockIcon size={16} /></div>
-        <p className="trk-kpi-value">{kpis?.locked ?? '—'}</p>
-        <p className="trk-kpi-label">{t('users.kpis.locked')}</p>
-      </Card>
-      <Card className="trk-kpi-card">
-        <div className="trk-kpi-icon-wrap"><UsersIcon size={16} /></div>
-        <p className="trk-kpi-value">{kpis?.new_last_7_days ?? '—'}</p>
-        <p className="trk-kpi-label">{t('users.kpis.new7d')}</p>
-      </Card>
-      <Card className="trk-kpi-card">
-        <div className="trk-kpi-icon-wrap"><UsersIcon size={16} /></div>
-        <p className="trk-kpi-value">{kpis?.new_last_30_days ?? '—'}</p>
-        <p className="trk-kpi-label">{t('users.kpis.new30d')}</p>
-      </Card>
-    </div>
-  );
-}
-
 // ── Utilisateurs (table) ─────────────────────────────────────────────────────
 
-function UsersListTab() {
+/** The accounts table; the page's tabs pick the role. */
+function UsersListTab({ role }: { role: AuthRole | '' }) {
   const { t } = useTranslation('admin');
   const navigate = useNavigate();
   const { user: currentUser, impersonate } = useAuth();
@@ -110,7 +54,6 @@ function UsersListTab() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
-  const [role, setRole] = useState<AuthRole | ''>('');
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState(false);
   const [selected, setSelected] = useState<AdminUser | null>(null);
@@ -127,11 +70,18 @@ function UsersListTab() {
 
   useEffect(() => { load(page, search, role); }, [page, load]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const applyFilters = (q: string, r: AuthRole | '') => {
-    setSearch(q);
-    setRole(r);
+  // Another tab (role): back to its first page.
+  const firstRender = useRef(true);
+  useEffect(() => {
+    if (firstRender.current) { firstRender.current = false; return; }
     setPage(1);
-    load(1, q, r);
+    load(1, search, role);
+  }, [role]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const applySearch = (q: string) => {
+    setSearch(q);
+    setPage(1);
+    load(1, q, role);
   };
 
   const handleImpersonate = async (target: AdminUser) => {
@@ -162,20 +112,9 @@ function UsersListTab() {
               className="adm-search__input"
               placeholder={t('users.searchPlaceholder')}
               value={search}
-              onChange={(e) => applyFilters(e.target.value, role)}
+              onChange={(e) => applySearch(e.target.value)}
             />
           </div>
-          <select
-            className="adm-select adm-select--sm"
-            value={role}
-            onChange={(e) => applyFilters(search, e.target.value as AuthRole | '')}
-            aria-label={t('users.allRoles')}
-          >
-            <option value="">{t('users.allRoles')}</option>
-            <option value="admin">{roleLabel('admin')}</option>
-            <option value="staff">{roleLabel('staff')}</option>
-            <option value="user">{roleLabel('user')}</option>
-          </select>
         </div>
       </div>
 
@@ -279,28 +218,48 @@ function UsersListTab() {
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
+const ROLE_TABS: { key: string; role: AuthRole | '' }[] = [
+  { key: 'all', role: '' },
+  { key: 'admins', role: 'admin' },
+  { key: 'staff', role: 'staff' },
+  { key: 'clients', role: 'user' },
+];
+
 export default function AdminUsers() {
   const { t } = useTranslation('admin');
-  const [tab, setTab] = useState('overview');
+  const [tab, setTab] = useState('all');
+  const [kpis, setKpis] = useState<AdminUsersOverview | null>(null);
+
+  useEffect(() => {
+    apiService.adminUsersOverview().then(setKpis).catch(() => setKpis(null));
+  }, []);
+
+  const count: Record<string, number | undefined> = {
+    all: kpis?.total, admins: kpis?.admins, staff: kpis?.staff, clients: kpis?.clients,
+  };
+  const role = ROLE_TABS.find((r) => r.key === tab)?.role ?? '';
 
   return (
-    <div className="space-y-6">
-      <header className="trk-header">
-        <div className="trk-header__title">
-          <UsersIcon size={22} className="trk-header__icon" />
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">{t('users.title')}</h1>
-        </div>
-        <p className="mt-1 text-muted-foreground text-sm">{t('users.subtitle')}</p>
-      </header>
+    <div className="dash-page">
+      <PageHeader icon={<ShieldIcon size={26} />} title={t('users.heading')} description={t('users.subtitle')} />
 
+      <StatRow>
+        <StatCard icon={<UsersIcon size={18} />} label={t('users.kpis.total')} value={kpis?.total ?? '—'} />
+        <StatCard icon={<CheckCircleIcon size={18} />} label={t('users.kpis.confirmed')} value={kpis?.confirmed ?? '—'} />
+        <StatCard icon={<LockIcon size={18} />} label={t('users.kpis.locked')} value={kpis?.locked ?? '—'} tone={kpis?.locked ? 'danger' : undefined} />
+        <StatCard icon={<UserIcon size={18} />} label={t('users.kpis.new7d')} value={kpis?.new_last_7_days ?? '—'} />
+        <StatCard icon={<UserIcon size={18} />} label={t('users.kpis.new30d')} value={kpis?.new_last_30_days ?? '—'} />
+      </StatRow>
+
+      {/* One tab per role; the table below follows it. */}
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
-          <TabsTrigger value="overview" icon={<LayoutDashboardIcon size={14} />}>{t('users.tabs.overview')}</TabsTrigger>
-          <TabsTrigger value="list" icon={<UsersIcon size={14} />}>{t('users.tabs.list')}</TabsTrigger>
+          <TabsTrigger value="all" icon={<UsersIcon size={14} />} count={count.all}>{t('users.tabs.all')}</TabsTrigger>
+          <TabsTrigger value="admins" icon={<ShieldIcon size={14} />} count={count.admins}>{t('users.kpis.admins')}</TabsTrigger>
+          <TabsTrigger value="staff" icon={<LayoutDashboardIcon size={14} />} count={count.staff}>{t('users.kpis.staff')}</TabsTrigger>
+          <TabsTrigger value="clients" icon={<UserIcon size={14} />} count={count.clients}>{t('users.kpis.clients')}</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="overview"><OverviewTab /></TabsContent>
-        <TabsContent value="list"><UsersListTab /></TabsContent>
+        <UsersListTab role={role} />
       </Tabs>
     </div>
   );

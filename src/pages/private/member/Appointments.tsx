@@ -6,6 +6,10 @@ import { apiService } from '@/services/api';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { PageHeader } from '@/components/private/common/PageHeader';
+import { StatCard, StatRow } from '@/components/private/common/StatRow';
+import { useModal } from '@/components/providers/ModalProvider';
+import { CalendarDaysIcon, CalendarIcon, CheckCircleIcon, PlusIcon, XCircleIcon } from '@icons';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 interface Appointment {
@@ -26,6 +30,7 @@ export default function MemberAppointments() {
   const { t, i18n } = useTranslation('member');
   const [items, setItems]     = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
+  const { openConsultationModal } = useModal();
 
   const reload = () =>
     apiService.listAppointments()
@@ -40,14 +45,33 @@ export default function MemberAppointments() {
     catch { toast.error(t('appointments.confirmCancel')); }
   };
 
+  const now = Date.now();
+  const isCancelled = (a: Appointment) => a.status === 'cancelled' || a.status === 'no_show';
+  const cancelled = items.filter(isCancelled).length;
+  const upcoming = items.filter((a) => !isCancelled(a) && a.status !== 'completed' && new Date(a.scheduled_at).getTime() >= now).length;
+  const past = items.length - cancelled - upcoming;
+
   const fmtDate = (iso: string) =>
     new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(iso));
 
   return (
-    <div className="space-y-6">
-      <header>
-        <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">{t('appointments.title')}</h1>
-      </header>
+    <div className="dash-page">
+      <PageHeader
+        icon={<CalendarDaysIcon size={26} />}
+        title={t('appointments.title')}
+        description={t('appointments.subtitle')}
+        actions={
+          <button type="button" className="adm-btn adm-btn--primary" onClick={() => openConsultationModal()}>
+            <PlusIcon size={14} /> {t('appointments.newButton')}
+          </button>
+        }
+      />
+
+      <StatRow>
+        <StatCard icon={<CalendarIcon size={18} />} label={t('appointments.stats.upcoming')} value={upcoming} loading={loading} />
+        <StatCard icon={<CheckCircleIcon size={18} />} label={t('appointments.stats.past')} value={past} loading={loading} />
+        <StatCard icon={<XCircleIcon size={18} />} label={t('appointments.stats.cancelled')} value={cancelled} loading={loading} />
+      </StatRow>
 
       <Card className="overflow-hidden">
         {loading ? (

@@ -6,7 +6,9 @@ import { apiService, saveBlob } from '@/services/api';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
 import { DataTable, DataTableHead, DataTableBody, DataTableRow, DataTableTh, DataTableTd, DataTableEmpty } from '@/components/common/DataTable';
 import { StatusBadge } from '@/components/common/StatusBadge';
-import { DownloadIcon, ReceiptIcon, FileTextIcon } from '@icons';
+import { CheckCircleIcon, DownloadIcon, ReceiptIcon, FileTextIcon, WalletIcon } from '@icons';
+import { PageHeader } from '@/components/private/common/PageHeader';
+import { StatCard, StatRow } from '@/components/private/common/StatRow';
 import type { InvoiceStatus, TravauxInvoice } from '@/types/travaux';
 
 /**
@@ -29,6 +31,9 @@ export default function MemberBilling() {
 
   const quotes   = documents.filter((d) => d.kind === 'quote');
   const invoices = documents.filter((d) => d.kind === 'invoice');
+  const sum = (rows: TravauxInvoice[]) => rows.reduce((total, d) => total + d.amount_cents, 0);
+  const toPay = sum(invoices.filter((d) => d.status === 'sent' || d.status === 'overdue'));
+  const paid  = sum(invoices.filter((d) => d.status === 'paid'));
 
   const fmtMoney = (cents: number) =>
     new Intl.NumberFormat(i18n.language, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(cents / 100);
@@ -98,14 +103,15 @@ export default function MemberBilling() {
   }
 
   return (
-    <div className="admin-news">
-      <header className="admin-news__header">
-        <div className="admin-news__header-title">
-          <ReceiptIcon size={22} />
-          <h1>{t('billing.title')}</h1>
-        </div>
-        <p className="admin-news__header-sub">{t('billing.subtitle')}</p>
-      </header>
+    <div className="dash-page">
+      <PageHeader icon={<FileTextIcon size={26} />} title={t('billing.heading')} description={t('billing.subtitle')} />
+
+      <StatRow>
+        <StatCard icon={<ReceiptIcon size={18} />} label={t('billing.invoices')} value={invoices.length} loading={loading} />
+        <StatCard icon={<FileTextIcon size={18} />} label={t('billing.quotes')} value={quotes.length} loading={loading} />
+        <StatCard icon={<WalletIcon size={18} />} label={t('billing.stats.toPay')} value={fmtMoney(toPay)} loading={loading} tone={toPay ? 'warning' : undefined} />
+        <StatCard icon={<CheckCircleIcon size={18} />} label={t('billing.stats.paid')} value={fmtMoney(paid)} loading={loading} tone={paid ? 'success' : undefined} />
+      </StatRow>
 
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>

@@ -52,7 +52,7 @@
   },
   "infrastructure": {
     "title": "Infrastructure",
-    "subtitle": "Santé applicative en temps réel.",
+    "subtitle": "Application, base de données, files de tâches et déploiement, en temps réel.",
     "refresh": "Rafraîchir",
     "app": "Application",
     "database": "Base de données",
@@ -69,7 +69,13 @@
     "slot": "Slot",
     "commit": "Commit",
     "statusUp": "OK",
-    "statusDown": "Indisponible"
+    "statusDown": "Indisponible",
+    "heading": "Santé de la plateforme",
+    "stats": {
+      "environment": "Environnement",
+      "dbLatency": "Latence BDD",
+      "failedJobs": "Tâches en échec"
+    }
   },
   "tracking": {
     "title": "Cookies",
@@ -102,7 +108,8 @@
     "duration": "Durée",
     "noData": "Aucune donnée disponible.",
     "loadError": "Erreur de chargement.",
-    "viewDetails": "Détails"
+    "viewDetails": "Détails",
+    "heading": "Audience du site"
   },
   "ouou": {
     "title": "OUOU — Assistant IA",
@@ -140,7 +147,8 @@
     "keyword": "Mot-clé",
     "intent": "Intention",
     "rank": "Rang",
-    "volume": "Volume"
+    "volume": "Volume",
+    "heading": "Référencement"
   },
   "common": {
     "loading": "Chargement…",
@@ -156,7 +164,7 @@
   },
   "news": {
     "title": "News",
-    "subtitle": "Gestion des articles et publications.",
+    "subtitle": "Rédaction, génération IA, calendrier et stratégie éditoriale.",
     "empty": "Aucun article pour l'instant.",
     "tabs": {
       "overview": "Vue d'ensemble",
@@ -349,11 +357,12 @@
       "keywordsPlaceholder": "IA, laboratoire, digital…",
       "themesPlaceholder": "Tech, Innovation, Design, IA générative…",
       "frequencyPlaceholder": "2 articles / semaine"
-    }
+    },
+    "heading": "Articles et publications"
   },
   "users": {
     "title": "Utilisateurs",
-    "subtitle": "Gestion des comptes et des rôles.",
+    "subtitle": "Comptes, rôles, confirmations et accès à la plateforme.",
     "empty": "Aucun utilisateur à afficher.",
     "searchPlaceholder": "Rechercher par nom ou email…",
     "allRoles": "Tous les rôles",
@@ -364,7 +373,8 @@
     "impersonateError": "Impossible de se connecter en tant que cet utilisateur",
     "tabs": {
       "overview": "Vue d'ensemble",
-      "list": "Utilisateurs"
+      "list": "Utilisateurs",
+      "all": "Tous"
     },
     "kpis": {
       "total": "Utilisateurs",
@@ -399,7 +409,8 @@
       "company": "Société",
       "signInCount": "Connexions",
       "lastSignIn": "Dernière connexion"
-    }
+    },
+    "heading": "Comptes et rôles"
   },
   "impersonation": {
     "banner": "Vous êtes connecté(e) en tant que {{name}}.",
@@ -506,6 +517,10 @@
         "imported": "Importé depuis l'annuaire : {{name}}. Vérifiez les coordonnées à l'étape suivante.",
         "sourceCompanies": "Source : annuaire des entreprises (data.gouv.fr)",
         "sourceAddresses": "Source : Base Adresse Nationale (Géoplateforme IGN)"
+      },
+      "heading": "Clients",
+      "stats": {
+        "clients": "Clients"
       }
     },
     "tabs": {
@@ -676,6 +691,9 @@
     },
     "stats": {
       "openTasks": "Tâches ouvertes"
+    },
+    "clientPage": {
+      "subtitle": "Livrables, tâches, devis, factures, contrats et paiements du client."
     }
   },
   "company": {
@@ -763,6 +781,16 @@
       "title": "Annuaire des entreprises",
       "hint": "Retrouvez votre entreprise : SIRET, raison sociale et adresse se remplissent. Vérifiez puis enregistrez.",
       "imported": "« {{name}} » importée : vérifiez puis enregistrez."
+    }
+  },
+  "lesankofa": {
+    "heading": "Intelligence artificielle",
+    "subtitle": "Modèles, tâches, infrastructure et clients de l’IA Lesankofa.",
+    "stats": {
+      "models": "Modèles actifs",
+      "requests": "Requêtes aujourd’hui",
+      "tokens": "Tokens aujourd’hui",
+      "clients": "Clients actifs"
     }
   }
 }

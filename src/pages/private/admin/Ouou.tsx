@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SendIcon, PlusIcon, ArchiveIcon } from '@icons';
+import { SendIcon, PlusIcon, ArchiveIcon, BotIcon, TerminalIcon } from '@icons';
+import { PageHeader } from '@/components/private/common/PageHeader';
 import { toast } from 'sonner';
 
 import { apiService } from '@/services/api';
@@ -79,17 +80,19 @@ export default function AdminOuou() {
   };
 
   return (
-    <div className="space-y-6">
-      <header className="flex items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">{t('ouou.title')}</h1>
-          <p className="mt-1 text-muted-foreground text-sm">{t('ouou.subtitle')}</p>
-        </div>
-        <CreateConversationDialog
-          open={createOpen} setOpen={setCreateOpen} models={models}
-          onCreated={(c) => { reloadConvos(); setActiveId(c.id); }}
-        />
-      </header>
+    <div className="dash-page">
+      <PageHeader
+        badge={{ icon: BotIcon, label: t('nav.ouou') }}
+        icon={<TerminalIcon size={26} />}
+        title={t('ouou.title')}
+        description={t('ouou.subtitle')}
+        actions={
+          <CreateConversationDialog
+            open={createOpen} setOpen={setCreateOpen} models={models}
+            onCreated={(c) => { reloadConvos(); setActiveId(c.id); }}
+          />
+        }
+      />
 
       {quota && (
         <Card className="p-4">

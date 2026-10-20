@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RefreshCwIcon } from '@icons';
+import { ActivityIcon, AlertTriangleIcon, LayersIcon, RefreshCwIcon, ServerIcon, ZapIcon } from '@icons';
 
 import { apiService } from '@/services/api';
-import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { PageHeader } from '@/components/private/common/PageHeader';
+import { StatCard, StatRow } from '@/components/private/common/StatRow';
 
 interface InfraResponse {
   app:        { version: string; env: string; ruby: string; rails: string; uptime_seconds: number };
@@ -37,77 +38,99 @@ export default function AdminInfrastructure() {
       : <Badge variant="destructive">{t('infrastructure.statusDown')}</Badge>;
 
   return (
-    <div className="space-y-6">
-      <header className="flex items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">{t('infrastructure.title')}</h1>
-          <p className="mt-1 text-muted-foreground text-sm">{t('infrastructure.subtitle')}</p>
-        </div>
-        <Button variant="outline" size="sm" onClick={reload} disabled={loading}>
-          <RefreshCwIcon className={`size-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-          {t('infrastructure.refresh')}
-        </Button>
-      </header>
+    <div className="dash-page">
+      <PageHeader
+        icon={<ActivityIcon size={26} />}
+        title={t('infrastructure.heading')}
+        description={t('infrastructure.subtitle')}
+        actions={
+          <Button variant="outline" size="sm" onClick={reload} disabled={loading}>
+            <RefreshCwIcon className={`size-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            {t('infrastructure.refresh')}
+          </Button>
+        }
+      />
+
+      <StatRow>
+        <StatCard icon={<ServerIcon size={18} />} label={t('infrastructure.stats.environment')} value={data?.app.env ?? '—'} loading={!data} />
+        <StatCard icon={<ZapIcon size={18} />} label={t('infrastructure.uptime')} value={data ? `${Math.round(data.app.uptime_seconds / 60)} min` : '—'} loading={!data} />
+        <StatCard
+          icon={<ActivityIcon size={18} />}
+          label={t('infrastructure.stats.dbLatency')}
+          value={data?.database.latency_ms != null ? `${data.database.latency_ms} ms` : '—'}
+          tone={data && data.database.status !== 'up' ? 'danger' : undefined}
+          loading={!data}
+        />
+        <StatCard
+          icon={<LayersIcon size={18} />}
+          label={t('infrastructure.redis')}
+          value={data ? (data.redis.status === 'up' ? t('infrastructure.statusUp') : t('infrastructure.statusDown')) : '—'}
+          tone={data ? (data.redis.status === 'up' ? 'success' : 'danger') : undefined}
+          loading={!data}
+        />
+        <StatCard
+          icon={<AlertTriangleIcon size={18} />}
+          label={t('infrastructure.stats.failedJobs')}
+          value={data?.sidekiq.failed ?? '—'}
+          tone={data?.sidekiq.failed ? 'warning' : undefined}
+          loading={!data}
+        />
+      </StatRow>
 
       {data && (
-        <div className="grid gap-4 md:grid-cols-2">
-          <Card className="p-5 space-y-2">
-            <div className="flex items-center justify-between">
-              <h3 className="font-medium text-foreground">{t('infrastructure.app')}</h3>
-              <Badge variant="outline">{data.app.env}</Badge>
-            </div>
+        <div className="infra-grid">
+          <Panel title={t('infrastructure.app')} badge={<Badge variant="outline">{data.app.env}</Badge>}>
             <Row label={t('infrastructure.version')} value={data.app.version} />
             <Row label={t('infrastructure.uptime')} value={`${Math.round(data.app.uptime_seconds / 60)} min`} />
             <Row label="Ruby"  value={data.app.ruby}  />
             <Row label="Rails" value={data.app.rails} />
-          </Card>
+          </Panel>
 
-          <Card className="p-5 space-y-2">
-            <div className="flex items-center justify-between">
-              <h3 className="font-medium text-foreground">{t('infrastructure.database')}</h3>
-              {statusBadge(data.database.status)}
-            </div>
+          <Panel title={t('infrastructure.database')} badge={statusBadge(data.database.status)}>
             <Row label={t('infrastructure.latency')} value={data.database.latency_ms != null ? `${data.database.latency_ms} ms` : '—'} />
             <Row label="Pool" value={`${data.database.pool_busy ?? 0} / ${data.database.pool_size ?? '—'}`} />
-          </Card>
+          </Panel>
 
-          <Card className="p-5 space-y-2">
-            <div className="flex items-center justify-between">
-              <h3 className="font-medium text-foreground">{t('infrastructure.redis')}</h3>
-              {statusBadge(data.redis.status)}
-            </div>
+          <Panel title={t('infrastructure.redis')} badge={statusBadge(data.redis.status)}>
             <Row label="Memory"  value={data.redis.used_memory_human || '—'} />
             <Row label="Clients" value={data.redis.clients ?? '—'} />
-          </Card>
+          </Panel>
 
-          <Card className="p-5 space-y-2">
-            <div className="flex items-center justify-between">
-              <h3 className="font-medium text-foreground">{t('infrastructure.sidekiq')}</h3>
-              {statusBadge(data.sidekiq.status)}
-            </div>
+          <Panel title={t('infrastructure.sidekiq')} badge={statusBadge(data.sidekiq.status)}>
             <Row label="Processed"            value={data.sidekiq.processed ?? '—'} />
             <Row label="Failed"               value={data.sidekiq.failed ?? '—'} />
             <Row label={t('infrastructure.retries')}    value={data.sidekiq.retries ?? '—'} />
             <Row label={t('infrastructure.dead')}       value={data.sidekiq.dead ?? '—'} />
             <Row label={t('infrastructure.processes')}  value={data.sidekiq.processes ?? '—'} />
-          </Card>
+          </Panel>
 
-          <Card className="p-5 md:col-span-2 space-y-2">
-            <h3 className="font-medium text-foreground">{t('infrastructure.deployment')}</h3>
+          <Panel title={t('infrastructure.deployment')} wide>
             <Row label={t('infrastructure.slot')}   value={data.deployment.slot   || '—'} />
             <Row label={t('infrastructure.commit')} value={data.deployment.commit ? data.deployment.commit.slice(0, 12) : '—'} />
-          </Card>
+          </Panel>
         </div>
       )}
     </div>
   );
 }
 
+function Panel({ title, badge, wide, children }: { title: string; badge?: React.ReactNode; wide?: boolean; children: React.ReactNode }) {
+  return (
+    <section className={wide ? 'infra-panel infra-panel--wide' : 'infra-panel'}>
+      <header className="infra-panel__head">
+        <h3>{title}</h3>
+        {badge}
+      </header>
+      <dl className="infra-panel__rows">{children}</dl>
+    </section>
+  );
+}
+
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="flex items-baseline justify-between text-sm">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="font-mono text-foreground">{value}</span>
+    <div className="infra-row">
+      <dt>{label}</dt>
+      <dd>{value}</dd>
     </div>
   );
 }

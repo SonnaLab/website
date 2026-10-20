@@ -52,7 +52,7 @@
   },
   "infrastructure": {
     "title": "Infrastruttura",
-    "subtitle": "Stato dell'applicazione in tempo reale.",
+    "subtitle": "Applicazione, database, code di lavoro e deploy, in tempo reale.",
     "refresh": "Aggiorna",
     "app": "Applicazione",
     "database": "Database",
@@ -69,7 +69,13 @@
     "slot": "Slot",
     "commit": "Commit",
     "statusUp": "OK",
-    "statusDown": "Non disponibile"
+    "statusDown": "Non disponibile",
+    "heading": "Stato della piattaforma",
+    "stats": {
+      "environment": "Ambiente",
+      "dbLatency": "Latenza DB",
+      "failedJobs": "Job falliti"
+    }
   },
   "tracking": {
     "title": "Cookies & consenso",
@@ -101,7 +107,8 @@
     "duration": "Durata",
     "noData": "Nessun dato.",
     "loadError": "Errore.",
-    "viewDetails": "Dettagli"
+    "viewDetails": "Dettagli",
+    "heading": "Pubblico del sito"
   },
   "ouou": {
     "title": "OUOU — Assistente IA",
@@ -139,7 +146,8 @@
     "keyword": "Parola chiave",
     "intent": "Intento",
     "rank": "Posizione",
-    "volume": "Volume"
+    "volume": "Volume",
+    "heading": "Posizionamento"
   },
   "common": {
     "loading": "Caricamento…",
@@ -155,7 +163,7 @@
   },
   "news": {
     "title": "Notizie",
-    "subtitle": "Gestione articoli e pubblicazioni.",
+    "subtitle": "Redazione, generazione IA, calendario e strategia editoriale.",
     "empty": "Nessun articolo per ora.",
     "tabs": {
       "overview": "Panoramica",
@@ -348,11 +356,12 @@
       "keywordsPlaceholder": "IA, laboratorio, digitale…",
       "themesPlaceholder": "Tech, Innovazione, Design, IA generativa…",
       "frequencyPlaceholder": "2 articoli / settimana"
-    }
+    },
+    "heading": "Articoli e pubblicazioni"
   },
   "users": {
     "title": "Utenti",
-    "subtitle": "Gestione di account e ruoli.",
+    "subtitle": "Account, ruoli, conferme e accesso alla piattaforma.",
     "empty": "Nessun utente da visualizzare.",
     "searchPlaceholder": "Cerca per nome o email…",
     "allRoles": "Tutti i ruoli",
@@ -363,7 +372,8 @@
     "impersonateError": "Impossibile accedere come questo utente",
     "tabs": {
       "overview": "Panoramica",
-      "list": "Utenti"
+      "list": "Utenti",
+      "all": "Tutti"
     },
     "kpis": {
       "total": "Utenti",
@@ -398,7 +408,8 @@
       "company": "Azienda",
       "signInCount": "Accessi",
       "lastSignIn": "Ultimo accesso"
-    }
+    },
+    "heading": "Account e ruoli"
   },
   "impersonation": {
     "banner": "Hai effettuato l'accesso come {{name}}.",
@@ -505,6 +516,10 @@
         "imported": "Importato dal registro: {{name}}. Verifica i recapiti al passaggio successivo.",
         "sourceCompanies": "Fonte: annuaire des entreprises (data.gouv.fr)",
         "sourceAddresses": "Fonte: Base Adresse Nationale (Géoplateforme IGN)"
+      },
+      "heading": "Clienti",
+      "stats": {
+        "clients": "Clienti"
       }
     },
     "tabs": {
@@ -675,6 +690,9 @@
     },
     "stats": {
       "openTasks": "Attività aperte"
+    },
+    "clientPage": {
+      "subtitle": "Consegne, attività, preventivi, fatture, contratti e pagamenti del cliente."
     }
   },
   "company": {
@@ -762,6 +780,16 @@
       "title": "Elenco delle imprese",
       "hint": "Trova la tua impresa: SIRET, ragione sociale e indirizzo vengono compilati. Verifica e salva.",
       "imported": "«{{name}}» importata: verifica e salva."
+    }
+  },
+  "lesankofa": {
+    "heading": "Intelligenza artificiale",
+    "subtitle": "Modelli, attività, infrastruttura e clienti dell’IA Lesankofa.",
+    "stats": {
+      "models": "Modelli attivi",
+      "requests": "Richieste oggi",
+      "tokens": "Token oggi",
+      "clients": "Clienti attivi"
     }
   }
 }

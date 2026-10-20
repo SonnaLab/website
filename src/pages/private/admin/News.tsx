@@ -21,6 +21,8 @@ async function triggerSitemapRefresh(): Promise<void> {
 import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
+import { PageHeader } from '@/components/private/common/PageHeader';
+import { StatCard, StatRow } from '@/components/private/common/StatRow';
 import { DataTable, DataTableHead, DataTableBody, DataTableRow, DataTableTh, DataTableTd, DataTableEmpty, DataTableBulkBar, DataTableSelectTh, DataTableSelectTd } from '@/components/common/DataTable';
 import { Modal } from '@/components/common/Modal';
 import { StatusBadge } from '@/components/common/StatusBadge';
@@ -124,14 +126,8 @@ export default function AdminNews() {
   };
 
   return (
-    <div className="admin-news">
-      <header className="admin-news__header">
-        <div className="admin-news__header-title">
-          <NewsIcon size={22} />
-          <h1>{t('news.title')}</h1>
-        </div>
-        <p className="admin-news__header-sub">{t('news.subtitle')}</p>
-      </header>
+    <div className="dash-page">
+      <PageHeader icon={<PenLineIcon size={26} />} title={t('news.heading')} description={t('news.subtitle')} />
 
       <AdminNewsKpis refreshKey={kpiKey} />
 
@@ -172,23 +168,19 @@ function AdminNewsKpis({ refreshKey }: { refreshKey: number }) {
     return () => { mounted = false; };
   }, [refreshKey]);
 
-  const items = [
-    { label: t('news.overview.stats.published'), value: stats?.published ?? '—' },
-    { label: t('news.overview.stats.drafts'), value: stats?.drafts ?? '—' },
-    { label: t('news.overview.stats.thisWeek'), value: stats?.this_week ?? '—' },
-    { label: t('news.overview.stats.total'), value: stats?.total ?? '—' },
-    { label: t('news.overview.stats.failed'), value: stats?.failed ?? '—', danger: true },
-  ];
-
   return (
-    <div className="admin-news-overview__stats">
-      {items.map(({ label, value, danger }) => (
-        <div key={label} className={`admin-news-overview__stat-card${danger ? ' admin-news-overview__stat-card--danger' : ''}`}>
-          <span className="admin-news-overview__stat-value">{value}</span>
-          <span className="admin-news-overview__stat-label">{label}</span>
-        </div>
-      ))}
-    </div>
+    <StatRow>
+      <StatCard icon={<CheckCircle2Icon size={18} />} label={t('news.overview.stats.published')} value={stats?.published ?? '—'} />
+      <StatCard icon={<PenLineIcon size={18} />} label={t('news.overview.stats.drafts')} value={stats?.drafts ?? '—'} />
+      <StatCard icon={<CalendarDaysIcon size={18} />} label={t('news.overview.stats.thisWeek')} value={stats?.this_week ?? '—'} />
+      <StatCard icon={<NewsIcon size={18} />} label={t('news.overview.stats.total')} value={stats?.total ?? '—'} />
+      <StatCard
+        icon={<AlertTriangleIcon size={18} />}
+        label={t('news.overview.stats.failed')}
+        value={stats?.failed ?? '—'}
+        tone={stats?.failed ? 'danger' : undefined}
+      />
+    </StatRow>
   );
 }
 

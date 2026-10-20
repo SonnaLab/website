@@ -26,11 +26,17 @@
     "location": "Ort",
     "actions": "Aktionen",
     "cancel": "Stornieren",
-    "confirmCancel": "Diesen Termin stornieren?"
+    "confirmCancel": "Diesen Termin stornieren?",
+    "subtitle": "Ihre Termine mit dem SonnaLab-Team.",
+    "stats": {
+      "upcoming": "Anstehend",
+      "past": "Vergangen",
+      "cancelled": "Abgesagt"
+    }
   },
   "billing": {
     "title": "Abrechnung",
-    "subtitle": "Ihre Rechnungen und Angebote",
+    "subtitle": "Ihre SonnaLab-Dokumente ansehen und herunterladen.",
     "quotes": "Angebote",
     "invoices": "Rechnungen",
     "number": "Nummer",
@@ -54,6 +60,11 @@
       "paid": "Bezahlt",
       "overdue": "Überfällig",
       "cancelled": "Storniert"
+    },
+    "heading": "Meine Angebote und Rechnungen",
+    "stats": {
+      "toPay": "Offen",
+      "paid": "Bezahlt"
     }
   },
   "profile": {

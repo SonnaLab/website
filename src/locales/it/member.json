@@ -26,11 +26,17 @@
     "location": "Luogo",
     "actions": "Azioni",
     "cancel": "Annulla",
-    "confirmCancel": "Annullare questo appuntamento?"
+    "confirmCancel": "Annullare questo appuntamento?",
+    "subtitle": "I tuoi appuntamenti con il team SonnaLab.",
+    "stats": {
+      "upcoming": "In arrivo",
+      "past": "Passati",
+      "cancelled": "Annullati"
+    }
   },
   "billing": {
     "title": "Fatturazione",
-    "subtitle": "Le tue fatture e preventivi",
+    "subtitle": "Consulta e scarica i tuoi documenti SonnaLab.",
     "quotes": "Preventivi",
     "invoices": "Fatture",
     "number": "Numero",
@@ -54,6 +60,11 @@
       "paid": "Pagato",
       "overdue": "Scaduto",
       "cancelled": "Annullato"
+    },
+    "heading": "I miei preventivi e fatture",
+    "stats": {
+      "toPay": "Da pagare",
+      "paid": "Pagato"
     }
   },
   "profile": {

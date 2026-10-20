@@ -3,24 +3,15 @@ import { Link, NavLink, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 import {
-  LayoutDashboardIcon,
-  CalendarIcon,
-  ReceiptIcon,
-  ServerIcon,
   LineChartIcon,
-  CookieIcon,
   LogOutIcon,
   ArrowRightIcon,
   GlobeIcon,
   MenuIcon,
   XIcon,
-  NewsIcon,
-  UsersIcon,
-  BrainIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   EyeIcon,
-  TrafficConeIcon,
   UserIcon,
   HotelIcon,
   EllipsisVerticalIcon,
@@ -29,11 +20,8 @@ import {
 import { useAuth } from '@/components/providers/AuthProvider';
 import { ConfirmProvider } from '@/components/common/ConfirmDialog';
 import { getDashboardPath } from '@/utils/auth';
+import { ADMIN_NAV, MEMBER_NAV } from './navigation';
 import sonnaLabLogo from '@/assets/logo/bSonnaLab.png';
-
-// `group`: items of a group sit together; a separator (⋮ collapsed, a line
-// expanded) marks where the next group starts.
-interface NavItem { to: string; label: string; icon: React.ReactNode; end?: boolean; group: number }
 
 export function MemberLayout() {
   const { t }    = useTranslation('member');
@@ -60,24 +48,10 @@ export function MemberLayout() {
 
   const closeSidebar = () => setSidebarOpen(false);
 
-  const memberNav: NavItem[] = [
-    { to: '/dashboard',              end: true, label: t('nav.dashboard'),    icon: <LayoutDashboardIcon size={20} />, group: 1 },
-    { to: '/dashboard/appointments',            label: t('nav.appointments'), icon: <CalendarIcon        size={20} />, group: 2 },
-    { to: '/dashboard/billing',                 label: t('nav.billing'),      icon: <ReceiptIcon         size={20} />, group: 2 },
-  ];
-
-  const adminNav: NavItem[] = [
-    // Pilotage · plateforme · contenus et comptes · activité client.
-    { to: '/admin/dashboard',      end: true, label: tA('nav.dashboard'),      icon: <LayoutDashboardIcon size={20} />, group: 1 },
-    { to: '/admin/infrastructure',            label: tA('nav.infrastructure'), icon: <ServerIcon          size={20} />, group: 2 },
-    { to: '/admin/cookies',                   label: tA('nav.tracking'),       icon: <CookieIcon          size={20} />, group: 2 },
-    { to: '/admin/news',                      label: tA('nav.news'),           icon: <NewsIcon            size={20} />, group: 3 },
-    { to: '/admin/lesankofa',                 label: tA('nav.lesankofa'),      icon: <BrainIcon           size={20} />, group: 3 },
-    { to: '/admin/users',                     label: tA('nav.users'),          icon: <UsersIcon           size={20} />, group: 3 },
-    { to: '/admin/travaux',                   label: tA('nav.travaux'),        icon: <TrafficConeIcon     size={20} />, group: 4 },
-  ];
-
-  const navItems = isAdmin ? adminNav : memberNav;
+  const navItems = (isAdmin ? ADMIN_NAV : MEMBER_NAV).map((item) => ({
+    ...item,
+    label: item.ns === 'admin' ? tA(item.labelKey) : t(item.labelKey),
+  }));
 
   const currentLang = i18n.language?.slice(0, 2) || 'fr';
   const nextLang    = currentLang === 'fr' ? 'en' : 'fr';
@@ -226,7 +200,7 @@ export function MemberLayout() {
                     'dash-nav-link' + (isActive ? ' active' : '')
                   }
                 >
-                  <span className="dash-nav-icon">{item.icon}</span>
+                  <span className="dash-nav-icon"><item.icon size={20} /></span>
                   <span className="dash-nav-label">{item.label}</span>
                 </NavLink>
               </Fragment>
