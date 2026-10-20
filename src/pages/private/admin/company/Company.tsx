@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { HotelIcon } from '@icons';
@@ -9,6 +9,8 @@ import { DocumentPreviewFrame } from '../travaux/DocumentPreviewFrame';
 import { FileDropzone } from '../travaux/FileDropzone';
 import { apiErrorMessage } from '../travaux/format';
 import { LetterheadSheet, type LetterheadZone } from './LetterheadSheet';
+import { LookupInput } from '../travaux/LookupInput';
+import { normalizeCompanyAddress, searchCompanies, type CompanySuggestion } from '@/lib/publicDirectories';
 
 const FIELDS = [
   'name', 'address_line1', 'address_line2', 'postal_code', 'city', 'country', 'phone', 'contact_email', 'website',
@@ -121,6 +123,39 @@ export default function Company() {
 
   const setField = (name: Field, value: string) => setForm((f) => ({ ...f, [name]: value }));
 
+  // Annuaire des entreprises → SIRET, raison sociale et adresse (le nom de
+  // marque reste) ; l'adresse publiée en capitales passe ensuite en graphie
+  // BAN, sauf si on l'a modifiée entre-temps. Rien n'est enregistré avant
+  // « Enregistrer ».
+  const [companyQuery, setCompanyQuery] = useState('');
+  const [imported, setImported] = useState('');
+  const normalizing = useRef<AbortController | null>(null);
+  function importCompany(c: CompanySuggestion) {
+    setForm((f) => ({
+      ...f,
+      siret: c.siret ?? c.siren,
+      legal_name: c.name,
+      address_line1: c.street,
+      postal_code: c.postal_code,
+      city: c.city,
+      country: c.country,
+    }));
+    setCompanyQuery('');
+    setImported(c.name);
+    setZone('footer');
+    normalizing.current?.abort();
+    const controller = new AbortController();
+    normalizing.current = controller;
+    normalizeCompanyAddress(c, controller.signal)
+      .then((a) => setForm((f) => ({
+        ...f,
+        address_line1: f.address_line1 === c.street ? a.street : f.address_line1,
+        postal_code: f.postal_code === c.postal_code ? a.postal_code : f.postal_code,
+        city: f.city === c.city ? a.city : f.city,
+      })))
+      .catch(() => { /* adresse publiée conservée */ });
+  }
+
   function reset() {
     setForm(savedForm);
     setLogo(null);
@@ -173,6 +208,42 @@ export default function Company() {
             <p className="trv-muted co-panel__loading">{t('company.loading')}</p>
           ) : (
             <div className="co-panel__scroll">
+              <div className="co-section">
+                <h2 className="co-section__title">{t('company.lookup.title')}</h2>
+                <p className="co-section__hint">{t('company.lookup.hint')}</p>
+                <div className="adm-form__field">
+                  <label className="adm-form__label" htmlFor="co-lookup">{t('travaux.clients.lookup.companyLabel')}</label>
+                  <LookupInput
+                    id="co-lookup"
+                    value={companyQuery}
+                    onChange={setCompanyQuery}
+                    search={searchCompanies}
+                    onPick={importCompany}
+                    itemKey={(c) => c.key}
+                    placeholder={t('travaux.clients.lookup.companyPlaceholder')}
+                    labels={{
+                      loading: t('travaux.clients.lookup.loading'),
+                      empty: t('travaux.clients.lookup.empty'),
+                      error: t('travaux.clients.lookup.error'),
+                    }}
+                    source={t('travaux.clients.lookup.sourceCompanies')}
+                    renderItem={(c) => (
+                      <>
+                        <span className="trv-lookup__title">
+                          {c.name}
+                          {c.closed && <span className="trv-lookup__badge">{t('travaux.clients.lookup.closed')}</span>}
+                        </span>
+                        <span className="trv-lookup__meta">
+                          {c.siret ? `SIRET ${c.siret}` : `SIREN ${c.siren}`}
+                          {c.isHeadOffice ? ` · ${t('travaux.clients.lookup.headOffice')}` : ''}
+                        </span>
+                        {c.address && <span className="trv-lookup__meta">{c.address}</span>}
+                      </>
+                    )}
+                  />
+                  {imported && <p className="trv-lookup__imported">{t('company.lookup.imported', { name: imported })}</p>}
+                </div>
+              </div>
               {SECTIONS.map((section) => (
                 <div
                   key={section.key}

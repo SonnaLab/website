@@ -743,6 +743,11 @@
       "vat_number": "FR00 920978210",
       "iban": "FR76 …",
       "bic": "BNPAFRPP"
+    },
+    "lookup": {
+      "title": "Unternehmensverzeichnis",
+      "hint": "Finden Sie Ihr Unternehmen: SIRET, Firmenname und Adresse werden ausgefüllt. Prüfen und speichern.",
+      "imported": "„{{name}}“ übernommen: prüfen und speichern."
     }
   }
 }

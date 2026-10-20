@@ -744,6 +744,11 @@
       "vat_number": "FR00 920978210",
       "iban": "FR76 …",
       "bic": "BNPAFRPP"
+    },
+    "lookup": {
+      "title": "Annuaire des entreprises",
+      "hint": "Retrouvez votre entreprise : SIRET, raison sociale et adresse se remplissent. Vérifiez puis enregistrez.",
+      "imported": "« {{name}} » importée : vérifiez puis enregistrez."
     }
   }
 }
