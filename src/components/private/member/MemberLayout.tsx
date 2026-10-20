@@ -187,7 +187,7 @@ export function MemberLayout() {
               <Fragment key={item.to}>
                 {i > 0 && item.group !== navItems[i - 1].group && (
                   <div className="dash-nav-sep" aria-hidden="true">
-                    <EllipsisVerticalIcon size={14} className="dash-nav-sep__icon" />
+                    <EllipsisVerticalIcon size={12} className="dash-nav-sep__icon" />
                     <span className="dash-nav-sep__line" />
                   </div>
                 )}
@@ -200,7 +200,7 @@ export function MemberLayout() {
                     'dash-nav-link' + (isActive ? ' active' : '')
                   }
                 >
-                  <span className="dash-nav-icon"><item.icon size={24} /></span>
+                  <span className="dash-nav-icon"><item.icon size={20} /></span>
                   <span className="dash-nav-label">{item.label}</span>
                 </NavLink>
               </Fragment>

@@ -18,12 +18,13 @@
   --dash-topbar-border:     #000000;
 
   /* Navigation */
-  --dash-nav-fg:            #555;
-  --dash-nav-hover-bg:      #f3f4f6;
-  --dash-nav-hover-fg:      #111;
-  /* Active menu (as on Élance): light tile, black 3px bar on its left. */
-  --dash-nav-active-bg:     #eef0f2;
-  --dash-nav-active-fg:     #111111;
+  --dash-nav-fg:            #666666;
+  --dash-nav-hover-bg:      #f5f5f3;
+  --dash-nav-hover-fg:      #111111;
+  /* Active menu (as on Lebocheur): a tinted pill, the brand's 5px bar on the
+     sidebar's edge — SonnaLab's brand being black. */
+  --dash-nav-active-bg:     rgba(17, 17, 17, 0.07);
+  --dash-nav-active-fg:     #0f0f0f;
   --dash-nav-active-bar:    #111111;
   --dash-nav-section-fg:    #9ca3af;
   --dash-nav-radius:        6px;
@@ -408,11 +409,11 @@
   --dash-sidebar-border: #e8eaed;
   --dash-topbar-bg: #ffffff;
   --dash-topbar-border: #e8eaed;
-  --dash-nav-fg: #4b5563;
-  --dash-nav-hover-bg: #f3f4f6;
-  --dash-nav-hover-fg: #000000;
-  --dash-nav-active-bg: #eef0f2;
-  --dash-nav-active-fg: #111111;
+  --dash-nav-fg: #666666;
+  --dash-nav-hover-bg: #f5f5f3;
+  --dash-nav-hover-fg: #111111;
+  --dash-nav-active-bg: rgba(17, 17, 17, 0.07);
+  --dash-nav-active-fg: #0f0f0f;
   --dash-nav-active-bar: #111111;
   --dash-nav-radius: 6px;
 }
@@ -596,9 +597,10 @@
 }
 
 .dash-sidebar__nav {
-  align-items: center;
-  padding: 14px 0;
-  gap: 6px;
+  align-items: stretch;
+  /* No side padding: rows span the column, the accent bar sits on its edge. */
+  padding: 12px 0;
+  gap: 2px;
 }
 
 .dash-sidebar__footer {
@@ -609,49 +611,115 @@
   padding: 12px;
 }
 
-/* Collapsed: a 48px square, its icon centred in the 72px column (the link
- * used to be wider than the column). Expanded: a full-width row. */
+/* Nav item, as on Lebocheur: a full-width row whose rounded pill (::before)
+ * shows on hover and when active; the active one also gets the brand's
+ * accent bar (::after) on the sidebar's left edge. Collapsed, the icon is
+ * centred in the column; expanded, the label follows it. */
 .dash-nav-link {
+  position: relative;
   justify-content: center;
   /* No gap to the hidden label, or the icon shifts off centre. */
   gap: 0;
-  width: 48px;
-  min-height: 48px;
+  width: 100%;
+  height: 44px;
+  min-height: 44px;
   padding: 0;
-  border-radius: var(--dash-nav-radius);
+  border-radius: 0;
+  background: transparent;
   color: var(--dash-nav-fg);
-  overflow: hidden;
+  font-size: 14px;
+  font-weight: 500;
   white-space: nowrap;
+  transition: color 0.18s ease, padding var(--dash-sidebar-transition), gap var(--dash-sidebar-transition);
+}
+
+.dash-nav-link::before {
+  content: '';
+  position: absolute;
+  inset: 3px 6px;
+  z-index: 0;
+  border-radius: 10px;
+  background: transparent;
+  transition: background 0.18s ease;
 }
 
 .dash-shell[data-sidebar-expanded="true"] .dash-nav-link {
   justify-content: flex-start;
-  gap: 12px;
-  width: 100%;
-  min-height: 46px;
-  padding: 0 12px;
+  gap: 15px;
+  padding: 0 15px;
+}
+
+.dash-shell[data-sidebar-expanded="true"] .dash-nav-link::before {
+  inset: 2px 8px;
+}
+
+.dash-nav-link:hover,
+.dash-nav-link.active,
+.dash-nav-link.active:hover {
+  background: transparent;
+  box-shadow: none;
+}
+
+.dash-nav-link:hover {
+  color: var(--dash-nav-hover-fg);
+}
+
+.dash-nav-link:hover::before {
+  background: var(--dash-nav-hover-bg);
+}
+
+.dash-nav-link.active,
+.dash-nav-link.active:hover {
+  color: var(--dash-nav-active-fg);
+  font-weight: 600;
+}
+
+.dash-nav-link.active::before {
+  background: var(--dash-nav-active-bg);
+}
+
+.dash-nav-link.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  width: 5px;
+  border-radius: 0 4px 4px 0;
+  background: var(--dash-nav-active-bar);
 }
 
 /* The icon in a fixed box, so labels line up whatever the drawing. */
 .dash-nav-icon {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
 }
 
-/* Between two groups: ⋮ when collapsed, a thin line when expanded (as in
- * Lebocheur). */
+.dash-nav-link svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  opacity: 1;
+  stroke-width: 1.8;
+}
+
+/* Between two groups: ⋮ when collapsed, a thin line when expanded. */
 .dash-nav-sep {
   display: flex;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 18px;
-  color: #9ca3af;
+  height: 24px;
+  color: var(--dash-nav-fg);
+  opacity: 0.35;
   pointer-events: none;
 }
 
@@ -663,7 +731,7 @@
 }
 
 .dash-shell[data-sidebar-expanded="true"] .dash-nav-sep {
-  padding: 0 6px;
+  padding: 0 16px;
 }
 
 .dash-shell[data-sidebar-expanded="true"] .dash-nav-sep__icon {
@@ -674,41 +742,13 @@
   display: block;
 }
 
-.dash-shell[data-sidebar-expanded="true"] .dash-sidebar__nav {
-  align-items: stretch;
-  padding: 14px 12px;
-  gap: 4px;
-}
-
 .dash-shell[data-sidebar-expanded="true"] .dash-sidebar__footer {
   align-items: stretch;
 }
 
-.dash-nav-link:hover {
-  background: var(--dash-nav-hover-bg);
-  color: var(--dash-nav-hover-fg);
-}
-
-.dash-nav-link.active,
-.dash-nav-link.active:hover {
-  background: var(--dash-nav-active-bg);
-  color: var(--dash-nav-active-fg);
-  font-weight: 600;
-  box-shadow: inset 3px 0 0 var(--dash-nav-active-bar);
-}
-
-.dash-nav-link.active:hover {
-  background: #e6e8eb;
-}
-
-.dash-nav-link svg {
-  display: block;
-  width: 24px;
-  height: 24px;
-  opacity: 1;
-}
-
 .dash-nav-label {
+  position: relative;
+  z-index: 1;
   display: inline-block;
   max-width: 0;
   opacity: 0;
@@ -795,7 +835,29 @@
   }
 
   .dash-nav-link,
-  .dash-shell[data-sidebar-expanded="true"] .dash-nav-link,
+  .dash-shell[data-sidebar-expanded="true"] .dash-nav-link {
+    justify-content: flex-start;
+    gap: 15px;
+    padding: 0 15px;
+  }
+
+  .dash-nav-link::before,
+  .dash-shell[data-sidebar-expanded="true"] .dash-nav-link::before {
+    inset: 2px 8px;
+  }
+
+  .dash-nav-sep {
+    padding: 0 16px;
+  }
+
+  .dash-nav-sep__icon {
+    display: none;
+  }
+
+  .dash-nav-sep__line {
+    display: block;
+  }
+
   .dash-footer-link,
   .dash-shell[data-sidebar-expanded="true"] .dash-footer-link {
     justify-content: flex-start;
