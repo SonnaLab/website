@@ -661,6 +661,9 @@
       "schedule": "Calendario",
       "zoomIn": "Acercar",
       "zoomOut": "Alejar"
+    },
+    "stats": {
+      "openTasks": "Tareas abiertas"
     }
   },
   "company": {

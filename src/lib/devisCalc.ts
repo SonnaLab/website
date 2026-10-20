@@ -32,11 +32,20 @@ export function remainingDaysUntil(dueDate: string, from: Date = new Date()): nu
 /**
  * Répartit le temps restant jusqu'à l'échéance entre les tâches d'un livrable,
  * au prorata de leur score d'effort (1-5), puis valorise chaque part au TJM.
+ * `issuedOn` (aaaa-mm-jj) : un document déjà émis se calcule depuis sa date
+ * d'émission, pas depuis aujourd'hui — sinon ses phases changeraient, puis
+ * disparaîtraient une fois l'échéance passée. Sans date : aujourd'hui.
  */
-export function calculateDevis(tasks: TravauxTask[], dueDate: string | null, dailyRate: number | null): DevisCalculation {
+export function calculateDevis(
+  tasks: TravauxTask[],
+  dueDate: string | null,
+  dailyRate: number | null,
+  issuedOn?: string | null,
+): DevisCalculation {
   const scoredTasks = tasks.filter((t) => t.score != null && !Number.isNaN(Number(t.score)));
   const totalScore = scoredTasks.reduce((sum, t) => sum + Number(t.score), 0);
-  const remainingDays = dueDate ? remainingDaysUntil(dueDate) : 0;
+  const from = issuedOn ? new Date(`${issuedOn}T00:00:00`) : new Date();
+  const remainingDays = dueDate ? remainingDaysUntil(dueDate, from) : 0;
   const rate = Number(dailyRate ?? 0);
 
   if (!scoredTasks.length || totalScore <= 0 || !remainingDays) {

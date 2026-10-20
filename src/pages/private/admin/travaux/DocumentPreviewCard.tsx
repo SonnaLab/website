@@ -13,6 +13,8 @@ export interface DocumentPreviewData {
   /** Montant enregistré, en euros — utilisé quand aucune répartition n'est calculable. */
   amount: number | null;
   dueDate: string | null;
+  /** Issue date: the phases are computed from it. */
+  issuedOn?: string | null;
   dailyRate: number | null;
   objective: TravauxObjective | null;
   /** Tâches du livrable : la répartition jours/prix est recalculée en direct. */
@@ -47,7 +49,7 @@ function PartyBlock({ party, label }: { party: TravauxClient | null; label: stri
  */
 export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
   const { t } = useTranslation('admin');
-  const calc = data.objective ? calculateDevis(data.tasks, data.dueDate, data.dailyRate) : null;
+  const calc = data.objective ? calculateDevis(data.tasks, data.dueDate, data.dailyRate, data.issuedOn) : null;
   const hasAllocations = !!calc && calc.allocations.length > 0;
   const deliverableTitle = data.objective?.title || data.title || '—';
   const bank = bankLine(data.issuer);

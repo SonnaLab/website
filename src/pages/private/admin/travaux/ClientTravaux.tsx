@@ -13,7 +13,7 @@ import {
 } from '@icons';
 import type { TravauxInvoice } from '@/types/travaux';
 import { Breadcrumbs } from '@/components/private/common/Breadcrumbs';
-import { ClientAvatar } from './ClientAvatar';
+import { formatCents } from './format';
 import { ContractsTab } from './ContractsTab';
 import { InvoicesTab } from './InvoicesTab';
 import { ObjectivesTab } from './ObjectivesTab';
@@ -63,28 +63,31 @@ export default function AdminClientTravaux() {
 
   if (!clientId) return null;
   const { client } = data;
+  // Same figures as the clients table (API stats_for), plus the open tasks.
+  const invoiced = data.invoices
+    .filter((i) => i.kind === 'invoice' && !['draft', 'cancelled'].includes(i.status))
+    .reduce((sum, i) => sum + i.amount_cents, 0);
+  const paid = data.payments.filter((p) => p.status === 'completed').reduce((sum, p) => sum + p.amount_cents, 0);
+  const stats: { label: string; value: string | number; danger?: boolean }[] = [
+    { label: t('travaux.clients.table.projects'), value: data.projects.length },
+    { label: t('travaux.clients.table.inProgress'), value: data.objectives.filter((o) => o.status !== 'done').length },
+    { label: t('travaux.stats.openTasks'), value: data.tasks.filter((task) => task.column !== 'done').length },
+    { label: t('travaux.clients.table.invoiced'), value: formatCents(invoiced) },
+    { label: t('travaux.clients.table.paid'), value: formatCents(paid) },
+  ];
 
   return (
     <div className="space-y-6">
       <Breadcrumbs items={[{ label: t('nav.travaux'), to: '/admin/travaux' }, { label: client?.name ?? '…' }]} />
 
-      <div className="trv-header-row">
-        <header className="trk-header">
-          <div className="trk-header__title">
-            {client ? <ClientAvatar client={client} size="lg" /> : null}
-            <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">{client?.name ?? '…'}</h1>
+      {/* The client's figures, as on the News page (its name is in the trail). */}
+      <div className="admin-news-overview__stats">
+        {stats.map(({ label, value, danger }) => (
+          <div key={label} className={`admin-news-overview__stat-card${danger ? ' admin-news-overview__stat-card--danger' : ''}`}>
+            <span className="admin-news-overview__stat-value">{data.loading ? '—' : value}</span>
+            <span className="admin-news-overview__stat-label">{label}</span>
           </div>
-          {client && (
-            <p className="mt-1 text-muted-foreground text-sm">
-              {[client.siret && `SIRET ${client.siret}`, client.contact_email].filter(Boolean).join(' · ') || t('travaux.subtitle')}
-            </p>
-          )}
-        </header>
-        <div className="trv-header-actions">
-          <button type="button" className="adm-btn adm-btn--primary" onClick={() => refs[tab].current?.openNew()}>
-            <PlusIcon size={14} /> {NEW_LABEL[tab]}
-          </button>
-        </div>
+        ))}
       </div>
 
       {data.error && <p className="trv-error">{t('common.error')}</p>}
@@ -92,13 +95,18 @@ export default function AdminClientTravaux() {
         <p className="trk-loading">{t('common.loading')}</p>
       ) : (
         <Tabs value={tab} onValueChange={setTab}>
-          <TabsList>
-            <TabsTrigger value="objectives" icon={<TargetIcon size={14} />} count={data.objectives.length}>{t('travaux.tabs.objectives')}</TabsTrigger>
-            <TabsTrigger value="tracking" icon={<KanbanIcon size={14} />} count={data.tasks.length}>{t('travaux.tabs.tracking')}</TabsTrigger>
-            <TabsTrigger value="invoices" icon={<ReceiptIcon size={14} />} count={data.invoices.length}>{t('travaux.tabs.invoices')}</TabsTrigger>
-            <TabsTrigger value="contracts" icon={<FileSignatureIcon size={14} />} count={data.contracts.length}>{t('travaux.tabs.contracts')}</TabsTrigger>
-            <TabsTrigger value="payments" icon={<WalletIcon size={14} />} count={data.payments.length}>{t('travaux.tabs.payments')}</TabsTrigger>
-          </TabsList>
+          <div className="trv-tabs-bar">
+            <TabsList>
+              <TabsTrigger value="objectives" icon={<TargetIcon size={14} />} count={data.objectives.length}>{t('travaux.tabs.objectives')}</TabsTrigger>
+              <TabsTrigger value="tracking" icon={<KanbanIcon size={14} />} count={data.tasks.length}>{t('travaux.tabs.tracking')}</TabsTrigger>
+              <TabsTrigger value="invoices" icon={<ReceiptIcon size={14} />} count={data.invoices.length}>{t('travaux.tabs.invoices')}</TabsTrigger>
+              <TabsTrigger value="contracts" icon={<FileSignatureIcon size={14} />} count={data.contracts.length}>{t('travaux.tabs.contracts')}</TabsTrigger>
+              <TabsTrigger value="payments" icon={<WalletIcon size={14} />} count={data.payments.length}>{t('travaux.tabs.payments')}</TabsTrigger>
+            </TabsList>
+            <button type="button" className="adm-btn adm-btn--primary" onClick={() => refs[tab].current?.openNew()}>
+              <PlusIcon size={14} /> {NEW_LABEL[tab]}
+            </button>
+          </div>
 
           <TabsContent value="objectives">
             <ObjectivesTab

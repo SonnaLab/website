@@ -114,10 +114,7 @@ export default function AdminTravauxClients() {
             <DataTableRow>
               <DataTableTh>{t('travaux.clients.table.client')}</DataTableTh>
               <DataTableTh>{t('travaux.clients.table.referent')}</DataTableTh>
-              <DataTableTh>{t('travaux.clients.table.projects')}</DataTableTh>
-              <DataTableTh>{t('travaux.clients.table.inProgress')}</DataTableTh>
-              <DataTableTh>{t('travaux.clients.table.invoiced')}</DataTableTh>
-              <DataTableTh>{t('travaux.clients.table.paid')}</DataTableTh>
+              <DataTableTh>{t('nav.travaux')}</DataTableTh>
               <DataTableTh>{t('travaux.clients.table.actions')}</DataTableTh>
             </DataTableRow>
           </DataTableHead>
@@ -125,7 +122,8 @@ export default function AdminTravauxClients() {
             {loading && <DataTableEmpty label={t('common.loading')} />}
             {!loading && clients.length === 0 && <DataTableEmpty icon={<UsersIcon size={28} />} label={t('travaux.clients.empty')} />}
             {!loading && clients.map((c) => (
-              <DataTableRow key={c.id}>
+              // The whole row opens the client's Travaux (but its actions).
+              <DataTableRow key={c.id} onClick={() => navigate(`/admin/travaux/${c.id}`)}>
                 <DataTableTd>
                   <div className="trv-client-cell">
                     <ClientAvatar client={c} />
@@ -139,11 +137,23 @@ export default function AdminTravauxClients() {
                   <div>{referentOf(c) || '—'}</div>
                   {(c.referent_email || c.contact_email) && <div className="trv-muted">{c.referent_email || c.contact_email}</div>}
                 </DataTableTd>
-                <DataTableTd className="trv-num">{c.stats?.projects_count ?? 0}</DataTableTd>
-                <DataTableTd className="trv-num">{c.stats?.objectives_in_progress ?? 0}</DataTableTd>
-                <DataTableTd className="trv-num">{formatCents(c.stats?.invoiced_cents)}</DataTableTd>
-                <DataTableTd className="trv-num">{formatCents(c.stats?.paid_cents)}</DataTableTd>
                 <DataTableTd>
+                  {/* Projects, deliverables in progress, invoiced, paid — on one line. */}
+                  <div className="trv-inline-stats">
+                    {[
+                      [t('travaux.clients.table.projects'), c.stats?.projects_count ?? 0],
+                      [t('travaux.clients.table.inProgress'), c.stats?.objectives_in_progress ?? 0],
+                      [t('travaux.clients.table.invoiced'), formatCents(c.stats?.invoiced_cents)],
+                      [t('travaux.clients.table.paid'), formatCents(c.stats?.paid_cents)],
+                    ].map(([label, value]) => (
+                      <span key={String(label)} className="trv-inline-stats__item">
+                        <span className="trv-inline-stats__label">{label}</span>
+                        <strong className="trv-num">{value}</strong>
+                      </span>
+                    ))}
+                  </div>
+                </DataTableTd>
+                <DataTableTd onClick={(e) => e.stopPropagation()}>
                   <div className="adm-table__actions">
                     <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title={t('travaux.clients.actions.view')} onClick={() => setViewId(c.id)}>
                       <EyeIcon size={13} />

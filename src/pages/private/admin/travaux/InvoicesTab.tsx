@@ -101,6 +101,7 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
     title: invoice.title,
     amount: invoice.amount_cents / 100,
     dueDate: invoice.due_on,
+    issuedOn: invoice.issued_on,
     dailyRate: invoice.daily_rate_cents != null ? invoice.daily_rate_cents / 100 : null,
     objective: objectives.find((o) => o.id === invoice.objective_id) ?? null,
     tasks: tasks.filter((task) => task.objective_id === invoice.objective_id),
@@ -397,12 +398,13 @@ function EditInvoiceModal({
   }, [invoice]);
 
   // Avec un livrable dont les tâches sont notées, le montant est calculé (lecture seule).
-  const calc = baseData?.objective ? calculateDevis(baseData.tasks, dueOn || null, dailyRate ? Number(dailyRate) : null) : null;
+  const calc = baseData?.objective ? calculateDevis(baseData.tasks, dueOn || null, dailyRate ? Number(dailyRate) : null, issuedOn || null) : null;
   const computedAmount = calc && calc.allocations.length > 0 ? calc.totalPrice : null;
 
   const liveData: DocumentPreviewData | null = baseData && invoice ? {
     ...baseData,
     dueDate: dueOn || null,
+    issuedOn: issuedOn || null,
     dailyRate: dailyRate ? Number(dailyRate) : null,
     amount: computedAmount ?? (amount ? Number(amount) : invoice.amount_cents / 100),
   } : null;

@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, type MouseEvent, type ReactNode } from 'react';
 
 /* ── Table container ── */
 interface DataTableProps {
@@ -42,8 +42,19 @@ export function DataTableTh({ children, className }: { children: ReactNode; clas
 }
 
 /* ── Data cell ── */
-export function DataTableTd({ children, className, title }: { children: ReactNode; className?: string; title?: string }) {
-  return <td className={['adm-table__td', className].filter(Boolean).join(' ')} title={title}>{children}</td>;
+export function DataTableTd({
+  children,
+  className,
+  title,
+  onClick,
+}: {
+  children: ReactNode;
+  className?: string;
+  title?: string;
+  /** E.g. stop a clickable row from opening when its actions are used. */
+  onClick?: (e: MouseEvent<HTMLTableCellElement>) => void;
+}) {
+  return <td className={['adm-table__td', className].filter(Boolean).join(' ')} title={title} onClick={onClick}>{children}</td>;
 }
 
 /* ── Bulk selection bar (2026-08-13, meme pattern que BaseTable.vue sur

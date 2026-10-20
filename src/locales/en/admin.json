@@ -661,6 +661,9 @@
       "schedule": "Schedule",
       "zoomIn": "Zoom in",
       "zoomOut": "Zoom out"
+    },
+    "stats": {
+      "openTasks": "Open tasks"
     }
   },
   "company": {

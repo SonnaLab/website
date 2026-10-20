@@ -661,6 +661,9 @@
       "schedule": "Zahlungsplan",
       "zoomIn": "Vergrößern",
       "zoomOut": "Verkleinern"
+    },
+    "stats": {
+      "openTasks": "Offene Aufgaben"
     }
   },
   "company": {

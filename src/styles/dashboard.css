@@ -5309,6 +5309,13 @@
 
 /* Client : logo ou initiales */
 .trv-client-cell { display: flex; align-items: center; gap: 10px; min-width: 0; }
+/* Clients table: a client's figures on one line (« Projets 2 · … »). */
+.trv-inline-stats { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; font-size: 13px; }
+.trv-inline-stats__item { display: inline-flex; align-items: baseline; gap: 5px; white-space: nowrap; }
+.trv-inline-stats__label { color: #9ca3af; font-size: 12px; }
+.trv-inline-stats__item strong { font-weight: 600; color: #111111; }
+/* Client page: the tabs, and the current tab's « Nouveau … » on the right. */
+.trv-tabs-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
 .trv-client-cell__name { font-weight: 600; color: #111111; }
 .trv-avatar { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 32px; height: 32px; border-radius: 999px; background: #111111; color: #ffffff; font-size: 12px; font-weight: 700; }
 .trv-avatar--lg { width: 44px; height: 44px; font-size: 15px; }

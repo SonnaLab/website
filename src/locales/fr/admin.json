@@ -662,6 +662,9 @@
       "schedule": "Échéancier",
       "zoomIn": "Zoom avant",
       "zoomOut": "Zoom arrière"
+    },
+    "stats": {
+      "openTasks": "Tâches ouvertes"
     }
   },
   "company": {

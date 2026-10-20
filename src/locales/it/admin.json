@@ -661,6 +661,9 @@
       "schedule": "Scadenzario",
       "zoomIn": "Ingrandisci",
       "zoomOut": "Riduci"
+    },
+    "stats": {
+      "openTasks": "Attività aperte"
     }
   },
   "company": {
