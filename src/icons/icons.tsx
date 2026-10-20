@@ -284,6 +284,17 @@ export function ChevronRightIcon(p: IconProps) {
   );
 }
 
+// lucide « ellipsis-vertical »: the sidebar's separator when collapsed.
+export function EllipsisVerticalIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <circle cx="12" cy="12" r="1" />
+      <circle cx="12" cy="5" r="1" />
+      <circle cx="12" cy="19" r="1" />
+    </svg>
+  );
+}
+
 export function TargetIcon(p: IconProps) {
   return (
     <svg {...svgProps(p)}>

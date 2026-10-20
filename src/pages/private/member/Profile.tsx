@@ -6,6 +6,8 @@ import { UserIcon } from '@icons';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { apiService, type ProfilePayload } from '@/services/api';
 import { Card } from '@/components/ui/card';
+import { Breadcrumbs } from '@/components/private/common/Breadcrumbs';
+import { getDashboardPath } from '@/utils/auth';
 
 const LANGUAGES = ['fr', 'en'] as const;
 
@@ -46,6 +48,8 @@ export default function Profile() {
 
   return (
     <div className="space-y-6">
+      {/* Reached from the avatar menu: the way back to the dashboard. */}
+      <Breadcrumbs items={[{ label: t('nav.dashboard'), to: getDashboardPath(user?.role) }, { label: t('profile.title') }]} />
       <header className="trk-header">
         <div className="trk-header__title">
           <UserIcon size={22} className="trk-header__icon" />

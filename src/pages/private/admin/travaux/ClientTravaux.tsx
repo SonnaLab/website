@@ -1,10 +1,9 @@
 import { useCallback, useRef, useState } from 'react';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/common/Tabs';
 import {
-  ArrowLeftIcon,
   FileSignatureIcon,
   KanbanIcon,
   PlusIcon,
@@ -13,6 +12,7 @@ import {
   WalletIcon,
 } from '@icons';
 import type { TravauxInvoice } from '@/types/travaux';
+import { Breadcrumbs } from '@/components/private/common/Breadcrumbs';
 import { ClientAvatar } from './ClientAvatar';
 import { ContractsTab } from './ContractsTab';
 import { InvoicesTab } from './InvoicesTab';
@@ -66,7 +66,7 @@ export default function AdminClientTravaux() {
 
   return (
     <div className="space-y-6">
-      <Link to="/admin/travaux" className="trv-back"><ArrowLeftIcon size={14} /> {t('travaux.common.back')}</Link>
+      <Breadcrumbs items={[{ label: t('nav.travaux'), to: '/admin/travaux' }, { label: client?.name ?? '…' }]} />
 
       <div className="trv-header-row">
         <header className="trk-header">

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { Fragment, useState, useRef, useEffect } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -23,13 +23,16 @@ import {
   TrafficConeIcon,
   UserIcon,
   HotelIcon,
+  EllipsisVerticalIcon,
 } from '@icons';
 
 import { useAuth } from '@/components/providers/AuthProvider';
 import { getDashboardPath } from '@/utils/auth';
 import sonnaLabLogo from '@/assets/logo/bSonnaLab.png';
 
-interface NavItem { to: string; label: string; icon: React.ReactNode; end?: boolean }
+// `group`: items of a group sit together; a separator (⋮ collapsed, a line
+// expanded) marks where the next group starts.
+interface NavItem { to: string; label: string; icon: React.ReactNode; end?: boolean; group: number }
 
 export function MemberLayout() {
   const { t }    = useTranslation('member');
@@ -57,19 +60,20 @@ export function MemberLayout() {
   const closeSidebar = () => setSidebarOpen(false);
 
   const memberNav: NavItem[] = [
-    { to: '/dashboard',              end: true, label: t('nav.dashboard'),    icon: <LayoutDashboardIcon size={16} /> },
-    { to: '/dashboard/appointments',            label: t('nav.appointments'), icon: <CalendarIcon        size={16} /> },
-    { to: '/dashboard/billing',                 label: t('nav.billing'),      icon: <ReceiptIcon         size={16} /> },
+    { to: '/dashboard',              end: true, label: t('nav.dashboard'),    icon: <LayoutDashboardIcon size={20} />, group: 1 },
+    { to: '/dashboard/appointments',            label: t('nav.appointments'), icon: <CalendarIcon        size={20} />, group: 2 },
+    { to: '/dashboard/billing',                 label: t('nav.billing'),      icon: <ReceiptIcon         size={20} />, group: 2 },
   ];
 
   const adminNav: NavItem[] = [
-    { to: '/admin/dashboard',      end: true, label: tA('nav.dashboard'),      icon: <LayoutDashboardIcon size={16} /> },
-    { to: '/admin/infrastructure',            label: tA('nav.infrastructure'), icon: <ServerIcon          size={16} /> },
-    { to: '/admin/cookies',                   label: tA('nav.tracking'),       icon: <CookieIcon          size={16} /> },
-    { to: '/admin/news',                      label: tA('nav.news'),           icon: <NewsIcon            size={16} /> },
-    { to: '/admin/users',                     label: tA('nav.users'),          icon: <UsersIcon           size={16} /> },
-    { to: '/admin/lesankofa',                  label: tA('nav.lesankofa'),      icon: <BrainIcon           size={16} /> },
-    { to: '/admin/travaux',                   label: tA('nav.travaux'),        icon: <TrafficConeIcon     size={16} /> },
+    // Pilotage · plateforme · contenus et comptes · activité client.
+    { to: '/admin/dashboard',      end: true, label: tA('nav.dashboard'),      icon: <LayoutDashboardIcon size={20} />, group: 1 },
+    { to: '/admin/infrastructure',            label: tA('nav.infrastructure'), icon: <ServerIcon          size={20} />, group: 2 },
+    { to: '/admin/cookies',                   label: tA('nav.tracking'),       icon: <CookieIcon          size={20} />, group: 2 },
+    { to: '/admin/news',                      label: tA('nav.news'),           icon: <NewsIcon            size={20} />, group: 3 },
+    { to: '/admin/lesankofa',                 label: tA('nav.lesankofa'),      icon: <BrainIcon           size={20} />, group: 3 },
+    { to: '/admin/users',                     label: tA('nav.users'),          icon: <UsersIcon           size={20} />, group: 3 },
+    { to: '/admin/travaux',                   label: tA('nav.travaux'),        icon: <TrafficConeIcon     size={20} />, group: 4 },
   ];
 
   const navItems = isAdmin ? adminNav : memberNav;
@@ -204,20 +208,27 @@ export function MemberLayout() {
           onMouseLeave={() => setSidebarHover(false)}
         >
           <nav className="dash-sidebar__nav">
-            {navItems.map(item => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                end={item.end}
-                onClick={closeSidebar}
-                title={sidebarExpanded ? undefined : item.label}
-                className={({ isActive }) =>
-                  'dash-nav-link' + (isActive ? ' active' : '')
-                }
-              >
-                {item.icon}
-                <span className="dash-nav-label">{item.label}</span>
-              </NavLink>
+            {navItems.map((item, i) => (
+              <Fragment key={item.to}>
+                {i > 0 && item.group !== navItems[i - 1].group && (
+                  <div className="dash-nav-sep" aria-hidden="true">
+                    <EllipsisVerticalIcon size={14} className="dash-nav-sep__icon" />
+                    <span className="dash-nav-sep__line" />
+                  </div>
+                )}
+                <NavLink
+                  to={item.to}
+                  end={item.end}
+                  onClick={closeSidebar}
+                  title={sidebarExpanded ? undefined : item.label}
+                  className={({ isActive }) =>
+                    'dash-nav-link' + (isActive ? ' active' : '')
+                  }
+                >
+                  <span className="dash-nav-icon">{item.icon}</span>
+                  <span className="dash-nav-label">{item.label}</span>
+                </NavLink>
+              </Fragment>
             ))}
           </nav>
 

@@ -606,12 +606,16 @@
   padding: 12px;
 }
 
+/* Collapsed: a 44px square, its icon centred in the 72px column (the link
+ * used to be wider than the column). Expanded: a full-width row. */
 .dash-nav-link {
   justify-content: center;
-  gap: 12px;
-  width: 80px;
-  min-height: 50px;
+  /* No gap to the hidden label, or the icon shifts off centre. */
+  gap: 0;
+  width: 44px;
+  min-height: 44px;
   padding: 0;
+  border-radius: var(--dash-nav-radius);
   color: var(--dash-nav-fg);
   overflow: hidden;
   white-space: nowrap;
@@ -619,9 +623,52 @@
 
 .dash-shell[data-sidebar-expanded="true"] .dash-nav-link {
   justify-content: flex-start;
+  gap: 12px;
   width: 100%;
   min-height: 42px;
-  padding: 10px 14px;
+  padding: 0 12px;
+}
+
+/* The icon in a fixed box, so labels line up whatever the drawing. */
+.dash-nav-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+}
+
+/* Between two groups: ⋮ when collapsed, a thin line when expanded (as in
+ * Lebocheur). */
+.dash-nav-sep {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 18px;
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.dash-nav-sep__line {
+  display: none;
+  flex: 1;
+  height: 1px;
+  background: var(--dash-sidebar-border);
+}
+
+.dash-shell[data-sidebar-expanded="true"] .dash-nav-sep {
+  padding: 0 6px;
+}
+
+.dash-shell[data-sidebar-expanded="true"] .dash-nav-sep__icon {
+  display: none;
+}
+
+.dash-shell[data-sidebar-expanded="true"] .dash-nav-sep__line {
+  display: block;
 }
 
 .dash-shell[data-sidebar-expanded="true"] .dash-sidebar__nav {
@@ -646,6 +693,7 @@
 }
 
 .dash-nav-link svg {
+  display: block;
   width: 20px;
   height: 20px;
   opacity: 1;
@@ -666,6 +714,7 @@
 
 .dash-footer-link {
   justify-content: center;
+  gap: 0;
   width: 48px;
   min-height: 44px;
   margin-top: 0;
@@ -683,6 +732,7 @@
 
 .dash-shell[data-sidebar-expanded="true"] .dash-footer-link {
   justify-content: flex-start;
+  gap: 10px;
   width: 100%;
   padding: 9px 12px;
 }
@@ -740,6 +790,7 @@
   .dash-footer-link,
   .dash-shell[data-sidebar-expanded="true"] .dash-footer-link {
     justify-content: flex-start;
+    gap: 12px;
     width: 100%;
     padding: 9px 12px;
   }
@@ -5491,3 +5542,96 @@
 .trv-lookup__status { padding: 8px 10px; font-size: 12px; color: #6b7280; }
 .trv-lookup__source { margin: 0; padding: 6px 12px; border-top: 1px solid #f0f0f0; font-size: 11px; color: #9ca3af; }
 .trv-lookup__imported { margin: 0; font-size: 12px; color: #047857; }
+
+/* ================================================================
+   Breadcrumbs (components/private/common/Breadcrumbs) — as in the
+   Élance VAE staff app: back arrow, levels, the current one in bold.
+   ================================================================ */
+.dash-crumbs {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.dash-crumbs__back {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: var(--dash-nav-radius);
+  background: var(--dash-nav-active-bg);
+  color: var(--dash-nav-active-fg);
+  cursor: pointer;
+  transition: opacity 120ms ease;
+}
+
+.dash-crumbs__back:hover {
+  opacity: 0.85;
+}
+
+.dash-crumbs__list {
+  display: flex;
+  min-width: 0;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+}
+
+.dash-crumbs__item {
+  display: flex;
+  min-width: 0;
+  flex-shrink: 1;
+  align-items: center;
+  gap: 4px;
+}
+
+.dash-crumbs__sep {
+  flex-shrink: 0;
+  color: #9ca3af;
+}
+
+.dash-crumbs__link,
+.dash-crumbs__current {
+  max-width: 220px;
+  padding: 2px 6px;
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--dash-nav-radius);
+  background: transparent;
+  font: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dash-crumbs__link {
+  color: #6b7280;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.dash-crumbs__link:hover {
+  background: var(--dash-nav-hover-bg);
+  color: #111111;
+}
+
+.dash-crumbs__current {
+  max-width: 420px;
+  font-weight: 500;
+  color: #111111;
+}
+
+@media (max-width: 640px) {
+  .dash-crumbs__link { max-width: 140px; }
+  .dash-crumbs__current { max-width: 220px; }
+}
+

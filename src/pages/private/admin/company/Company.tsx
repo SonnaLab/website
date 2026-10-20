@@ -10,6 +10,7 @@ import { FileDropzone } from '../travaux/FileDropzone';
 import { apiErrorMessage } from '../travaux/format';
 import { LetterheadSheet, type LetterheadZone } from './LetterheadSheet';
 import { LookupInput } from '../travaux/LookupInput';
+import { Breadcrumbs } from '@/components/private/common/Breadcrumbs';
 import { normalizeCompanyAddress, searchCompanies, type CompanySuggestion } from '@/lib/publicDirectories';
 
 const FIELDS = [
@@ -186,6 +187,8 @@ export default function Company() {
 
   return (
     <div className="space-y-6">
+      {/* Issuer of the Travaux documents; reached from the avatar menu. */}
+      <Breadcrumbs items={[{ label: t('nav.travaux'), to: '/admin/travaux' }, { label: t('company.title') }]} />
       <header className="admin-news__header">
         <div className="admin-news__header-title">
           <HotelIcon size={22} />

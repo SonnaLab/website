@@ -39,6 +39,7 @@ export {
   UsersIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  EllipsisVerticalIcon,
   TargetIcon,
   EyeIcon,
   EyeOffIcon,
