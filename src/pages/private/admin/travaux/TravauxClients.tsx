@@ -112,7 +112,8 @@ export default function AdminTravauxClients() {
         <DataTable>
           <DataTableHead>
             <DataTableRow>
-              <DataTableTh>{t('travaux.clients.table.client')}</DataTableTh>
+              <DataTableTh className="trv-col-logo">{t('travaux.clients.table.logo')}</DataTableTh>
+              <DataTableTh>{t('travaux.clients.table.company')}</DataTableTh>
               <DataTableTh>{t('travaux.clients.table.referent')}</DataTableTh>
               <DataTableTh>{t('nav.travaux')}</DataTableTh>
               <DataTableTh>{t('travaux.clients.table.actions')}</DataTableTh>
@@ -124,19 +125,13 @@ export default function AdminTravauxClients() {
             {!loading && clients.map((c) => (
               // The whole row opens the client's Travaux (but its actions).
               <DataTableRow key={c.id} onClick={() => navigate(`/admin/travaux/${c.id}`)}>
-                <DataTableTd>
-                  <div className="trv-client-cell">
-                    <ClientAvatar client={c} />
-                    <div>
-                      <div className="trv-client-cell__name">{c.name}</div>
-                      {c.siret && <div className="trv-muted">SIRET {c.siret}</div>}
-                    </div>
-                  </div>
+                <DataTableTd className="trv-col-logo">
+                  <ClientAvatar client={c} />
                 </DataTableTd>
                 <DataTableTd>
-                  <div>{referentOf(c) || '—'}</div>
-                  {(c.referent_email || c.contact_email) && <div className="trv-muted">{c.referent_email || c.contact_email}</div>}
+                  <span className="trv-client-cell__name">{c.name}</span>
                 </DataTableTd>
+                <DataTableTd>{referentOf(c) || '—'}</DataTableTd>
                 <DataTableTd>
                   {/* Projects, deliverables in progress, invoiced, paid — on one line. */}
                   <div className="trv-inline-stats">

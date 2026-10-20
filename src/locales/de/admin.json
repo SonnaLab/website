@@ -436,7 +436,9 @@
         "inProgress": "Laufende Liefergegenstände",
         "invoiced": "Fakturiert",
         "paid": "Eingegangen",
-        "actions": "Aktionen"
+        "actions": "Aktionen",
+        "logo": "Logo",
+        "company": "Unternehmen"
       },
       "actions": {
         "view": "Details ansehen",

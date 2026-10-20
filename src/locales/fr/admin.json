@@ -437,7 +437,9 @@
         "inProgress": "Livrables en cours",
         "invoiced": "Facturé",
         "paid": "Encaissé",
-        "actions": "Actions"
+        "actions": "Actions",
+        "logo": "Logo",
+        "company": "Entreprise"
       },
       "actions": {
         "view": "Voir la fiche",

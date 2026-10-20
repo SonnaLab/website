@@ -436,7 +436,9 @@
         "inProgress": "Ongoing deliverables",
         "invoiced": "Invoiced",
         "paid": "Collected",
-        "actions": "Actions"
+        "actions": "Actions",
+        "logo": "Logo",
+        "company": "Company"
       },
       "actions": {
         "view": "View details",

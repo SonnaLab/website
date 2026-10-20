@@ -436,7 +436,9 @@
         "inProgress": "Entregables en curso",
         "invoiced": "Facturado",
         "paid": "Cobrado",
-        "actions": "Acciones"
+        "actions": "Acciones",
+        "logo": "Logo",
+        "company": "Empresa"
       },
       "actions": {
         "view": "Ver la ficha",

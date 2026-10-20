@@ -5309,6 +5309,8 @@
 
 /* Client : logo ou initiales */
 .trv-client-cell { display: flex; align-items: center; gap: 10px; min-width: 0; }
+/* Clients table: the logo column only as wide as the logo. */
+.trv-col-logo { width: 1%; white-space: nowrap; }
 /* Clients table: a client's figures on one line (« Projets 2 · … »). */
 .trv-inline-stats { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; font-size: 13px; }
 .trv-inline-stats__item { display: inline-flex; align-items: baseline; gap: 5px; white-space: nowrap; }
