@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState, useCallback } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -17,7 +17,12 @@ import {
 import {
   UsersIcon, LayoutDashboardIcon, ShieldIcon, UserIcon, CheckCircleIcon, LockIcon,
   SearchIcon, EyeIcon, ArrowRightIcon, ChevronLeftIcon, ChevronRightIcon,
+  HotelIcon, PenLineIcon, PlusIcon, TrafficConeIcon,
 } from '@icons';
+import type { TravauxClient } from '@/types/travaux';
+import { ClientAvatar } from './travaux/ClientAvatar';
+import { ClientDetailModal } from './travaux/ClientDetailModal';
+import { ClientFormModal } from './travaux/ClientFormModal';
 
 const PER_PAGE = 20;
 
@@ -44,8 +49,8 @@ function Pagination({
 
 // ── Utilisateurs (table) ─────────────────────────────────────────────────────
 
-/** The accounts table; the page's tabs pick the role. */
-function UsersListTab({ role }: { role: AuthRole | '' }) {
+/** The accounts table; the page's tab picks the role, or the companies' teams. */
+function UsersListTab({ role = '', withClient = false }: { role?: AuthRole | ''; withClient?: boolean }) {
   const { t } = useTranslation('admin');
   const navigate = useNavigate();
   const { user: currentUser, impersonate } = useAuth();
@@ -62,21 +67,13 @@ function UsersListTab({ role }: { role: AuthRole | '' }) {
   const load = useCallback((p: number, q: string, r: AuthRole | '') => {
     setLoading(true);
     setErr(false);
-    apiService.adminUsersList({ page: p, per_page: PER_PAGE, q: q || undefined, role: r || undefined })
+    apiService.adminUsersList({ page: p, per_page: PER_PAGE, q: q || undefined, role: r || undefined, with_client: withClient ? 'true' : undefined })
       .then((res) => { setUsers(res.users); setTotal(res.meta.total); })
       .catch(() => setErr(true))
       .finally(() => setLoading(false));
-  }, []);
+  }, [withClient]);
 
   useEffect(() => { load(page, search, role); }, [page, load]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Another tab (role): back to its first page.
-  const firstRender = useRef(true);
-  useEffect(() => {
-    if (firstRender.current) { firstRender.current = false; return; }
-    setPage(1);
-    load(1, search, role);
-  }, [role]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const applySearch = (q: string) => {
     setSearch(q);
@@ -127,6 +124,7 @@ function UsersListTab({ role }: { role: AuthRole | '' }) {
               <DataTableRow>
                 <DataTableTh>{t('users.table.name')}</DataTableTh>
                 <DataTableTh>{t('users.table.email')}</DataTableTh>
+                <DataTableTh>{t('users.table.company')}</DataTableTh>
                 <DataTableTh>{t('users.table.role')}</DataTableTh>
                 <DataTableTh>{t('users.table.status')}</DataTableTh>
                 <DataTableTh>{t('users.table.createdAt')}</DataTableTh>
@@ -135,7 +133,7 @@ function UsersListTab({ role }: { role: AuthRole | '' }) {
             </DataTableHead>
             <DataTableBody>
               {users.length === 0 ? (
-                <DataTableEmpty icon={<UsersIcon size={28} />} label={t('users.empty')} />
+                <DataTableEmpty icon={<UsersIcon size={28} />} label={withClient ? t('users.teamsEmpty') : t('users.empty')} />
               ) : users.map((u) => {
                 const isSelf = u.id === currentUser?.id;
                 const canImpersonate = !isSelf && u.role !== 'admin' && !u.locked;
@@ -143,6 +141,7 @@ function UsersListTab({ role }: { role: AuthRole | '' }) {
                   <DataTableRow key={u.id}>
                     <DataTableTd>{u.full_name || '—'}</DataTableTd>
                     <DataTableTd className="text-xs">{u.email}</DataTableTd>
+                    <DataTableTd>{u.client_name || '—'}</DataTableTd>
                     <DataTableTd>
                       <span className={`adm-badge adm-badge--${u.role === 'admin' ? 'info' : u.role === 'staff' ? 'default' : 'muted'}`}>
                         {roleLabel(u.role)}
@@ -216,32 +215,146 @@ function UsersListTab({ role }: { role: AuthRole | '' }) {
   );
 }
 
+// ── Clients : the companies (Travaux clients) ────────────────────────────────
+
+function CompaniesTab({ reloadKey, onEdit }: { reloadKey: number; onEdit: (id: string) => void }) {
+  const { t } = useTranslation('admin');
+  const navigate = useNavigate();
+  const [clients, setClients] = useState<TravauxClient[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [viewId, setViewId] = useState<string | null>(null);
+
+  const load = useCallback((p: number, q: string) => {
+    setLoading(true);
+    apiService.adminTravauxClients({ page: p, per_page: PER_PAGE, q: q || undefined })
+      .then((res) => { setClients(res.clients); setTotal(res.meta.total); })
+      .catch(() => toast.error(t('travaux.clients.loadError')))
+      .finally(() => setLoading(false));
+  }, [t]);
+
+  useEffect(() => { load(page, search); }, [page, load, reloadKey]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const referentOf = (c: TravauxClient) => [c.referent_first_name, c.referent_last_name].filter(Boolean).join(' ');
+
+  return (
+    <div className="trk-tab space-y-4">
+      <div className="adm-toolbar">
+        <div className="adm-toolbar__search-group">
+          <div className="adm-search">
+            <SearchIcon size={15} />
+            <input
+              type="text"
+              className="adm-search__input"
+              placeholder={t('travaux.clients.search')}
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); setPage(1); load(1, e.target.value); }}
+            />
+          </div>
+        </div>
+      </div>
+
+      <Card className="overflow-hidden gap-0">
+        <DataTable>
+          <DataTableHead>
+            <DataTableRow>
+              <DataTableTh className="trv-col-logo">{t('travaux.clients.table.logo')}</DataTableTh>
+              <DataTableTh>{t('travaux.clients.table.company')}</DataTableTh>
+              <DataTableTh>{t('travaux.clients.table.referent')}</DataTableTh>
+              <DataTableTh className="trv-col-num">{t('travaux.clients.table.members')}</DataTableTh>
+              <DataTableTh className="trv-col-num">{t('travaux.clients.table.projects')}</DataTableTh>
+              <DataTableTh>{t('users.table.actions')}</DataTableTh>
+            </DataTableRow>
+          </DataTableHead>
+          <DataTableBody>
+            {loading && <DataTableEmpty label={t('common.loading')} />}
+            {!loading && clients.length === 0 && <DataTableEmpty icon={<UsersIcon size={28} />} label={t('travaux.clients.empty')} />}
+            {!loading && clients.map((c) => (
+              <DataTableRow key={c.id} onClick={() => setViewId(c.id)}>
+                <DataTableTd className="trv-col-logo"><ClientAvatar client={c} /></DataTableTd>
+                <DataTableTd><span className="trv-client-cell__name">{c.name}</span></DataTableTd>
+                <DataTableTd>{referentOf(c) || '—'}</DataTableTd>
+                <DataTableTd className="trv-col-num trv-num">{c.stats?.members_count ?? 0}</DataTableTd>
+                <DataTableTd className="trv-col-num trv-num">{c.stats?.projects_count ?? 0}</DataTableTd>
+                <DataTableTd onClick={(e) => e.stopPropagation()}>
+                  <div className="adm-table__actions">
+                    <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title={t('travaux.clients.actions.view')} onClick={() => setViewId(c.id)}>
+                      <EyeIcon size={13} />
+                    </button>
+                    <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title={t('travaux.clients.actions.edit')} onClick={() => onEdit(c.id)}>
+                      <PenLineIcon size={13} />
+                    </button>
+                    <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title={t('travaux.clients.actions.travaux')} onClick={() => navigate(`/admin/travaux/${c.id}`)}>
+                      <TrafficConeIcon size={13} />
+                    </button>
+                  </div>
+                </DataTableTd>
+              </DataTableRow>
+            ))}
+          </DataTableBody>
+        </DataTable>
+        <Pagination
+          page={page}
+          hasMore={page * PER_PAGE < total}
+          onPrev={() => setPage((p) => p - 1)}
+          onNext={() => setPage((p) => p + 1)}
+        />
+      </Card>
+
+      <ClientDetailModal clientId={viewId} onClose={() => setViewId(null)} />
+    </div>
+  );
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 
-const ROLE_TABS: { key: string; role: AuthRole | '' }[] = [
-  { key: 'all', role: '' },
-  { key: 'admins', role: 'admin' },
-  { key: 'staff', role: 'staff' },
-  { key: 'clients', role: 'user' },
-];
+const TAB_KEYS = ['all', 'admins', 'clients', 'teams'] as const;
+type UsersTab = typeof TAB_KEYS[number];
 
 export default function AdminUsers() {
   const { t } = useTranslation('admin');
-  const [tab, setTab] = useState('all');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const urlTab = searchParams.get('tab') as UsersTab | null;
+  const tab: UsersTab = urlTab && TAB_KEYS.includes(urlTab) ? urlTab : 'all';
+  const setTab = (next: string) => setSearchParams((prev) => {
+    const params = new URLSearchParams(prev);
+    params.set('tab', next);
+    return params;
+  }, { replace: true });
   const [kpis, setKpis] = useState<AdminUsersOverview | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
+  const [formOpen, setFormOpen] = useState(false);
+  const [editClient, setEditClient] = useState<TravauxClient | null>(null);
 
-  useEffect(() => {
+  const loadKpis = useCallback(() => {
     apiService.adminUsersOverview().then(setKpis).catch(() => setKpis(null));
   }, []);
+  useEffect(() => { loadKpis(); }, [loadKpis]);
 
-  const count: Record<string, number | undefined> = {
-    all: kpis?.total, admins: kpis?.admins, staff: kpis?.staff, clients: kpis?.clients,
-  };
-  const role = ROLE_TABS.find((r) => r.key === tab)?.role ?? '';
+  async function openEdit(id: string) {
+    try {
+      // The list has no member accounts: the form needs the full record.
+      setEditClient((await apiService.adminTravauxClient(id)).client);
+      setFormOpen(true);
+    } catch {
+      toast.error(t('common.error'));
+    }
+  }
+  const saved = () => { setFormOpen(false); setReloadKey((k) => k + 1); loadKpis(); };
 
   return (
     <div className="dash-page">
-      <PageHeader title={t('users.heading')} description={t('users.subtitle')} />
+      <PageHeader
+        title={t('users.heading')}
+        description={t('users.subtitle')}
+        actions={tab === 'clients' && (
+          <button type="button" className="adm-btn adm-btn--primary" onClick={() => { setEditClient(null); setFormOpen(true); }}>
+            <PlusIcon size={14} /> {t('travaux.clients.new')}
+          </button>
+        )}
+      />
 
       <StatRow>
         <StatCard icon={<UsersIcon size={18} />} label={t('users.kpis.total')} value={kpis?.total ?? '—'} />
@@ -251,16 +364,21 @@ export default function AdminUsers() {
         <StatCard icon={<UserIcon size={18} />} label={t('users.kpis.new30d')} value={kpis?.new_last_30_days ?? '—'} />
       </StatRow>
 
-      {/* One tab per role; the table below follows it. */}
+      {/* Clients are the companies; Équipes, the accounts belonging to them. */}
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
-          <TabsTrigger value="all" icon={<UsersIcon size={14} />} count={count.all}>{t('users.tabs.all')}</TabsTrigger>
-          <TabsTrigger value="admins" icon={<ShieldIcon size={14} />} count={count.admins}>{t('users.kpis.admins')}</TabsTrigger>
-          <TabsTrigger value="staff" icon={<LayoutDashboardIcon size={14} />} count={count.staff}>{t('users.kpis.staff')}</TabsTrigger>
-          <TabsTrigger value="clients" icon={<UserIcon size={14} />} count={count.clients}>{t('users.kpis.clients')}</TabsTrigger>
+          <TabsTrigger value="all" icon={<UsersIcon size={14} />} count={kpis?.total}>{t('users.tabs.all')}</TabsTrigger>
+          <TabsTrigger value="admins" icon={<ShieldIcon size={14} />} count={kpis?.admins}>{t('users.kpis.admins')}</TabsTrigger>
+          <TabsTrigger value="clients" icon={<HotelIcon size={14} />} count={kpis?.companies}>{t('users.tabs.companies')}</TabsTrigger>
+          <TabsTrigger value="teams" icon={<LayoutDashboardIcon size={14} />} count={kpis?.company_members}>{t('users.tabs.teams')}</TabsTrigger>
         </TabsList>
-        <UsersListTab role={role} />
+        {tab === 'all' && <UsersListTab key="all" />}
+        {tab === 'admins' && <UsersListTab key="admins" role="admin" />}
+        {tab === 'teams' && <UsersListTab key="teams" withClient />}
+        {tab === 'clients' && <CompaniesTab reloadKey={reloadKey} onEdit={openEdit} />}
       </Tabs>
+
+      <ClientFormModal open={formOpen} client={editClient} onClose={() => setFormOpen(false)} onSaved={saved} onDeleted={saved} />
     </div>
   );
 }

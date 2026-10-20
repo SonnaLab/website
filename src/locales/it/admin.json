@@ -374,7 +374,9 @@
     "tabs": {
       "overview": "Panoramica",
       "list": "Utenti",
-      "all": "Tutti"
+      "all": "Tutti",
+      "companies": "Clienti",
+      "teams": "Team"
     },
     "kpis": {
       "total": "Utenti",
@@ -402,7 +404,8 @@
       "role": "Ruolo",
       "status": "Stato",
       "createdAt": "Creato",
-      "actions": "Azioni"
+      "actions": "Azioni",
+      "company": "Azienda"
     },
     "detail": {
       "phone": "Telefono",
@@ -410,7 +413,8 @@
       "signInCount": "Accessi",
       "lastSignIn": "Ultimo accesso"
     },
-    "heading": "Gestione degli utenti"
+    "heading": "Gestione degli utenti",
+    "teamsEmpty": "Nessun account appartiene ancora a un'azienda."
   },
   "impersonation": {
     "banner": "Hai effettuato l'accesso come {{name}}.",
@@ -452,7 +456,8 @@
         "paid": "Incassato",
         "actions": "Azioni",
         "logo": "Logo",
-        "company": "Azienda"
+        "company": "Azienda",
+        "members": "Team"
       },
       "actions": {
         "view": "Vedi la scheda",
@@ -521,7 +526,8 @@
       "heading": "Gestione dei lavori",
       "stats": {
         "clients": "Clienti"
-      }
+      },
+      "newChantier": "Nuovo cantiere"
     },
     "tabs": {
       "objectives": "Deliverable",
@@ -694,6 +700,15 @@
     },
     "clientPage": {
       "subtitle": "Consegne, attività, preventivi, fatture, contratti e pagamenti del cliente."
+    },
+    "chantier": {
+      "title": "Nuovo cantiere",
+      "hint": "Un cantiere è un progetto svolto per un cliente: consegne, attività, preventivi e fatture vi appartengono.",
+      "client": "Cliente",
+      "choose": "Scegli un cliente",
+      "noClients": "Nessun cliente: crealo prima in Gestione degli utenti, scheda Clienti.",
+      "createClient": "Crea un cliente",
+      "created": "Cantiere creato."
     }
   },
   "company": {

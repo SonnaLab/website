@@ -9,6 +9,8 @@ export interface TravauxClientStats {
   objectives_in_progress: number;
   invoiced_cents: number;
   paid_cents: number;
+  /** Accounts attached to the company (its team). */
+  members_count?: number;
 }
 
 export interface TravauxClientProject {

@@ -375,7 +375,9 @@
     "tabs": {
       "overview": "Vue d'ensemble",
       "list": "Utilisateurs",
-      "all": "Tous"
+      "all": "Tous",
+      "companies": "Clients",
+      "teams": "Équipes"
     },
     "kpis": {
       "total": "Utilisateurs",
@@ -403,7 +405,8 @@
       "role": "Rôle",
       "status": "Statut",
       "createdAt": "Créé le",
-      "actions": "Actions"
+      "actions": "Actions",
+      "company": "Entreprise"
     },
     "detail": {
       "phone": "Téléphone",
@@ -411,7 +414,8 @@
       "signInCount": "Connexions",
       "lastSignIn": "Dernière connexion"
     },
-    "heading": "Gestion des utilisateurs"
+    "heading": "Gestion des utilisateurs",
+    "teamsEmpty": "Aucun compte rattaché à une entreprise."
   },
   "impersonation": {
     "banner": "Vous êtes connecté(e) en tant que {{name}}.",
@@ -453,7 +457,8 @@
         "paid": "Encaissé",
         "actions": "Actions",
         "logo": "Logo",
-        "company": "Entreprise"
+        "company": "Entreprise",
+        "members": "Équipe"
       },
       "actions": {
         "view": "Voir la fiche",
@@ -522,7 +527,8 @@
       "heading": "Gestion des Travaux",
       "stats": {
         "clients": "Clients"
-      }
+      },
+      "newChantier": "Nouveau chantier"
     },
     "tabs": {
       "objectives": "Livrables",
@@ -695,6 +701,15 @@
     },
     "clientPage": {
       "subtitle": "Livrables, tâches, devis, factures, contrats et paiements du client."
+    },
+    "chantier": {
+      "title": "Nouveau chantier",
+      "hint": "Un chantier est un projet mené pour un client : ses livrables, tâches, devis et factures s'y rattachent.",
+      "client": "Client",
+      "choose": "Choisir un client",
+      "noClients": "Aucun client : créez-le d'abord dans Gestion des utilisateurs, onglet Clients.",
+      "createClient": "Créer un client",
+      "created": "Chantier créé."
     }
   },
   "company": {

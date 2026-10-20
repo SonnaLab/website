@@ -35,6 +35,7 @@ import type { TravauxClient } from '@/types/travaux';
 import { ClientAvatar } from './ClientAvatar';
 import { ClientDetailModal } from './ClientDetailModal';
 import { ClientFormModal } from './ClientFormModal';
+import { NewChantierModal } from './NewChantierModal';
 import { formatCents } from './format';
 import { useTravauxTotals } from './useTravauxTotals';
 
@@ -56,6 +57,7 @@ export default function AdminTravauxClients() {
   const [viewId, setViewId] = useState<string | null>(null);
   const [editClient, setEditClient] = useState<TravauxClient | null>(null);
   const [formOpen, setFormOpen] = useState(false);
+  const [chantierOpen, setChantierOpen] = useState(false);
   // Refetched with the list, so a new or deleted client shows in the totals.
   const totals = useTravauxTotals(clients);
 
@@ -93,8 +95,9 @@ export default function AdminTravauxClients() {
             <button type="button" className="adm-btn adm-btn--ghost" onClick={() => navigate('/admin/entreprise')}>
               <HotelIcon size={14} /> {t('travaux.clients.issuer')}
             </button>
-            <button type="button" className="adm-btn adm-btn--primary" onClick={() => { setEditClient(null); setFormOpen(true); }}>
-              <PlusIcon size={14} /> {t('travaux.clients.new')}
+            {/* Clients themselves are created in Gestion des utilisateurs › Clients. */}
+            <button type="button" className="adm-btn adm-btn--primary" onClick={() => setChantierOpen(true)}>
+              <PlusIcon size={14} /> {t('travaux.clients.newChantier')}
             </button>
           </>
         }
@@ -130,7 +133,10 @@ export default function AdminTravauxClients() {
               <DataTableTh className="trv-col-logo">{t('travaux.clients.table.logo')}</DataTableTh>
               <DataTableTh>{t('travaux.clients.table.company')}</DataTableTh>
               <DataTableTh>{t('travaux.clients.table.referent')}</DataTableTh>
-              <DataTableTh>{t('nav.travaux')}</DataTableTh>
+              <DataTableTh className="trv-col-num">{t('travaux.clients.table.projects')}</DataTableTh>
+              <DataTableTh className="trv-col-num">{t('travaux.clients.table.inProgress')}</DataTableTh>
+              <DataTableTh className="trv-col-num">{t('travaux.clients.table.invoiced')}</DataTableTh>
+              <DataTableTh className="trv-col-num">{t('travaux.clients.table.paid')}</DataTableTh>
               <DataTableTh>{t('travaux.clients.table.actions')}</DataTableTh>
             </DataTableRow>
           </DataTableHead>
@@ -147,22 +153,10 @@ export default function AdminTravauxClients() {
                   <span className="trv-client-cell__name">{c.name}</span>
                 </DataTableTd>
                 <DataTableTd>{referentOf(c) || '—'}</DataTableTd>
-                <DataTableTd>
-                  {/* Projects, deliverables in progress, invoiced, paid — on one line. */}
-                  <div className="trv-inline-stats">
-                    {[
-                      [t('travaux.clients.table.projects'), c.stats?.projects_count ?? 0],
-                      [t('travaux.clients.table.inProgress'), c.stats?.objectives_in_progress ?? 0],
-                      [t('travaux.clients.table.invoiced'), formatCents(c.stats?.invoiced_cents)],
-                      [t('travaux.clients.table.paid'), formatCents(c.stats?.paid_cents)],
-                    ].map(([label, value]) => (
-                      <span key={String(label)} className="trv-inline-stats__item">
-                        <span className="trv-inline-stats__label">{label}</span>
-                        <strong className="trv-num">{value}</strong>
-                      </span>
-                    ))}
-                  </div>
-                </DataTableTd>
+                <DataTableTd className="trv-col-num trv-num">{c.stats?.projects_count ?? 0}</DataTableTd>
+                <DataTableTd className="trv-col-num trv-num">{c.stats?.objectives_in_progress ?? 0}</DataTableTd>
+                <DataTableTd className="trv-col-num trv-num">{formatCents(c.stats?.invoiced_cents ?? 0)}</DataTableTd>
+                <DataTableTd className="trv-col-num trv-num">{formatCents(c.stats?.paid_cents ?? 0)}</DataTableTd>
                 <DataTableTd onClick={(e) => e.stopPropagation()}>
                   <div className="adm-table__actions">
                     <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title={t('travaux.clients.actions.view')} onClick={() => setViewId(c.id)}>
@@ -194,6 +188,11 @@ export default function AdminTravauxClients() {
       </Card>
 
       <ClientDetailModal clientId={viewId} onClose={() => setViewId(null)} />
+      <NewChantierModal
+        open={chantierOpen}
+        onClose={() => setChantierOpen(false)}
+        onCreated={(clientId) => { setChantierOpen(false); navigate(`/admin/travaux/${clientId}`); }}
+      />
       <ClientFormModal
         open={formOpen}
         client={editClient}

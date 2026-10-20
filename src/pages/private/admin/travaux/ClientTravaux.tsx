@@ -8,8 +8,8 @@ import {
   FileSignatureIcon,
   FileTextIcon,
   FolderKanbanIcon,
+  HotelIcon,
   KanbanIcon,
-  PenLineIcon,
   PlusIcon,
   ReceiptIcon,
   TargetIcon,
@@ -19,8 +19,6 @@ import type { TravauxInvoice } from '@/types/travaux';
 import { Breadcrumbs } from '@/components/private/common/Breadcrumbs';
 import { PageHeader } from '@/components/private/common/PageHeader';
 import { StatCard, StatRow } from '@/components/private/common/StatRow';
-import { ClientAvatar } from './ClientAvatar';
-import { ClientFormModal } from './ClientFormModal';
 import { formatCents } from './format';
 import { ContractsTab } from './ContractsTab';
 import { InvoicesTab } from './InvoicesTab';
@@ -51,7 +49,6 @@ export default function AdminClientTravaux() {
     return params;
   });
   const [autoPreviewId, setAutoPreviewId] = useState<string | null>(null);
-  const [editOpen, setEditOpen] = useState(false);
   const consumeAutoPreview = useCallback(() => setAutoPreviewId(null), []);
 
   const data = useTravauxData(clientId);
@@ -113,19 +110,16 @@ export default function AdminClientTravaux() {
 
   return (
     <div className="dash-page">
-      <Breadcrumbs items={[{ label: t('nav.travaux'), to: '/admin/travaux' }, { label: client?.name ?? '…' }]} />
-
+      {/* The Travaux header, unchanged from the clients list: only the CTA
+          follows the open tab; the trail below names the client. */}
       <PageHeader
-        icon={client ? <ClientAvatar client={client} size="lg" /> : undefined}
-        title={client?.name ?? '…'}
-        description={t('travaux.clientPage.subtitle')}
+        title={t('travaux.clients.heading')}
+        description={t('travaux.subtitle')}
         actions={
           <>
-            {client && (
-              <button type="button" className="adm-btn adm-btn--ghost" onClick={() => setEditOpen(true)}>
-                <PenLineIcon size={14} /> {t('travaux.clients.actions.edit')}
-              </button>
-            )}
+            <button type="button" className="adm-btn adm-btn--ghost" onClick={() => navigate('/admin/entreprise')}>
+              <HotelIcon size={14} /> {t('travaux.clients.issuer')}
+            </button>
             {/* The open tab's « Nouveau … » (invoices come from a quote). */}
             {newLabel && !data.loading && (
               <button type="button" className="adm-btn adm-btn--primary" onClick={() => refs[tab].current?.openNew()}>
@@ -144,6 +138,8 @@ export default function AdminClientTravaux() {
         <StatCard loading={data.loading} icon={<ReceiptIcon size={18} />} label={t('travaux.clients.table.invoiced')} value={formatCents(invoiced)} />
         <StatCard loading={data.loading} icon={<WalletIcon size={18} />} label={t('travaux.clients.table.paid')} value={formatCents(paid)} tone={paid ? 'success' : undefined} />
       </StatRow>
+
+      <Breadcrumbs items={[{ label: t('nav.travaux'), to: '/admin/travaux' }, { label: client?.name ?? '…' }]} />
 
       {data.error && <p className="trv-error">{t('common.error')}</p>}
       {data.loading ? (
@@ -191,14 +187,6 @@ export default function AdminClientTravaux() {
           </TabsContent>
         </Tabs>
       )}
-
-      <ClientFormModal
-        open={editOpen}
-        client={client}
-        onClose={() => setEditOpen(false)}
-        onSaved={() => { setEditOpen(false); void data.reload(['client']); }}
-        onDeleted={() => navigate('/admin/travaux')}
-      />
     </div>
   );
 }

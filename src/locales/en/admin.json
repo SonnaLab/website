@@ -374,7 +374,9 @@
     "tabs": {
       "overview": "Overview",
       "list": "Users",
-      "all": "All"
+      "all": "All",
+      "companies": "Clients",
+      "teams": "Teams"
     },
     "kpis": {
       "total": "Users",
@@ -402,7 +404,8 @@
       "role": "Role",
       "status": "Status",
       "createdAt": "Created",
-      "actions": "Actions"
+      "actions": "Actions",
+      "company": "Company"
     },
     "detail": {
       "phone": "Phone",
@@ -410,7 +413,8 @@
       "signInCount": "Sign-ins",
       "lastSignIn": "Last sign-in"
     },
-    "heading": "User management"
+    "heading": "User management",
+    "teamsEmpty": "No account belongs to a company yet."
   },
   "impersonation": {
     "banner": "You are signed in as {{name}}.",
@@ -452,7 +456,8 @@
         "paid": "Collected",
         "actions": "Actions",
         "logo": "Logo",
-        "company": "Company"
+        "company": "Company",
+        "members": "Team"
       },
       "actions": {
         "view": "View details",
@@ -521,7 +526,8 @@
       "heading": "Work management",
       "stats": {
         "clients": "Clients"
-      }
+      },
+      "newChantier": "New engagement"
     },
     "tabs": {
       "objectives": "Deliverables",
@@ -694,6 +700,15 @@
     },
     "clientPage": {
       "subtitle": "The client’s deliverables, tasks, quotes, invoices, contracts and payments."
+    },
+    "chantier": {
+      "title": "New engagement",
+      "hint": "An engagement is a project carried out for a client: its deliverables, tasks, quotes and invoices belong to it.",
+      "client": "Client",
+      "choose": "Choose a client",
+      "noClients": "No clients yet: create one first in User management, Clients tab.",
+      "createClient": "Create a client",
+      "created": "Engagement created."
     }
   },
   "company": {

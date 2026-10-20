@@ -291,6 +291,9 @@ export interface AdminUser {
   language: string | null;
   confirmed: boolean;
   locked: boolean;
+  /** The client company (Travaux) the account belongs to, if any. */
+  client_id: string | null;
+  client_name: string | null;
   created_at: string;
   // Only present when fetched with full: true (show/create/update/lock/unlock/impersonate)
   phone?: string | null;
@@ -329,6 +332,9 @@ export interface AdminUsersOverview {
   locked: number;
   new_last_7_days: number;
   new_last_30_days: number;
+  /** Client companies (Travaux) and the accounts attached to them. */
+  companies: number;
+  company_members: number;
 }
 
 export interface AdminImpersonateResponse {
@@ -697,7 +703,7 @@ class ApiService {
   async adminUsersOverview(): Promise<AdminUsersOverview> {
     return (await this.client.get('/api/v1/admin/users/overview')).data;
   }
-  async adminUsersList(params?: { role?: AuthRole; q?: string; page?: number; per_page?: number; active?: 'true'; unconfirmed?: boolean }): Promise<AdminUsersListResponse> {
+  async adminUsersList(params?: { role?: AuthRole; q?: string; page?: number; per_page?: number; active?: 'true'; unconfirmed?: boolean; with_client?: 'true'; client_id?: string }): Promise<AdminUsersListResponse> {
     return (await this.client.get('/api/v1/admin/users', { params })).data;
   }
   async adminUserDetail(id: string): Promise<{ user: AdminUser }> {

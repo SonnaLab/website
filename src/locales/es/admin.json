@@ -374,7 +374,9 @@
     "tabs": {
       "overview": "Resumen",
       "list": "Usuarios",
-      "all": "Todos"
+      "all": "Todos",
+      "companies": "Clientes",
+      "teams": "Equipos"
     },
     "kpis": {
       "total": "Usuarios",
@@ -402,7 +404,8 @@
       "role": "Rol",
       "status": "Estado",
       "createdAt": "Creado",
-      "actions": "Acciones"
+      "actions": "Acciones",
+      "company": "Empresa"
     },
     "detail": {
       "phone": "Teléfono",
@@ -410,7 +413,8 @@
       "signInCount": "Inicios de sesión",
       "lastSignIn": "Último acceso"
     },
-    "heading": "Gestión de los usuarios"
+    "heading": "Gestión de los usuarios",
+    "teamsEmpty": "Ninguna cuenta pertenece aún a una empresa."
   },
   "impersonation": {
     "banner": "Has iniciado sesión como {{name}}.",
@@ -452,7 +456,8 @@
         "paid": "Cobrado",
         "actions": "Acciones",
         "logo": "Logo",
-        "company": "Empresa"
+        "company": "Empresa",
+        "members": "Equipo"
       },
       "actions": {
         "view": "Ver la ficha",
@@ -521,7 +526,8 @@
       "heading": "Gestión de los trabajos",
       "stats": {
         "clients": "Clientes"
-      }
+      },
+      "newChantier": "Nuevo proyecto"
     },
     "tabs": {
       "objectives": "Entregables",
@@ -694,6 +700,15 @@
     },
     "clientPage": {
       "subtitle": "Entregables, tareas, presupuestos, facturas, contratos y pagos del cliente."
+    },
+    "chantier": {
+      "title": "Nuevo proyecto",
+      "hint": "Un proyecto se realiza para un cliente: sus entregables, tareas, presupuestos y facturas dependen de él.",
+      "client": "Cliente",
+      "choose": "Elegir un cliente",
+      "noClients": "Aún no hay clientes: cree uno primero en Gestión de los usuarios, pestaña Clientes.",
+      "createClient": "Crear un cliente",
+      "created": "Proyecto creado."
     }
   },
   "company": {

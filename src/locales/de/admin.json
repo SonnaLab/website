@@ -374,7 +374,9 @@
     "tabs": {
       "overview": "Übersicht",
       "list": "Benutzer",
-      "all": "Alle"
+      "all": "Alle",
+      "companies": "Kunden",
+      "teams": "Teams"
     },
     "kpis": {
       "total": "Benutzer",
@@ -402,7 +404,8 @@
       "role": "Rolle",
       "status": "Status",
       "createdAt": "Erstellt",
-      "actions": "Aktionen"
+      "actions": "Aktionen",
+      "company": "Unternehmen"
     },
     "detail": {
       "phone": "Telefon",
@@ -410,7 +413,8 @@
       "signInCount": "Anmeldungen",
       "lastSignIn": "Letzte Anmeldung"
     },
-    "heading": "Verwaltung der Benutzer"
+    "heading": "Verwaltung der Benutzer",
+    "teamsEmpty": "Noch kein Konto gehört zu einem Unternehmen."
   },
   "impersonation": {
     "banner": "Sie sind als {{name}} angemeldet.",
@@ -452,7 +456,8 @@
         "paid": "Eingegangen",
         "actions": "Aktionen",
         "logo": "Logo",
-        "company": "Unternehmen"
+        "company": "Unternehmen",
+        "members": "Team"
       },
       "actions": {
         "view": "Details ansehen",
@@ -521,7 +526,8 @@
       "heading": "Verwaltung der Arbeiten",
       "stats": {
         "clients": "Kunden"
-      }
+      },
+      "newChantier": "Neues Projekt"
     },
     "tabs": {
       "objectives": "Liefergegenstände",
@@ -694,6 +700,15 @@
     },
     "clientPage": {
       "subtitle": "Lieferungen, Aufgaben, Angebote, Rechnungen, Verträge und Zahlungen des Kunden."
+    },
+    "chantier": {
+      "title": "Neues Projekt",
+      "hint": "Ein Projekt wird für einen Kunden durchgeführt: Lieferungen, Aufgaben, Angebote und Rechnungen gehören dazu.",
+      "client": "Kunde",
+      "choose": "Kunden wählen",
+      "noClients": "Noch keine Kunden: legen Sie zuerst einen unter Benutzerverwaltung, Reiter Kunden, an.",
+      "createClient": "Kunden anlegen",
+      "created": "Projekt angelegt."
     }
   },
   "company": {
