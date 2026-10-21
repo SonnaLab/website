@@ -640,7 +640,13 @@
       "noIssuer": "Emisor no configurado: completa la ficha «Emisor» (SonnaLab) desde la lista de clientes para que aparezca en los presupuestos.",
       "dropDocument": "Suelta un documento",
       "dropDocumentHint": "PDF, imagen… (opcional)",
-      "replaceDocument": "Haz clic para reemplazar"
+      "replaceDocument": "Haz clic para reemplazar",
+      "payment": {
+        "paid": "Pagada",
+        "unpaid": "Impagada",
+        "deposit": "Anticipo",
+        "detail": "{{paid}} pagados de {{total}}"
+      }
     },
     "contracts": {
       "new": "Nuevo contrato",
@@ -669,13 +675,15 @@
         "other": "Otro"
       },
       "paidAt": "Fecha de pago",
-      "invoice": "Presupuesto/Factura",
+      "invoice": "Factura",
       "notes": "Notas",
       "statuses": {
         "pending": "Pendiente",
         "completed": "Realizado",
         "failed": "Fallido"
-      }
+      },
+      "chooseInvoice": "Elegir una factura",
+      "noInvoice": "Ninguna factura por cobrar: genérela primero desde su presupuesto (pestaña Presupuestos)."
     },
     "document": {
       "emittedBy": "Emitido por",

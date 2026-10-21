@@ -640,7 +640,13 @@
       "noIssuer": "Emittente non configurato: compila la scheda «Emittente» (SonnaLab) dalla lista clienti perché compaia sui preventivi.",
       "dropDocument": "Trascina un documento",
       "dropDocumentHint": "PDF, immagine… (facoltativo)",
-      "replaceDocument": "Clicca per sostituire"
+      "replaceDocument": "Clicca per sostituire",
+      "payment": {
+        "paid": "Pagata",
+        "unpaid": "Non pagata",
+        "deposit": "Acconto",
+        "detail": "{{paid}} pagati su {{total}}"
+      }
     },
     "contracts": {
       "new": "Nuovo contratto",
@@ -669,13 +675,15 @@
         "other": "Altro"
       },
       "paidAt": "Data di pagamento",
-      "invoice": "Preventivo/Fattura",
+      "invoice": "Fattura",
       "notes": "Note",
       "statuses": {
         "pending": "In attesa",
         "completed": "Effettuato",
         "failed": "Non riuscito"
-      }
+      },
+      "chooseInvoice": "Scegli una fattura",
+      "noInvoice": "Nessuna fattura da saldare: generala prima dal suo preventivo (scheda Preventivi)."
     },
     "document": {
       "emittedBy": "Emesso da",

@@ -73,7 +73,9 @@ export const PaymentsTab = forwardRef<TravauxTabHandle, PaymentsTabProps>(functi
             {payments.map((p) => (
               <DataTableRow key={p.id}>
                 <DataTableTd className="trv-num"><span className="trv-client-cell__name">{formatCents(p.amount_cents)}</span></DataTableTd>
-                <DataTableTd>{p.invoice_title || '—'}</DataTableTd>
+                <DataTableTd>
+                  {p.invoice_number ? <><span className="trv-num">{p.invoice_number}</span> <span className="trv-muted">{p.invoice_title}</span></> : '—'}
+                </DataTableTd>
                 <DataTableTd>{t(`travaux.payments.methods.${p.payment_method}`)}</DataTableTd>
                 <DataTableTd className="trv-num">{formatDate(p.paid_on)}</DataTableTd>
                 <DataTableTd><StatusBadge label={t(`travaux.payments.statuses.${p.status}`)} variant={STATUS_VARIANT[p.status]} /></DataTableTd>
@@ -92,6 +94,7 @@ export const PaymentsTab = forwardRef<TravauxTabHandle, PaymentsTabProps>(functi
         open={newOpen}
         clientId={clientId}
         invoices={invoices}
+        payments={payments}
         onClose={() => setNewOpen(false)}
         onCreated={async () => { await reload(['payments', 'client']); setNewOpen(false); }}
       />
@@ -100,11 +103,12 @@ export const PaymentsTab = forwardRef<TravauxTabHandle, PaymentsTabProps>(functi
 });
 
 function NewPaymentModal({
-  open, clientId, invoices, onClose, onCreated,
+  open, clientId, invoices, payments, onClose, onCreated,
 }: {
   open: boolean;
   clientId: string;
   invoices: TravauxInvoice[];
+  payments: TravauxPayment[];
   onClose: () => void;
   onCreated: () => Promise<void>;
 }) {
@@ -116,11 +120,23 @@ function NewPaymentModal({
   const [invoiceId, setInvoiceId] = useState('');
   const [notes, setNotes] = useState('');
   const [saving, setSaving] = useState(false);
+  // A payment settles an invoice (itself generated from a quote).
+  const payable = invoices.filter((i) => i.kind === 'invoice' && i.status !== 'cancelled');
+  const remainingCents = (invoice: TravauxInvoice) => invoice.amount_cents - payments
+    .filter((p) => p.invoice_id === invoice.id && p.status === 'completed')
+    .reduce((sum, p) => sum + p.amount_cents, 0);
 
   useEffect(() => {
     if (!open) return;
     setAmount(''); setMethod('transfer'); setStatus('pending'); setPaidOn(''); setInvoiceId(''); setNotes('');
   }, [open]);
+
+  function pickInvoice(id: string) {
+    setInvoiceId(id);
+    // Pre-fill what's left to pay on it.
+    const invoice = payable.find((i) => i.id === id);
+    if (invoice && !amount) setAmount(String(Math.max(remainingCents(invoice), 0) / 100));
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -132,7 +148,7 @@ function NewPaymentModal({
         payment_method: method,
         status,
         paid_on: paidOn || null,
-        invoice_id: invoiceId || null,
+        invoice_id: invoiceId,
         notes,
       });
       await onCreated();
@@ -151,7 +167,7 @@ function NewPaymentModal({
       footer={
         <>
           <button type="button" className="adm-btn adm-btn--ghost" onClick={onClose}>{t('common.cancel')}</button>
-          <button type="submit" form="trv-new-payment" className="adm-btn adm-btn--primary" disabled={saving}>{t('common.create')}</button>
+          <button type="submit" form="trv-new-payment" className="adm-btn adm-btn--primary" disabled={saving || payable.length === 0}>{t('common.create')}</button>
         </>
       }
     >
@@ -172,15 +188,16 @@ function NewPaymentModal({
           </div>
         </div>
         <div className="adm-form__field">
-          <label className="adm-form__label" htmlFor="trv-pay-invoice">{t('travaux.payments.invoice')}</label>
-          <select id="trv-pay-invoice" className="adm-select" value={invoiceId} onChange={(e) => setInvoiceId(e.target.value)}>
-            <option value="">{t('travaux.common.none')}</option>
-            {invoices.map((inv) => (
+          <label className="adm-form__label" htmlFor="trv-pay-invoice">{t('travaux.payments.invoice')} *</label>
+          <select id="trv-pay-invoice" className="adm-select" required value={invoiceId} onChange={(e) => pickInvoice(e.target.value)}>
+            <option value="">{t('travaux.payments.chooseInvoice')}</option>
+            {payable.map((inv) => (
               <option key={inv.id} value={inv.id}>
-                {t(`travaux.invoices.kinds.${inv.kind}`)} {inv.printed_number} — {inv.title}
+                {inv.number} — {inv.title} ({formatCents(remainingCents(inv))})
               </option>
             ))}
           </select>
+          {payable.length === 0 && <p className="trv-info">{t('travaux.payments.noInvoice')}</p>}
         </div>
         <div className="adm-form__row">
           <div className="adm-form__field">

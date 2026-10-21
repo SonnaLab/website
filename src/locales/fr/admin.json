@@ -641,7 +641,13 @@
       "noIssuer": "Émetteur non configuré : renseignez la fiche « Émetteur » (SonnaLab) depuis la liste des clients pour qu'il apparaisse sur les devis.",
       "dropDocument": "Déposez un document",
       "dropDocumentHint": "PDF, image… (optionnel)",
-      "replaceDocument": "Cliquez pour remplacer"
+      "replaceDocument": "Cliquez pour remplacer",
+      "payment": {
+        "paid": "Payée",
+        "unpaid": "Impayée",
+        "deposit": "Acompte",
+        "detail": "{{paid}} réglés sur {{total}}"
+      }
     },
     "contracts": {
       "new": "Nouveau contrat",
@@ -670,13 +676,15 @@
         "other": "Autre"
       },
       "paidAt": "Date de paiement",
-      "invoice": "Devis/Facture",
+      "invoice": "Facture",
       "notes": "Notes",
       "statuses": {
         "pending": "En attente",
         "completed": "Effectué",
         "failed": "Échoué"
-      }
+      },
+      "chooseInvoice": "Choisir une facture",
+      "noInvoice": "Aucune facture à régler : générez-la d'abord depuis son devis (onglet Devis)."
     },
     "document": {
       "emittedBy": "Émis par",

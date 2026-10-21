@@ -23,6 +23,7 @@ import type {
   TravauxClient,
   TravauxInvoice,
   TravauxObjective,
+  TravauxPayment,
   TravauxTask,
 } from '@/types/travaux';
 import type { TravauxResource } from './useTravauxData';
@@ -54,6 +55,8 @@ interface InvoicesTabProps {
   invoices: TravauxInvoice[];
   objectives: TravauxObjective[];
   tasks: TravauxTask[];
+  /** Pour la jauge de paiement des factures. */
+  payments: TravauxPayment[];
   reload: (resources?: TravauxResource[]) => Promise<void>;
   /** Défini juste après « Générer un devis » / « Générer la facture » : ouvre son aperçu. */
   autoPreviewId: string | null;
@@ -63,7 +66,7 @@ interface InvoicesTabProps {
 }
 
 export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(function InvoicesTab(
-  { kind, clientId, client, issuer, invoices, objectives, tasks, reload, autoPreviewId, onAutoPreviewConsumed, onInvoiceGenerated },
+  { kind, clientId, client, issuer, invoices, objectives, tasks, payments, reload, autoPreviewId, onAutoPreviewConsumed, onInvoiceGenerated },
   ref,
 ) {
   const { t } = useTranslation('admin');
@@ -75,6 +78,9 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
   const [generating, setGenerating] = useState(false);
   useImperativeHandle(ref, () => ({ openNew: () => setNewOpen(true) }));
   const rows = invoices.filter((i) => i.kind === kind);
+  const paidCents = (invoice: TravauxInvoice) => payments
+    .filter((p) => p.invoice_id === invoice.id && p.status === 'completed')
+    .reduce((sum, p) => sum + p.amount_cents, 0);
   const byId = new Map(invoices.map((i) => [i.id, i]));
 
   useEffect(() => {
@@ -138,9 +144,10 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
               <DataTableTh>{t('travaux.common.title')}</DataTableTh>
               <DataTableTh>{t('travaux.invoices.amount')}</DataTableTh>
               <DataTableTh>{t('travaux.invoices.dueDate')}</DataTableTh>
-              <DataTableTh>{t('travaux.common.status')}</DataTableTh>
+              {kind === 'quote' && <DataTableTh>{t('travaux.common.status')}</DataTableTh>}
               <DataTableTh>{t(kind === 'quote' ? 'travaux.invoices.invoiceRef' : 'travaux.invoices.quoteRef')}</DataTableTh>
-              <DataTableTh>{t('travaux.invoices.document')}</DataTableTh>
+              {/* Invoices: how much is paid, in place of the attached document. */}
+              <DataTableTh>{t(kind === 'quote' ? 'travaux.invoices.document' : 'travaux.common.status')}</DataTableTh>
               <DataTableTh>{t('travaux.clients.table.actions')}</DataTableTh>
             </DataTableRow>
           </DataTableHead>
@@ -170,7 +177,9 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
                       </>
                     ) : '—'}
                   </DataTableTd>
-                  <DataTableTd><StatusBadge label={t(`travaux.invoices.statuses.${i.status}`)} variant={STATUS_VARIANT[i.status]} /></DataTableTd>
+                  {kind === 'quote' && (
+                    <DataTableTd><StatusBadge label={t(`travaux.invoices.statuses.${i.status}`)} variant={STATUS_VARIANT[i.status]} /></DataTableTd>
+                  )}
                   <DataTableTd onClick={(e) => e.stopPropagation()}>
                     {linked ? (
                       <button type="button" className="trv-doc-ref" onClick={() => setPreview(linked)}>
@@ -183,7 +192,9 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
                     ) : (i.source_quote_number ?? '—')}
                   </DataTableTd>
                   <DataTableTd>
-                    {i.file_path ? (
+                    {kind === 'invoice' ? (
+                      <PaymentGauge invoice={i} paidCents={paidCents(i)} />
+                    ) : i.file_path ? (
                       <a className="trv-link" href={apiAssetUrl(i.file_path) ?? undefined} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} title={i.file_name ?? ''}>
                         <PaperclipIcon size={13} />
                       </a>
@@ -241,6 +252,27 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
     </div>
   );
 });
+
+// ── Jauge de paiement d'une facture ─────────────────────────────────────────
+
+/** Payée (pleine, verte), impayée (rouge) ou acompte : remplie au prorata. */
+function PaymentGauge({ invoice, paidCents }: { invoice: TravauxInvoice; paidCents: number }) {
+  const { t } = useTranslation('admin');
+  if (invoice.status === 'draft' || invoice.status === 'cancelled') {
+    return <span className="trv-pay trv-pay--muted">{t(`travaux.invoices.statuses.${invoice.status}`)}</span>;
+  }
+  const ratio = invoice.amount_cents > 0 ? Math.min(paidCents / invoice.amount_cents, 1) : 1;
+  const detail = t('travaux.invoices.payment.detail', { paid: formatCents(paidCents), total: formatCents(invoice.amount_cents) });
+  if (ratio >= 1) return <span className="trv-pay trv-pay--paid" title={detail}>{t('travaux.invoices.payment.paid')}</span>;
+  if (ratio <= 0) return <span className="trv-pay trv-pay--unpaid" title={detail}>{t('travaux.invoices.payment.unpaid')}</span>;
+  const percent = Math.round(ratio * 100);
+  return (
+    <span className="trv-pay trv-pay--partial" title={detail} role="meter" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100}>
+      <span className="trv-pay__fill" style={{ width: `${percent}%` }} />
+      <span className="trv-pay__label">{t('travaux.invoices.payment.deposit')} · {percent} %</span>
+    </span>
+  );
+}
 
 // ── Nouveau devis ───────────────────────────────────────────────────────────
 

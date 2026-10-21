@@ -97,6 +97,7 @@ export default function AdminClientTravaux() {
       invoices={data.invoices}
       objectives={data.objectives}
       tasks={data.tasks}
+      payments={data.payments}
       reload={data.reload}
       autoPreviewId={autoPreviewId}
       onAutoPreviewConsumed={consumeAutoPreview}

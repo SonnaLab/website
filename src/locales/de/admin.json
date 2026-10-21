@@ -640,7 +640,13 @@
       "noIssuer": "Aussteller nicht konfiguriert: Fülle den Datensatz „Aussteller“ (SonnaLab) in der Kundenliste aus, damit er auf Angeboten erscheint.",
       "dropDocument": "Dokument ablegen",
       "dropDocumentHint": "PDF, Bild… (optional)",
-      "replaceDocument": "Zum Ersetzen klicken"
+      "replaceDocument": "Zum Ersetzen klicken",
+      "payment": {
+        "paid": "Bezahlt",
+        "unpaid": "Unbezahlt",
+        "deposit": "Anzahlung",
+        "detail": "{{paid}} von {{total}} bezahlt"
+      }
     },
     "contracts": {
       "new": "Neuer Vertrag",
@@ -669,13 +675,15 @@
         "other": "Sonstige"
       },
       "paidAt": "Zahlungsdatum",
-      "invoice": "Angebot/Rechnung",
+      "invoice": "Rechnung",
       "notes": "Notizen",
       "statuses": {
         "pending": "Ausstehend",
         "completed": "Abgeschlossen",
         "failed": "Fehlgeschlagen"
-      }
+      },
+      "chooseInvoice": "Rechnung wählen",
+      "noInvoice": "Keine offene Rechnung: erstellen Sie sie zuerst aus dem Angebot (Reiter Angebote)."
     },
     "document": {
       "emittedBy": "Ausgestellt von",

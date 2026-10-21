@@ -640,7 +640,13 @@
       "noIssuer": "Issuer not configured: fill in the \"Issuer\" (SonnaLab) record from the clients list so it appears on quotes.",
       "dropDocument": "Drop a document",
       "dropDocumentHint": "PDF, image… (optional)",
-      "replaceDocument": "Click to replace"
+      "replaceDocument": "Click to replace",
+      "payment": {
+        "paid": "Paid",
+        "unpaid": "Unpaid",
+        "deposit": "Deposit",
+        "detail": "{{paid}} paid of {{total}}"
+      }
     },
     "contracts": {
       "new": "New contract",
@@ -669,13 +675,15 @@
         "other": "Other"
       },
       "paidAt": "Payment date",
-      "invoice": "Quote/Invoice",
+      "invoice": "Invoice",
       "notes": "Notes",
       "statuses": {
         "pending": "Pending",
         "completed": "Completed",
         "failed": "Failed"
-      }
+      },
+      "chooseInvoice": "Choose an invoice",
+      "noInvoice": "No invoice to settle: generate it from its quote first (Quotes tab)."
     },
     "document": {
       "emittedBy": "Issued by",
