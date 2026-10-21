@@ -75,6 +75,128 @@
       "environment": "Umgebung",
       "dbLatency": "DB-Latenz",
       "failedJobs": "Fehlgeschlagene Jobs"
+    },
+    "tabs": {
+      "overview": "Übersicht",
+      "database": "Datenbank",
+      "cronjobs": "Cronjobs",
+      "backups": "Backups",
+      "activities": "Aktivitäten"
+    },
+    "db": {
+      "size": "Größe",
+      "tables": "Tabellen",
+      "connections": "Verbindungen",
+      "cacheHit": "Cache-Treffer",
+      "startedAt": "Gestartet am",
+      "migration": "Letzte Migration",
+      "table": "Tabelle",
+      "rows": "Zeilen",
+      "seqScans": "Sequenzielle Scans",
+      "idxScans": "Index-Scans",
+      "vacuum": "Letztes Vacuum"
+    },
+    "cron": {
+      "daily": "Täglich um {{time}}",
+      "weekly": "Jeden {{day}} um {{time}}",
+      "job": "Aufgabe",
+      "schedule": "Zeitplan",
+      "lastRun": "Letzte Ausführung",
+      "nextRun": "Nächste Ausführung",
+      "ok": "Erfolgreich",
+      "failed": "Fehlgeschlagen",
+      "never": "Nie ausgeführt",
+      "run": "Starten",
+      "queued": "„{{name}}“ gestartet.",
+      "empty": "Keine geplante Aufgabe.",
+      "jobs": {
+        "database_backup": "Datenbank-Backup",
+        "seo_auto_noindex": "SEO: Artikel ohne Traffic deindexieren",
+        "activity_purge": "Aktivitätsprotokoll leeren (> 180 Tage)"
+      },
+      "days": {
+        "0": "Sonntag",
+        "1": "Montag",
+        "2": "Dienstag",
+        "3": "Mittwoch",
+        "4": "Donnerstag",
+        "5": "Freitag",
+        "6": "Samstag"
+      }
+    },
+    "backups": {
+      "policy": "Automatisches Backup: {{when}}. Die {{keep}} neuesten werden auf dem Server behalten.",
+      "restore": "Wiederherstellung (manuell):",
+      "now": "Jetzt sichern",
+      "queued": "Backup gestartet: es erscheint hier in wenigen Sekunden.",
+      "file": "Datei",
+      "date": "Datum",
+      "download": "Herunterladen",
+      "empty": "Noch kein Backup."
+    },
+    "activity": {
+      "search": "Suchen (E-Mail, Pfad, IP)…",
+      "kinds": {
+        "all": "Alle",
+        "auth": "Anmeldungen",
+        "admin": "Backoffice",
+        "site": "Website und Kundenbereich",
+        "jobs": "Geplante Aufgaben",
+        "errors": "Fehler"
+      },
+      "when": "Datum",
+      "who": "Wer",
+      "what": "Aktion",
+      "outcome": "Ergebnis",
+      "request": "Anfrage",
+      "system": "System",
+      "anonymous": "Besucher",
+      "impersonated": "Von einem Admin in dessen Namen",
+      "empty": "Keine Aktivität.",
+      "total_one": "{{count}} Aktion",
+      "total_other": "{{count}} Aktionen",
+      "named": {
+        "signIn": "Anmeldung",
+        "signOut": "Abmeldung",
+        "signUp": "Registrierung",
+        "passwordForgot": "Passwort vergessen",
+        "passwordReset": "Neues Passwort",
+        "confirmResend": "Bestätigung erneut gesendet",
+        "impersonate": "Als Benutzer angemeldet",
+        "projectRequest": "Projektanfrage",
+        "cron": "Geplante Aufgabe"
+      },
+      "verbs": {
+        "create": "Erstellung",
+        "update": "Änderung",
+        "destroy": "Löschung",
+        "pdf": "PDF-Download",
+        "download_backup": "Download",
+        "create_backup": "Backup",
+        "run_cronjob": "Start",
+        "generate_invoice": "Rechnungserstellung",
+        "deliver": "Testversand",
+        "lock": "Sperrung",
+        "unlock": "Entsperrung",
+        "update_issuer": "Änderung",
+        "consent": "Einwilligung"
+      },
+      "resources": {
+        "clients": "Kunde",
+        "invoices": "Angebot/Rechnung",
+        "payments": "Zahlung",
+        "contracts": "Vertrag",
+        "objectives": "Lieferung",
+        "tasks": "Aufgabe",
+        "projects": "Projekt",
+        "users": "Benutzer",
+        "infrastructure": "Infrastruktur",
+        "mail_previews": "E-Mail",
+        "contacts": "Kontakt",
+        "news": "Artikel",
+        "appointments": "Termin",
+        "me": "Profil"
+      }
     }
   },
   "tracking": {

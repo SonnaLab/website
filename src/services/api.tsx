@@ -342,6 +342,49 @@ export interface AdminUsersOverview {
   acquisition: number;
 }
 
+// ── Gestion de l'infrastructure ──
+export interface InfraDatabase {
+  version: string;
+  size_bytes: number;
+  connections: number;
+  max_connections: number;
+  cache_hit_ratio: number | null;
+  started_at: string;
+  latest_migration: string;
+  tables: { name: string; rows: number; bytes: number; seq_scan: number; idx_scan: number | null; last_vacuum_at: string | null }[];
+}
+
+export interface InfraCronjob {
+  name: string;
+  cron: string;
+  job_class: string;
+  queue: string;
+  next_run_at: string | null;
+  last_run_at: string | null;
+  last_status: 'ok' | 'failed' | null;
+  last_duration_ms: number | null;
+  last_message: string | null;
+}
+
+export interface InfraBackup { name: string; size_bytes: number; created_at: string }
+
+export interface ActivityEntry {
+  id: string;
+  created_at: string;
+  action_key: string;
+  http_method: string | null;
+  path: string | null;
+  status: number | null;
+  resource_id: string | null;
+  actor_id: string | null;
+  actor_name: string | null;
+  actor_email: string | null;
+  actor_role: string | null;
+  impersonated: boolean;
+  ip: string | null;
+  details: Record<string, unknown>;
+}
+
 /** « Aperçu des mails »: an e-mail rendered on sample data (nothing sent). */
 export interface MailPreview {
   subject: string;
@@ -749,6 +792,20 @@ class ApiService {
 
   async adminInfrastructure()       { return (await this.client.get('/api/v1/admin/infrastructure')).data; }
   async adminInfrastructureHealth() { return (await this.client.get('/api/v1/admin/infrastructure/health')).data; }
+  async adminInfraDatabase(): Promise<InfraDatabase> { return (await this.client.get('/api/v1/admin/infrastructure/database')).data; }
+  async adminInfraCronjobs(): Promise<{ jobs: InfraCronjob[] }> { return (await this.client.get('/api/v1/admin/infrastructure/cronjobs')).data; }
+  async adminInfraRunCronjob(name: string) { return (await this.client.post(`/api/v1/admin/infrastructure/cronjobs/${name}/run`)).data; }
+  async adminInfraBackups(): Promise<{ backups: InfraBackup[]; keep: number; cron: string | null }> {
+    return (await this.client.get('/api/v1/admin/infrastructure/backups')).data;
+  }
+  async adminInfraCreateBackup() { return (await this.client.post('/api/v1/admin/infrastructure/backups')).data; }
+  async adminInfraDownloadBackup(name: string): Promise<{ blob: Blob; filename: string }> {
+    const res = await this.client.get(`/api/v1/admin/infrastructure/backups/${encodeURIComponent(name)}`, { responseType: 'blob', timeout: 120000 });
+    return { blob: res.data, filename: filenameFrom(res.headers['content-disposition'], name) };
+  }
+  async adminInfraActivities(params: { q?: string; kind?: string; page?: number; per_page?: number }): Promise<{ activities: ActivityEntry[]; meta: { total: number; page: number; per_page: number; pages: number } }> {
+    return (await this.client.get('/api/v1/admin/infrastructure/activities', { params })).data;
+  }
 
   // ── Cookies / Tracking (app/cookies dans api.sonnalab.com) ──
   async analyticsOverview(_site: string) {

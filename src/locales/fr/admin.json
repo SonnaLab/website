@@ -75,6 +75,128 @@
       "environment": "Environnement",
       "dbLatency": "Latence BDD",
       "failedJobs": "Tâches en échec"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "database": "Base de données",
+      "cronjobs": "Cronjob",
+      "backups": "Backups",
+      "activities": "Activités"
+    },
+    "db": {
+      "size": "Taille",
+      "tables": "Tables",
+      "connections": "Connexions",
+      "cacheHit": "Cache (hit)",
+      "startedAt": "Démarré le",
+      "migration": "Dernière migration",
+      "table": "Table",
+      "rows": "Lignes",
+      "seqScans": "Scans séquentiels",
+      "idxScans": "Scans d'index",
+      "vacuum": "Dernier vacuum"
+    },
+    "cron": {
+      "daily": "Tous les jours à {{time}}",
+      "weekly": "Chaque {{day}} à {{time}}",
+      "job": "Tâche",
+      "schedule": "Planification",
+      "lastRun": "Dernière exécution",
+      "nextRun": "Prochaine exécution",
+      "ok": "Réussie",
+      "failed": "Échec",
+      "never": "Jamais exécutée",
+      "run": "Lancer",
+      "queued": "« {{name}} » lancée.",
+      "empty": "Aucune tâche planifiée.",
+      "jobs": {
+        "database_backup": "Sauvegarde de la base",
+        "seo_auto_noindex": "SEO : désindexer les articles sans trafic",
+        "activity_purge": "Purge du journal d'activité (> 180 jours)"
+      },
+      "days": {
+        "0": "dimanche",
+        "1": "lundi",
+        "2": "mardi",
+        "3": "mercredi",
+        "4": "jeudi",
+        "5": "vendredi",
+        "6": "samedi"
+      }
+    },
+    "backups": {
+      "policy": "Sauvegarde automatique : {{when}}. Les {{keep}} plus récentes sont conservées sur le serveur.",
+      "restore": "Restauration (manuelle) :",
+      "now": "Sauvegarder maintenant",
+      "queued": "Sauvegarde lancée : elle apparaîtra ici dans quelques secondes.",
+      "file": "Fichier",
+      "date": "Date",
+      "download": "Télécharger",
+      "empty": "Aucune sauvegarde pour l'instant."
+    },
+    "activity": {
+      "search": "Rechercher (e-mail, chemin, IP)…",
+      "kinds": {
+        "all": "Tout",
+        "auth": "Connexions",
+        "admin": "Back-office",
+        "site": "Site et espace client",
+        "jobs": "Tâches planifiées",
+        "errors": "Erreurs"
+      },
+      "when": "Date",
+      "who": "Qui",
+      "what": "Action",
+      "outcome": "Résultat",
+      "request": "Requête",
+      "system": "Système",
+      "anonymous": "Visiteur",
+      "impersonated": "Par un admin connecté en tant que",
+      "empty": "Aucune activité.",
+      "total_one": "{{count}} action",
+      "total_other": "{{count}} actions",
+      "named": {
+        "signIn": "Connexion",
+        "signOut": "Déconnexion",
+        "signUp": "Inscription",
+        "passwordForgot": "Mot de passe oublié",
+        "passwordReset": "Nouveau mot de passe",
+        "confirmResend": "Renvoi de la confirmation",
+        "impersonate": "Connexion en tant qu'un utilisateur",
+        "projectRequest": "Demande de projet",
+        "cron": "Tâche planifiée"
+      },
+      "verbs": {
+        "create": "Création",
+        "update": "Modification",
+        "destroy": "Suppression",
+        "pdf": "Téléchargement PDF",
+        "download_backup": "Téléchargement",
+        "create_backup": "Sauvegarde",
+        "run_cronjob": "Lancement",
+        "generate_invoice": "Génération de facture",
+        "deliver": "Envoi d'un test",
+        "lock": "Verrouillage",
+        "unlock": "Déverrouillage",
+        "update_issuer": "Modification",
+        "consent": "Consentement"
+      },
+      "resources": {
+        "clients": "client",
+        "invoices": "devis/facture",
+        "payments": "paiement",
+        "contracts": "contrat",
+        "objectives": "livrable",
+        "tasks": "tâche",
+        "projects": "projet",
+        "users": "utilisateur",
+        "infrastructure": "infrastructure",
+        "mail_previews": "mail",
+        "contacts": "contact",
+        "news": "article",
+        "appointments": "rendez-vous",
+        "me": "profil"
+      }
     }
   },
   "tracking": {

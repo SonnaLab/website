@@ -75,6 +75,128 @@
       "environment": "Environment",
       "dbLatency": "DB latency",
       "failedJobs": "Failed jobs"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "database": "Database",
+      "cronjobs": "Cron jobs",
+      "backups": "Backups",
+      "activities": "Activity"
+    },
+    "db": {
+      "size": "Size",
+      "tables": "Tables",
+      "connections": "Connections",
+      "cacheHit": "Cache hits",
+      "startedAt": "Started on",
+      "migration": "Latest migration",
+      "table": "Table",
+      "rows": "Rows",
+      "seqScans": "Sequential scans",
+      "idxScans": "Index scans",
+      "vacuum": "Last vacuum"
+    },
+    "cron": {
+      "daily": "Every day at {{time}}",
+      "weekly": "Every {{day}} at {{time}}",
+      "job": "Job",
+      "schedule": "Schedule",
+      "lastRun": "Last run",
+      "nextRun": "Next run",
+      "ok": "Succeeded",
+      "failed": "Failed",
+      "never": "Never run",
+      "run": "Run",
+      "queued": "“{{name}}” started.",
+      "empty": "No scheduled job.",
+      "jobs": {
+        "database_backup": "Database backup",
+        "seo_auto_noindex": "SEO: noindex articles without traffic",
+        "activity_purge": "Activity log purge (> 180 days)"
+      },
+      "days": {
+        "0": "Sunday",
+        "1": "Monday",
+        "2": "Tuesday",
+        "3": "Wednesday",
+        "4": "Thursday",
+        "5": "Friday",
+        "6": "Saturday"
+      }
+    },
+    "backups": {
+      "policy": "Automatic backup: {{when}}. The {{keep}} most recent are kept on the server.",
+      "restore": "Restore (manual):",
+      "now": "Back up now",
+      "queued": "Backup started: it will show up here in a few seconds.",
+      "file": "File",
+      "date": "Date",
+      "download": "Download",
+      "empty": "No backup yet."
+    },
+    "activity": {
+      "search": "Search (e-mail, path, IP)…",
+      "kinds": {
+        "all": "All",
+        "auth": "Sign-ins",
+        "admin": "Back office",
+        "site": "Site and client space",
+        "jobs": "Scheduled jobs",
+        "errors": "Errors"
+      },
+      "when": "Date",
+      "who": "Who",
+      "what": "Action",
+      "outcome": "Outcome",
+      "request": "Request",
+      "system": "System",
+      "anonymous": "Visitor",
+      "impersonated": "By an admin signed in as them",
+      "empty": "No activity.",
+      "total_one": "{{count}} action",
+      "total_other": "{{count}} actions",
+      "named": {
+        "signIn": "Sign-in",
+        "signOut": "Sign-out",
+        "signUp": "Sign-up",
+        "passwordForgot": "Forgotten password",
+        "passwordReset": "New password",
+        "confirmResend": "Confirmation resent",
+        "impersonate": "Signed in as a user",
+        "projectRequest": "Project request",
+        "cron": "Scheduled job"
+      },
+      "verbs": {
+        "create": "Creation",
+        "update": "Update",
+        "destroy": "Deletion",
+        "pdf": "PDF download",
+        "download_backup": "Download",
+        "create_backup": "Backup",
+        "run_cronjob": "Run",
+        "generate_invoice": "Invoice generation",
+        "deliver": "Test send",
+        "lock": "Lock",
+        "unlock": "Unlock",
+        "update_issuer": "Update",
+        "consent": "Consent"
+      },
+      "resources": {
+        "clients": "client",
+        "invoices": "quote/invoice",
+        "payments": "payment",
+        "contracts": "contract",
+        "objectives": "deliverable",
+        "tasks": "task",
+        "projects": "project",
+        "users": "user",
+        "infrastructure": "infrastructure",
+        "mail_previews": "e-mail",
+        "contacts": "contact",
+        "news": "article",
+        "appointments": "appointment",
+        "me": "profile"
+      }
     }
   },
   "tracking": {

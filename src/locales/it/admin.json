@@ -75,6 +75,128 @@
       "environment": "Ambiente",
       "dbLatency": "Latenza DB",
       "failedJobs": "Job falliti"
+    },
+    "tabs": {
+      "overview": "Panoramica",
+      "database": "Database",
+      "cronjobs": "Cron job",
+      "backups": "Backup",
+      "activities": "Attività"
+    },
+    "db": {
+      "size": "Dimensione",
+      "tables": "Tabelle",
+      "connections": "Connessioni",
+      "cacheHit": "Cache hit",
+      "startedAt": "Avviato il",
+      "migration": "Ultima migrazione",
+      "table": "Tabella",
+      "rows": "Righe",
+      "seqScans": "Scansioni sequenziali",
+      "idxScans": "Scansioni indice",
+      "vacuum": "Ultimo vacuum"
+    },
+    "cron": {
+      "daily": "Ogni giorno alle {{time}}",
+      "weekly": "Ogni {{day}} alle {{time}}",
+      "job": "Attività",
+      "schedule": "Pianificazione",
+      "lastRun": "Ultima esecuzione",
+      "nextRun": "Prossima esecuzione",
+      "ok": "Riuscita",
+      "failed": "Fallita",
+      "never": "Mai eseguita",
+      "run": "Avvia",
+      "queued": "«{{name}}» avviata.",
+      "empty": "Nessuna attività pianificata.",
+      "jobs": {
+        "database_backup": "Backup del database",
+        "seo_auto_noindex": "SEO: deindicizzare articoli senza traffico",
+        "activity_purge": "Pulizia del registro attività (> 180 giorni)"
+      },
+      "days": {
+        "0": "domenica",
+        "1": "lunedì",
+        "2": "martedì",
+        "3": "mercoledì",
+        "4": "giovedì",
+        "5": "venerdì",
+        "6": "sabato"
+      }
+    },
+    "backups": {
+      "policy": "Backup automatico: {{when}}. I {{keep}} più recenti sono conservati sul server.",
+      "restore": "Ripristino (manuale):",
+      "now": "Esegui backup ora",
+      "queued": "Backup avviato: apparirà qui tra pochi secondi.",
+      "file": "File",
+      "date": "Data",
+      "download": "Scarica",
+      "empty": "Ancora nessun backup."
+    },
+    "activity": {
+      "search": "Cerca (e-mail, percorso, IP)…",
+      "kinds": {
+        "all": "Tutto",
+        "auth": "Accessi",
+        "admin": "Back-office",
+        "site": "Sito e area clienti",
+        "jobs": "Attività pianificate",
+        "errors": "Errori"
+      },
+      "when": "Data",
+      "who": "Chi",
+      "what": "Azione",
+      "outcome": "Esito",
+      "request": "Richiesta",
+      "system": "Sistema",
+      "anonymous": "Visitatore",
+      "impersonated": "Da un admin al suo posto",
+      "empty": "Nessuna attività.",
+      "total_one": "{{count}} azione",
+      "total_other": "{{count}} azioni",
+      "named": {
+        "signIn": "Accesso",
+        "signOut": "Disconnessione",
+        "signUp": "Registrazione",
+        "passwordForgot": "Password dimenticata",
+        "passwordReset": "Nuova password",
+        "confirmResend": "Conferma reinviata",
+        "impersonate": "Accesso come utente",
+        "projectRequest": "Richiesta di progetto",
+        "cron": "Attività pianificata"
+      },
+      "verbs": {
+        "create": "Creazione",
+        "update": "Modifica",
+        "destroy": "Eliminazione",
+        "pdf": "Download PDF",
+        "download_backup": "Download",
+        "create_backup": "Backup",
+        "run_cronjob": "Avvio",
+        "generate_invoice": "Generazione fattura",
+        "deliver": "Invio di prova",
+        "lock": "Blocco",
+        "unlock": "Sblocco",
+        "update_issuer": "Modifica",
+        "consent": "Consenso"
+      },
+      "resources": {
+        "clients": "cliente",
+        "invoices": "preventivo/fattura",
+        "payments": "pagamento",
+        "contracts": "contratto",
+        "objectives": "consegna",
+        "tasks": "attività",
+        "projects": "progetto",
+        "users": "utente",
+        "infrastructure": "infrastruttura",
+        "mail_previews": "e-mail",
+        "contacts": "contatto",
+        "news": "articolo",
+        "appointments": "appuntamento",
+        "me": "profilo"
+      }
     }
   },
   "tracking": {

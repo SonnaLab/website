@@ -75,6 +75,128 @@
       "environment": "Entorno",
       "dbLatency": "Latencia BD",
       "failedJobs": "Tareas fallidas"
+    },
+    "tabs": {
+      "overview": "Resumen",
+      "database": "Base de datos",
+      "cronjobs": "Tareas programadas",
+      "backups": "Copias de seguridad",
+      "activities": "Actividad"
+    },
+    "db": {
+      "size": "Tamaño",
+      "tables": "Tablas",
+      "connections": "Conexiones",
+      "cacheHit": "Aciertos de caché",
+      "startedAt": "Iniciado el",
+      "migration": "Última migración",
+      "table": "Tabla",
+      "rows": "Filas",
+      "seqScans": "Escaneos secuenciales",
+      "idxScans": "Escaneos de índice",
+      "vacuum": "Último vacuum"
+    },
+    "cron": {
+      "daily": "Todos los días a las {{time}}",
+      "weekly": "Cada {{day}} a las {{time}}",
+      "job": "Tarea",
+      "schedule": "Programación",
+      "lastRun": "Última ejecución",
+      "nextRun": "Próxima ejecución",
+      "ok": "Correcta",
+      "failed": "Fallida",
+      "never": "Nunca ejecutada",
+      "run": "Ejecutar",
+      "queued": "«{{name}}» iniciada.",
+      "empty": "Ninguna tarea programada.",
+      "jobs": {
+        "database_backup": "Copia de la base de datos",
+        "seo_auto_noindex": "SEO: desindexar artículos sin tráfico",
+        "activity_purge": "Purga del registro de actividad (> 180 días)"
+      },
+      "days": {
+        "0": "domingo",
+        "1": "lunes",
+        "2": "martes",
+        "3": "miércoles",
+        "4": "jueves",
+        "5": "viernes",
+        "6": "sábado"
+      }
+    },
+    "backups": {
+      "policy": "Copia automática: {{when}}. Se conservan las {{keep}} más recientes en el servidor.",
+      "restore": "Restauración (manual):",
+      "now": "Hacer copia ahora",
+      "queued": "Copia iniciada: aparecerá aquí en unos segundos.",
+      "file": "Archivo",
+      "date": "Fecha",
+      "download": "Descargar",
+      "empty": "Aún no hay copias."
+    },
+    "activity": {
+      "search": "Buscar (correo, ruta, IP)…",
+      "kinds": {
+        "all": "Todo",
+        "auth": "Accesos",
+        "admin": "Back-office",
+        "site": "Sitio y área cliente",
+        "jobs": "Tareas programadas",
+        "errors": "Errores"
+      },
+      "when": "Fecha",
+      "who": "Quién",
+      "what": "Acción",
+      "outcome": "Resultado",
+      "request": "Petición",
+      "system": "Sistema",
+      "anonymous": "Visitante",
+      "impersonated": "Por un admin en su nombre",
+      "empty": "Sin actividad.",
+      "total_one": "{{count}} acción",
+      "total_other": "{{count}} acciones",
+      "named": {
+        "signIn": "Inicio de sesión",
+        "signOut": "Cierre de sesión",
+        "signUp": "Registro",
+        "passwordForgot": "Contraseña olvidada",
+        "passwordReset": "Nueva contraseña",
+        "confirmResend": "Reenvío de la confirmación",
+        "impersonate": "Acceso como usuario",
+        "projectRequest": "Solicitud de proyecto",
+        "cron": "Tarea programada"
+      },
+      "verbs": {
+        "create": "Creación",
+        "update": "Modificación",
+        "destroy": "Eliminación",
+        "pdf": "Descarga PDF",
+        "download_backup": "Descarga",
+        "create_backup": "Copia",
+        "run_cronjob": "Ejecución",
+        "generate_invoice": "Generación de factura",
+        "deliver": "Envío de prueba",
+        "lock": "Bloqueo",
+        "unlock": "Desbloqueo",
+        "update_issuer": "Modificación",
+        "consent": "Consentimiento"
+      },
+      "resources": {
+        "clients": "cliente",
+        "invoices": "presupuesto/factura",
+        "payments": "pago",
+        "contracts": "contrato",
+        "objectives": "entregable",
+        "tasks": "tarea",
+        "projects": "proyecto",
+        "users": "usuario",
+        "infrastructure": "infraestructura",
+        "mail_previews": "correo",
+        "contacts": "contacto",
+        "news": "artículo",
+        "appointments": "cita",
+        "me": "perfil"
+      }
     }
   },
   "tracking": {
