@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { apiAssetUrl } from '@/services/api';
-import { calculateDevis, formatDays } from '@/lib/devisCalc';
+import { calculateDevis, formatDays, shownDays, shownTotalDays } from '@/lib/devisCalc';
 import { bankLine, footerAddress, footerSlogan, footerWebsite, vatNumber } from '@/lib/letterhead';
 import type { TravauxClient, TravauxObjective, TravauxTask } from '@/types/travaux';
 import { formatDate, formatEuros } from './format';
@@ -16,6 +16,8 @@ export interface DocumentPreviewData {
   /** Issue date: the phases are computed from it. */
   issuedOn?: string | null;
   dailyRate: number | null;
+  /** « Facteur de multiplication » of the days shown (1 = off). */
+  daysMultiplier?: number;
   objective: TravauxObjective | null;
   /** Tâches du livrable : la répartition jours/prix est recalculée en direct. */
   tasks: TravauxTask[];
@@ -93,7 +95,7 @@ export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
                     <p className="trv-doc__task-title">{task.title}</p>
                     {task.description && <p className="trv-doc__task-desc">{task.description}</p>}
                   </td>
-                  <td className="trv-right trv-doc__muted">{offered ? '—' : formatDays(days)}</td>
+                  <td className="trv-right trv-doc__muted">{offered ? '—' : formatDays(shownDays(days, data.daysMultiplier))}</td>
                   <td className="trv-right trv-num">{offered ? t('travaux.document.offered') : formatEuros(price)}</td>
                 </tr>
               ))
@@ -107,9 +109,12 @@ export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan={hasAllocations ? 3 : 2} className="trv-right" style={{ fontWeight: 600 }}>
+              <td colSpan={2} className="trv-right" style={{ fontWeight: 600 }}>
                 {t('travaux.document.total')}
               </td>
+              {hasAllocations && (
+                <td className="trv-right trv-num" style={{ fontWeight: 600 }}>{formatDays(shownTotalDays(calc!, data.daysMultiplier))}</td>
+              )}
               <td className="trv-right">
                 <mark className="trv-doc__mark">{formatEuros(hasAllocations ? calc!.totalPrice : data.amount)}</mark>
               </td>

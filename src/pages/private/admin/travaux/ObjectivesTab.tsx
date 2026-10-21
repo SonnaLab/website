@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 
 import { Modal } from '@/components/common/Modal';
 import { apiService } from '@/services/api';
-import { calculateDevis, formatDays } from '@/lib/devisCalc';
+import { calculateDevis, DAYS_MULTIPLIERS, formatDays, shownDays, shownTotalDays } from '@/lib/devisCalc';
 import { DataTableAction } from '@/components/common/DataTable';
 import {
   CheckCircle2Icon, CheckCircleIcon, ChevronDownIcon, ClipboardListIcon, ClockIcon, EyeIcon, FileTextIcon, FolderKanbanIcon,
@@ -493,6 +493,8 @@ function GenerateDevisModal({
   const { t } = useTranslation('admin');
   const [dueOn, setDueOn] = useState('');
   const [dailyRate, setDailyRate] = useState(String(DEFAULT_DAILY_RATE));
+  // « Facteur de multiplication » des jours affichés (1 = désactivé).
+  const [multiplier, setMultiplier] = useState(1);
   const [saving, setSaving] = useState(false);
 
   // Un livrable n'a qu'un devis en cours : le régénérer le met à jour (nouvelle
@@ -502,9 +504,11 @@ function GenerateDevisModal({
     if (existingQuote) {
       setDueOn(existingQuote.due_on ?? '');
       setDailyRate(existingQuote.daily_rate_cents != null ? String(existingQuote.daily_rate_cents / 100) : String(DEFAULT_DAILY_RATE));
+      setMultiplier(existingQuote.days_multiplier ?? 1);
     } else {
       setDueOn(objective.due_on ?? addDaysIso(15));
       setDailyRate(String(DEFAULT_DAILY_RATE));
+      setMultiplier(1);
     }
   }, [objective, existingQuote]);
 
@@ -518,6 +522,7 @@ function GenerateDevisModal({
       due_on: dueOn || null,
       daily_rate_cents: dailyRate ? Math.round(Number(dailyRate) * 100) : null,
       amount_cents: calc.totalPrice * 100,
+      days_multiplier: multiplier,
     };
     try {
       const invoice = existingQuote
@@ -563,6 +568,24 @@ function GenerateDevisModal({
             </div>
           </div>
 
+          <div className="trv-multiplier">
+            <label className="trv-multiplier__toggle">
+              <input type="checkbox" checked={multiplier > 1} onChange={(e) => setMultiplier(e.target.checked ? 2 : 1)} />
+              <span>{t('travaux.invoices.multiplier.enable')}</span>
+            </label>
+            {multiplier > 1 && (
+              <div className="infra-chips" role="radiogroup" aria-label={t('travaux.invoices.multiplier.enable')}>
+                {DAYS_MULTIPLIERS.map((m) => (
+                  <button key={m} type="button" role="radio" aria-checked={multiplier === m}
+                          className={multiplier === m ? 'is-active' : ''} onClick={() => setMultiplier(m)}>
+                    x{m}
+                  </button>
+                ))}
+              </div>
+            )}
+            <p className="trv-hint">{t('travaux.invoices.multiplier.hint')}</p>
+          </div>
+
           {calc.allocations.length > 0 ? (
             <div className={['trv-alloc', calc.allocations.length > 5 ? 'trv-alloc--scroll' : ''].filter(Boolean).join(' ')}>
               <table>
@@ -577,14 +600,15 @@ function GenerateDevisModal({
                   {calc.allocations.map(({ task, days, price, offered }) => (
                     <tr key={task.id}>
                       <td>{task.title} <span className="trv-muted">({t(`travaux.tracking.columns.${task.column}`)})</span></td>
-                      <td className="trv-right trv-num">{offered ? '—' : formatDays(days)}</td>
+                      <td className="trv-right trv-num">{offered ? '—' : formatDays(shownDays(days, multiplier))}</td>
                       <td className="trv-right trv-num">{offered ? t('travaux.document.offered') : formatEuros(price)}</td>
                     </tr>
                   ))}
                 </tbody>
                 <tfoot>
                   <tr>
-                    <td colSpan={2}>{t('travaux.invoices.total')} ({calc.remainingDays} {t('travaux.invoices.daysRemaining')})</td>
+                    <td>{t('travaux.invoices.total')} ({calc.remainingDays} {t('travaux.invoices.daysRemaining')})</td>
+                    <td className="trv-right trv-num">{formatDays(shownTotalDays(calc, multiplier))}</td>
                     <td className="trv-right trv-num">{formatEuros(calc.totalPrice)}</td>
                   </tr>
                 </tfoot>

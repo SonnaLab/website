@@ -195,6 +195,7 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
     dueDate: invoice.due_on,
     issuedOn: invoice.issued_on,
     dailyRate: invoice.daily_rate_cents != null ? invoice.daily_rate_cents / 100 : null,
+    daysMultiplier: invoice.days_multiplier ?? 1,
     objective: objectives.find((o) => o.id === invoice.objective_id) ?? null,
     tasks: tasks.filter((task) => task.objective_id === invoice.objective_id),
     issuer,

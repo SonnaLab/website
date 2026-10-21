@@ -147,6 +147,8 @@ export interface TravauxInvoice {
   title: string;
   amount_cents: number;
   daily_rate_cents: number | null;
+  /** « Facteur de multiplication » of the days shown (1 = off; 2, 3 or 4). */
+  days_multiplier?: number;
   status: InvoiceStatus;
   issued_on: string | null;
   due_on: string | null;

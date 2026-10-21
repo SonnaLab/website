@@ -890,6 +890,10 @@
           "postponed": "Proyecto aplazado",
           "other": "Otro motivo"
         }
+      },
+      "multiplier": {
+        "enable": "Activar el factor de multiplicación",
+        "hint": "Los días mostrados en el presupuesto se multiplican por este factor; los precios no cambian."
       }
     },
     "contracts": {

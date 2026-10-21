@@ -890,6 +890,10 @@
           "postponed": "Projekt verschoben",
           "other": "Anderer Grund"
         }
+      },
+      "multiplier": {
+        "enable": "Multiplikationsfaktor aktivieren",
+        "hint": "Die im Angebot angezeigten Tage werden mit diesem Faktor multipliziert; die Preise ändern sich nicht."
       }
     },
     "contracts": {

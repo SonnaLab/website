@@ -20,6 +20,23 @@ export interface DevisCalculation {
   totalPrice: number;
 }
 
+/** Facteurs de multiplication proposés pour les jours affichés (1 = désactivé). */
+export const DAYS_MULTIPLIERS = [2, 3, 4] as const;
+
+/**
+ * Les jours qu'affiche un document : multipliés par son « facteur de
+ * multiplication » (x2, x3, x4), les prix restant ceux calculés.
+ */
+export function shownDays(days: number, multiplier = 1): number {
+  return Math.round(days * Math.max(multiplier, 1) * 10) / 10;
+}
+
+/** Leur total, pour la ligne « Total » (les phases offertes ne comptent pas). */
+export function shownTotalDays(calc: DevisCalculation, multiplier = 1): number {
+  const days = calc.allocations.filter((a) => !a.offered).reduce((sum, a) => sum + shownDays(a.days, multiplier), 0);
+  return Math.round(days * 10) / 10;
+}
+
 /** Jours calendaires de demain jusqu'à l'échéance incluse. */
 export function remainingDaysUntil(dueDate: string, from: Date = new Date()): number {
   const tomorrow = new Date(from);

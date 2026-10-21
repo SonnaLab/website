@@ -891,6 +891,10 @@
           "postponed": "Projet reporté",
           "other": "Autre raison"
         }
+      },
+      "multiplier": {
+        "enable": "Activer le facteur de multiplication",
+        "hint": "Les jours affichés sur le devis sont multipliés par ce facteur ; les prix ne changent pas."
       }
     },
     "contracts": {

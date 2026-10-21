@@ -890,6 +890,10 @@
           "postponed": "Progetto rinviato",
           "other": "Altro motivo"
         }
+      },
+      "multiplier": {
+        "enable": "Attiva il fattore di moltiplicazione",
+        "hint": "I giorni mostrati sul preventivo sono moltiplicati per questo fattore; i prezzi non cambiano."
       }
     },
     "contracts": {

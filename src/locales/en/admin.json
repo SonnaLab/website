@@ -890,6 +890,10 @@
           "postponed": "Project postponed",
           "other": "Other reason"
         }
+      },
+      "multiplier": {
+        "enable": "Enable the multiplying factor",
+        "hint": "The days shown on the quote are multiplied by this factor; prices do not change."
       }
     },
     "contracts": {
