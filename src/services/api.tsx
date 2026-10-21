@@ -90,6 +90,8 @@ export interface AuthUser {
   phone?: string | null;
   company?: string | null;
   confirmed_at?: string | null;
+  /** Main contact of its company: manages the company sheet. */
+  company_admin?: boolean;
 }
 
 export interface ProfilePayload {
@@ -726,6 +728,13 @@ class ApiService {
   }
   async adminTravauxDeleteClient(id: string) {
     return (await this.client.delete(`/api/v1/admin/travaux/clients/${id}`)).data;
+  }
+  /** Client space: the company sheet, for its main contact. */
+  async myCompany(): Promise<{ company: TravauxClient }> {
+    return (await this.client.get('/api/v1/company')).data;
+  }
+  async updateMyCompany(payload: TravauxPayload): Promise<{ company: TravauxClient }> {
+    return (await this.client.patch('/api/v1/company', toFormData('company', payload), MULTIPART)).data;
   }
   async adminTravauxIssuer(): Promise<{ issuer: TravauxClient | null }> {
     return (await this.client.get('/api/v1/admin/travaux/issuer')).data;

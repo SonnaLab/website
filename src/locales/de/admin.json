@@ -960,7 +960,8 @@
       "hint": "Finden Sie Ihr Unternehmen: SIRET, Firmenname und Adresse werden ausgefüllt. Prüfen und speichern.",
       "imported": "„{{name}}“ übernommen: prüfen und speichern."
     },
-    "heading": "Verwaltung des Unternehmens"
+    "heading": "Unternehmensprofil",
+    "clientSubtitle": "Die Angaben Ihres Unternehmens auf Ihren SonnaLab-Angeboten und -Rechnungen. Prüfen und ergänzen Sie sie."
   },
   "lesankofa": {
     "heading": "Verwaltung von Lesankofa",

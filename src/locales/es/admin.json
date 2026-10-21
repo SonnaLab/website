@@ -960,7 +960,8 @@
       "hint": "Busque su empresa: se rellenan el SIRET, la razón social y la dirección. Compruebe y guarde.",
       "imported": "«{{name}}» importada: compruebe y guarde."
     },
-    "heading": "Gestión de la empresa"
+    "heading": "Ficha de la empresa",
+    "clientSubtitle": "Los datos de su empresa, en sus presupuestos y facturas de SonnaLab. Revíselos y complételos."
   },
   "lesankofa": {
     "heading": "Gestión de Lesankofa",

@@ -961,7 +961,8 @@
       "hint": "Retrouvez votre entreprise : SIRET, raison sociale et adresse se remplissent. Vérifiez puis enregistrez.",
       "imported": "« {{name}} » importée : vérifiez puis enregistrez."
     },
-    "heading": "Gestion de l'entreprise"
+    "heading": "Fiche de l'entreprise",
+    "clientSubtitle": "Les informations de votre entreprise, reprises sur vos devis et factures SonnaLab. Vérifiez-les et complétez-les."
   },
   "lesankofa": {
     "heading": "Gestion de Lesankofa",

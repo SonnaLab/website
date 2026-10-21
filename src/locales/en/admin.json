@@ -960,7 +960,8 @@
       "hint": "Find your company: SIRET, legal name and address are filled in. Check, then save.",
       "imported": "“{{name}}” imported: check, then save."
     },
-    "heading": "Company management"
+    "heading": "Company sheet",
+    "clientSubtitle": "Your company details, shown on your SonnaLab quotes and invoices. Check and complete them."
   },
   "lesankofa": {
     "heading": "Lesankofa management",

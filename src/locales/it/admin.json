@@ -960,7 +960,8 @@
       "hint": "Trova la tua impresa: SIRET, ragione sociale e indirizzo vengono compilati. Verifica e salva.",
       "imported": "«{{name}}» importata: verifica e salva."
     },
-    "heading": "Gestione dell'azienda"
+    "heading": "Scheda dell'azienda",
+    "clientSubtitle": "I dati della tua azienda, riportati su preventivi e fatture SonnaLab. Verificali e completali."
   },
   "lesankofa": {
     "heading": "Gestione di Lesankofa",

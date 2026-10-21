@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { TrafficConeIcon } from '@icons';
+import { HotelIcon } from '@icons';
+import { useAuth } from '@/components/providers/AuthProvider';
+import { getDashboardPath } from '@/utils/auth';
 
 import { apiAssetUrl, apiService } from '@/services/api';
 import type { TravauxClient, TravauxPayload } from '@/types/travaux';
@@ -76,12 +78,17 @@ const toForm = (c: TravauxClient | null): FormState =>
   Object.fromEntries(FIELDS.map((f) => [f, (c?.[f] as string | null | undefined) ?? ''])) as FormState;
 
 /**
- * Page Entreprise (admin) : fiche émetteur SonnaLab, source de l'en-tête et
- * du pied de page des devis, factures et autres documents générés.
+ * « Fiche de l'entreprise » : côté admin, la fiche émetteur SonnaLab (en-tête
+ * et pied de page des documents générés) ; côté client (`mode="client"`),
+ * la fiche de son entreprise pour son contact principal, pré-remplie avec ce
+ * que SonnaLab en sait (sans les coordonnées bancaires).
  * Gauche (60 %) : aperçu A4 en direct ; droite (40 %) : champs éditables.
  */
-export default function Company() {
+export default function Company({ mode = 'issuer' }: { mode?: 'issuer' | 'client' }) {
   const { t } = useTranslation('admin');
+  const { user } = useAuth();
+  const client = mode === 'client';
+  const sections = client ? SECTIONS.filter((s) => s.key !== 'payment') : SECTIONS;
   const [issuer, setIssuer] = useState<TravauxClient | null>(null);
   const [form, setForm] = useState<FormState>(() => toForm(null));
   const [logo, setLogo] = useState<File | null>(null);
@@ -93,12 +100,12 @@ export default function Company() {
 
   useEffect(() => {
     let cancelled = false;
-    apiService.adminTravauxIssuer()
-      .then((res) => { if (!cancelled) { setIssuer(res.issuer); setForm(toForm(res.issuer)); } })
+    (client ? apiService.myCompany().then((r) => r.company) : apiService.adminTravauxIssuer().then((r) => r.issuer))
+      .then((company) => { if (!cancelled) { setIssuer(company); setForm(toForm(company)); } })
       .catch(() => { if (!cancelled) toast.error(t('company.loadError')); })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [t]);
+  }, [t, client]);
 
   // Aperçu immédiat du logo choisi, avant envoi.
   useEffect(() => {
@@ -173,7 +180,9 @@ export default function Company() {
       remove_logo: removeLogo && !logo ? true : undefined,
     };
     try {
-      const saved = (await apiService.adminTravauxUpdateIssuer(payload)).issuer;
+      const saved = client
+        ? (await apiService.updateMyCompany(payload)).company
+        : (await apiService.adminTravauxUpdateIssuer(payload)).issuer;
       setIssuer(saved);
       setForm(toForm(saved));
       setLogo(null);
@@ -188,12 +197,12 @@ export default function Company() {
 
   return (
     <div className="dash-page">
-      {/* Issuer of the Travaux documents; reached from the avatar menu. */}
-      <Breadcrumbs items={[{ label: t('nav.travaux'), to: '/admin/travaux' }, { label: t('company.title') }]} />
+      {/* Reached from the avatar menu: the way back is the dashboard. */}
+      <Breadcrumbs items={[{ label: t('nav.dashboard', { ns: 'member' }), to: getDashboardPath(user?.role) }, { label: t('company.title') }]} />
       <PageHeader
-        badge={{ icon: TrafficConeIcon, label: t('nav.travaux') }}
+        badge={{ icon: HotelIcon, label: t('nav.company') }}
         title={t('company.heading')}
-        description={t('company.subtitle')}
+        description={t(client ? 'company.clientSubtitle' : 'company.subtitle')}
       />
 
       <div className="co-layout">
@@ -246,7 +255,7 @@ export default function Company() {
                   {imported && <p className="trv-lookup__imported">{t('company.lookup.imported', { name: imported })}</p>}
                 </div>
               </div>
-              {SECTIONS.map((section) => (
+              {sections.map((section) => (
                 <div
                   key={section.key}
                   role="group"

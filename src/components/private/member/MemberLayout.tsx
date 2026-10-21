@@ -137,8 +137,8 @@ export function MemberLayout() {
                   <UserIcon size={14} />
                   {t('nav.profile')}
                 </Link>
-                {isAdmin && (
-                  <Link to="/admin/entreprise" className="dash-avatar-menu-item" onClick={() => setAvatarOpen(false)}>
+                {(isAdmin || user?.company_admin) && (
+                  <Link to={isAdmin ? '/admin/entreprise' : '/dashboard/entreprise'} className="dash-avatar-menu-item" onClick={() => setAvatarOpen(false)}>
                     <HotelIcon size={14} />
                     {tA('nav.company')}
                   </Link>

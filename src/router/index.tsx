@@ -180,6 +180,7 @@ export const routeTree: RouteObject[] = [
           { index: true,           element: <MemberDashboard /> },
           { path: 'appointments',  element: <MemberAppointments /> },
           { path: 'travaux',       element: <MemberTravaux /> },
+          { path: 'entreprise',    element: <AdminCompany mode="client" /> },
           { path: 'billing',       element: <MemberBilling /> },
           { path: 'profile',       element: <MemberProfile /> },
         ],
