@@ -989,7 +989,6 @@
       "newsletter_mailer": "Newsletter",
       "campaign_mailer": "Kampagnen",
       "appointment_mailer": "Termine",
-      "consultation_mailer": "Beratungen",
       "staff_mailer": "Interne Benachrichtigungen"
     },
     "emails": {
@@ -1022,10 +1021,6 @@
       "staff_appointment_requested": "Termin angefragt",
       "staff_appointment_rescheduled": "Termin vom Kunden geändert",
       "staff_appointment_cancelled": "Termin vom Kunden abgesagt",
-      "consultation_received": "Anfrage erhalten",
-      "consultation_scheduled": "Geplant",
-      "consultation_reminder": "Erinnerung am Vortag",
-      "consultation_team": "Anfrage — Team",
       "payment_reminder": "Erinnerung",
       "payment_received": "Zahlung erhalten",
       "requested": "Anfrage erhalten",
@@ -1033,9 +1028,7 @@
       "rescheduled": "Verschoben",
       "cancelled": "Abgesagt",
       "reminder": "Erinnerung am Vortag",
-      "appointment": "Termin (vom Kunden)",
-      "confirm_request": "Anfrage erhalten",
-      "schedule_confirmation": "Geplant"
+      "appointment": "Termin (vom Kunden)"
     },
     "sendTest": "Test senden",
     "sending": "Wird gesendet…",

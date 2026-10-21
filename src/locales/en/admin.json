@@ -989,7 +989,6 @@
       "newsletter_mailer": "Newsletter",
       "campaign_mailer": "Campaigns",
       "appointment_mailer": "Meetings",
-      "consultation_mailer": "Consultations",
       "staff_mailer": "Internal notices"
     },
     "emails": {
@@ -1022,10 +1021,6 @@
       "staff_appointment_requested": "Meeting requested",
       "staff_appointment_rescheduled": "Meeting changed by the client",
       "staff_appointment_cancelled": "Meeting cancelled by the client",
-      "consultation_received": "Request received",
-      "consultation_scheduled": "Scheduled",
-      "consultation_reminder": "Day-before reminder",
-      "consultation_team": "Request — team",
       "payment_reminder": "Reminder",
       "payment_received": "Payment received",
       "requested": "Request received",
@@ -1033,9 +1028,7 @@
       "rescheduled": "Moved",
       "cancelled": "Cancelled",
       "reminder": "Day-before reminder",
-      "appointment": "Meeting (by the client)",
-      "confirm_request": "Request received",
-      "schedule_confirmation": "Scheduled"
+      "appointment": "Meeting (by the client)"
     },
     "sendTest": "Send a test",
     "sending": "Sending…",

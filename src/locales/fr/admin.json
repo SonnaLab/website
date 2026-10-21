@@ -990,7 +990,6 @@
       "newsletter_mailer": "Newsletter",
       "campaign_mailer": "Campagnes",
       "appointment_mailer": "Rendez-vous",
-      "consultation_mailer": "Consultations",
       "staff_mailer": "Notifications internes"
     },
     "emails": {
@@ -1023,10 +1022,6 @@
       "staff_appointment_requested": "Rendez-vous demandé",
       "staff_appointment_rescheduled": "Rendez-vous modifié par le client",
       "staff_appointment_cancelled": "Rendez-vous annulé par le client",
-      "consultation_received": "Demande reçue",
-      "consultation_scheduled": "Planifiée",
-      "consultation_reminder": "Rappel la veille",
-      "consultation_team": "Demande — équipe",
       "payment_reminder": "Relance",
       "payment_received": "Paiement reçu",
       "requested": "Demande reçue",
@@ -1034,9 +1029,7 @@
       "rescheduled": "Déplacé",
       "cancelled": "Annulé",
       "reminder": "Rappel la veille",
-      "appointment": "Rendez-vous (par le client)",
-      "confirm_request": "Demande reçue",
-      "schedule_confirmation": "Planifiée"
+      "appointment": "Rendez-vous (par le client)"
     },
     "sendTest": "Envoyer un test",
     "sending": "Envoi…",

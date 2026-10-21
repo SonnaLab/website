@@ -989,7 +989,6 @@
       "newsletter_mailer": "Newsletter",
       "campaign_mailer": "Campagne",
       "appointment_mailer": "Appuntamenti",
-      "consultation_mailer": "Consulenze",
       "staff_mailer": "Notifiche interne"
     },
     "emails": {
@@ -1022,10 +1021,6 @@
       "staff_appointment_requested": "Appuntamento richiesto",
       "staff_appointment_rescheduled": "Appuntamento modificato dal cliente",
       "staff_appointment_cancelled": "Appuntamento annullato dal cliente",
-      "consultation_received": "Richiesta ricevuta",
-      "consultation_scheduled": "Pianificata",
-      "consultation_reminder": "Promemoria il giorno prima",
-      "consultation_team": "Richiesta — team",
       "payment_reminder": "Sollecito",
       "payment_received": "Pagamento ricevuto",
       "requested": "Richiesta ricevuta",
@@ -1033,9 +1028,7 @@
       "rescheduled": "Spostato",
       "cancelled": "Annullato",
       "reminder": "Promemoria il giorno prima",
-      "appointment": "Appuntamento (dal cliente)",
-      "confirm_request": "Richiesta ricevuta",
-      "schedule_confirmation": "Pianificata"
+      "appointment": "Appuntamento (dal cliente)"
     },
     "sendTest": "Invia un test",
     "sending": "Invio…",

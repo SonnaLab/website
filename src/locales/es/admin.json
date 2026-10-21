@@ -989,7 +989,6 @@
       "newsletter_mailer": "Newsletter",
       "campaign_mailer": "Campañas",
       "appointment_mailer": "Citas",
-      "consultation_mailer": "Consultas",
       "staff_mailer": "Avisos internos"
     },
     "emails": {
@@ -1022,10 +1021,6 @@
       "staff_appointment_requested": "Cita solicitada",
       "staff_appointment_rescheduled": "Cita cambiada por el cliente",
       "staff_appointment_cancelled": "Cita cancelada por el cliente",
-      "consultation_received": "Solicitud recibida",
-      "consultation_scheduled": "Programada",
-      "consultation_reminder": "Recordatorio la víspera",
-      "consultation_team": "Solicitud — equipo",
       "payment_reminder": "Recordatorio",
       "payment_received": "Pago recibido",
       "requested": "Solicitud recibida",
@@ -1033,9 +1028,7 @@
       "rescheduled": "Cambiada",
       "cancelled": "Cancelada",
       "reminder": "Recordatorio la víspera",
-      "appointment": "Cita (por el cliente)",
-      "confirm_request": "Solicitud recibida",
-      "schedule_confirmation": "Programada"
+      "appointment": "Cita (por el cliente)"
     },
     "sendTest": "Enviar una prueba",
     "sending": "Enviando…",

@@ -11,7 +11,7 @@ type Device = 'desktop' | 'mobile';
 // The order of the client's journey, not the alphabet.
 const ORDER = [
   // The groups, in this order…
-  'auth_mailer', 'team_mailer', 'billing_mailer', 'appointment_mailer', 'contact_mailer', 'consultation_mailer',
+  'auth_mailer', 'team_mailer', 'billing_mailer', 'appointment_mailer', 'contact_mailer',
   'newsletter_mailer', 'campaign_mailer', 'staff_mailer',
   // …and the e-mails within each, along the journey (`welcome` sits between
   // the account's and the newsletter's neighbours).
@@ -22,7 +22,6 @@ const ORDER = [
   'appointment_requested', 'appointment_confirmed', 'appointment_rescheduled', 'appointment_cancelled',
   'appointment_reminder', 'appointment_reminder_staff',
   'confirm_submission', 'notify_team',
-  'consultation_received', 'consultation_scheduled', 'consultation_reminder', 'consultation_team',
   'campaign',
   'new_account', 'staff_appointment_requested', 'staff_appointment_rescheduled', 'staff_appointment_cancelled',
 ];
