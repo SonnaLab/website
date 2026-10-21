@@ -1061,13 +1061,15 @@
       "all": "Iscritti e clienti"
     },
     "heroes": {
-      "none": "Senza illustrazione",
       "welcome": "La home page",
       "request": "I servizi",
       "quote": "Preventivi",
       "invoice": "Fatture",
       "payment": "Pagamenti",
-      "invitation": "L'area clienti"
+      "invitation": "L'area clienti",
+      "newsletter": "Il blog (newsletter)",
+      "appointment": "Gli appuntamenti",
+      "security": "La sicurezza dell'account"
     },
     "campaigns": {
       "new": "Nuova campagna",

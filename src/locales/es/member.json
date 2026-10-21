@@ -33,7 +33,22 @@
       "past": "Pasadas",
       "cancelled": "Canceladas"
     },
-    "heading": "Gestión de las citas"
+    "heading": "Gestión de las citas",
+    "kinds": {
+      "discovery": "Llamada de descubrimiento",
+      "follow_up": "Seguimiento",
+      "project_review": "Revisión de proyecto",
+      "billing": "Facturación",
+      "support": "Soporte",
+      "other": "Otro"
+    },
+    "statuses": {
+      "pending": "Pendiente",
+      "confirmed": "Confirmada",
+      "cancelled": "Cancelada",
+      "completed": "Completada",
+      "no_show": "No presentado"
+    }
   },
   "billing": {
     "title": "Facturación",

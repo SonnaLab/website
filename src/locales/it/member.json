@@ -33,7 +33,22 @@
       "past": "Passati",
       "cancelled": "Annullati"
     },
-    "heading": "Gestione degli appuntamenti"
+    "heading": "Gestione degli appuntamenti",
+    "kinds": {
+      "discovery": "Chiamata conoscitiva",
+      "follow_up": "Punto di avanzamento",
+      "project_review": "Revisione del progetto",
+      "billing": "Fatturazione",
+      "support": "Supporto",
+      "other": "Altro"
+    },
+    "statuses": {
+      "pending": "In attesa",
+      "confirmed": "Confermato",
+      "cancelled": "Annullato",
+      "completed": "Completato",
+      "no_show": "Assente"
+    }
   },
   "billing": {
     "title": "Fatturazione",

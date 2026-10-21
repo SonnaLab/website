@@ -17,7 +17,13 @@ const HEROES = {
   reminder:   { screen: 'invoices',  icon: 'clock-warning',        side: 'right', fr: ['Reste à payer', 'Échéance à surveiller'],     en: ['Balance due', 'Mind the due date'] },
   payment:    { screen: 'invoices',  icon: 'check-circle-success', side: 'left',  fr: ['Paiement reçu', 'Merci !'],                   en: ['Payment received', 'Thank you!'] },
   request:    { screen: 'services',  icon: 'zap',                  side: 'right', fr: ['Demande reçue', 'Réponse sous 48 h'],         en: ['Request received', 'Answer within 48 h'] },
+  appointment:{ screen: 'appointments', icon: 'calendar-success',   side: 'left',  fr: ['Rendez-vous', 'Ajouté à votre agenda'],      en: ['Meeting', 'Added to your calendar'] },
+  security:   { screen: 'signin',    icon: 'shield-success',       side: 'left',  fr: ['Sécurité', 'Votre compte est protégé'],      en: ['Security', 'Your account is protected'] },
+  newsletter: { screen: 'blog',      icon: 'sparkles',             side: 'right', fr: ['Newsletter', 'Digital, IA et produit'],      en: ['Newsletter', 'Digital, AI and product'] },
+  lead:       { screen: 'services',  icon: 'user-success',         side: 'left',  fr: ['Nouveau compte', 'À qualifier'],             en: ['New account', 'To qualify'] },
 };
+// Only some heroes: node heroes.mjs <screens> [out] appointment,security
+const ONLY = process.argv[4]?.split(',');
 const page = (h, locale) => {
   const [title, sub] = h[locale];
   const chipLeft = h.side === 'left';
@@ -50,10 +56,10 @@ const page = (h, locale) => {
 };
 const browser = await chromium.launch();
 const tab = await browser.newPage({ viewport: { width: 600, height: 360 }, deviceScaleFactor: 2 });
-for (const [key, h] of Object.entries(HEROES)) for (const locale of ['fr', 'en']) {
+for (const [key, h] of Object.entries(HEROES).filter(([k]) => !ONLY || ONLY.includes(k))) for (const locale of ['fr', 'en']) {
   await tab.setContent(page(h, locale), { waitUntil: 'load' });
   await tab.evaluate(() => document.fonts.ready);
   await tab.screenshot({ path: `${OUT}/${key}-${locale}.png` });
 }
 await browser.close();
-console.log('heroes', Object.keys(HEROES).length * 2);
+console.log('heroes', (ONLY ?? Object.keys(HEROES)).length * 2);

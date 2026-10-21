@@ -12,7 +12,7 @@ import { EyeIcon, MegaphoneIcon, PenLineIcon, SendIcon, Trash2Icon } from '@icon
 
 const CATEGORIES = ['newsletter', 'updates', 'events'] as const;
 const AUDIENCES = ['subscribers', 'clients', 'all'] as const;
-const HEROES = ['', 'welcome', 'request', 'quote', 'invoice', 'payment', 'invitation'] as const;
+const HEROES = ['newsletter', 'welcome', 'request', 'appointment', 'quote', 'invoice', 'payment', 'invitation', 'security'] as const;
 const STATUS_VARIANT = { draft: 'default', sending: 'info', sent: 'success', failed: 'danger' } as const;
 const FIELDS = ['subject', 'preheader', 'title', 'body', 'cta_label'] as const;
 
@@ -31,7 +31,7 @@ export function CampaignsTab({ creating, onCreated, onChange }: { creating: bool
   }, []);
   useEffect(() => { load(); }, [load]);
   useEffect(() => {
-    if (creating) { setEditing({ category: 'newsletter', audience: 'subscribers', hero: '' }); onCreated(); }
+    if (creating) { setEditing({ category: 'newsletter', audience: 'subscribers', hero: 'newsletter' }); onCreated(); }
   }, [creating, onCreated]);
 
   async function edit(campaign: MailingCampaign) {
@@ -140,7 +140,7 @@ function CampaignFormModal({ draft, onClose, onSaved }: { draft: Draft | null; o
     e.preventDefault();
     setSaving(true);
     const payload: Record<string, unknown> = {
-      name: form.name, category: form.category, audience: form.audience, hero: form.hero || null, cta_url: form.cta_url || null,
+      name: form.name, category: form.category, audience: form.audience, hero: form.hero || 'newsletter', cta_url: form.cta_url || null,
     };
     FIELDS.forEach((f) => ['fr', 'en'].forEach((l) => { payload[`${f}_${l}`] = value(`${f}_${l}`) || null; }));
     try {
@@ -192,7 +192,7 @@ function CampaignFormModal({ draft, onClose, onSaved }: { draft: Draft | null; o
           <div className="adm-form__field">
             <label className="adm-form__label" htmlFor="cmp-hero">{t('mailing.campaigns.hero')}</label>
             <select id="cmp-hero" className="adm-select" value={value('hero')} onChange={(e) => set('hero', e.target.value)}>
-              {HEROES.map((h) => <option key={h} value={h}>{h ? t(`mailing.heroes.${h}`) : t('mailing.heroes.none')}</option>)}
+              {HEROES.map((h) => <option key={h} value={h}>{t(`mailing.heroes.${h}`)}</option>)}
             </select>
           </div>
           <div className="adm-form__field">

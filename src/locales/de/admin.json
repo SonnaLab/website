@@ -1061,13 +1061,15 @@
       "all": "Abonnenten und Kunden"
     },
     "heroes": {
-      "none": "Ohne Illustration",
       "welcome": "Die Startseite",
       "request": "Die Leistungen",
       "quote": "Angebote",
       "invoice": "Rechnungen",
       "payment": "Zahlungen",
-      "invitation": "Der Kundenbereich"
+      "invitation": "Der Kundenbereich",
+      "newsletter": "Der Blog (Newsletter)",
+      "appointment": "Termine",
+      "security": "Kontosicherheit"
     },
     "campaigns": {
       "new": "Neue Kampagne",

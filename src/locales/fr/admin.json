@@ -1062,13 +1062,15 @@
       "all": "Abonnés et clients"
     },
     "heroes": {
-      "none": "Sans illustration",
       "welcome": "L'accueil du site",
       "request": "Les services",
       "quote": "Les devis",
       "invoice": "Les factures",
       "payment": "Les règlements",
-      "invitation": "L'espace client"
+      "invitation": "L'espace client",
+      "newsletter": "Le blog (newsletter)",
+      "appointment": "Les rendez-vous",
+      "security": "La sécurité du compte"
     },
     "campaigns": {
       "new": "Nouvelle campagne",

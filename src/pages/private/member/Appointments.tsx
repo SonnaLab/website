@@ -93,11 +93,11 @@ export default function MemberAppointments() {
               {items.map((a) => (
                 <TableRow key={a.id}>
                   <TableCell>{fmtDate(a.scheduled_at)}</TableCell>
-                  <TableCell className="capitalize">{a.kind}</TableCell>
+                  <TableCell>{t(`appointments.kinds.${a.kind}`, { defaultValue: a.kind })}</TableCell>
                   <TableCell>{a.duration_minutes} min</TableCell>
                   <TableCell>{a.location || '—'}</TableCell>
                   <TableCell>
-                    <Badge variant={STATUS_VARIANT[a.status] || 'secondary'}>{a.status}</Badge>
+                    <Badge variant={STATUS_VARIANT[a.status] || 'secondary'}>{t(`appointments.statuses.${a.status}`, { defaultValue: a.status })}</Badge>
                   </TableCell>
                   <TableCell className="text-right">
                     {(a.status === 'pending' || a.status === 'confirmed') && (

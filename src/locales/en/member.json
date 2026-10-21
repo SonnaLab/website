@@ -33,7 +33,22 @@
       "past": "Past",
       "cancelled": "Cancelled"
     },
-    "heading": "Appointment management"
+    "heading": "Appointment management",
+    "kinds": {
+      "discovery": "Discovery call",
+      "follow_up": "Follow-up",
+      "project_review": "Project review",
+      "billing": "Billing",
+      "support": "Support",
+      "other": "Other"
+    },
+    "statuses": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled",
+      "completed": "Completed",
+      "no_show": "No-show"
+    }
   },
   "billing": {
     "title": "Billing",

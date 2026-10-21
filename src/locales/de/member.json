@@ -33,7 +33,22 @@
       "past": "Vergangen",
       "cancelled": "Abgesagt"
     },
-    "heading": "Verwaltung der Termine"
+    "heading": "Verwaltung der Termine",
+    "kinds": {
+      "discovery": "Kennenlerngespräch",
+      "follow_up": "Folgetermin",
+      "project_review": "Projektbesprechung",
+      "billing": "Abrechnung",
+      "support": "Support",
+      "other": "Sonstiges"
+    },
+    "statuses": {
+      "pending": "Ausstehend",
+      "confirmed": "Bestätigt",
+      "cancelled": "Abgesagt",
+      "completed": "Abgeschlossen",
+      "no_show": "Nicht erschienen"
+    }
   },
   "billing": {
     "title": "Abrechnung",

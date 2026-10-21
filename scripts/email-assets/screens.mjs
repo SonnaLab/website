@@ -17,6 +17,8 @@ const SHOTS = [
   { key: 'dashboard', path: { fr: '/dashboard', en: '/dashboard' }, member: true },
   { key: 'invoices', path: { fr: '/dashboard/billing', en: '/dashboard/billing' }, member: true },
   { key: 'quotes', path: { fr: '/dashboard/billing', en: '/dashboard/billing' }, member: true, click: '[role=tab]:nth-child(2)' },
+  { key: 'appointments', path: { fr: '/dashboard/appointments', en: '/dashboard/appointments' }, member: true },
+  { key: 'blog', path: { fr: '/blog', en: '/en/blog' } },
 ];
 const browser = await chromium.launch();
 for (const locale of ['fr', 'en']) {

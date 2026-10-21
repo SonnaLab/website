@@ -9,6 +9,7 @@ const TILES = {
   users: 'Users', user: 'User', lock: 'Lock', zap: 'Zap', clock: 'Clock', download: 'Download',
   'folder-kanban': 'FolderKanban', shield: 'Shield', globe: 'Globe', target: 'Target', 'layout-dashboard': 'LayoutDashboard',
   briefcase: 'Briefcase', send: 'Send', 'alert-triangle': 'AlertTriangle', 'trending-up': 'TrendingUp', sparkles: 'Sparkles',
+  smartphone: 'Smartphone', 'shopping-cart': 'ShoppingCart', palette: 'Palette', code: 'Code', 'bar-chart': 'BarChart',
 };
 const TONES = { '': ['#f3f4f6', '#111111'], '-success': ['#e9f8ee', '#16a34a'], '-warning': ['#fff4e0', '#d97706'] };
 const tiles = [];

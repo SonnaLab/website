@@ -33,7 +33,22 @@
       "past": "Passés",
       "cancelled": "Annulés"
     },
-    "heading": "Gestion des rendez-vous"
+    "heading": "Gestion des rendez-vous",
+    "kinds": {
+      "discovery": "Appel découverte",
+      "follow_up": "Point de suivi",
+      "project_review": "Revue de projet",
+      "billing": "Facturation",
+      "support": "Support",
+      "other": "Autre"
+    },
+    "statuses": {
+      "pending": "En attente",
+      "confirmed": "Confirmé",
+      "cancelled": "Annulé",
+      "completed": "Terminé",
+      "no_show": "Absent"
+    }
   },
   "billing": {
     "title": "Facturation",

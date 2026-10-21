@@ -40,6 +40,8 @@ export function TemplatesTab() {
   const [locale, setLocale] = useState<Locale>('fr');
   const [device, setDevice] = useState<Device>('desktop');
   const [mail, setMail] = useState<MailPreview | null>(null);
+  // The skeleton stays until the e-mail and its images are painted (iframe load).
+  const [painted, setPainted] = useState(false);
   const [error, setError] = useState(false);
   // Who a test goes to: the sample's address until changed.
   const [to, setTo] = useState('');
@@ -84,6 +86,7 @@ export function TemplatesTab() {
 
   // Links open in a new tab; the frame grows to the e-mail's height.
   const html = mail?.html.replace('<head>', '<head><base target="_blank">') ?? '';
+  useEffect(() => { setPainted(false); }, [html]);
   const fit = () => {
     const doc = frame.current?.contentDocument;
     if (frame.current && doc) frame.current.style.height = `${doc.documentElement.scrollHeight}px`;
@@ -128,6 +131,13 @@ export function TemplatesTab() {
 
         <section className="mailp-view">
           {error && <p className="trv-error">{t('common.error')}</p>}
+          {!mail && !error && (
+            <div className="mailp-meta" aria-hidden="true">
+              {[38, 30, 46, 22].map((w, i) => (
+                <div key={i}><span className="mailp-skel mailp-skel--line" style={{ width: 70 }} /><span className="mailp-skel mailp-skel--line" style={{ width: `${w}%` }} /></div>
+              ))}
+            </div>
+          )}
           {mail && (
             <dl className="mailp-meta">
               <div><dt>{t('mails.subject')}</dt><dd className="mailp-meta__subject">{mail.subject}</dd></div>
@@ -156,18 +166,46 @@ export function TemplatesTab() {
             </dl>
           )}
           <div className="mailp-stage">
-            {mail ? (
+            {mail && (
               <iframe
                 ref={frame}
                 title={mail.subject}
                 srcDoc={html}
-                className={`mailp-frame mailp-frame--${device}`}
+                className={`mailp-frame mailp-frame--${device}${painted ? '' : ' is-loading'}`}
                 sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox"
-                onLoad={fit}
+                onLoad={() => { fit(); setPainted(true); }}
               />
-            ) : !error && <p className="trk-loading">{t('common.loading')}</p>}
+            )}
+            {!error && !painted && <MailSkeleton device={device} label={t('common.loading')} />}
           </div>
         </section>
+      </div>
+    </div>
+  );
+}
+
+/** The shape of an e-mail (logo, title, text, button, phone, grid) while it loads. */
+function MailSkeleton({ device, label }: { device: string; label: string }) {
+  return (
+    <div className={`mailp-skeleton mailp-frame--${device}`} role="status" aria-label={label}>
+      <div className="mailp-skeleton__card">
+        <span className="mailp-skel" style={{ width: 120, height: 26, margin: '0 auto' }} />
+        <span className="mailp-skel" style={{ width: 80, height: 10, margin: '26px auto 0' }} />
+        <span className="mailp-skel" style={{ width: '70%', height: 28, margin: '14px auto 0' }} />
+        <span className="mailp-skel" style={{ width: '50%', height: 28, margin: '8px auto 0' }} />
+        <span className="mailp-skel" style={{ width: '84%', height: 12, margin: '22px auto 0' }} />
+        <span className="mailp-skel" style={{ width: '64%', height: 12, margin: '8px auto 0' }} />
+        <span className="mailp-skel" style={{ width: 190, height: 46, margin: '26px auto 0', borderRadius: 14 }} />
+        <span className="mailp-skel" style={{ width: '100%', height: 220, margin: '30px 0 0', borderRadius: 0 }} />
+        <div className="mailp-skeleton__grid">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i}>
+              <span className="mailp-skel" style={{ width: 44, height: 44, margin: '0 auto', borderRadius: 12 }} />
+              <span className="mailp-skel" style={{ width: '60%', height: 12, margin: '12px auto 0' }} />
+              <span className="mailp-skel" style={{ width: '80%', height: 10, margin: '8px auto 0' }} />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
