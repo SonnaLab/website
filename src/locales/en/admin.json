@@ -113,7 +113,9 @@
       "jobs": {
         "database_backup": "Database backup",
         "seo_auto_noindex": "SEO: noindex articles without traffic",
-        "activity_purge": "Activity log purge (> 180 days)"
+        "activity_purge": "Activity log purge (> 180 days)",
+        "payment_reminders": "Invoice reminders (D-3, D+1, D+7, D+14)",
+        "appointment_reminders": "Meeting reminders (the day before)"
       },
       "days": {
         "0": "Sunday",
@@ -143,7 +145,8 @@
         "admin": "Back office",
         "site": "Site and client space",
         "jobs": "Scheduled jobs",
-        "errors": "Errors"
+        "errors": "Errors",
+        "mails": "E-mails"
       },
       "when": "Date",
       "who": "Who",
@@ -165,7 +168,8 @@
         "confirmResend": "Confirmation resent",
         "impersonate": "Signed in as a user",
         "projectRequest": "Project request",
-        "cron": "Scheduled job"
+        "cron": "Scheduled job",
+        "mail": "E-mail"
       },
       "verbs": {
         "create": "Creation",
@@ -197,7 +201,8 @@
         "news": "article",
         "appointments": "appointment",
         "me": "profile"
-      }
+      },
+      "mailTo": "To {{to}}"
     }
   },
   "tracking": {
@@ -754,9 +759,7 @@
       "download": "Download",
       "downloadError": "Could not download the PDF.",
       "send": "Send",
-      "sendConfirm": "Mark \"{{title}}\" as sent to {{client}}?",
-      "sendHint": "No email is sent: the document simply moves to the \"Sent\" status.",
-      "sentDone": "Document marked as sent.",
+      "sendHint": "Each recipient gets it in their language. A draft becomes “Sent”.",
       "created": "Quote created.",
       "saved": "Document saved.",
       "deleted": "Document deleted.",
@@ -769,7 +772,28 @@
         "unpaid": "Unpaid",
         "deposit": "Deposit",
         "detail": "{{paid}} paid of {{total}}"
-      }
+      },
+      "remind": "Send a reminder",
+      "sendIntro": "“{{title}}” goes out by e-mail, PDF attached.",
+      "remindIntro": "Reminder of the {{amount}} left to pay on “{{title}}”, invoice attached.",
+      "sendAction_one": "Send to 1 recipient",
+      "sendAction_other": "Send to {{count}} recipients",
+      "remindAction_one": "Remind 1 recipient",
+      "remindAction_other": "Remind {{count}} recipients",
+      "sentDone_one": "Sent to 1 recipient.",
+      "sentDone_other": "Sent to {{count}} recipients.",
+      "remindDone_one": "Reminder sent to 1 recipient.",
+      "remindDone_other": "Reminder sent to {{count}} recipients.",
+      "recipients": "Recipients",
+      "recipientRoles": {
+        "referent": "Referent",
+        "contact": "Contact e-mail",
+        "member": "Team"
+      },
+      "noRecipient": "This client has no referent nor contact e-mail: add an address below.",
+      "otherRecipients": "Other addresses (comma-separated)",
+      "remindHint": "Each recipient gets it in their language. Automatic reminders also go out 3 days before and 1, 7 and 14 days after the due date.",
+      "lastReminded": "Last reminder: {{date}}"
     },
     "contracts": {
       "new": "New contract",
@@ -806,7 +830,8 @@
         "failed": "Failed"
       },
       "chooseInvoice": "Choose an invoice",
-      "noInvoice": "No invoice to settle: generate it from its quote first (Quotes tab)."
+      "noInvoice": "No invoice to settle: generate it from its quote first (Quotes tab).",
+      "notify": "E-mail the receipt to the client"
     },
     "document": {
       "emittedBy": "Issued by",
@@ -963,7 +988,10 @@
       "billing_mailer": "Billing",
       "contact_mailer": "Project requests",
       "newsletter_mailer": "Newsletter",
-      "campaign_mailer": "Campaigns"
+      "campaign_mailer": "Campaigns",
+      "appointment_mailer": "Meetings",
+      "consultation_mailer": "Consultations",
+      "staff_mailer": "Internal notices"
     },
     "emails": {
       "confirmation": "Sign-up confirmation",
@@ -981,7 +1009,34 @@
       "confirm_subscription": "Subscription confirmation",
       "welcome": "Welcome",
       "goodbye": "Unsubscribed",
-      "campaign": "Campaign"
+      "campaign": "Campaign",
+      "password_changed": "Password changed",
+      "account_locked": "Account locked",
+      "invitation_existing": "Invitation — existing account",
+      "appointment_requested": "Request received",
+      "appointment_confirmed": "Confirmed (+ .ics)",
+      "appointment_rescheduled": "Moved",
+      "appointment_cancelled": "Cancelled",
+      "appointment_reminder": "Day-before reminder — client",
+      "appointment_reminder_staff": "Day-before reminder — team",
+      "new_account": "New account",
+      "staff_appointment_requested": "Meeting requested",
+      "staff_appointment_rescheduled": "Meeting changed by the client",
+      "staff_appointment_cancelled": "Meeting cancelled by the client",
+      "consultation_received": "Request received",
+      "consultation_scheduled": "Scheduled",
+      "consultation_reminder": "Day-before reminder",
+      "consultation_team": "Request — team",
+      "payment_reminder": "Reminder",
+      "payment_received": "Payment received",
+      "requested": "Request received",
+      "confirmed": "Confirmed",
+      "rescheduled": "Moved",
+      "cancelled": "Cancelled",
+      "reminder": "Day-before reminder",
+      "appointment": "Meeting (by the client)",
+      "confirm_request": "Request received",
+      "schedule_confirmation": "Scheduled"
     },
     "sendTest": "Send a test",
     "sending": "Sending…",

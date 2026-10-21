@@ -113,7 +113,9 @@
       "jobs": {
         "database_backup": "Copia de la base de datos",
         "seo_auto_noindex": "SEO: desindexar artículos sin tráfico",
-        "activity_purge": "Purga del registro de actividad (> 180 días)"
+        "activity_purge": "Purga del registro de actividad (> 180 días)",
+        "payment_reminders": "Recordatorios de facturas (D-3, D+1, D+7, D+14)",
+        "appointment_reminders": "Recordatorios de citas (el día anterior)"
       },
       "days": {
         "0": "domingo",
@@ -143,7 +145,8 @@
         "admin": "Back-office",
         "site": "Sitio y área cliente",
         "jobs": "Tareas programadas",
-        "errors": "Errores"
+        "errors": "Errores",
+        "mails": "Correos"
       },
       "when": "Fecha",
       "who": "Quién",
@@ -165,7 +168,8 @@
         "confirmResend": "Reenvío de la confirmación",
         "impersonate": "Acceso como usuario",
         "projectRequest": "Solicitud de proyecto",
-        "cron": "Tarea programada"
+        "cron": "Tarea programada",
+        "mail": "Correo"
       },
       "verbs": {
         "create": "Creación",
@@ -197,7 +201,8 @@
         "news": "artículo",
         "appointments": "cita",
         "me": "perfil"
-      }
+      },
+      "mailTo": "Para {{to}}"
     }
   },
   "tracking": {
@@ -754,9 +759,7 @@
       "download": "Descargar",
       "downloadError": "No se pudo descargar el PDF.",
       "send": "Enviar",
-      "sendConfirm": "¿Marcar «{{title}}» como enviado a {{client}}?",
-      "sendHint": "No se envía ningún correo: el documento pasa al estado «Enviado».",
-      "sentDone": "Documento marcado como enviado.",
+      "sendHint": "Cada uno lo recibe en su idioma. Un borrador pasa a «Enviado».",
       "created": "Presupuesto creado.",
       "saved": "Documento guardado.",
       "deleted": "Documento eliminado.",
@@ -769,7 +772,28 @@
         "unpaid": "Impagada",
         "deposit": "Anticipo",
         "detail": "{{paid}} pagados de {{total}}"
-      }
+      },
+      "remind": "Recordar el pago",
+      "sendIntro": "«{{title}}» se envía por correo, con el PDF adjunto.",
+      "remindIntro": "Recordatorio del importe pendiente ({{amount}}) de «{{title}}», factura adjunta.",
+      "sendAction_one": "Enviar a 1 destinatario",
+      "sendAction_other": "Enviar a {{count}} destinatarios",
+      "remindAction_one": "Recordar a 1 destinatario",
+      "remindAction_other": "Recordar a {{count}} destinatarios",
+      "sentDone_one": "Enviado a 1 destinatario.",
+      "sentDone_other": "Enviado a {{count}} destinatarios.",
+      "remindDone_one": "Recordatorio enviado a 1 destinatario.",
+      "remindDone_other": "Recordatorio enviado a {{count}} destinatarios.",
+      "recipients": "Destinatarios",
+      "recipientRoles": {
+        "referent": "Referente",
+        "contact": "Correo de contacto",
+        "member": "Equipo"
+      },
+      "noRecipient": "Este cliente no tiene referente ni correo de contacto: añada una dirección abajo.",
+      "otherRecipients": "Otras direcciones (separadas por comas)",
+      "remindHint": "Cada uno lo recibe en su idioma. También se envían recordatorios automáticos 3 días antes y 1, 7 y 14 días después del vencimiento.",
+      "lastReminded": "Último recordatorio: {{date}}"
     },
     "contracts": {
       "new": "Nuevo contrato",
@@ -806,7 +830,8 @@
         "failed": "Fallido"
       },
       "chooseInvoice": "Elegir una factura",
-      "noInvoice": "Ninguna factura por cobrar: genérela primero desde su presupuesto (pestaña Presupuestos)."
+      "noInvoice": "Ninguna factura por cobrar: genérela primero desde su presupuesto (pestaña Presupuestos).",
+      "notify": "Enviar el recibo al cliente por correo"
     },
     "document": {
       "emittedBy": "Emitido por",
@@ -963,7 +988,10 @@
       "billing_mailer": "Facturación",
       "contact_mailer": "Solicitudes de proyecto",
       "newsletter_mailer": "Newsletter",
-      "campaign_mailer": "Campañas"
+      "campaign_mailer": "Campañas",
+      "appointment_mailer": "Citas",
+      "consultation_mailer": "Consultas",
+      "staff_mailer": "Avisos internos"
     },
     "emails": {
       "confirmation": "Confirmación de registro",
@@ -981,7 +1009,34 @@
       "confirm_subscription": "Confirmación de suscripción",
       "welcome": "Bienvenida",
       "goodbye": "Baja",
-      "campaign": "Campaña"
+      "campaign": "Campaña",
+      "password_changed": "Contraseña cambiada",
+      "account_locked": "Cuenta bloqueada",
+      "invitation_existing": "Invitación — cuenta existente",
+      "appointment_requested": "Solicitud recibida",
+      "appointment_confirmed": "Confirmada (+ .ics)",
+      "appointment_rescheduled": "Cambiada",
+      "appointment_cancelled": "Cancelada",
+      "appointment_reminder": "Recordatorio la víspera — cliente",
+      "appointment_reminder_staff": "Recordatorio la víspera — equipo",
+      "new_account": "Nueva cuenta",
+      "staff_appointment_requested": "Cita solicitada",
+      "staff_appointment_rescheduled": "Cita cambiada por el cliente",
+      "staff_appointment_cancelled": "Cita cancelada por el cliente",
+      "consultation_received": "Solicitud recibida",
+      "consultation_scheduled": "Programada",
+      "consultation_reminder": "Recordatorio la víspera",
+      "consultation_team": "Solicitud — equipo",
+      "payment_reminder": "Recordatorio",
+      "payment_received": "Pago recibido",
+      "requested": "Solicitud recibida",
+      "confirmed": "Confirmada",
+      "rescheduled": "Cambiada",
+      "cancelled": "Cancelada",
+      "reminder": "Recordatorio la víspera",
+      "appointment": "Cita (por el cliente)",
+      "confirm_request": "Solicitud recibida",
+      "schedule_confirmation": "Programada"
     },
     "sendTest": "Enviar una prueba",
     "sending": "Enviando…",

@@ -154,6 +154,7 @@ export interface TravauxInvoice {
   source_quote_number: string | null;
   generated_invoice_id: string | null;
   current_version: number;
+  last_reminded_on?: string | null;
   /** Member billing only: what the invoice has received (completed payments). */
   paid_cents?: number;
   file_path: string | null;
@@ -183,3 +184,11 @@ export interface TravauxPayment {
 /** Valeurs de formulaire envoyées en multipart (fichiers) ou JSON. */
 export type TravauxFormValue = string | number | boolean | File | null | undefined | string[];
 export type TravauxPayload = Record<string, TravauxFormValue>;
+
+/** Who a client's quotes, invoices and receipts can be e-mailed to. */
+export interface BillingRecipient {
+  email: string;
+  name?: string | null;
+  role: 'referent' | 'contact' | 'member';
+  language: string;
+}

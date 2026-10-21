@@ -119,6 +119,7 @@ function NewPaymentModal({
   const [paidOn, setPaidOn] = useState('');
   const [invoiceId, setInvoiceId] = useState('');
   const [notes, setNotes] = useState('');
+  const [notify, setNotify] = useState(true);
   const [saving, setSaving] = useState(false);
   // A payment settles an invoice (itself generated from a quote).
   const payable = invoices.filter((i) => i.kind === 'invoice' && i.status !== 'cancelled');
@@ -128,7 +129,7 @@ function NewPaymentModal({
 
   useEffect(() => {
     if (!open) return;
-    setAmount(''); setMethod('transfer'); setStatus('pending'); setPaidOn(''); setInvoiceId(''); setNotes('');
+    setAmount(''); setMethod('transfer'); setStatus('pending'); setPaidOn(''); setInvoiceId(''); setNotes(''); setNotify(true);
   }, [open]);
 
   function pickInvoice(id: string) {
@@ -150,7 +151,7 @@ function NewPaymentModal({
         paid_on: paidOn || null,
         invoice_id: invoiceId,
         notes,
-      });
+      }, notify && status === 'completed');
       await onCreated();
     } catch (err) {
       toast.error(apiErrorMessage(err, t('common.error')));
@@ -215,6 +216,12 @@ function NewPaymentModal({
           <label className="adm-form__label" htmlFor="trv-pay-notes">{t('travaux.payments.notes')}</label>
           <textarea id="trv-pay-notes" className="adm-textarea" rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} />
         </div>
+        {status === 'completed' && (
+          <label className="trv-notify">
+            <input type="checkbox" checked={notify} onChange={(e) => setNotify(e.target.checked)} />
+            {t('travaux.payments.notify')}
+          </label>
+        )}
       </form>
     </Modal>
   );

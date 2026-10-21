@@ -71,6 +71,7 @@ export {
   BriefcaseIcon,
   ClockIcon,
   AtSignIcon,
+  BellIcon,
   DownloadIcon,
   UploadIcon,
   WalletIcon,

@@ -10,11 +10,21 @@ type Device = 'desktop' | 'mobile';
 
 // The order of the client's journey, not the alphabet.
 const ORDER = [
-  'auth_mailer', 'confirmation', 'reset_password', 'team_mailer', 'invitation',
-  'billing_mailer', 'quote_sent', 'invoice_sent', 'invoice_sent_after_deposit', 'payment_reminder_upcoming',
-  'payment_reminder_overdue', 'payment_received_deposit', 'payment_received_settled',
-  'contact_mailer', 'confirm_submission', 'notify_team',
-  'newsletter_mailer', 'confirm_subscription', 'welcome', 'goodbye', 'campaign_mailer', 'campaign',
+  // The groups, in this order…
+  'auth_mailer', 'team_mailer', 'billing_mailer', 'appointment_mailer', 'contact_mailer', 'consultation_mailer',
+  'newsletter_mailer', 'campaign_mailer', 'staff_mailer',
+  // …and the e-mails within each, along the journey (`welcome` sits between
+  // the account's and the newsletter's neighbours).
+  'confirmation', 'confirm_subscription', 'welcome', 'reset_password', 'password_changed', 'account_locked', 'goodbye',
+  'invitation', 'invitation_existing',
+  'quote_sent', 'invoice_sent', 'invoice_sent_after_deposit', 'payment_reminder_upcoming', 'payment_reminder_overdue',
+  'payment_received_deposit', 'payment_received_settled',
+  'appointment_requested', 'appointment_confirmed', 'appointment_rescheduled', 'appointment_cancelled',
+  'appointment_reminder', 'appointment_reminder_staff',
+  'confirm_submission', 'notify_team',
+  'consultation_received', 'consultation_scheduled', 'consultation_reminder', 'consultation_team',
+  'campaign',
+  'new_account', 'staff_appointment_requested', 'staff_appointment_rescheduled', 'staff_appointment_cancelled',
 ];
 const rank = (key: string) => (ORDER.indexOf(key) + 1 || ORDER.length + 1);
 const byJourney = (a: string, b: string) => rank(a) - rank(b);

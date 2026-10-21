@@ -113,7 +113,9 @@
       "jobs": {
         "database_backup": "Datenbank-Backup",
         "seo_auto_noindex": "SEO: Artikel ohne Traffic deindexieren",
-        "activity_purge": "Aktivitätsprotokoll leeren (> 180 Tage)"
+        "activity_purge": "Aktivitätsprotokoll leeren (> 180 Tage)",
+        "payment_reminders": "Rechnungserinnerungen (T-3, T+1, T+7, T+14)",
+        "appointment_reminders": "Terminerinnerungen (am Vortag)"
       },
       "days": {
         "0": "Sonntag",
@@ -143,7 +145,8 @@
         "admin": "Backoffice",
         "site": "Website und Kundenbereich",
         "jobs": "Geplante Aufgaben",
-        "errors": "Fehler"
+        "errors": "Fehler",
+        "mails": "E-Mails"
       },
       "when": "Datum",
       "who": "Wer",
@@ -165,7 +168,8 @@
         "confirmResend": "Bestätigung erneut gesendet",
         "impersonate": "Als Benutzer angemeldet",
         "projectRequest": "Projektanfrage",
-        "cron": "Geplante Aufgabe"
+        "cron": "Geplante Aufgabe",
+        "mail": "E-Mail"
       },
       "verbs": {
         "create": "Erstellung",
@@ -197,7 +201,8 @@
         "news": "Artikel",
         "appointments": "Termin",
         "me": "Profil"
-      }
+      },
+      "mailTo": "An {{to}}"
     }
   },
   "tracking": {
@@ -754,9 +759,7 @@
       "download": "Herunterladen",
       "downloadError": "PDF konnte nicht heruntergeladen werden.",
       "send": "Senden",
-      "sendConfirm": "„{{title}}“ als an {{client}} gesendet markieren?",
-      "sendHint": "Es wird keine E-Mail versendet: Das Dokument wechselt lediglich in den Status „Gesendet“.",
-      "sentDone": "Dokument als gesendet markiert.",
+      "sendHint": "Jeder erhält sie in seiner Sprache. Ein Entwurf wird zu „Gesendet“.",
       "created": "Angebot erstellt.",
       "saved": "Dokument gespeichert.",
       "deleted": "Dokument gelöscht.",
@@ -769,7 +772,28 @@
         "unpaid": "Unbezahlt",
         "deposit": "Anzahlung",
         "detail": "{{paid}} von {{total}} bezahlt"
-      }
+      },
+      "remind": "Erinnern",
+      "sendIntro": "„{{title}}“ wird per E-Mail gesendet, PDF im Anhang.",
+      "remindIntro": "Erinnerung an den offenen Betrag ({{amount}}) für „{{title}}“, Rechnung im Anhang.",
+      "sendAction_one": "An 1 Empfänger senden",
+      "sendAction_other": "An {{count}} Empfänger senden",
+      "remindAction_one": "1 Empfänger erinnern",
+      "remindAction_other": "{{count}} Empfänger erinnern",
+      "sentDone_one": "An 1 Empfänger gesendet.",
+      "sentDone_other": "An {{count}} Empfänger gesendet.",
+      "remindDone_one": "Erinnerung an 1 Empfänger gesendet.",
+      "remindDone_other": "Erinnerung an {{count}} Empfänger gesendet.",
+      "recipients": "Empfänger",
+      "recipientRoles": {
+        "referent": "Ansprechpartner",
+        "contact": "Kontakt-E-Mail",
+        "member": "Team"
+      },
+      "noRecipient": "Dieser Kunde hat weder Ansprechpartner noch Kontakt-E-Mail: fügen Sie unten eine Adresse hinzu.",
+      "otherRecipients": "Weitere Adressen (durch Kommas getrennt)",
+      "remindHint": "Jeder erhält sie in seiner Sprache. Automatische Erinnerungen gehen außerdem 3 Tage vor sowie 1, 7 und 14 Tage nach Fälligkeit raus.",
+      "lastReminded": "Letzte Erinnerung: {{date}}"
     },
     "contracts": {
       "new": "Neuer Vertrag",
@@ -806,7 +830,8 @@
         "failed": "Fehlgeschlagen"
       },
       "chooseInvoice": "Rechnung wählen",
-      "noInvoice": "Keine offene Rechnung: erstellen Sie sie zuerst aus dem Angebot (Reiter Angebote)."
+      "noInvoice": "Keine offene Rechnung: erstellen Sie sie zuerst aus dem Angebot (Reiter Angebote).",
+      "notify": "Quittung per E-Mail an den Kunden senden"
     },
     "document": {
       "emittedBy": "Ausgestellt von",
@@ -963,7 +988,10 @@
       "billing_mailer": "Abrechnung",
       "contact_mailer": "Projektanfragen",
       "newsletter_mailer": "Newsletter",
-      "campaign_mailer": "Kampagnen"
+      "campaign_mailer": "Kampagnen",
+      "appointment_mailer": "Termine",
+      "consultation_mailer": "Beratungen",
+      "staff_mailer": "Interne Benachrichtigungen"
     },
     "emails": {
       "confirmation": "Anmeldebestätigung",
@@ -981,7 +1009,34 @@
       "confirm_subscription": "Anmeldebestätigung",
       "welcome": "Willkommen",
       "goodbye": "Abmeldung",
-      "campaign": "Kampagne"
+      "campaign": "Kampagne",
+      "password_changed": "Passwort geändert",
+      "account_locked": "Konto gesperrt",
+      "invitation_existing": "Einladung — bestehendes Konto",
+      "appointment_requested": "Anfrage erhalten",
+      "appointment_confirmed": "Bestätigt (+ .ics)",
+      "appointment_rescheduled": "Verschoben",
+      "appointment_cancelled": "Abgesagt",
+      "appointment_reminder": "Erinnerung am Vortag — Kunde",
+      "appointment_reminder_staff": "Erinnerung am Vortag — Team",
+      "new_account": "Neues Konto",
+      "staff_appointment_requested": "Termin angefragt",
+      "staff_appointment_rescheduled": "Termin vom Kunden geändert",
+      "staff_appointment_cancelled": "Termin vom Kunden abgesagt",
+      "consultation_received": "Anfrage erhalten",
+      "consultation_scheduled": "Geplant",
+      "consultation_reminder": "Erinnerung am Vortag",
+      "consultation_team": "Anfrage — Team",
+      "payment_reminder": "Erinnerung",
+      "payment_received": "Zahlung erhalten",
+      "requested": "Anfrage erhalten",
+      "confirmed": "Bestätigt",
+      "rescheduled": "Verschoben",
+      "cancelled": "Abgesagt",
+      "reminder": "Erinnerung am Vortag",
+      "appointment": "Termin (vom Kunden)",
+      "confirm_request": "Anfrage erhalten",
+      "schedule_confirmation": "Geplant"
     },
     "sendTest": "Test senden",
     "sending": "Wird gesendet…",

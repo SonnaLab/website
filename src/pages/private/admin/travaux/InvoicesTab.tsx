@@ -16,8 +16,9 @@ import {
 } from '@/components/common/DataTable';
 import { apiAssetUrl, apiService, saveBlob } from '@/services/api';
 import { calculateDevis, dueDateCountdown } from '@/lib/devisCalc';
-import { DownloadIcon, EyeIcon, FileTextIcon, PaperclipIcon, PenLineIcon, ReceiptIcon, SendIcon, Trash2Icon } from '@icons';
+import { BellIcon, DownloadIcon, EyeIcon, FileTextIcon, PaperclipIcon, PenLineIcon, ReceiptIcon, SendIcon, Trash2Icon } from '@icons';
 import type {
+  BillingRecipient,
   InvoiceKind,
   InvoiceStatus,
   TravauxClient,
@@ -75,7 +76,7 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
   const [newOpen, setNewOpen] = useState(false);
   const [preview, setPreview] = useState<TravauxInvoice | null>(null);
   const [edit, setEdit] = useState<TravauxInvoice | null>(null);
-  const [send, setSend] = useState<TravauxInvoice | null>(null);
+  const [send, setSend] = useState<SendRequest | null>(null);
   const [generating, setGenerating] = useState(false);
   useImperativeHandle(ref, () => ({ openNew: () => setNewOpen(true) }));
   const rows = invoices.filter((i) => i.kind === kind);
@@ -83,6 +84,9 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
     .filter((p) => p.invoice_id === invoice.id && p.status === 'completed')
     .reduce((sum, p) => sum + p.amount_cents, 0);
   const byId = new Map(invoices.map((i) => [i.id, i]));
+  // « Relancer »: an invoice sent and not fully paid.
+  const remindable = (invoice: TravauxInvoice) => invoice.kind === 'invoice'
+    && (invoice.status === 'sent' || invoice.status === 'overdue') && paidCents(invoice) < invoice.amount_cents;
 
   useEffect(() => {
     if (!autoPreviewId) return;
@@ -235,7 +239,8 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
         onClose={() => setPreview(null)}
         onEdit={(i) => { setPreview(null); setEdit(i); }}
         onDelete={remove}
-        onSend={(i) => { setPreview(null); setSend(i); }}
+        onSend={(i) => { setPreview(null); setSend({ invoice: i, mode: 'send' }); }}
+        onRemind={preview && remindable(preview) ? (i) => { setPreview(null); setSend({ invoice: i, mode: 'remind' }); } : undefined}
         onGenerateInvoice={generateInvoice}
       />
       <EditInvoiceModal
@@ -245,8 +250,8 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
         onSaved={async () => { await reload(['invoices', 'objectives', 'client']); setEdit(null); }}
       />
       <SendInvoiceModal
-        invoice={send}
-        clientName={client?.name ?? ''}
+        request={send}
+        dueCents={send ? send.invoice.amount_cents - paidCents(send.invoice) : 0}
         onClose={() => setSend(null)}
         onSent={async () => { await reload(['invoices']); setSend(null); }}
       />
@@ -359,7 +364,7 @@ function NewInvoiceModal({
 // ── Aperçu (lecture seule) ──────────────────────────────────────────────────
 
 function InvoicePreviewModal({
-  invoice, data, generating, onClose, onEdit, onDelete, onSend, onGenerateInvoice,
+  invoice, data, generating, onClose, onEdit, onDelete, onSend, onRemind, onGenerateInvoice,
 }: {
   invoice: TravauxInvoice | null;
   data: DocumentPreviewData | null;
@@ -368,6 +373,8 @@ function InvoicePreviewModal({
   onEdit: (i: TravauxInvoice) => void;
   onDelete: (i: TravauxInvoice) => void;
   onSend: (i: TravauxInvoice) => void;
+  /** Only when the invoice still waits for money. */
+  onRemind?: (i: TravauxInvoice) => void;
   onGenerateInvoice: (i: TravauxInvoice) => void;
 }) {
   const { t } = useTranslation('admin');
@@ -400,6 +407,9 @@ function InvoicePreviewModal({
             <button type="button" className="adm-btn adm-btn--ghost" disabled={generating} onClick={() => onGenerateInvoice(invoice)}>
               <FileTextIcon size={13} /> {t('travaux.invoices.generateInvoice')}
             </button>
+          )}
+          {onRemind && (
+            <button type="button" className="adm-btn adm-btn--ghost" onClick={() => onRemind(invoice)}><BellIcon size={13} /> {t('travaux.invoices.remind')}</button>
           )}
           <button type="button" className="adm-btn adm-btn--ghost" onClick={() => onSend(invoice)}><SendIcon size={13} /> {t('travaux.invoices.send')}</button>
           <button type="button" className="adm-btn adm-btn--primary" disabled={downloading} onClick={() => download(invoice)}>
@@ -560,25 +570,52 @@ function EditInvoiceModal({
   );
 }
 
-// ── Envoyer : passe le document au statut « envoyé » ────────────────────────
+// ── Envoyer / Relancer : par e-mail, PDF joint, dans la langue de chacun ────
+
+type SendRequest = { invoice: TravauxInvoice; mode: 'send' | 'remind' };
+
+const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
 function SendInvoiceModal({
-  invoice, clientName, onClose, onSent,
+  request, dueCents, onClose, onSent,
 }: {
-  invoice: TravauxInvoice | null;
-  clientName: string;
+  request: SendRequest | null;
+  dueCents: number;
   onClose: () => void;
   onSent: () => Promise<void>;
 }) {
   const { t } = useTranslation('admin');
+  const invoice = request?.invoice ?? null;
+  const remind = request?.mode === 'remind';
+  const [recipients, setRecipients] = useState<BillingRecipient[] | null>(null);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [extra, setExtra] = useState('');
   const [sending, setSending] = useState(false);
 
-  async function confirm() {
+  // The main contact is ticked; the rest of the company's team can be added.
+  useEffect(() => {
     if (!invoice) return;
+    setRecipients(null);
+    setExtra('');
+    apiService.adminTravauxInvoiceRecipients(invoice.id)
+      .then(({ recipients: list }) => { setRecipients(list); setSelected(list.slice(0, 1).map((r) => r.email)); })
+      .catch(() => { setRecipients([]); setSelected([]); });
+  }, [invoice]);
+
+  const extraEmails = extra.split(/[\s,;]+/).map((e) => e.trim().toLowerCase()).filter((e) => EMAIL.test(e));
+  const to = [...new Set([...selected, ...extraEmails])];
+  const toggle = (email: string) => setSelected((current) => (
+    current.includes(email) ? current.filter((e) => e !== email) : [...current, email]
+  ));
+
+  async function submit() {
+    if (!invoice || to.length === 0) return;
     setSending(true);
     try {
-      await apiService.adminTravauxUpdateInvoice(invoice.id, { status: 'sent' });
-      toast.success(t('travaux.invoices.sentDone'));
+      const res = remind
+        ? await apiService.adminTravauxRemindInvoice(invoice.id, to)
+        : await apiService.adminTravauxDeliverInvoice(invoice.id, to);
+      toast.success(t(remind ? 'travaux.invoices.remindDone' : 'travaux.invoices.sentDone', { count: res.sent_to.length }));
       await onSent();
     } catch (err) {
       toast.error(apiErrorMessage(err, t('common.error')));
@@ -591,21 +628,51 @@ function SendInvoiceModal({
     <Modal
       open={!!invoice}
       onClose={onClose}
-      title={t('travaux.invoices.send')}
+      title={t(remind ? 'travaux.invoices.remind' : 'travaux.invoices.send')}
+      subtitle={invoice ? t(remind ? 'travaux.invoices.remindIntro' : 'travaux.invoices.sendIntro', {
+        title: invoice.title, amount: formatCents(dueCents), kind: t(`travaux.invoices.kinds.${invoice.kind}`).toLowerCase(),
+      }) : undefined}
       size="sm"
       footer={
         <>
           <button type="button" className="adm-btn adm-btn--ghost" onClick={onClose}>{t('common.cancel')}</button>
-          <button type="button" className="adm-btn adm-btn--primary" onClick={confirm} disabled={sending}>
-            <SendIcon size={13} /> {t('travaux.invoices.send')}
+          <button type="button" className="adm-btn adm-btn--primary" onClick={submit} disabled={sending || to.length === 0}>
+            {remind ? <BellIcon size={13} /> : <SendIcon size={13} />} {t(remind ? 'travaux.invoices.remindAction' : 'travaux.invoices.sendAction', { count: to.length })}
           </button>
         </>
       }
     >
       {invoice && (
         <div className="adm-form">
-          <p className="trv-info">{t('travaux.invoices.sendConfirm', { title: invoice.title, client: clientName })}</p>
-          <p className="trv-muted">{t('travaux.invoices.sendHint')}</p>
+          <div className="adm-form__field">
+            <p className="adm-form__label">{t('travaux.invoices.recipients')}</p>
+            {recipients === null ? (
+              <p className="trv-muted">{t('common.loading')}</p>
+            ) : recipients.length === 0 ? (
+              <p className="trv-info">{t('travaux.invoices.noRecipient')}</p>
+            ) : (
+              <div className="trv-checklist trv-recipients">
+                {recipients.map((r) => (
+                  <label key={r.email}>
+                    <input type="checkbox" checked={selected.includes(r.email)} onChange={() => toggle(r.email)} />
+                    <span className="trv-recipients__who">
+                      <strong>{r.name || r.email}</strong>
+                      {r.name && <small>{r.email}</small>}
+                    </span>
+                    <span className="trv-recipients__meta">{t(`travaux.invoices.recipientRoles.${r.role}`)} · {r.language.toUpperCase()}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="adm-form__field">
+            <label className="adm-form__label" htmlFor="trv-send-extra">{t('travaux.invoices.otherRecipients')}</label>
+            <input id="trv-send-extra" className="adm-input" value={extra} placeholder="compta@entreprise.fr" onChange={(e) => setExtra(e.target.value)} />
+          </div>
+          <p className="trv-muted">{t(remind ? 'travaux.invoices.remindHint' : 'travaux.invoices.sendHint')}</p>
+          {remind && invoice.last_reminded_on && (
+            <p className="trv-muted">{t('travaux.invoices.lastReminded', { date: formatDate(invoice.last_reminded_on) })}</p>
+          )}
         </div>
       )}
     </Modal>

@@ -4,6 +4,7 @@ import type { AnalyticsEvent, ConsentPayload } from '@/types/analytics';
 import type { BlogPost } from '@/types/blog';
 import type { Budget, ProjectType, Timeline } from '@/types/consultation';
 import type {
+  BillingRecipient,
   TravauxClient,
   TravauxClientsListResponse,
   TravauxContract,
@@ -657,7 +658,7 @@ class ApiService {
   }
 
   async resetPassword(token: string, password: string) {
-    const res = await this.client.patch('/api/v1/auth/password', { token, password });
+    const res = await this.client.patch('/api/v1/auth/password', { token, password, password_confirmation: password });
     return res.data;
   }
 
@@ -791,6 +792,16 @@ class ApiService {
   async adminTravauxGenerateInvoice(id: string): Promise<{ invoice: TravauxInvoice }> {
     return (await this.client.post(`/api/v1/admin/travaux/invoices/${id}/generate_invoice`)).data;
   }
+  /** « Envoyer » / « Relancer » by e-mail (PDF attached), each recipient in their language. */
+  async adminTravauxInvoiceRecipients(id: string): Promise<{ recipients: BillingRecipient[] }> {
+    return (await this.client.get(`/api/v1/admin/travaux/invoices/${id}/recipients`)).data;
+  }
+  async adminTravauxDeliverInvoice(id: string, recipients: string[]): Promise<{ invoice: TravauxInvoice; sent_to: string[] }> {
+    return (await this.client.post(`/api/v1/admin/travaux/invoices/${id}/deliver`, { recipients }, { timeout: 30000 })).data;
+  }
+  async adminTravauxRemindInvoice(id: string, recipients: string[]): Promise<{ invoice: TravauxInvoice; sent_to: string[] }> {
+    return (await this.client.post(`/api/v1/admin/travaux/invoices/${id}/remind`, { recipients }, { timeout: 30000 })).data;
+  }
   async adminTravauxDownloadInvoicePdf(id: string): Promise<{ blob: Blob; filename: string }> {
     const res = await this.client.get(`/api/v1/admin/travaux/invoices/${id}/pdf`, { responseType: 'blob', timeout: 30000 });
     return { blob: res.data, filename: filenameFrom(res.headers['content-disposition'], 'document.pdf') };
@@ -799,8 +810,9 @@ class ApiService {
   async adminTravauxPayments(clientId: string): Promise<{ payments: TravauxPayment[] }> {
     return (await this.client.get('/api/v1/admin/travaux/payments', { params: { client_id: clientId } })).data;
   }
-  async adminTravauxCreatePayment(payload: TravauxPayload): Promise<{ payment: TravauxPayment }> {
-    return (await this.client.post('/api/v1/admin/travaux/payments', { payment: payload })).data;
+  /** `notify`: a completed payment sends its receipt to the client. */
+  async adminTravauxCreatePayment(payload: TravauxPayload, notify = false): Promise<{ payment: TravauxPayment }> {
+    return (await this.client.post('/api/v1/admin/travaux/payments', { payment: payload, notify })).data;
   }
   async adminTravauxDeletePayment(id: string) {
     return (await this.client.delete(`/api/v1/admin/travaux/payments/${id}`)).data;

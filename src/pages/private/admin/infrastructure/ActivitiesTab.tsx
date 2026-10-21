@@ -10,7 +10,7 @@ import { DataTable, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, 
 import { ActivityIcon, ChevronLeftIcon, ChevronRightIcon, SearchIcon } from '@icons';
 import { formatDateTime } from './format';
 
-const KINDS = ['all', 'auth', 'admin', 'site', 'jobs', 'errors'] as const;
+const KINDS = ['all', 'auth', 'admin', 'site', 'jobs', 'mails', 'errors'] as const;
 type Kind = typeof KINDS[number];
 const PER_PAGE = 30;
 
@@ -29,6 +29,11 @@ const NAMED: Record<string, string> = {
 /** « Création · devis/facture », « Connexion », « Tâche planifiée · sauvegarde de la base »… */
 export function activityLabel(key: string, t: TFunction): string {
   if (NAMED[key]) return t(`infrastructure.activity.named.${NAMED[key]}`);
+  if (key.startsWith('mail:')) {
+    const [mailer, email = ''] = key.slice(5).split('#');
+    const group = t(`mails.groups.${mailer}`, { defaultValue: mailer });
+    return `${t('infrastructure.activity.named.mail')} · ${group} · ${t(`mails.emails.${email}`, { defaultValue: email.replace(/_/g, ' ') })}`;
+  }
   if (key.startsWith('cron:')) {
     const job = key.slice(5);
     return `${t('infrastructure.activity.named.cron')} · ${t(`infrastructure.cron.jobs.${job}`, { defaultValue: job })}`;
@@ -111,6 +116,9 @@ export function ActivitiesTab() {
                 <DataTableTd>
                   {activityLabel(row.action_key, t)}
                   {row.path && <span className="infra-sub infra-mono">{row.http_method} {row.path}</span>}
+                  {row.action_key.startsWith('mail:') && Array.isArray(row.details?.to) && (
+                    <span className="infra-sub">{t('infrastructure.activity.mailTo', { to: (row.details.to as string[]).join(', ') })}</span>
+                  )}
                 </DataTableTd>
                 <DataTableTd className="infra-mono">{row.ip || '—'}</DataTableTd>
                 <DataTableTd>

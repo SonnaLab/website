@@ -113,7 +113,9 @@
       "jobs": {
         "database_backup": "Backup del database",
         "seo_auto_noindex": "SEO: deindicizzare articoli senza traffico",
-        "activity_purge": "Pulizia del registro attività (> 180 giorni)"
+        "activity_purge": "Pulizia del registro attività (> 180 giorni)",
+        "payment_reminders": "Solleciti fatture (G-3, G+1, G+7, G+14)",
+        "appointment_reminders": "Promemoria appuntamenti (il giorno prima)"
       },
       "days": {
         "0": "domenica",
@@ -143,7 +145,8 @@
         "admin": "Back-office",
         "site": "Sito e area clienti",
         "jobs": "Attività pianificate",
-        "errors": "Errori"
+        "errors": "Errori",
+        "mails": "E-mail"
       },
       "when": "Data",
       "who": "Chi",
@@ -165,7 +168,8 @@
         "confirmResend": "Conferma reinviata",
         "impersonate": "Accesso come utente",
         "projectRequest": "Richiesta di progetto",
-        "cron": "Attività pianificata"
+        "cron": "Attività pianificata",
+        "mail": "E-mail"
       },
       "verbs": {
         "create": "Creazione",
@@ -197,7 +201,8 @@
         "news": "articolo",
         "appointments": "appuntamento",
         "me": "profilo"
-      }
+      },
+      "mailTo": "A {{to}}"
     }
   },
   "tracking": {
@@ -754,9 +759,7 @@
       "download": "Scarica",
       "downloadError": "Impossibile scaricare il PDF.",
       "send": "Invia",
-      "sendConfirm": "Segnare «{{title}}» come inviato a {{client}}?",
-      "sendHint": "Nessuna e-mail viene inviata: il documento passa semplicemente allo stato «Inviato».",
-      "sentDone": "Documento segnato come inviato.",
+      "sendHint": "Ognuno lo riceve nella sua lingua. Una bozza diventa «Inviato».",
       "created": "Preventivo creato.",
       "saved": "Documento salvato.",
       "deleted": "Documento eliminato.",
@@ -769,7 +772,28 @@
         "unpaid": "Non pagata",
         "deposit": "Acconto",
         "detail": "{{paid}} pagati su {{total}}"
-      }
+      },
+      "remind": "Sollecitare",
+      "sendIntro": "«{{title}}» parte via e-mail, con il PDF allegato.",
+      "remindIntro": "Promemoria del residuo da pagare ({{amount}}) su «{{title}}», fattura allegata.",
+      "sendAction_one": "Invia a 1 destinatario",
+      "sendAction_other": "Invia a {{count}} destinatari",
+      "remindAction_one": "Sollecita 1 destinatario",
+      "remindAction_other": "Sollecita {{count}} destinatari",
+      "sentDone_one": "Inviato a 1 destinatario.",
+      "sentDone_other": "Inviato a {{count}} destinatari.",
+      "remindDone_one": "Sollecito inviato a 1 destinatario.",
+      "remindDone_other": "Sollecito inviato a {{count}} destinatari.",
+      "recipients": "Destinatari",
+      "recipientRoles": {
+        "referent": "Referente",
+        "contact": "E-mail di contatto",
+        "member": "Team"
+      },
+      "noRecipient": "Questo cliente non ha né referente né e-mail di contatto: aggiungi un indirizzo qui sotto.",
+      "otherRecipients": "Altri indirizzi (separati da virgole)",
+      "remindHint": "Ognuno lo riceve nella sua lingua. Partono anche solleciti automatici 3 giorni prima e 1, 7 e 14 giorni dopo la scadenza.",
+      "lastReminded": "Ultimo sollecito: {{date}}"
     },
     "contracts": {
       "new": "Nuovo contratto",
@@ -806,7 +830,8 @@
         "failed": "Non riuscito"
       },
       "chooseInvoice": "Scegli una fattura",
-      "noInvoice": "Nessuna fattura da saldare: generala prima dal suo preventivo (scheda Preventivi)."
+      "noInvoice": "Nessuna fattura da saldare: generala prima dal suo preventivo (scheda Preventivi).",
+      "notify": "Invia la ricevuta al cliente via e-mail"
     },
     "document": {
       "emittedBy": "Emesso da",
@@ -963,7 +988,10 @@
       "billing_mailer": "Fatturazione",
       "contact_mailer": "Richieste di progetto",
       "newsletter_mailer": "Newsletter",
-      "campaign_mailer": "Campagne"
+      "campaign_mailer": "Campagne",
+      "appointment_mailer": "Appuntamenti",
+      "consultation_mailer": "Consulenze",
+      "staff_mailer": "Notifiche interne"
     },
     "emails": {
       "confirmation": "Conferma di registrazione",
@@ -981,7 +1009,34 @@
       "confirm_subscription": "Conferma d'iscrizione",
       "welcome": "Benvenuto",
       "goodbye": "Disiscrizione",
-      "campaign": "Campagna"
+      "campaign": "Campagna",
+      "password_changed": "Password modificata",
+      "account_locked": "Account bloccato",
+      "invitation_existing": "Invito — account esistente",
+      "appointment_requested": "Richiesta ricevuta",
+      "appointment_confirmed": "Confermato (+ .ics)",
+      "appointment_rescheduled": "Spostato",
+      "appointment_cancelled": "Annullato",
+      "appointment_reminder": "Promemoria il giorno prima — cliente",
+      "appointment_reminder_staff": "Promemoria il giorno prima — team",
+      "new_account": "Nuovo account",
+      "staff_appointment_requested": "Appuntamento richiesto",
+      "staff_appointment_rescheduled": "Appuntamento modificato dal cliente",
+      "staff_appointment_cancelled": "Appuntamento annullato dal cliente",
+      "consultation_received": "Richiesta ricevuta",
+      "consultation_scheduled": "Pianificata",
+      "consultation_reminder": "Promemoria il giorno prima",
+      "consultation_team": "Richiesta — team",
+      "payment_reminder": "Sollecito",
+      "payment_received": "Pagamento ricevuto",
+      "requested": "Richiesta ricevuta",
+      "confirmed": "Confermato",
+      "rescheduled": "Spostato",
+      "cancelled": "Annullato",
+      "reminder": "Promemoria il giorno prima",
+      "appointment": "Appuntamento (dal cliente)",
+      "confirm_request": "Richiesta ricevuta",
+      "schedule_confirmation": "Pianificata"
     },
     "sendTest": "Invia un test",
     "sending": "Invio…",

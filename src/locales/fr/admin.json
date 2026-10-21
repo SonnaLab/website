@@ -113,7 +113,9 @@
       "jobs": {
         "database_backup": "Sauvegarde de la base",
         "seo_auto_noindex": "SEO : désindexer les articles sans trafic",
-        "activity_purge": "Purge du journal d'activité (> 180 jours)"
+        "activity_purge": "Purge du journal d'activité (> 180 jours)",
+        "payment_reminders": "Relances des factures (J-3, J+1, J+7, J+14)",
+        "appointment_reminders": "Rappels de rendez-vous (la veille)"
       },
       "days": {
         "0": "dimanche",
@@ -143,7 +145,8 @@
         "admin": "Back-office",
         "site": "Site et espace client",
         "jobs": "Tâches planifiées",
-        "errors": "Erreurs"
+        "errors": "Erreurs",
+        "mails": "E-mails"
       },
       "when": "Date",
       "who": "Qui",
@@ -165,7 +168,8 @@
         "confirmResend": "Renvoi de la confirmation",
         "impersonate": "Connexion en tant qu'un utilisateur",
         "projectRequest": "Demande de projet",
-        "cron": "Tâche planifiée"
+        "cron": "Tâche planifiée",
+        "mail": "E-mail"
       },
       "verbs": {
         "create": "Création",
@@ -197,7 +201,8 @@
         "news": "article",
         "appointments": "rendez-vous",
         "me": "profil"
-      }
+      },
+      "mailTo": "À {{to}}"
     }
   },
   "tracking": {
@@ -755,9 +760,7 @@
       "download": "Télécharger",
       "downloadError": "Impossible de télécharger le PDF.",
       "send": "Envoyer",
-      "sendConfirm": "Marquer « {{title}} » comme envoyé à {{client}} ?",
-      "sendHint": "Aucun e-mail n'est envoyé : le document passe simplement au statut « Envoyé ».",
-      "sentDone": "Document marqué comme envoyé.",
+      "sendHint": "Chacun le reçoit dans sa langue. Un brouillon passe au statut « Envoyé ».",
       "created": "Devis créé.",
       "saved": "Document enregistré.",
       "deleted": "Document supprimé.",
@@ -770,7 +773,28 @@
         "unpaid": "Impayée",
         "deposit": "Acompte",
         "detail": "{{paid}} réglés sur {{total}}"
-      }
+      },
+      "remind": "Relancer",
+      "sendIntro": "« {{title}} » part par e-mail, PDF joint.",
+      "remindIntro": "Rappel du reste à payer ({{amount}}) sur « {{title}} », facture jointe.",
+      "sendAction_one": "Envoyer à 1 destinataire",
+      "sendAction_other": "Envoyer à {{count}} destinataires",
+      "remindAction_one": "Relancer 1 destinataire",
+      "remindAction_other": "Relancer {{count}} destinataires",
+      "sentDone_one": "Envoyé à 1 destinataire.",
+      "sentDone_other": "Envoyé à {{count}} destinataires.",
+      "remindDone_one": "Relance envoyée à 1 destinataire.",
+      "remindDone_other": "Relance envoyée à {{count}} destinataires.",
+      "recipients": "Destinataires",
+      "recipientRoles": {
+        "referent": "Référent",
+        "contact": "E-mail de contact",
+        "member": "Équipe"
+      },
+      "noRecipient": "Ce client n'a ni référent ni e-mail de contact : ajoutez une adresse ci-dessous.",
+      "otherRecipients": "Autres adresses (séparées par des virgules)",
+      "remindHint": "Chacun le reçoit dans sa langue. Des relances automatiques partent aussi à J-3, J+1, J+7 et J+14 de l'échéance.",
+      "lastReminded": "Dernière relance : {{date}}"
     },
     "contracts": {
       "new": "Nouveau contrat",
@@ -807,7 +831,8 @@
         "failed": "Échoué"
       },
       "chooseInvoice": "Choisir une facture",
-      "noInvoice": "Aucune facture à régler : générez-la d'abord depuis son devis (onglet Devis)."
+      "noInvoice": "Aucune facture à régler : générez-la d'abord depuis son devis (onglet Devis).",
+      "notify": "Envoyer le reçu au client par e-mail"
     },
     "document": {
       "emittedBy": "Émis par",
@@ -964,7 +989,10 @@
       "billing_mailer": "Facturation",
       "contact_mailer": "Demandes de projet",
       "newsletter_mailer": "Newsletter",
-      "campaign_mailer": "Campagnes"
+      "campaign_mailer": "Campagnes",
+      "appointment_mailer": "Rendez-vous",
+      "consultation_mailer": "Consultations",
+      "staff_mailer": "Notifications internes"
     },
     "emails": {
       "confirmation": "Confirmation d'inscription",
@@ -982,7 +1010,34 @@
       "confirm_subscription": "Confirmation d'inscription",
       "welcome": "Bienvenue",
       "goodbye": "Désinscription",
-      "campaign": "Campagne"
+      "campaign": "Campagne",
+      "password_changed": "Mot de passe modifié",
+      "account_locked": "Compte verrouillé",
+      "invitation_existing": "Invitation — compte existant",
+      "appointment_requested": "Demande reçue",
+      "appointment_confirmed": "Confirmé (+ .ics)",
+      "appointment_rescheduled": "Déplacé",
+      "appointment_cancelled": "Annulé",
+      "appointment_reminder": "Rappel la veille — client",
+      "appointment_reminder_staff": "Rappel la veille — équipe",
+      "new_account": "Nouveau compte",
+      "staff_appointment_requested": "Rendez-vous demandé",
+      "staff_appointment_rescheduled": "Rendez-vous modifié par le client",
+      "staff_appointment_cancelled": "Rendez-vous annulé par le client",
+      "consultation_received": "Demande reçue",
+      "consultation_scheduled": "Planifiée",
+      "consultation_reminder": "Rappel la veille",
+      "consultation_team": "Demande — équipe",
+      "payment_reminder": "Relance",
+      "payment_received": "Paiement reçu",
+      "requested": "Demande reçue",
+      "confirmed": "Confirmé",
+      "rescheduled": "Déplacé",
+      "cancelled": "Annulé",
+      "reminder": "Rappel la veille",
+      "appointment": "Rendez-vous (par le client)",
+      "confirm_request": "Demande reçue",
+      "schedule_confirmation": "Planifiée"
     },
     "sendTest": "Envoyer un test",
     "sending": "Envoi…",

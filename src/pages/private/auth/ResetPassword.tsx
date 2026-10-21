@@ -20,6 +20,8 @@ export default function ResetPasswordPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const token = searchParams.get('token') || '';
+  // From an invitation to a company's space: the first password.
+  const invite = searchParams.get('invite') === '1';
 
   const [tokenInvalid, setTokenInvalid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -33,7 +35,9 @@ export default function ResetPasswordPage() {
   const onSubmit = async (data: ResetPasswordInputs) => {
     try {
       await apiService.resetPassword(token, data.password);
-      toast.success(t('resetPassword.successTitle'), { description: t('resetPassword.successMessage') });
+      toast.success(t(invite ? 'resetPassword.inviteSuccessTitle' : 'resetPassword.successTitle'), {
+        description: t(invite ? 'resetPassword.inviteSuccessMessage' : 'resetPassword.successMessage'),
+      });
       navigate('/sign-in', { replace: true });
     } catch (err) {
       const status = (err as AxiosError)?.response?.status;
@@ -44,8 +48,8 @@ export default function ResetPasswordPage() {
 
   return (
     <AuthLayout
-      title={t('resetPassword.title')}
-      subtitle={t('resetPassword.subtitle')}
+      title={t(invite ? 'resetPassword.inviteTitle' : 'resetPassword.title')}
+      subtitle={t(invite ? 'resetPassword.inviteSubtitle' : 'resetPassword.subtitle')}
       footer={<Link to="/sign-in" className="text-foreground hover:underline">← {t('forgotPassword.back')}</Link>}
     >
       <SEO title={t('resetPassword.title')} noindex />
@@ -74,7 +78,7 @@ export default function ResetPasswordPage() {
             {errors.password_confirm && <p className="text-xs text-destructive">{errors.password_confirm.message}</p>}
           </div>
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {t('resetPassword.submit')}
+            {t(invite ? 'resetPassword.inviteSubmit' : 'resetPassword.submit')}
           </Button>
         </form>
       )}
