@@ -722,6 +722,10 @@ class ApiService {
   async adminMailPreview(mailer: string, email: string, locale: string): Promise<MailPreview> {
     return (await this.client.get(`/api/v1/admin/mail_previews/${mailer}/${email}`, { params: { locale } })).data;
   }
+  /** Sends the sample e-mail, marked « [Test] », to `to` only. */
+  async adminMailPreviewDeliver(mailer: string, email: string, locale: string, to: string): Promise<{ delivered: boolean; to: string }> {
+    return (await this.client.post(`/api/v1/admin/mail_previews/${mailer}/${email}/deliver`, { to, locale })).data;
+  }
   async adminUsersOverview(): Promise<AdminUsersOverview> {
     return (await this.client.get('/api/v1/admin/users/overview')).data;
   }

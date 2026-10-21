@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 import { apiService, type MailPreview } from '@/services/api';
 import { Breadcrumbs } from '@/components/private/common/Breadcrumbs';
 import { PageHeader } from '@/components/private/common/PageHeader';
-import { PaperclipIcon, ServerIcon } from '@icons';
+import { PaperclipIcon, SendIcon, ServerIcon } from '@icons';
 
 type Locale = 'fr' | 'en';
 type Device = 'desktop' | 'mobile';
@@ -32,6 +33,9 @@ export default function AdminMailPreviews() {
   const [device, setDevice] = useState<Device>('desktop');
   const [mail, setMail] = useState<MailPreview | null>(null);
   const [error, setError] = useState(false);
+  // Who a test goes to: the sample's address until changed.
+  const [to, setTo] = useState('');
+  const [sending, setSending] = useState(false);
   const frame = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
@@ -53,6 +57,22 @@ export default function AdminMailPreviews() {
     setError(false);
     apiService.adminMailPreview(selected.mailer, selected.email, locale).then(setMail).catch(() => setError(true));
   }, [selected, locale]);
+
+  useEffect(() => { if (mail && !to) setTo(mail.to?.[0] ?? ''); }, [mail]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  async function sendTest(e: React.FormEvent) {
+    e.preventDefault();
+    if (!selected) return;
+    setSending(true);
+    try {
+      const res = await apiService.adminMailPreviewDeliver(selected.mailer, selected.email, locale, to.trim());
+      toast.success(t('mails.sent', { to: res.to }));
+    } catch {
+      toast.error(t('mails.sendError'));
+    } finally {
+      setSending(false);
+    }
+  }
 
   // Links open in a new tab; the frame grows to the e-mail's height.
   const html = mail?.html.replace('<head>', '<head><base target="_blank">') ?? '';
@@ -112,7 +132,18 @@ export default function AdminMailPreviews() {
             <dl className="mailp-meta">
               <div><dt>{t('mails.subject')}</dt><dd className="mailp-meta__subject">{mail.subject}</dd></div>
               <div><dt>{t('mails.from')}</dt><dd>{mail.from}</dd></div>
-              <div><dt>{t('mails.to')}</dt><dd>{mail.to?.join(', ')}</dd></div>
+              <div>
+                <dt>{t('mails.to')}</dt>
+                <dd>
+                  {/* A real send of this sample, to this address only (subject « [Test] »). */}
+                  <form className="mailp-send" onSubmit={sendTest}>
+                    <input type="email" required className="adm-input" value={to} onChange={(e) => setTo(e.target.value)} aria-label={t('mails.to')} />
+                    <button type="submit" className="adm-btn adm-btn--primary" disabled={sending || !to.trim()}>
+                      <SendIcon size={14} /> {sending ? t('mails.sending') : t('mails.sendTest')}
+                    </button>
+                  </form>
+                </dd>
+              </div>
               {mail.reply_to && <div><dt>{t('mails.replyTo')}</dt><dd>{mail.reply_to.join(', ')}</dd></div>}
               <div>
                 <dt>{t('mails.attachments')}</dt>

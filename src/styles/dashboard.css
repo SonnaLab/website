@@ -345,7 +345,8 @@
 .dash-main {
   flex: 1;
   padding: 32px;
-  overflow-x: hidden;
+  /* clip, not hidden: hidden would make it a scroll box and stop sticky blocks. */
+  overflow-x: clip;
   min-width: 0;
 }
 
@@ -5813,10 +5814,10 @@
 
 /* Aperçu des mails (admin/mails): the list, then the e-mail in a frame. */
 .mailp { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 20px; align-items: start; }
-.mailp-list { position: sticky; top: 16px; display: flex; flex-direction: column; gap: 18px; padding: 16px; border: 1px solid #e8eaed; border-radius: 12px; background: #ffffff; }
+.mailp-list { position: sticky; top: 88px; max-height: calc(100vh - 112px); overflow-y: auto; display: flex; flex-direction: column; gap: 18px; padding: 16px; border: 1px solid #e8eaed; border-radius: 12px; background: #ffffff; }
 .mailp-list__group { display: flex; flex-direction: column; gap: 2px; }
 .mailp-list__title { margin: 0 0 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #9ca3af; }
-.mailp-list__item { padding: 8px 10px; border: 0; border-radius: 8px; background: transparent; font: inherit; font-size: 13px; color: #4b5563; text-align: left; cursor: pointer; }
+.mailp-list__item { padding: 8px 15px; border: 0; border-radius: 0; background: transparent; font: inherit; font-size: 13px; color: #4b5563; text-align: left; cursor: pointer; }
 .mailp-list__item:hover { background: #f5f5f3; color: #111111; }
 .mailp-list__item.is-active { background: rgba(17, 17, 17, 0.07); color: #0f0f0f; font-weight: 600; box-shadow: inset 3px 0 0 #111111; }
 .mailp-view { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
@@ -5825,6 +5826,9 @@
 .mailp-meta dt { color: #6b7280; }
 .mailp-meta dd { margin: 0; color: #111111; overflow-wrap: anywhere; }
 .mailp-meta__subject { font-weight: 700; }
+.mailp-meta > div { align-items: center; }
+.mailp-send { display: flex; flex-wrap: wrap; gap: 8px; }
+.mailp-send .adm-input { flex: 1 1 220px; max-width: 360px; height: 36px; }
 .mailp-meta__file { display: inline-flex; align-items: center; gap: 4px; margin-right: 12px; }
 .mailp-stage { display: flex; justify-content: center; padding: 24px 0; border-radius: 12px; background: #e9eaed; }
 .mailp-frame { display: block; height: 900px; border: 0; background: #f4f4f5; transition: width 0.2s ease; }

@@ -853,6 +853,10 @@
       "payment_received_settled": "Payment received — settled",
       "confirm_submission": "Project request — visitor",
       "notify_team": "Project request — team"
-    }
+    },
+    "sendTest": "Send a test",
+    "sending": "Sending…",
+    "sent": "Test e-mail sent to {{to}}.",
+    "sendError": "The test could not be sent."
   }
 }

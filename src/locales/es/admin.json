@@ -853,6 +853,10 @@
       "payment_received_settled": "Pago recibido — saldada",
       "confirm_submission": "Solicitud de proyecto — visitante",
       "notify_team": "Solicitud de proyecto — equipo"
-    }
+    },
+    "sendTest": "Enviar una prueba",
+    "sending": "Enviando…",
+    "sent": "Correo de prueba enviado a {{to}}.",
+    "sendError": "No se pudo enviar la prueba."
   }
 }
