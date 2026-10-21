@@ -671,7 +671,6 @@
       "new": "Neues Projekt",
       "edit": "Projekt bearbeiten",
       "name": "Projektname",
-      "hint": "Eine Spalte pro Kundenprojekt.",
       "empty": "Keine Projekte: Lege eines an, um Liefergegenstände zuzuordnen.",
       "noObjectives": "Keine Liefergegenstände.",
       "deleteBlocked": "Dieses Projekt kann nicht gelöscht werden: Es hat noch Liefergegenstände."

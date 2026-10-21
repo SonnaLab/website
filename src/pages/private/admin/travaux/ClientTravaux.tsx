@@ -121,6 +121,11 @@ export default function AdminClientTravaux() {
             <button type="button" className="adm-btn adm-btn--ghost" onClick={() => navigate('/admin/entreprise')}>
               <HotelIcon size={14} /> {t('travaux.clients.issuer')}
             </button>
+            {tab === 'objectives' && !data.loading && (
+              <button type="button" className="adm-btn adm-btn--ghost" onClick={() => refs.objectives.current?.openNewProject?.()}>
+                <PlusIcon size={14} /> {t('travaux.projects.new')}
+              </button>
+            )}
             {/* The open tab's « Nouveau … » (invoices come from a quote). */}
             {newLabel && !data.loading && (
               <button type="button" className="adm-btn adm-btn--primary" onClick={() => refs[tab].current?.openNew()}>

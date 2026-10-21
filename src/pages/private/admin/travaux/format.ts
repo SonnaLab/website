@@ -15,6 +15,15 @@ export function formatDate(iso: string | null | undefined): string {
   return `${d}/${m}/${y}`;
 }
 
+/** "2026-10-21T14:32:00+02:00" → "21/10/2026 14:32" (local time). */
+export function formatDateTime(iso: string | null | undefined): string {
+  if (!iso) return '—';
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return '—';
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
 export function todayIso(): string {
   const now = new Date();
   const pad = (n: number) => String(n).padStart(2, '0');

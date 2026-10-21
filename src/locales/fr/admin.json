@@ -672,7 +672,6 @@
       "new": "Nouveau projet",
       "edit": "Modifier le projet",
       "name": "Nom du projet",
-      "hint": "Une colonne par projet du client.",
       "empty": "Aucun projet : créez-en un pour y rattacher des livrables.",
       "noObjectives": "Aucun livrable.",
       "deleteBlocked": "Impossible de supprimer ce projet : il porte encore des livrables."

@@ -671,7 +671,6 @@
       "new": "Nuevo proyecto",
       "edit": "Editar proyecto",
       "name": "Nombre del proyecto",
-      "hint": "Una columna por proyecto del cliente.",
       "empty": "Sin proyectos: crea uno para vincularle entregables.",
       "noObjectives": "Sin entregables.",
       "deleteBlocked": "No se puede eliminar este proyecto: todavía tiene entregables."

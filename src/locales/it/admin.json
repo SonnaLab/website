@@ -671,7 +671,6 @@
       "new": "Nuovo progetto",
       "edit": "Modifica progetto",
       "name": "Nome del progetto",
-      "hint": "Una colonna per progetto del cliente.",
       "empty": "Nessun progetto: creane uno per collegarvi dei deliverable.",
       "noObjectives": "Nessun deliverable.",
       "deleteBlocked": "Impossibile eliminare questo progetto: ha ancora dei deliverable."

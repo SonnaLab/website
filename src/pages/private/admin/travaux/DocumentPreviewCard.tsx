@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { apiAssetUrl } from '@/services/api';
 import { calculateDevis, formatDays } from '@/lib/devisCalc';
-import { addressLines, bankLine, footerAddress, footerSlogan, footerWebsite, legalLine, vatNumber } from '@/lib/letterhead';
+import { bankLine, footerAddress, footerSlogan, footerWebsite, vatNumber } from '@/lib/letterhead';
 import type { TravauxClient, TravauxObjective, TravauxTask } from '@/types/travaux';
 import { formatDate, formatEuros } from './format';
 
@@ -35,8 +35,8 @@ function PartyBlock({ party, label }: { party: TravauxClient | null; label: stri
         <span className="trv-doc__avatar">{party?.initials ?? '?'}</span>
       )}
       <p className="trv-doc__name">{party?.name || '—'}</p>
+      {/* SIRET, e-mail and phone are enough: no postal address. */}
       {party?.siret && <p className="trv-doc__meta">SIRET : {party.siret}</p>}
-      {addressLines(party).map((line, i) => <p key={i} className="trv-doc__meta">{line}</p>)}
       {party?.contact_email && <p className="trv-doc__meta">{party.contact_email}</p>}
       {phone && <p className="trv-doc__meta">{phone}</p>}
     </div>
@@ -53,7 +53,6 @@ export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
   const hasAllocations = !!calc && calc.allocations.length > 0;
   const deliverableTitle = data.objective?.title || data.title || '—';
   const bank = bankLine(data.issuer);
-  const legal = legalLine(data.issuer);
   const address = footerAddress(data.issuer);
   const vat = vatNumber(data.issuer);
 
@@ -140,7 +139,6 @@ export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
             <p>{footerWebsite(data.issuer)}</p>
             {address && <p>{address}</p>}
             <p>{footerSlogan(data.issuer)}</p>
-            {legal && <p>{legal}</p>}
           </div>
         </div>
       </div>

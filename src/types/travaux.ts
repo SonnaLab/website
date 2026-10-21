@@ -107,6 +107,8 @@ export interface TravauxTask {
   assignee_id: string | null;
   assignee_name: string | null;
   score: number | null;
+  /** When it reached « Terminé » (null elsewhere). */
+  completed_at?: string | null;
   created_at: string;
   updated_at: string;
 }

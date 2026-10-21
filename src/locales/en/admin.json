@@ -671,7 +671,6 @@
       "new": "New project",
       "edit": "Edit project",
       "name": "Project name",
-      "hint": "One column per client project.",
       "empty": "No projects: create one to attach deliverables to it.",
       "noObjectives": "No deliverables.",
       "deleteBlocked": "This project cannot be deleted: it still has deliverables."

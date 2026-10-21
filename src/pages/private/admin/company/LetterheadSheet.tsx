@@ -4,7 +4,6 @@ import {
   footerAddress,
   footerSlogan,
   footerWebsite,
-  legalLine,
   partyPhone,
   vatNumber,
   type LetterheadCompany,
@@ -38,7 +37,6 @@ export function LetterheadSheet({
 }) {
   const { t } = useTranslation('admin');
   const address = footerAddress(company);
-  const legal = legalLine(company);
   const bank = bankLine(company);
   const vat = vatNumber(company);
   const zoneClass = (z: Exclude<LetterheadZone, null>) => `co-sheet__zone${zone === z ? ' co-sheet__zone--active' : ''}`;
@@ -100,7 +98,6 @@ export function LetterheadSheet({
           <p>{footerWebsite(company)}</p>
           {address && <p>{address}</p>}
           <p>{footerSlogan(company)}</p>
-          {legal && <p>{legal}</p>}
         </div>
       </footer>
     </div>

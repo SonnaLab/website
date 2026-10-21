@@ -5413,7 +5413,6 @@
 .trv-tabs-bar > .adm-tabs__list { position: relative; flex: 1 1 auto; min-width: 0; width: auto; margin-bottom: -2px; border-bottom: none; overflow-x: auto; scrollbar-width: none; }
 .trv-tabs-bar > .adm-tabs__list::-webkit-scrollbar { display: none; }
 .trv-tabs-bar .adm-tabs__trigger { margin-bottom: 0; }
-.trv-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .trv-doc-ref { padding: 0; border: none; background: none; color: #26348b; font: inherit; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; cursor: pointer; }
 .trv-doc-ref:hover { text-decoration: underline; }
 /* Invoice payment status: paid (solid green), unpaid (red), deposit (filled to the share paid). */
@@ -5480,7 +5479,8 @@
 .trv-task { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; background: #ffffff; border: 1px solid #e8eaed; border-radius: 8px; cursor: grab; }
 .trv-task:active { cursor: grabbing; }
 .trv-task__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-.trv-task__title { font-size: 13px; font-weight: 600; color: #111111; margin: 0; }
+.trv-task__title { font-size: 13px; font-weight: 600; color: #111111; margin: 0; flex: 1; min-width: 0; }
+.trv-task__done-at { flex-shrink: 0; font-size: 11px; line-height: 18px; color: #9ca3af; white-space: nowrap; }
 .trv-task__desc { font-size: 12px; color: #4b5563; margin: 0; }
 .trv-task__delete { border: none; background: none; padding: 0; color: #9ca3af; cursor: pointer; flex-shrink: 0; }
 .trv-task__delete:hover { color: #dc2626; }

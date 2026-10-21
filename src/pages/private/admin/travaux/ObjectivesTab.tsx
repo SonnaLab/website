@@ -61,6 +61,7 @@ export const ObjectivesTab = forwardRef<TravauxTabHandle, ObjectivesTabProps>(fu
         setCreateOpen(true);
       }
     },
+    openNewProject: () => setProjectModal({ open: true, project: null }),
   }));
 
   // Numéro d'ordre (#n) par date de création, comme sur elancevae.
@@ -130,13 +131,6 @@ export const ObjectivesTab = forwardRef<TravauxTabHandle, ObjectivesTabProps>(fu
 
   return (
     <div className="adm-form">
-      <div className="trv-toolbar">
-        <p className="trv-info">{t('travaux.projects.hint')}</p>
-        <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => setProjectModal({ open: true, project: null })}>
-          <PlusIcon size={13} /> {t('travaux.projects.new')}
-        </button>
-      </div>
-
       {projects.length ? (
         <div className="trv-board">
           {projects.map((p) => {

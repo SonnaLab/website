@@ -8,7 +8,7 @@ import { Trash2Icon } from '@icons';
 import type { KanbanColumn, TaskPriority, TravauxObjective, TravauxTask } from '@/types/travaux';
 import type { TravauxResource } from './useTravauxData';
 import type { TravauxTabHandle } from './tabHandle';
-import { apiErrorMessage } from './format';
+import { apiErrorMessage, formatDateTime } from './format';
 import { useConfirmDelete } from './useConfirmDelete';
 
 const COLUMNS: KanbanColumn[] = ['todo', 'in_progress', 'review', 'done'];
@@ -53,7 +53,9 @@ export const TasksTab = forwardRef<TravauxTabHandle, TasksTabProps>(function Tas
   return (
     <div className="trv-kanban">
       {COLUMNS.map((col) => {
+        // « Terminé »: the latest done first.
         const items = tasks.filter((task) => task.column === col);
+        if (col === 'done') items.sort((a, b) => (b.completed_at ?? b.updated_at).localeCompare(a.completed_at ?? a.updated_at));
         return (
           <div
             key={col}
@@ -82,6 +84,11 @@ export const TasksTab = forwardRef<TravauxTabHandle, TasksTabProps>(function Tas
                 >
                   <div className="trv-task__top">
                     <p className="trv-task__title">{task.title}</p>
+                    {col === 'done' && (
+                      <time className="trv-task__done-at" dateTime={task.completed_at ?? task.updated_at}>
+                        {formatDateTime(task.completed_at ?? task.updated_at)}
+                      </time>
+                    )}
                     <button
                       type="button"
                       className="trv-task__delete"
@@ -211,7 +218,10 @@ function TaskFormModal({
           <label className="adm-form__label" htmlFor="trv-task-objective">{t('travaux.tracking.objective')}</label>
           <select id="trv-task-objective" className="adm-select" value={objectiveId} onChange={(e) => setObjectiveId(e.target.value)}>
             <option value="">{t('travaux.tracking.noObjective')}</option>
-            {objectives.map((o) => <option key={o.id} value={o.id}>{o.title}{o.project_name ? ` — ${o.project_name}` : ''}</option>)}
+            {/* A delivered deliverable takes no new task (its own stays listed). */}
+            {objectives.filter((o) => o.status !== 'done' || o.id === task?.objective_id).map((o) => (
+              <option key={o.id} value={o.id}>{o.title}{o.project_name ? ` — ${o.project_name}` : ''}</option>
+            ))}
           </select>
         </div>
         {linked && (
