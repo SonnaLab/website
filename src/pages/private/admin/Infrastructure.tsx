@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ActivityIcon, AlertTriangleIcon, LayersIcon, RefreshCwIcon, ServerIcon, ZapIcon } from '@icons';
+import { ActivityIcon, AlertTriangleIcon, LayersIcon, RefreshCwIcon, SendIcon, ServerIcon, ZapIcon } from '@icons';
 
 import { apiService } from '@/services/api';
 import { Badge } from '@/components/ui/badge';
@@ -43,10 +44,14 @@ export default function AdminInfrastructure() {
         title={t('infrastructure.heading')}
         description={t('infrastructure.subtitle')}
         actions={
-          <Button variant="outline" size="sm" onClick={reload} disabled={loading}>
-            <RefreshCwIcon className={`size-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-            {t('infrastructure.refresh')}
-          </Button>
+          <>
+            {/* Temporary: the e-mail designs, rendered by the API, nothing sent. */}
+            <Link to="/admin/mails" className="adm-btn adm-btn--ghost"><SendIcon size={14} /> {t('mails.heading')}</Link>
+            <Button variant="outline" size="sm" onClick={reload} disabled={loading}>
+              <RefreshCwIcon className={`size-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              {t('infrastructure.refresh')}
+            </Button>
+          </>
         }
       />
 

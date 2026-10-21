@@ -818,5 +818,41 @@
       "tokens": "Tokens heute",
       "clients": "Aktive Kunden"
     }
+  },
+  "mails": {
+    "heading": "E-Mail-Vorschau",
+    "subtitle": "Die E-Mails von SonnaLab mit fiktiven Daten: Es wird nichts versendet.",
+    "locale": "Sprache",
+    "device": {
+      "label": "Format",
+      "desktop": "Desktop",
+      "mobile": "Mobil"
+    },
+    "subject": "Betreff",
+    "from": "Von",
+    "to": "An",
+    "replyTo": "Antwort an",
+    "attachments": "Anhänge",
+    "none": "Keine",
+    "groups": {
+      "auth_mailer": "Konto",
+      "team_mailer": "Team",
+      "billing_mailer": "Abrechnung",
+      "contact_mailer": "Projektanfragen"
+    },
+    "emails": {
+      "confirmation": "Anmeldebestätigung",
+      "reset_password": "Passwort vergessen",
+      "invitation": "Einladung ins Unternehmen",
+      "quote_sent": "Angebot (PDF)",
+      "invoice_sent": "Rechnung (PDF)",
+      "invoice_sent_after_deposit": "Rechnung nach Anzahlung",
+      "payment_reminder_upcoming": "Erinnerung — bald fällig",
+      "payment_reminder_overdue": "Erinnerung — überfällig",
+      "payment_received_deposit": "Zahlung erhalten — Anzahlung",
+      "payment_received_settled": "Zahlung erhalten — beglichen",
+      "confirm_submission": "Projektanfrage — Besucher",
+      "notify_team": "Projektanfrage — Team"
+    }
   }
 }

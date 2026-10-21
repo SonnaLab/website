@@ -9,7 +9,7 @@ const OUT = process.argv[3] || `${ROOT}public/email/heroes`;
 const ICONS = `${ROOT}public/email/icons`;
 const b64 = (path) => `data:image/png;base64,${readFileSync(path).toString('base64')}`;
 const HEROES = {
-  welcome:    { screen: 'home',      icon: 'check-circle-success', side: 'left',  fr: ['Compte créé', 'Bienvenue chez SonnaLab'],      en: ['Account created', 'Welcome to SonnaLab'] },
+  welcome:    { screen: 'home',      icon: 'check-circle-success', side: 'left',  top: 262, fr: ['Compte créé', 'Bienvenue chez SonnaLab'],      en: ['Account created', 'Welcome to SonnaLab'] },
   password:   { screen: 'signin',    icon: 'lock',                 side: 'right', fr: ['Mot de passe', 'Lien sécurisé'],              en: ['Password', 'Secure link'] },
   invitation: { screen: 'dashboard', icon: 'users',                side: 'left',  fr: ['Votre équipe', 'Projets, devis et factures'], en: ['Your team', 'Projects, quotes, invoices'] },
   quote:      { screen: 'quotes',    icon: 'file-text',            side: 'right', fr: ['Nouveau devis', 'PDF en pièce jointe'],       en: ['New quote', 'PDF attached'] },
@@ -38,7 +38,7 @@ const page = (h, locale) => {
   .status i { display: flex; gap: 3px; align-items: center; }
   .status i::before { content: ''; width: 14px; height: 8px; border-radius: 2px; background: linear-gradient(90deg, #0f0f0f 0 22%, transparent 22% 26%, #0f0f0f 26% 48%, transparent 48% 52%, #0f0f0f 52% 74%, transparent 74% 78%, #0f0f0f 78%); }
   .status i::after { content: ''; width: 18px; height: 9px; border-radius: 3px; border: 1.5px solid #0f0f0f; box-shadow: inset 0 0 0 1.5px #fff; background: #0f0f0f; }
-  .chip { position: absolute; top: 150px; ${chipLeft ? 'left: 70px' : 'right: 70px'}; display: flex; align-items: center; gap: 12px; padding: 12px 18px 12px 12px; border-radius: 18px; background: #fff; box-shadow: 0 18px 40px rgba(15,15,15,.14); }
+  .chip { position: absolute; top: ${h.top ?? 150}px; ${chipLeft ? 'left: 70px' : 'right: 70px'}; display: flex; align-items: center; gap: 12px; padding: 12px 18px 12px 12px; border-radius: 18px; background: #fff; box-shadow: 0 18px 40px rgba(15,15,15,.14); }
   .chip img { width: 40px; height: 40px; }
   .chip b { display: block; font-size: 15px; font-weight: 800; color: #0f0f0f; letter-spacing: -.01em; }
   .chip span { display: block; margin-top: 2px; font-size: 11.5px; color: #6b7280; }

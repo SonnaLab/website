@@ -818,5 +818,41 @@
       "tokens": "Tokens today",
       "clients": "Active clients"
     }
+  },
+  "mails": {
+    "heading": "E-mail previews",
+    "subtitle": "SonnaLab's e-mails, rendered on fictional data: nothing is sent.",
+    "locale": "Language",
+    "device": {
+      "label": "Format",
+      "desktop": "Desktop",
+      "mobile": "Mobile"
+    },
+    "subject": "Subject",
+    "from": "From",
+    "to": "To",
+    "replyTo": "Reply to",
+    "attachments": "Attachments",
+    "none": "None",
+    "groups": {
+      "auth_mailer": "Account",
+      "team_mailer": "Team",
+      "billing_mailer": "Billing",
+      "contact_mailer": "Project requests"
+    },
+    "emails": {
+      "confirmation": "Sign-up confirmation",
+      "reset_password": "Forgotten password",
+      "invitation": "Company invitation",
+      "quote_sent": "Quote (PDF)",
+      "invoice_sent": "Invoice (PDF)",
+      "invoice_sent_after_deposit": "Invoice after a deposit",
+      "payment_reminder_upcoming": "Reminder — due soon",
+      "payment_reminder_overdue": "Reminder — overdue",
+      "payment_received_deposit": "Payment received — deposit",
+      "payment_received_settled": "Payment received — settled",
+      "confirm_submission": "Project request — visitor",
+      "notify_team": "Project request — team"
+    }
   }
 }

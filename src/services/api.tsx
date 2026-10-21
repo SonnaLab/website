@@ -342,6 +342,17 @@ export interface AdminUsersOverview {
   acquisition: number;
 }
 
+/** « Aperçu des mails »: an e-mail rendered on sample data (nothing sent). */
+export interface MailPreview {
+  subject: string;
+  from: string | null;
+  to: string[] | null;
+  reply_to: string[] | null;
+  html: string;
+  text: string | null;
+  attachments: { filename: string; size: number }[];
+}
+
 export interface AdminImpersonateResponse {
   access_token: string;
   user: AdminUser;
@@ -705,6 +716,12 @@ class ApiService {
 
   // ==================== Admin: Users ====================
 
+  async adminMailPreviews(): Promise<{ mailers: { key: string; emails: string[] }[] }> {
+    return (await this.client.get('/api/v1/admin/mail_previews')).data;
+  }
+  async adminMailPreview(mailer: string, email: string, locale: string): Promise<MailPreview> {
+    return (await this.client.get(`/api/v1/admin/mail_previews/${mailer}/${email}`, { params: { locale } })).data;
+  }
   async adminUsersOverview(): Promise<AdminUsersOverview> {
     return (await this.client.get('/api/v1/admin/users/overview')).data;
   }

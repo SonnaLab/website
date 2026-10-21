@@ -45,6 +45,7 @@ import AdminLesankofa from '@/pages/private/admin/Lesankofa';
 import AdminTravauxClients from '@/pages/private/admin/travaux/TravauxClients';
 import AdminClientTravaux from '@/pages/private/admin/travaux/ClientTravaux';
 import AdminCompany from '@/pages/private/admin/company/Company';
+import AdminMailPreviews from '@/pages/private/admin/MailPreviews';
 
 // Staff
 import StaffDashboard from '@/pages/private/staff/Dashboard';
@@ -201,6 +202,7 @@ export const routeTree: RouteObject[] = [
           { path: 'travaux',        element: <AdminTravauxClients /> },
           { path: 'travaux/:clientId', element: <AdminClientTravaux /> },
           { path: 'entreprise',     element: <AdminCompany /> },
+          { path: 'mails',          element: <AdminMailPreviews /> },
         ],
       },
     ],

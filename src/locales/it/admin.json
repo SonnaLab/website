@@ -818,5 +818,41 @@
       "tokens": "Token oggi",
       "clients": "Clienti attivi"
     }
+  },
+  "mails": {
+    "heading": "Anteprima e-mail",
+    "subtitle": "Le e-mail di SonnaLab con dati fittizi: non viene inviato nulla.",
+    "locale": "Lingua",
+    "device": {
+      "label": "Formato",
+      "desktop": "Computer",
+      "mobile": "Mobile"
+    },
+    "subject": "Oggetto",
+    "from": "Da",
+    "to": "A",
+    "replyTo": "Rispondi a",
+    "attachments": "Allegati",
+    "none": "Nessuno",
+    "groups": {
+      "auth_mailer": "Account",
+      "team_mailer": "Team",
+      "billing_mailer": "Fatturazione",
+      "contact_mailer": "Richieste di progetto"
+    },
+    "emails": {
+      "confirmation": "Conferma di registrazione",
+      "reset_password": "Password dimenticata",
+      "invitation": "Invito all'azienda",
+      "quote_sent": "Preventivo (PDF)",
+      "invoice_sent": "Fattura (PDF)",
+      "invoice_sent_after_deposit": "Fattura dopo acconto",
+      "payment_reminder_upcoming": "Promemoria — in scadenza",
+      "payment_reminder_overdue": "Promemoria — scaduta",
+      "payment_received_deposit": "Pagamento ricevuto — acconto",
+      "payment_received_settled": "Pagamento ricevuto — saldata",
+      "confirm_submission": "Richiesta di progetto — visitatore",
+      "notify_team": "Richiesta di progetto — team"
+    }
   }
 }
