@@ -19,6 +19,7 @@ export {
   LogOutIcon,
   ArrowLeftIcon,
   ArrowRightIcon,
+  ArrowRightFromLineIcon,
   ArrowUpRightIcon,
   ServerIcon,
   LineChartIcon,

@@ -700,3 +700,14 @@ export function BellIcon(p: IconProps) {
     </svg>
   );
 }
+
+/* Sortie — « Revenir à mon compte » (lucide ArrowRightFromLine). */
+export function ArrowRightFromLineIcon(p: IconProps) {
+  return (
+    <svg {...svgProps(p)}>
+      <path d="M3 5v14" />
+      <path d="M21 12H7" />
+      <path d="m15 18 6-6-6-6" />
+    </svg>
+  );
+}

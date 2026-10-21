@@ -11,6 +11,7 @@ import {
   XIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  ArrowRightFromLineIcon,
   EyeIcon,
   UserIcon,
   HotelIcon,
@@ -70,18 +71,8 @@ export function MemberLayout() {
       className="dash-shell"
       data-collapsed={collapsed ? 'true' : 'false'}
       data-sidebar-expanded={sidebarExpanded ? 'true' : 'false'}
+      data-impersonating={impersonatingAdmin ? 'true' : undefined}
     >
-
-      {/* ── Impersonation banner ── */}
-      {impersonatingAdmin && (
-        <div className="dash-impersonation-banner">
-          <EyeIcon size={14} />
-          <span>{tA('impersonation.banner', { name: displayName || user?.email })}</span>
-          <button type="button" className="dash-impersonation-banner__btn" onClick={stopImpersonating}>
-            {tA('impersonation.stop')}
-          </button>
-        </div>
-      )}
 
       {/* ── Top bar ── */}
       <header className="dash-topbar">
@@ -166,6 +157,17 @@ export function MemberLayout() {
           </div>
         </div>
       </header>
+
+      {/* ── Impersonation banner, under the top bar ── */}
+      {impersonatingAdmin && (
+        <div className="dash-impersonation-banner">
+          <EyeIcon size={14} />
+          <span className="dash-impersonation-banner__text">{tA('impersonation.banner', { name: displayName || user?.email })}</span>
+          <button type="button" className="dash-impersonation-banner__btn" onClick={stopImpersonating} title={tA('impersonation.stop')}>
+            <span className="dash-impersonation-banner__label">{tA('impersonation.stop')}</span> <ArrowRightFromLineIcon size={14} />
+          </button>
+        </div>
+      )}
 
       {/* ── Body ── */}
       <div className="dash-body">

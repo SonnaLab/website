@@ -40,33 +40,44 @@
 }
 
 /* ── Impersonation banner ── */
+.dash-shell[data-impersonating="true"] { --dash-banner-h: 40px; }
 .dash-impersonation-banner {
   position: sticky;
-  top: 0;
-  z-index: 31; /* above .dash-topbar (30) so it stays visible when it scrolls under */
+  top: var(--dash-topbar-h); /* right under the top bar, which stays above it */
+  z-index: 29;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: #fffbeb;
-  border-bottom: 1px solid #fde68a;
-  color: #92400e;
+  gap: 10px;
+  height: var(--dash-banner-h);
+  padding: 0 16px;
+  background: #0f0f0f;
+  color: #ffffff;
   font-size: 12.5px;
   font-weight: 500;
 }
-.dash-impersonation-banner span { flex: 1; }
+.dash-impersonation-banner__text { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Phones: the message first, the button keeps only its icon. */
+@media (max-width: 640px) {
+  .dash-impersonation-banner__label { display: none; }
+  .dash-impersonation-banner__btn { padding: 5px 8px; }
+}
 .dash-impersonation-banner__btn {
+  display: inline-flex;
   flex-shrink: 0;
-  padding: 4px 10px;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 6px;
-  border: 1px solid #d97706;
-  background: #fff;
-  color: #92400e;
+  background: transparent;
+  color: #ffffff;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
 }
-.dash-impersonation-banner__btn:hover { background: #fef3c7; }
+.dash-impersonation-banner__btn:hover { background: rgba(255, 255, 255, 0.12); }
+
 
 /* ══════════════════════════════════════
    TOP BAR
@@ -148,8 +159,8 @@
   display: flex;
   flex-direction: column;
   position: sticky;
-  top: var(--dash-topbar-h);
-  height: calc(100vh - var(--dash-topbar-h));
+  top: calc(var(--dash-topbar-h) + var(--dash-banner-h));
+  height: calc(100vh - var(--dash-topbar-h) - var(--dash-banner-h));
   overflow-y: auto;
   scrollbar-width: none;
 }
@@ -404,6 +415,7 @@
   --dash-sidebar-w: 280px;
   --dash-sidebar-w-col: 72px;
   --dash-topbar-h: 64px;
+  --dash-banner-h: 0px; /* the impersonation banner, when shown */
   --dash-sidebar-transition: 180ms cubic-bezier(0.4, 0, 0.2, 1);
   --dash-bg: #f8f9fa;
   --dash-sidebar-bg: #ffffff;
@@ -5820,7 +5832,7 @@
 
 /* Aperçu des mails (admin/mails): the list, then the e-mail in a frame. */
 .mailp { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 20px; align-items: start; }
-.mailp-list { position: sticky; top: 88px; max-height: calc(100vh - 112px); overflow-y: auto; display: flex; flex-direction: column; gap: 18px; padding: 16px; border: 1px solid #e8eaed; border-radius: 12px; background: #ffffff; }
+.mailp-list { position: sticky; top: calc(88px + var(--dash-banner-h)); max-height: calc(100vh - 112px - var(--dash-banner-h)); overflow-y: auto; display: flex; flex-direction: column; gap: 18px; padding: 16px; border: 1px solid #e8eaed; border-radius: 12px; background: #ffffff; }
 .mailp-list__group { display: flex; flex-direction: column; gap: 2px; }
 .mailp-list__title { margin: 0 0 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #9ca3af; }
 .mailp-list__item { padding: 8px 15px; border: 0; border-radius: 0; background: transparent; font: inherit; font-size: 13px; color: #4b5563; text-align: left; cursor: pointer; }
