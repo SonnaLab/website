@@ -8,7 +8,6 @@ import {
   FileSignatureIcon,
   FileTextIcon,
   FolderKanbanIcon,
-  HotelIcon,
   KanbanIcon,
   PlusIcon,
   ReceiptIcon,
@@ -29,7 +28,7 @@ import type { TravauxTabHandle } from './tabHandle';
 import { useTravauxData } from './useTravauxData';
 
 type TabKey = 'objectives' | 'tracking' | 'quotes' | 'invoices' | 'contracts' | 'payments';
-const TAB_KEYS: TabKey[] = ['objectives', 'tracking', 'quotes', 'invoices', 'contracts', 'payments'];
+const TAB_KEYS: TabKey[] = ['objectives', 'tracking', 'quotes', 'invoices', 'payments', 'contracts'];
 
 /**
  * Travaux d'un client (action « plot » du tableau des clients) : livrables
@@ -118,9 +117,6 @@ export default function AdminClientTravaux() {
         description={t('travaux.subtitle')}
         actions={
           <>
-            <button type="button" className="adm-btn adm-btn--ghost" onClick={() => navigate('/admin/entreprise')}>
-              <HotelIcon size={14} /> {t('travaux.clients.issuer')}
-            </button>
             {tab === 'objectives' && !data.loading && (
               <button type="button" className="adm-btn adm-btn--ghost" onClick={() => refs.objectives.current?.openNewProject?.()}>
                 <PlusIcon size={14} /> {t('travaux.projects.new')}
@@ -158,8 +154,8 @@ export default function AdminClientTravaux() {
               <TabsTrigger value="tracking" icon={<KanbanIcon size={14} />} count={data.tasks.length}>{t('travaux.tabs.tracking')}</TabsTrigger>
               <TabsTrigger value="quotes" icon={<FileTextIcon size={14} />} count={quotes.length}>{t('travaux.tabs.quotes')}</TabsTrigger>
               <TabsTrigger value="invoices" icon={<ReceiptIcon size={14} />} count={invoices.length}>{t('travaux.tabs.invoices')}</TabsTrigger>
-              <TabsTrigger value="contracts" icon={<FileSignatureIcon size={14} />} count={data.contracts.length}>{t('travaux.tabs.contracts')}</TabsTrigger>
               <TabsTrigger value="payments" icon={<WalletIcon size={14} />} count={data.payments.length}>{t('travaux.tabs.payments')}</TabsTrigger>
+              <TabsTrigger value="contracts" icon={<FileSignatureIcon size={14} />} count={data.contracts.length}>{t('travaux.tabs.contracts')}</TabsTrigger>
             </TabsList>
           </div>
 

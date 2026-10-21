@@ -1,6 +1,6 @@
 import { Fragment, useState, useRef, useEffect } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 import {
   LineChartIcon,
@@ -113,7 +113,7 @@ export function MemberLayout() {
             className="dash-btn-lang"
             onClick={() => i18n.changeLanguage(nextLang)}
           >
-            <LanguagesIcon size={16} />
+            <LanguagesIcon size={24} />
             <span>{currentLang}</span>
           </button>
 
@@ -225,7 +225,9 @@ export function MemberLayout() {
           {impersonatingAdmin && (
             <div className="dash-impersonation-banner">
               <EyeIcon size={14} />
-              <span className="dash-impersonation-banner__text">{tA('impersonation.banner', { name: displayName || user?.email })}</span>
+              <span className="dash-impersonation-banner__text">
+            <Trans i18nKey="impersonation.banner" ns="admin" values={{ name: displayName || user?.email }} components={{ b: <strong /> }} />
+          </span>
               <button type="button" className="dash-impersonation-banner__btn" onClick={stopImpersonating} title={tA('impersonation.stop')}>
                 <span className="dash-impersonation-banner__label">{tA('impersonation.stop')}</span> <ArrowRightFromLineIcon size={14} />
               </button>

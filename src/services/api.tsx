@@ -300,6 +300,8 @@ export interface AdminUser {
   /** The client company (Travaux) the account belongs to, if any. */
   client_id: string | null;
   client_name: string | null;
+  /** Its company's referent / contact: shown as « Manager ». */
+  company_admin?: boolean;
   created_at: string;
   // Only present when fetched with full: true (show/create/update/lock/unlock/impersonate)
   phone?: string | null;
@@ -418,7 +420,9 @@ export interface InfraCronjob {
   last_message: string | null;
 }
 
-export interface InfraBackup { name: string; size_bytes: number; created_at: string }
+export type BackupTier = 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'semiannual' | 'annual' | 'manual';
+export interface InfraBackup { name: string; tier: BackupTier; size_bytes: number; created_at: string; verified: boolean; sha256: string | null }
+export interface InfraBackupTier { tier: BackupTier; keep: number; count: number; last_at: string | null; oldest_at: string | null; size_bytes: number; cron: string | null }
 
 export interface ActivityEntry {
   id: string;
@@ -843,6 +847,13 @@ class ApiService {
   // ==================== Admin: Users ====================
 
   // ── Mailing (back office) ──
+  /** « Activité »: the e-mails that left, newest first, and one of them whole. */
+  async adminMailingSent(params: { q?: string; page?: number }): Promise<{ emails: SentEmailSummary[]; meta: { total: number; page: number; pages: number } }> {
+    return (await this.client.get('/api/v1/admin/mailing/sent', { params })).data;
+  }
+  async adminMailingSentEmail(id: string): Promise<SentEmail> {
+    return (await this.client.get(`/api/v1/admin/mailing/sent/${id}`)).data.email;
+  }
   async adminMailingOverview(): Promise<MailingOverview> { return (await this.client.get('/api/v1/admin/mailing/overview')).data; }
   async adminMailingSubscribers(params: { q?: string; status?: string; page?: number }): Promise<{ subscribers: MailingSubscriber[]; meta: { total: number; page: number; pages: number } }> {
     return (await this.client.get('/api/v1/admin/mailing/subscribers', { params })).data;
@@ -917,7 +928,11 @@ class ApiService {
   async adminInfraDatabase(): Promise<InfraDatabase> { return (await this.client.get('/api/v1/admin/infrastructure/database')).data; }
   async adminInfraCronjobs(): Promise<{ jobs: InfraCronjob[] }> { return (await this.client.get('/api/v1/admin/infrastructure/cronjobs')).data; }
   async adminInfraRunCronjob(name: string) { return (await this.client.post(`/api/v1/admin/infrastructure/cronjobs/${name}/run`)).data; }
-  async adminInfraBackups(): Promise<{ backups: InfraBackup[]; keep: number; cron: string | null }> {
+  /** The dashboard's « Dernières actions »: the last items of each menu. */
+  async adminDashboardLatest(): Promise<Record<string, Array<{ label: string; status: string; at: string; kind?: string }>>> {
+    return (await this.client.get('/api/v1/admin/dashboard/latest')).data;
+  }
+  async adminInfraBackups(): Promise<{ backups: InfraBackup[]; tiers: InfraBackupTier[] }> {
     return (await this.client.get('/api/v1/admin/infrastructure/backups')).data;
   }
   async adminInfraCreateBackup() { return (await this.client.post('/api/v1/admin/infrastructure/backups')).data; }
@@ -1186,3 +1201,10 @@ export interface MyBilling {
   company: string; siret: string | null; vat_number: string | null; address: string[]; contact_email: string | null;
   referent: string | null; referent_email: string | null; referent_phone: string | null;
 }
+
+/** An e-mail as it left (« Gestion du mailing › Activité »). */
+export interface SentEmailSummary {
+  id: string; mail_key: string; from: string | null; to: string[]; subject: string | null; locale: string | null;
+  attachments: Array<{ filename: string; size: number }>; sent_at: string;
+}
+export interface SentEmail extends SentEmailSummary { bcc: string[]; html: string | null; text: string | null }

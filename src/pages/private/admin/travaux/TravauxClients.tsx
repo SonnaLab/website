@@ -36,7 +36,6 @@ import {
   TrafficConeIcon,
   Trash2Icon,
   UsersIcon,
-  HotelIcon,
   WalletIcon,
 } from '@icons';
 import type { TravauxClient } from '@/types/travaux';
@@ -133,9 +132,6 @@ export default function AdminTravauxClients() {
         description={t('travaux.subtitle')}
         actions={
           <>
-            <button type="button" className="adm-btn adm-btn--ghost" onClick={() => navigate('/admin/entreprise')}>
-              <HotelIcon size={14} /> {t('travaux.clients.issuer')}
-            </button>
             {/* Clients themselves are created in Gestion des utilisateurs › Clients. */}
             <button type="button" className="adm-btn adm-btn--primary" onClick={() => setChantierOpen(true)}>
               <PlusIcon size={14} /> {t('travaux.clients.newChantier')}

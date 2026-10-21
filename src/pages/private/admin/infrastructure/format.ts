@@ -29,5 +29,13 @@ export function cronLabel(cron: string | null, t: TFunction): string {
   if (time && dom === '*' && mon === '*' && /^\d$/.test(dow)) {
     return t('infrastructure.cron.weekly', { time, day: t(`infrastructure.cron.days.${dow}`) });
   }
+  if (time && dom === '1' && dow === '*') {
+    if (mon === '*') return t('infrastructure.cron.monthly', { time });
+    const months = mon.split(',').map((n) => t(`infrastructure.cron.months.${n}`));
+    return months.length === 1
+      ? t('infrastructure.cron.yearly', { time, month: months[0] })
+      : t('infrastructure.cron.someMonths', { time, months: months.join(', ') });
+  }
+  if (/^\d+$/.test(m) && h === '*' && dom === '*') return t('infrastructure.cron.hourly', { minute: m.padStart(2, '0') });
   return cron;
 }

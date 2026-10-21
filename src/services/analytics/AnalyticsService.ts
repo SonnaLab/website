@@ -150,6 +150,10 @@ class AnalyticsService {
     type: AnalyticsEventType,
     metadata?: Record<string, any>
   ): void {
+    // Only the public site is measured: not the back office / client space,
+    // and never the SonnaLab team (signed in as admin or staff, or impersonating).
+    if (this.isInternal()) return;
+
     // Vérifier le consentement
     if (type !== 'page_view' && !this.hasConsent('analytics')) {
       return;
@@ -200,6 +204,17 @@ class AnalyticsService {
   }
 
   // ==================== Specific Tracking Methods ====================
+
+  private isInternal(): boolean {
+    if (/^\/(admin|staff|dashboard)(\/|$)/.test(window.location.pathname)) return true;
+    try {
+      if (localStorage.getItem('admin_impersonation_snapshot')) return true;
+      const user = JSON.parse(localStorage.getItem('auth_user') || 'null') as { role?: string } | null;
+      return user?.role === 'admin' || user?.role === 'staff';
+    } catch {
+      return false;
+    }
+  }
 
   public trackPageView(metadata?: Record<string, any>): void {
     this.track('page_view', {

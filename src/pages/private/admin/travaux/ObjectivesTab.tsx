@@ -5,7 +5,10 @@ import { toast } from 'sonner';
 import { Modal } from '@/components/common/Modal';
 import { apiService } from '@/services/api';
 import { calculateDevis, formatDays } from '@/lib/devisCalc';
-import { PenLineIcon, PlusIcon, TargetIcon } from '@icons';
+import { DataTableAction } from '@/components/common/DataTable';
+import {
+  CheckCircleIcon, ChevronDownIcon, FileTextIcon, FolderKanbanIcon, PenLineIcon, PlusIcon, TargetIcon, Trash2Icon,
+} from '@icons';
 import type {
   KanbanColumn,
   ObjectiveFormat,
@@ -37,9 +40,10 @@ interface ObjectivesTabProps {
 }
 
 /**
- * Livrables du client, une colonne par projet (ex. Elance VAE → ÉlanceVAE,
- * ÉlanceCampus). Fiche livrable avec la frise de ses tâches, et génération
- * du devis (répartition jours/prix au prorata des scores des tâches).
+ * Livrables du client en deux colonnes : à gauche les projets (ex. Elance VAE
+ * → ÉlanceVAE, ÉlanceCampus) en accordéons contenant leurs livrables, à droite
+ * le livrable ouvert avec la frise de ses tâches et la génération du devis
+ * (répartition jours/prix au prorata des scores des tâches).
  */
 export const ObjectivesTab = forwardRef<TravauxTabHandle, ObjectivesTabProps>(function ObjectivesTab(
   { clientId, issuer, projects, objectives, tasks, invoices, reload, onDevisCreated },
@@ -47,9 +51,11 @@ export const ObjectivesTab = forwardRef<TravauxTabHandle, ObjectivesTabProps>(fu
 ) {
   const { t } = useTranslation('admin');
   const confirmDelete = useConfirmDelete();
-  const [createOpen, setCreateOpen] = useState(false);
+  // Projet pré-choisi du livrable à créer ('' = le premier), null = fermé.
+  const [createFor, setCreateFor] = useState<string | null>(null);
   const [editObjective, setEditObjective] = useState<TravauxObjective | null>(null);
-  const [detailObjective, setDetailObjective] = useState<TravauxObjective | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [closedProjects, setClosedProjects] = useState<Set<string>>(() => new Set());
   const [devisObjective, setDevisObjective] = useState<TravauxObjective | null>(null);
   const [projectModal, setProjectModal] = useState<{ open: boolean; project: TravauxProject | null }>({ open: false, project: null });
   useImperativeHandle(ref, () => ({
@@ -58,11 +64,16 @@ export const ObjectivesTab = forwardRef<TravauxTabHandle, ObjectivesTabProps>(fu
         toast.info(t('travaux.objectives.needProject'));
         setProjectModal({ open: true, project: null });
       } else {
-        setCreateOpen(true);
+        setCreateFor('');
       }
     },
     openNewProject: () => setProjectModal({ open: true, project: null }),
   }));
+
+  // Le premier livrable s'ouvre d'emblée, pour que la colonne détail ne soit pas vide.
+  useEffect(() => {
+    if (selectedId === null && objectives.length) setSelectedId(objectives[0].id);
+  }, [objectives]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Numéro d'ordre (#n) par date de création, comme sur elancevae.
   const orderMap = new Map(
@@ -74,7 +85,7 @@ export const ObjectivesTab = forwardRef<TravauxTabHandle, ObjectivesTabProps>(fu
       if (id) await apiService.adminTravauxUpdateObjective(id, payload);
       else await apiService.adminTravauxCreateObjective(payload);
       await reload(['objectives', 'invoices']);
-      setCreateOpen(false);
+      setCreateFor(null);
       setEditObjective(null);
     } catch (err) {
       toast.error(apiErrorMessage(err, t('common.error')));
@@ -86,7 +97,7 @@ export const ObjectivesTab = forwardRef<TravauxTabHandle, ObjectivesTabProps>(fu
     try {
       await apiService.adminTravauxDeleteObjective(o.id);
       await reload(['objectives']);
-      setDetailObjective(null);
+      if (selectedId === o.id) setSelectedId(null);
     } catch (err) {
       toast.error(apiErrorMessage(err, t('travaux.objectives.deleteBlocked')));
     }
@@ -96,59 +107,106 @@ export const ObjectivesTab = forwardRef<TravauxTabHandle, ObjectivesTabProps>(fu
     try {
       await apiService.adminTravauxUpdateObjective(o.id, { status: 'done' });
       await reload(['objectives']);
-      setDetailObjective(null);
     } catch (err) {
       toast.error(apiErrorMessage(err, t('common.error')));
     }
   }
 
-  function ObjectiveCard({ o }: { o: TravauxObjective }) {
-    return (
-      <div className="trv-card" onClick={() => setDetailObjective(o)}>
-        <div className="trv-card__head">
-          <span className="trv-card__ordinal">#{orderMap.get(o.id)}</span>
-          <span className="trv-card__title">{o.title}</span>
-        </div>
-        <div className="trv-card__body">
-          {o.description && <p className="trv-card__desc trv-card__desc--clamp">{o.description}</p>}
-          <div className="trv-card__progress">
-            <div className="trv-progress"><div className="trv-progress__bar" style={{ width: `${o.progress}%` }} /></div>
-            <span className="trv-card__percent">{o.progress} %</span>
-          </div>
-        </div>
-        <div className="trv-card__foot">
-          <span className={`trv-due trv-due--${dueTone(o.due_on, o.status === 'done')}`}>
-            {o.due_on ? `${t('travaux.objectives.dueDate')} : ${formatDate(o.due_on)}` : ''}
-          </span>
-          <span className="trv-chip-row">
-            <span className={`trv-pill trv-pill--${o.status}`}>{t(`travaux.objectives.statuses.${o.status}`)}</span>
-            <span className={`trv-pill trv-pill--${o.format}`}>{t(`travaux.objectives.formats.${o.format}`)}</span>
-          </span>
-        </div>
-      </div>
-    );
-  }
+  const selected = objectives.find((o) => o.id === selectedId) ?? null;
+  const toggleProject = (id: string) => setClosedProjects((prev) => {
+    const next = new Set(prev);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    return next;
+  });
 
   return (
     <div className="adm-form">
       {projects.length ? (
-        <div className="trv-board">
-          {projects.map((p) => {
-            const items = objectives.filter((o) => o.project_id === p.id);
-            return (
-              <div key={p.id} className="trv-board__column">
-                <div className="trv-board__column-head">
-                  <span className="trv-board__column-title">{p.name} <span className="trv-kanban__count">({items.length})</span></span>
-                  <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title={t('travaux.projects.edit')} onClick={() => setProjectModal({ open: true, project: p })}>
-                    <PenLineIcon size={12} />
+        <div className="trv-split">
+          {/* Col A : projets → livrables, chacun en accordéon. */}
+          <div className="trv-split__list">
+            {projects.map((p) => {
+              const items = objectives.filter((o) => o.project_id === p.id);
+              const open = !closedProjects.has(p.id);
+              return (
+                <section key={p.id} className={['trv-acc', open ? 'is-open' : ''].filter(Boolean).join(' ')}>
+                  <div className="trv-acc__head">
+                    <button type="button" className="trv-acc__toggle" aria-expanded={open} onClick={() => toggleProject(p.id)}>
+                      <ChevronDownIcon size={16} className="trv-acc__chevron" />
+                      <FolderKanbanIcon size={16} />
+                      <span className="trv-acc__title">{p.name}</span>
+                      <span className="trv-kanban__count">{items.length}</span>
+                    </button>
+                    <span className="trv-acc__actions">
+                      <DataTableAction icon={PlusIcon} label={t('travaux.objectives.new')} onClick={() => setCreateFor(p.id)} />
+                      <DataTableAction icon={PenLineIcon} label={t('travaux.projects.edit')} onClick={() => setProjectModal({ open: true, project: p })} />
+                    </span>
+                  </div>
+                  {open && (
+                    <div className="trv-acc__body">
+                      {items.length ? items.map((o) => {
+                        const active = o.id === selected?.id;
+                        return (
+                          <div key={o.id} className={['trv-acc', 'trv-acc--item', active ? 'is-open' : ''].filter(Boolean).join(' ')}>
+                            <div className="trv-acc__head">
+                              <button type="button" className="trv-acc__toggle" aria-expanded={active} onClick={() => setSelectedId(active ? null : o.id)}>
+                                <ChevronDownIcon size={14} className="trv-acc__chevron" />
+                                <span className="trv-card__ordinal">#{orderMap.get(o.id)}</span>
+                                <span className="trv-acc__title">{o.title}</span>
+                              </button>
+                              <span className="trv-acc__actions">
+                                <DataTableAction icon={PenLineIcon} label={t('common.edit')} onClick={() => setEditObjective(o)} />
+                                {o.status !== 'done' && (
+                                  <DataTableAction icon={CheckCircleIcon} variant="success" label={t('travaux.objectives.archive')} onClick={() => archiveObjective(o)} />
+                                )}
+                                <DataTableAction icon={Trash2Icon} variant="danger" label={t('common.delete')} onClick={() => removeObjective(o)} />
+                              </span>
+                            </div>
+                            {active && (
+                              <div className="trv-acc__body trv-acc__body--item">
+                                <div className="trv-card__progress">
+                                  <div className="trv-progress"><div className="trv-progress__bar" style={{ width: `${o.progress}%` }} /></div>
+                                  <span className="trv-card__percent">{o.progress} %</span>
+                                </div>
+                                <span className="trv-chip-row">
+                                  <span className={`trv-pill trv-pill--${o.status}`}>{t(`travaux.objectives.statuses.${o.status}`)}</span>
+                                  <span className={`trv-pill trv-pill--${o.format}`}>{t(`travaux.objectives.formats.${o.format}`)}</span>
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      }) : (
+                        <div className="trv-board__empty">{t('travaux.projects.noObjectives')}</div>
+                      )}
+                    </div>
+                  )}
+                </section>
+              );
+            })}
+          </div>
+
+          {/* Col B : le livrable ouvert, avec la génération du devis au-dessus. */}
+          <div className="trv-split__detail">
+            {selected ? (
+              <>
+                <div className="trv-split__cta">
+                  <button type="button" className="adm-btn adm-btn--primary" onClick={() => setDevisObjective(selected)}>
+                    <FileTextIcon size={14} />
+                    {invoices.some((i) => i.kind === 'quote' && i.objective_id === selected.id)
+                      ? t('travaux.objectives.updateDevis')
+                      : t('travaux.objectives.generateDevis')}
                   </button>
                 </div>
-                {items.length ? items.map((o) => <ObjectiveCard key={o.id} o={o} />) : (
-                  <div className="trv-board__empty">{t('travaux.projects.noObjectives')}</div>
-                )}
+                <ObjectiveDetail objective={selected} tasks={tasks} />
+              </>
+            ) : (
+              <div className="adm-empty-state trv-split__empty">
+                <TargetIcon size={28} />
+                <p>{t('travaux.objectives.pick')}</p>
               </div>
-            );
-          })}
+            )}
+          </div>
         </div>
       ) : (
         <div className="adm-empty-state">
@@ -158,21 +216,12 @@ export const ObjectivesTab = forwardRef<TravauxTabHandle, ObjectivesTabProps>(fu
       )}
 
       <ObjectiveFormModal
-        open={createOpen || !!editObjective}
+        open={!!createFor || !!editObjective}
         objective={editObjective}
         projects={projects}
-        onClose={() => { setCreateOpen(false); setEditObjective(null); }}
+        defaultProjectId={createFor}
+        onClose={() => { setCreateFor(null); setEditObjective(null); }}
         onSubmit={(payload) => saveObjective(payload, editObjective?.id)}
-      />
-      <ObjectiveDetailModal
-        objective={detailObjective}
-        tasks={tasks}
-        hasQuote={!!detailObjective && invoices.some((i) => i.kind === 'quote' && i.objective_id === detailObjective.id)}
-        onClose={() => setDetailObjective(null)}
-        onEdit={(o) => { setDetailObjective(null); setEditObjective(o); }}
-        onDelete={removeObjective}
-        onArchive={archiveObjective}
-        onGenerateDevis={(o) => { setDetailObjective(null); setDevisObjective(o); }}
       />
       <GenerateDevisModal
         clientId={clientId}
@@ -281,11 +330,12 @@ function ProjectFormModal({
 // ── Livrable : formulaire ───────────────────────────────────────────────────
 
 function ObjectiveFormModal({
-  open, objective, projects, onClose, onSubmit,
+  open, objective, projects, defaultProjectId, onClose, onSubmit,
 }: {
   open: boolean;
   objective: TravauxObjective | null;
   projects: TravauxProject[];
+  defaultProjectId?: string | null;
   onClose: () => void;
   onSubmit: (payload: Record<string, string | null>) => Promise<void>;
 }) {
@@ -303,11 +353,11 @@ function ObjectiveFormModal({
     if (!open) return;
     setTitle(objective?.title ?? '');
     setDescription(objective?.description ?? '');
-    setProjectId(objective?.project_id ?? projects[0]?.id ?? '');
+    setProjectId(objective?.project_id || defaultProjectId || projects[0]?.id || '');
     setStatus(objective?.status ?? 'planned');
     setFormat(objective?.format ?? 'web');
     setDueOn(objective?.due_on ?? '');
-  }, [open, objective, projects]);
+  }, [open, objective, projects, defaultProjectId]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -371,81 +421,52 @@ function ObjectiveFormModal({
   );
 }
 
-// ── Livrable : fiche + frise des tâches ─────────────────────────────────────
+// ── Livrable : fiche + frise des tâches (colonne de droite) ────────────────
 
-function ObjectiveDetailModal({
-  objective, tasks, hasQuote, onClose, onEdit, onDelete, onArchive, onGenerateDevis,
-}: {
-  objective: TravauxObjective | null;
-  tasks: TravauxTask[];
-  hasQuote: boolean;
-  onClose: () => void;
-  onEdit: (o: TravauxObjective) => void;
-  onDelete: (o: TravauxObjective) => void;
-  onArchive: (o: TravauxObjective) => void;
-  onGenerateDevis: (o: TravauxObjective) => void;
-}) {
+function ObjectiveDetail({ objective, tasks }: { objective: TravauxObjective; tasks: TravauxTask[] }) {
   const { t } = useTranslation('admin');
-  const linked = objective
-    ? tasks
-      .filter((task) => task.objective_id === objective.id)
-      .sort((a, b) => COLUMN_ORDER.indexOf(a.column) - COLUMN_ORDER.indexOf(b.column) || a.position - b.position)
-    : [];
+  const linked = tasks
+    .filter((task) => task.objective_id === objective.id)
+    .sort((a, b) => COLUMN_ORDER.indexOf(a.column) - COLUMN_ORDER.indexOf(b.column) || a.position - b.position);
 
   return (
-    <Modal
-      open={!!objective}
-      onClose={onClose}
-      title={objective?.title ?? ''}
-      size="lg"
-      footer={objective && (
-        <>
-          <button type="button" className="adm-btn adm-btn--ghost trv-mr-auto" onClick={() => onGenerateDevis(objective)}>
-            {hasQuote ? t('travaux.objectives.updateDevis') : t('travaux.objectives.generateDevis')}
-          </button>
-          <button type="button" className="adm-btn adm-btn--ghost" onClick={() => onEdit(objective)}>{t('common.edit')}</button>
-          <button type="button" className="adm-btn adm-btn--danger" onClick={() => onDelete(objective)}>{t('common.delete')}</button>
-          {objective.status !== 'done' && (
-            <button type="button" className="adm-btn adm-btn--primary" onClick={() => onArchive(objective)}>{t('travaux.objectives.archive')}</button>
-          )}
-        </>
-      )}
-    >
-      {objective && (
-        <div className="adm-form">
-          <div className="trv-chip-row">
-            <span className={`trv-pill trv-pill--${objective.status}`}>{t(`travaux.objectives.statuses.${objective.status}`)}</span>
-            <span className={`trv-pill trv-pill--${objective.format}`}>{t(`travaux.objectives.formats.${objective.format}`)}</span>
-            {objective.project_name && <span className="trv-pill trv-pill--soft">{objective.project_name}</span>}
-            {objective.due_on && <span className={`trv-due trv-due--${dueTone(objective.due_on, objective.status === 'done')}`}>{t('travaux.objectives.dueDate')} : {formatDate(objective.due_on)}</span>}
-          </div>
-          {objective.description && <p className="trv-card__desc">{objective.description}</p>}
-          <div>
-            <div className="trv-progress-label"><span>{t('travaux.objectives.progress')}</span><span>{objective.progress} %</span></div>
-            <div className="trv-progress"><div className="trv-progress__bar" style={{ width: `${objective.progress}%` }} /></div>
-          </div>
-          <div>
-            <p className="trv-section-title">{t('travaux.tabs.tracking')}</p>
-            {linked.length ? (
-              <ol className={['trv-timeline', linked.length > 5 ? 'trv-timeline--scroll' : ''].filter(Boolean).join(' ')}>
-                {linked.map((task) => (
-                  <li key={task.id} className="trv-timeline__item">
-                    <span className={`trv-timeline__dot trv-timeline__dot--${task.column}`} />
-                    <div className="trv-timeline__row">
-                      <p className="trv-timeline__title">{task.title}</p>
-                      <span className="trv-pill trv-pill--soft">{t(`travaux.tracking.columns.${task.column}`)}</span>
-                    </div>
-                    {task.description && <p className="trv-task__desc">{task.description}</p>}
-                  </li>
-                ))}
-              </ol>
-            ) : (
-              <p className="trv-info">{t('travaux.objectives.noTasks')}</p>
-            )}
-          </div>
+    <article className="trv-detail">
+      <header className="trv-detail__head">
+        <h3 className="trv-detail__title">{objective.title}</h3>
+        <div className="trv-chip-row">
+          <span className={`trv-pill trv-pill--${objective.status}`}>{t(`travaux.objectives.statuses.${objective.status}`)}</span>
+          <span className={`trv-pill trv-pill--${objective.format}`}>{t(`travaux.objectives.formats.${objective.format}`)}</span>
+          {objective.project_name && <span className="trv-pill trv-pill--soft">{objective.project_name}</span>}
+          {objective.due_on && <span className={`trv-due trv-due--${dueTone(objective.due_on, objective.status === 'done')}`}>{t('travaux.objectives.dueDate')} : {formatDate(objective.due_on)}</span>}
         </div>
-      )}
-    </Modal>
+      </header>
+      <div className="trv-detail__body">
+        {objective.description && <p className="trv-card__desc">{objective.description}</p>}
+        <div>
+          <div className="trv-progress-label"><span>{t('travaux.objectives.progress')}</span><span>{objective.progress} %</span></div>
+          <div className="trv-progress"><div className="trv-progress__bar" style={{ width: `${objective.progress}%` }} /></div>
+        </div>
+        <div>
+          <p className="trv-section-title">{t('travaux.tabs.tracking')}</p>
+          {linked.length ? (
+            <ol className="trv-timeline">
+              {linked.map((task) => (
+                <li key={task.id} className="trv-timeline__item">
+                  <span className={`trv-timeline__dot trv-timeline__dot--${task.column}`} />
+                  <div className="trv-timeline__row">
+                    <p className="trv-timeline__title">{task.title}</p>
+                    <span className="trv-pill trv-pill--soft">{t(`travaux.tracking.columns.${task.column}`)}</span>
+                  </div>
+                  {task.description && <p className="trv-task__desc">{task.description}</p>}
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p className="trv-info">{t('travaux.objectives.noTasks')}</p>
+          )}
+        </div>
+      </div>
+    </article>
   );
 }
 

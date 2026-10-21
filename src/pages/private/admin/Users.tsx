@@ -5,12 +5,13 @@ import { toast } from 'sonner';
 
 import { apiService, type AdminUser, type AdminUsersOverview, type AuthRole } from '@/services/api';
 import { useAuth } from '@/components/providers/AuthProvider';
-import { getDashboardPath } from '@/utils/auth';
+import { getDashboardPath, roleKey } from '@/utils/auth';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger } from '@/components/common/Tabs';
 import { PageHeader } from '@/components/private/common/PageHeader';
 import { StatCard, StatRow } from '@/components/private/common/StatRow';
 import { Modal } from '@/components/common/Modal';
+import { StatusBadge } from '@/components/common/StatusBadge';
 import { useConfirm } from '@/components/common/ConfirmDialog';
 import {
   DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
@@ -24,6 +25,7 @@ import {
 import type { TravauxClient } from '@/types/travaux';
 import { ClientAvatar } from './travaux/ClientAvatar';
 import { ClientDetailModal } from './travaux/ClientDetailModal';
+import { DetailHead, DetailSection, initialsOf } from './travaux/DetailCard';
 import { ClientFormModal } from './travaux/ClientFormModal';
 
 const PER_PAGE = 20;
@@ -46,6 +48,108 @@ function Pagination({
         <ChevronRightIcon size={14} />
       </button>
     </div>
+  );
+}
+
+// ── Fiche utilisateur (action « œil ») ───────────────────────────────────────
+
+const ROLE_VARIANT: Record<AuthRole, 'info' | 'default' | 'muted'> = { admin: 'info', staff: 'default', user: 'muted' };
+
+function UserDetailModal({
+  user, onClose, canImpersonate, canLock, impersonating, onImpersonate, onLockChange,
+}: {
+  user: AdminUser | null;
+  onClose: () => void;
+  canImpersonate: boolean;
+  canLock: boolean;
+  impersonating: boolean;
+  onImpersonate: (u: AdminUser) => void;
+  onLockChange: (u: AdminUser) => Promise<void>;
+}) {
+  const { t } = useTranslation('admin');
+  const [busy, setBusy] = useState(false);
+
+  const toggleLock = async (u: AdminUser) => {
+    setBusy(true);
+    try { await onLockChange(u); } finally { setBusy(false); }
+  };
+
+  const statusLabel = (u: AdminUser) => u.locked ? t('users.status.locked') : u.confirmed ? t('users.status.confirmed') : t('users.status.unconfirmed');
+
+  const footer = user && (
+    <>
+      {canLock && (
+        <button type="button" className="adm-btn adm-btn--ghost" disabled={busy} onClick={() => toggleLock(user)}>
+          {user.locked ? <CheckCircleIcon size={14} /> : <LockIcon size={14} />} {user.locked ? t('users.unlock') : t('users.lock')}
+        </button>
+      )}
+      <button
+        type="button"
+        className="adm-btn adm-btn--primary"
+        disabled={!canImpersonate || impersonating}
+        title={!canImpersonate && user.role === 'admin' ? t('users.cantImpersonateAdmin') : undefined}
+        onClick={() => onImpersonate(user)}
+      >
+        <ArrowUpRightIcon size={14} /> {t('users.impersonate')}
+      </button>
+    </>
+  );
+
+  return (
+    <Modal open={!!user} onClose={onClose} title={t('users.detail.title')} size="md" footer={footer}>
+      {user && (
+        <div className="dm-card">
+          <DetailHead
+            avatar={<ClientAvatar client={{ name: user.full_name || user.email, initials: initialsOf(user.full_name, user.email), logo_path: null }} size="lg" />}
+            name={user.full_name || user.email}
+            subtitle={user.full_name ? user.email : user.client_name}
+            pills={(
+              <>
+                <StatusBadge label={t(`users.roles.${roleKey(user)}`)} variant={ROLE_VARIANT[user.role]} />
+                <StatusBadge label={statusLabel(user)} variant={user.locked ? 'danger' : user.confirmed ? 'success' : 'warning'} />
+                {user.client_name && <StatusBadge label={user.client_name} variant="default" />}
+              </>
+            )}
+          />
+
+          <DetailSection
+            title={t('common.detailSections.identity')}
+            tiles={[
+              { label: t('users.detail.firstName'), value: user.first_name },
+              { label: t('users.detail.lastName'), value: user.last_name },
+              { label: t('users.table.role'), value: t(`users.roles.${roleKey(user)}`) },
+              { label: t('users.detail.language'), value: user.language?.toUpperCase() },
+            ]}
+          />
+
+          <DetailSection
+            title={t('common.detailSections.contact')}
+            tiles={[
+              { label: t('users.table.email'), value: user.email, copy: user.email },
+              { label: t('users.detail.phone'), value: user.phone, copy: user.phone },
+            ]}
+          />
+
+          <DetailSection
+            title={t('common.detailSections.organization')}
+            tiles={[
+              { label: t('users.table.company'), value: user.client_name },
+              { label: t('users.detail.company'), value: user.company },
+            ]}
+          />
+
+          <DetailSection
+            title={t('common.detailSections.activity')}
+            tiles={[
+              { label: t('users.table.status'), value: statusLabel(user) },
+              { label: t('users.detail.signInCount'), value: user.sign_in_count, num: true },
+              { label: t('users.detail.lastSignIn'), value: user.last_sign_in_at ? fmt(user.last_sign_in_at) : null },
+              { label: t('users.table.createdAt'), value: fmt(user.created_at) },
+            ]}
+          />
+        </div>
+      )}
+    </Modal>
   );
 }
 
@@ -112,7 +216,7 @@ function UsersListTab({ role = '', withClient = false, segment, onChanged }: { r
   const bulkLock = () => bulk(selection.selectedRows.filter((u) => u.id !== currentUser?.id && !u.locked), (u) => apiService.adminUserLock(u.id));
   const bulkUnlock = () => bulk(selection.selectedRows.filter((u) => u.locked), (u) => apiService.adminUserUnlock(u.id));
 
-  const roleLabel = (r: AuthRole) => t(`users.roles.${r}`);
+  const roleLabel = (u: AdminUser) => t(`users.roles.${roleKey(u)}`);
   const statusLabel = (u: AdminUser) => u.locked ? t('users.status.locked') : u.confirmed ? t('users.status.confirmed') : t('users.status.unconfirmed');
 
   function exportSelection() {
@@ -120,7 +224,7 @@ function UsersListTab({ role = '', withClient = false, segment, onChanged }: { r
       [t('users.table.name'), (u) => u.full_name ?? ''],
       [t('users.table.email'), (u) => u.email],
       [t('users.table.company'), (u) => u.client_name ?? ''],
-      [t('users.table.role'), (u) => roleLabel(u.role)],
+      [t('users.table.role'), (u) => roleLabel(u)],
       [t('users.table.status'), statusLabel],
       [t('users.table.createdAt'), (u) => fmt(u.created_at)],
     ], selection.selectedRows);
@@ -178,7 +282,7 @@ function UsersListTab({ role = '', withClient = false, segment, onChanged }: { r
                     <DataTableTd>{u.client_name || '—'}</DataTableTd>
                     <DataTableTd>
                       <span className={`adm-badge adm-badge--${u.role === 'admin' ? 'info' : u.role === 'staff' ? 'default' : 'muted'}`}>
-                        {roleLabel(u.role)}
+                        {roleLabel(u)}
                       </span>
                     </DataTableTd>
                     <DataTableTd>
@@ -216,21 +320,23 @@ function UsersListTab({ role = '', withClient = false, segment, onChanged }: { r
         </Card>
       )}
 
-      <Modal open={!!selected} onClose={() => setSelected(null)} title={selected?.full_name || selected?.email || '—'} size="sm">
-        {selected && (
-          <dl className="trk-modal-dl">
-            <dt>{t('users.table.email')}</dt><dd>{selected.email}</dd>
-            <dt>{t('users.table.role')}</dt><dd>{roleLabel(selected.role)}</dd>
-            <dt>{t('users.detail.phone')}</dt><dd>{selected.phone || '—'}</dd>
-            <dt>{t('users.detail.company')}</dt><dd>{selected.company || '—'}</dd>
-            <dt>{t('users.detail.signInCount')}</dt><dd>{selected.sign_in_count ?? '—'}</dd>
-            <dt>{t('users.detail.lastSignIn')}</dt><dd>{fmt(selected.last_sign_in_at)}</dd>
-            <dt>{t('users.table.createdAt')}</dt><dd>{fmt(selected.created_at)}</dd>
-            <dt>{t('users.table.status')}</dt>
-            <dd>{statusLabel(selected)}</dd>
-          </dl>
-        )}
-      </Modal>
+      <UserDetailModal
+        user={selected}
+        onClose={() => setSelected(null)}
+        canImpersonate={!!selected && selected.id !== currentUser?.id && selected.role !== 'admin' && !selected.locked}
+        canLock={!!selected && selected.id !== currentUser?.id}
+        impersonating={!!selected && impersonatingId === selected.id}
+        onImpersonate={handleImpersonate}
+        onLockChange={async (u) => {
+          try {
+            const res = u.locked ? await apiService.adminUserUnlock(u.id) : await apiService.adminUserLock(u.id);
+            setSelected(res.user);
+            load(); onChanged?.();
+          } catch {
+            toast.error(t('common.error'));
+          }
+        }}
+      />
     </div>
   );
 }
@@ -342,7 +448,7 @@ function CompaniesTab({ reloadKey, onEdit, onChanged }: { reloadKey: number; onE
         />
       </Card>
 
-      <ClientDetailModal clientId={viewId} onClose={() => setViewId(null)} />
+      <ClientDetailModal clientId={viewId} onClose={() => setViewId(null)} onEdit={(id) => { setViewId(null); onEdit(id); }} />
     </div>
   );
 }

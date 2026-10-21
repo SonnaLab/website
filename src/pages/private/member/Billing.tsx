@@ -286,10 +286,32 @@ function DocumentModal({ doc, downloading, onDownload, onClose }: {
         </form>
       )}
       <div className="mb-pdf">
-        {url ? <iframe title={doc?.printed_number ?? 'PDF'} src={url} className="mb-pdf__frame" /> : (
-          <p className="mb-pdf__state">{failed ? t('billing.downloadError') : '…'}</p>
-        )}
+        {url ? <iframe title={doc?.printed_number ?? 'PDF'} src={url} className="mb-pdf__frame" /> : failed ? (
+          <p className="mb-pdf__state">{t('billing.downloadError')}</p>
+        ) : <PdfSkeleton />}
       </div>
     </Modal>
+  );
+}
+
+/** An A4 page taking shape while the PDF is fetched. */
+function PdfSkeleton() {
+  return (
+    <div className="mb-pdf__skeleton" role="status" aria-busy="true">
+      <div className="mb-pdf__page">
+        <div className="mb-pdf__row">
+          <span className="mailp-skel" style={{ width: 90, height: 34 }} />
+          <span className="mailp-skel" style={{ width: 120, height: 12 }} />
+        </div>
+        <span className="mailp-skel" style={{ width: '40%', height: 14, margin: '28px auto 0' }} />
+        <span className="mailp-skel" style={{ width: '60%', height: 20, margin: '10px auto 0' }} />
+        <div className="mb-pdf__table">
+          {[0, 1, 2, 3, 4].map((i) => <span key={i} className="mailp-skel" style={{ height: 14 }} />)}
+        </div>
+        <span className="mailp-skel" style={{ width: '30%', height: 16, margin: '18px 0 0 auto' }} />
+        <span className="mailp-skel" style={{ width: '70%', height: 10, margin: '40px auto 0' }} />
+        <span className="mailp-skel" style={{ width: '50%', height: 10, margin: '8px auto 0' }} />
+      </div>
+    </div>
   );
 }

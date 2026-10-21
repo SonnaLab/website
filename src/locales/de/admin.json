@@ -41,14 +41,20 @@
         "title": "Abrechnung",
         "empty": "Keine aktuellen Dokumente."
       },
-      "seo": {
-        "title": "SEO",
-        "empty": "Keine aktuellen Seiten."
+      "travaux": {
+        "title": "Arbeiten",
+        "empty": "Keine aktuelle Aufgabe."
       },
-      "ouou": {
-        "title": "OUOU (KI)",
-        "empty": "Keine aktuellen Gespräche."
+      "mailing": {
+        "title": "Mailing",
+        "empty": "Keine kürzlich gesendete E-Mail."
       }
+    },
+    "unconfirmed": "Unbestätigt",
+    "devices": {
+      "desktop": "Desktop",
+      "mobile": "Mobil",
+      "tablet": "Tablet"
     }
   },
   "infrastructure": {
@@ -115,7 +121,13 @@
         "seo_auto_noindex": "SEO: Artikel ohne Traffic deindexieren",
         "activity_purge": "Aktivitätsprotokoll leeren (> 180 Tage)",
         "payment_reminders": "Rechnungserinnerungen (T-3, T+1, T+7, T+14)",
-        "appointment_reminders": "Terminerinnerungen (am Vortag)"
+        "appointment_reminders": "Terminerinnerungen (am Vortag)",
+        "backup_weekly": "Wöchentliche Sicherung",
+        "backup_monthly": "Monatliche Sicherung",
+        "backup_quarterly": "Vierteljährliche Sicherung",
+        "backup_semiannual": "Halbjährliche Sicherung",
+        "backup_annual": "Jährliche Sicherung",
+        "backup_manual": "Manuelle Sicherung"
       },
       "days": {
         "0": "Sonntag",
@@ -125,17 +137,52 @@
         "4": "Donnerstag",
         "5": "Freitag",
         "6": "Samstag"
+      },
+      "monthly": "Am 1. des Monats um {{time}}",
+      "someMonths": "Am 1. im {{months}} um {{time}}",
+      "yearly": "Am 1. {{month}} um {{time}}",
+      "hourly": "Stündlich um :{{minute}}",
+      "months": {
+        "1": "Januar",
+        "2": "Februar",
+        "3": "März",
+        "4": "April",
+        "5": "Mai",
+        "6": "Juni",
+        "7": "Juli",
+        "8": "August",
+        "9": "September",
+        "10": "Oktober",
+        "11": "November",
+        "12": "Dezember"
       }
     },
     "backups": {
-      "policy": "Automatisches Backup: {{when}}. Die {{keep}} neuesten werden auf dem Server behalten.",
+      "policy": "Jede Nacht wird ein vollständiger Dump geprüft (Archiv von pg_restore gelesen, SHA-256). Die wöchentliche, monatliche, vierteljährliche, halbjährliche und jährliche Stufe behalten davon eine Momentaufnahme mit eigener Aufbewahrung.",
       "restore": "Wiederherstellung (manuell):",
       "now": "Jetzt sichern",
       "queued": "Backup gestartet: es erscheint hier in wenigen Sekunden.",
       "file": "Datei",
       "date": "Datum",
       "download": "Herunterladen",
-      "empty": "Noch kein Backup."
+      "empty": "Noch kein Backup.",
+      "tiers": {
+        "daily": "Täglich",
+        "weekly": "Wöchentlich",
+        "monthly": "Monatlich",
+        "quarterly": "Vierteljährlich",
+        "semiannual": "Halbjährlich",
+        "annual": "Jährlich",
+        "manual": "Manuell"
+      },
+      "all": "Alle",
+      "tier": "Stufe",
+      "kept": "{{count}} / {{keep}} behalten",
+      "last": "Zuletzt: {{date}}",
+      "none": "Noch keine",
+      "onDemand": "Auf Abruf",
+      "verified": "Geprüft (lesbares Archiv, SHA-256)",
+      "unverified": "Nicht geprüft"
     },
     "activity": {
       "search": "Suchen (E-Mail, Pfad, IP)…",
@@ -288,7 +335,17 @@
     "create": "Erstellen",
     "confirm": "Bestätigen",
     "next": "Weiter",
-    "back": "Zurück"
+    "back": "Zurück",
+    "copy": "Kopieren",
+    "copied": "In die Zwischenablage kopiert",
+    "copyFailed": "Kopieren fehlgeschlagen",
+    "detailSections": {
+      "identity": "Identität",
+      "contact": "Kontakt",
+      "legal": "Rechtliche Angaben",
+      "activity": "Aktivität",
+      "organization": "Organisation"
+    }
   },
   "news": {
     "title": "News",
@@ -520,7 +577,8 @@
     "roles": {
       "admin": "Administrator",
       "staff": "Team",
-      "user": "Kunde"
+      "user": "Kunde",
+      "manager": "Manager"
     },
     "status": {
       "confirmed": "Bestätigt",
@@ -540,7 +598,11 @@
       "phone": "Telefon",
       "company": "Unternehmen",
       "signInCount": "Anmeldungen",
-      "lastSignIn": "Letzte Anmeldung"
+      "lastSignIn": "Letzte Anmeldung",
+      "title": "Benutzerprofil",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "language": "Sprache"
     },
     "heading": "Verwaltung der Benutzer",
     "teamsEmpty": "Noch kein Konto gehört zu einem Unternehmen.",
@@ -553,7 +615,7 @@
     }
   },
   "impersonation": {
-    "banner": "Sie sind als {{name}} angemeldet.",
+    "banner": "Sie sind angemeldet als <b>{{name}}</b>.",
     "stop": "Zurück zu meinem Admin-Konto"
   },
   "travaux": {
@@ -616,14 +678,26 @@
         "postalCode": "Postleitzahl",
         "city": "Stadt",
         "country": "Land",
-        "phone": "Telefon"
+        "phone": "Telefon",
+        "legalName": "Rechtlicher Name",
+        "legalForm": "Rechtsform",
+        "vatNumber": "USt-IdNr.",
+        "rcs": "Handelsregister (RCS)",
+        "capital": "Stammkapital",
+        "website": "Website",
+        "iban": "IBAN",
+        "bic": "BIC",
+        "legalLine": "Vollständige Angabe"
       },
       "detail": {
         "projects": "Projekte",
         "members": "Mitgliedskonten",
         "noProjects": "Keine Projekte.",
         "noMembers": "Kein verknüpftes Konto.",
-        "referent": "Ansprechpartner"
+        "referent": "Ansprechpartner",
+        "title": "Unternehmensprofil",
+        "membersCount_one": "{{count}} Mitglied",
+        "membersCount_other": "{{count}} Mitglieder"
       },
       "creating": "Wird erstellt…",
       "steps": {
@@ -703,7 +777,8 @@
       "updateDevis": "Angebot aktualisieren",
       "generateDevisNoScore": "Keine bewertete Aufgabe für diesen Liefergegenstand (oder Fälligkeit überschritten): Bewerte die Aufgaben (1-5), um das Angebot zu berechnen.",
       "deleteBlocked": "Dieser Liefergegenstand hat verknüpfte Aufgaben und kann nicht gelöscht werden. Markiere ihn stattdessen als erledigt.",
-      "needProject": "Lege zuerst ein Projekt für diesen Kunden an."
+      "needProject": "Lege zuerst ein Projekt für diesen Kunden an.",
+      "pick": "Wählen Sie ein Lieferobjekt, um die Details zu sehen."
     },
     "tracking": {
       "new": "Neue Aufgabe",
@@ -1049,7 +1124,8 @@
     "tabs": {
       "templates": "Vorlagen",
       "campaigns": "Kampagnen",
-      "newsletter": "Newsletter"
+      "newsletter": "Newsletter",
+      "activity": "Aktivität"
     },
     "stats": {
       "confirmed": "Bestätigte Abonnenten",
@@ -1154,6 +1230,15 @@
         "pending": "Ausstehend",
         "unsubscribed": "Abgemeldet"
       }
+    },
+    "activity": {
+      "search": "Suchen (Betreff, Empfänger, Typ)…",
+      "empty": "Noch keine E-Mail gesendet.",
+      "total_one": "{{count}} E-Mail",
+      "total_other": "{{count}} E-Mails",
+      "type": "Typ",
+      "bcc": "Bcc",
+      "sentAt": "Gesendet am"
     }
   }
 }

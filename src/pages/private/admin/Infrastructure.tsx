@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ActivityIcon, AlertTriangleIcon, ClockIcon, LayersIcon, RefreshCwIcon, ServerIcon, ZapIcon } from '@icons';
+import { ActivityIcon, AlertTriangleIcon, ClockIcon, LayersIcon, PlusIcon, RefreshCwIcon, ServerIcon, ZapIcon } from '@icons';
+import { toast } from 'sonner';
 
 import { apiService } from '@/services/api';
 import { Button } from '@/components/ui/button';
@@ -41,17 +42,37 @@ export default function AdminInfrastructure() {
     return () => clearInterval(id);
   }, []);
 
+  // « Sauvegarder maintenant » (Backups tab): a manual backup, then the list reloads.
+  const [backingUp, setBackingUp] = useState(false);
+  const [backupsKey, setBackupsKey] = useState(0);
+  async function backupNow() {
+    setBackingUp(true);
+    try {
+      await apiService.adminInfraCreateBackup();
+      toast.success(t('infrastructure.backups.queued'));
+      window.setTimeout(() => setBackupsKey((k) => k + 1), 6000);
+    } catch {
+      toast.error(t('common.error'));
+    } finally {
+      setBackingUp(false);
+    }
+  }
+
   return (
     <div className="dash-page">
       <PageHeader
         title={t('infrastructure.heading')}
         description={t('infrastructure.subtitle')}
-        actions={
+        actions={tab === 'backups' ? (
+          <button type="button" className="adm-btn adm-btn--primary" disabled={backingUp} onClick={backupNow}>
+            <PlusIcon size={14} /> {t('infrastructure.backups.now')}
+          </button>
+        ) : (
           <Button variant="outline" size="sm" onClick={reload} disabled={loading}>
             <RefreshCwIcon className={`size-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             {t('infrastructure.refresh')}
           </Button>
-        }
+        )}
       />
 
       <StatRow>
@@ -91,7 +112,7 @@ export default function AdminInfrastructure() {
         <TabsContent value="overview"><OverviewTab data={data} /></TabsContent>
         <TabsContent value="database"><DatabaseTab /></TabsContent>
         <TabsContent value="cronjobs"><CronjobsTab /></TabsContent>
-        <TabsContent value="backups"><BackupsTab /></TabsContent>
+        <TabsContent value="backups"><BackupsTab reloadKey={backupsKey} /></TabsContent>
         <TabsContent value="activities"><ActivitiesTab /></TabsContent>
       </Tabs>
     </div>

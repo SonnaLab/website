@@ -185,7 +185,7 @@ export function TemplatesTab() {
 }
 
 /** The shape of an e-mail (logo, title, text, button, phone, grid) while it loads. */
-function MailSkeleton({ device, label }: { device: string; label: string }) {
+export function MailSkeleton({ device, label }: { device: string; label: string }) {
   return (
     <div className={`mailp-skeleton mailp-frame--${device}`} role="status" aria-label={label}>
       <div className="mailp-skeleton__card">

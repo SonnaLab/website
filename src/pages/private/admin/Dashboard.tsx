@@ -6,8 +6,8 @@ import {
   ServerIcon,
   LineChartIcon,
   CookieIcon,
-  BotIcon,
-  SearchIcon,
+  AtSignIcon,
+  TrafficConeIcon,
   NewsIcon,
   UsersIcon,
   ReceiptIcon,
@@ -21,6 +21,7 @@ import { PageHeader } from '@/components/private/common/PageHeader';
 import { StatCard, StatRow } from '@/components/private/common/StatRow';
 import { apiService } from '@/services/api';
 import { formatCents } from './travaux/format';
+import { formatDateTime } from './infrastructure/format';
 import { useTravauxTotals } from './travaux/useTravauxTotals';
 
 interface AdminWidget {
@@ -32,6 +33,8 @@ interface AdminWidget {
 interface LatestItem {
   label: string;
   status: string;
+  at: string;
+  kind?: string;
 }
 
 type WidgetKey =
@@ -40,10 +43,8 @@ type WidgetKey =
   | 'news'
   | 'users'
   | 'billing'
-  | 'seo'
-  | 'ouou';
-
-const latestItemsByWidget: Partial<Record<WidgetKey, LatestItem[]>> = {};
+  | 'travaux'
+  | 'mailing';
 
 const adminWidgetRows: AdminWidget[][] = [
   [
@@ -56,17 +57,19 @@ const adminWidgetRows: AdminWidget[][] = [
     { key: 'billing', to: '/admin/travaux',     icon: ReceiptIcon },
   ],
   [
-    { key: 'seo',      to: '/admin/seo',           icon: SearchIcon },
-    { key: 'ouou',     to: '/admin/ouou',          icon: BotIcon },
+    { key: 'travaux',  to: '/admin/travaux',          icon: TrafficConeIcon },
+    { key: 'mailing',  to: '/admin/mailing?tab=activity', icon: AtSignIcon },
   ],
 ];
 
 export default function AdminDashboard() {
-  const { t } = useTranslation('admin');
+  const { t, i18n } = useTranslation('admin');
   const { user } = useAuth();
   const displayName = user?.first_name || user?.email || t('dashboard.fallbackName');
   const figures = useDashboardFigures();
   const travaux = useTravauxTotals();
+  const latest = useLatest();
+  const statusLabel = useStatusLabel();
 
   return (
     <div className="dash-page">
@@ -96,7 +99,7 @@ export default function AdminDashboard() {
               className={`admin-dashboard__widget-row admin-dashboard__widget-row--${row.length}`}
             >
               {row.map(({ key, to, icon: Icon }) => {
-                const latestItems = latestItemsByWidget[key] ?? [];
+                const latestItems = latest?.[key] ?? [];
 
                 return (
                   <article key={key} className="admin-action-widget">
@@ -119,17 +122,20 @@ export default function AdminDashboard() {
 
                       {latestItems.length > 0 ? (
                         <ul className="admin-action-widget__activity-list">
-                          {latestItems.map(item => (
-                            <li key={`${key}-${item.label}`}>
+                          {latestItems.map((item, i) => (
+                            <li key={`${key}-${i}`}>
                               <span className="admin-action-widget__activity-label">
-                                {item.label}
+                                {key === 'infrastructure' ? t(`infrastructure.cron.jobs.${item.label}`, { defaultValue: item.label }) : item.label}
+                                <small className="admin-action-widget__activity-at">{formatDateTime(item.at, i18n.language)}</small>
                               </span>
                               <span className="admin-action-widget__activity-status">
-                                {item.status}
+                                {statusLabel(key, item)}
                               </span>
                             </li>
                           ))}
                         </ul>
+                      ) : latest === null ? (
+                        <p className="admin-action-widget__empty">…</p>
                       ) : (
                         <p className="admin-action-widget__empty">
                           {t(`dashboard.widgets.${key}.empty`)}
@@ -162,4 +168,32 @@ function useDashboardFigures() {
     return () => { alive = false; };
   }, []);
   return figures;
+}
+
+/** The last items of each menu (GET /admin/dashboard/latest); null while loading. */
+function useLatest() {
+  const [latest, setLatest] = useState<Partial<Record<WidgetKey, LatestItem[]>> | null>(null);
+  useEffect(() => {
+    let alive = true;
+    apiService.adminDashboardLatest().then((r) => { if (alive) setLatest(r); }).catch(() => { if (alive) setLatest({}); });
+    return () => { alive = false; };
+  }, []);
+  return latest;
+}
+
+/** Each widget's raw status in words. */
+function useStatusLabel() {
+  const { t } = useTranslation('admin');
+  return (key: WidgetKey, item: LatestItem) => {
+    switch (key) {
+      case 'infrastructure': return t(`infrastructure.cron.${item.status === 'ok' ? 'ok' : 'failed'}`);
+      case 'news': return t(`news.articles.statuses.${item.status}`, { defaultValue: item.status });
+      case 'users': return item.status === 'unconfirmed' ? t('dashboard.unconfirmed') : t(`users.roles.${item.status}`, { defaultValue: item.status });
+      case 'billing': return t(`travaux.invoices.statuses.${item.status}`, { defaultValue: item.status });
+      case 'travaux': return t(`travaux.tracking.columns.${item.status}`, { defaultValue: item.status });
+      case 'tracking': return t(`dashboard.devices.${item.status}`, { defaultValue: item.status });
+      case 'mailing': return t(`mails.groups.${item.status}`, { defaultValue: item.status });
+      default: return item.status;
+    }
+  };
 }

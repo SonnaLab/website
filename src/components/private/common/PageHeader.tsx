@@ -1,6 +1,7 @@
 import type { ComponentType, ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet-async';
 
 import type { IconProps } from '@icons';
 import { navEntryFor } from '@/components/private/member/navigation';
@@ -25,18 +26,29 @@ export function PageHeader({
   description,
   actions,
   badge,
+  documentTitle,
 }: {
   icon?: ReactNode;
   title: ReactNode;
   description?: ReactNode;
   actions?: ReactNode;
   badge?: PageBadge | null;
+  /** The browser tab's title when `title` is not plain text (else the title, else the menu). */
+  documentTitle?: string;
 }) {
   const section = useSectionBadge();
   const shown = badge === undefined ? section : badge;
   const BadgeIcon = shown?.icon;
+  const tabTitle = documentTitle ?? (typeof title === 'string' ? title : shown?.label);
   return (
     <header className="dash-page-header">
+      {/* « Gestion de l'infrastructure | SonnaLab »; private pages are never indexed. */}
+      {tabTitle && (
+        <Helmet>
+          <title>{`${tabTitle} | SonnaLab`}</title>
+          <meta name="robots" content="noindex, nofollow" />
+        </Helmet>
+      )}
       <div className="dash-page-header__main">
         {shown && BadgeIcon && (
           <span className="dash-page-header__badge">

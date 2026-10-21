@@ -41,14 +41,20 @@
         "title": "Billing",
         "empty": "No recent documents."
       },
-      "seo": {
-        "title": "SEO",
-        "empty": "No recent pages."
+      "travaux": {
+        "title": "Work",
+        "empty": "No recent task."
       },
-      "ouou": {
-        "title": "OUOU (AI)",
-        "empty": "No recent conversations."
+      "mailing": {
+        "title": "Mailing",
+        "empty": "No e-mail sent recently."
       }
+    },
+    "unconfirmed": "Unconfirmed",
+    "devices": {
+      "desktop": "Desktop",
+      "mobile": "Mobile",
+      "tablet": "Tablet"
     }
   },
   "infrastructure": {
@@ -115,7 +121,13 @@
         "seo_auto_noindex": "SEO: noindex articles without traffic",
         "activity_purge": "Activity log purge (> 180 days)",
         "payment_reminders": "Invoice reminders (D-3, D+1, D+7, D+14)",
-        "appointment_reminders": "Meeting reminders (the day before)"
+        "appointment_reminders": "Meeting reminders (the day before)",
+        "backup_weekly": "Weekly backup",
+        "backup_monthly": "Monthly backup",
+        "backup_quarterly": "Quarterly backup",
+        "backup_semiannual": "Half-yearly backup",
+        "backup_annual": "Yearly backup",
+        "backup_manual": "Manual backup"
       },
       "days": {
         "0": "Sunday",
@@ -125,17 +137,52 @@
         "4": "Thursday",
         "5": "Friday",
         "6": "Saturday"
+      },
+      "monthly": "On the 1st of the month at {{time}}",
+      "someMonths": "On the 1st of {{months}} at {{time}}",
+      "yearly": "On {{month}} 1st at {{time}}",
+      "hourly": "Every hour at :{{minute}}",
+      "months": {
+        "1": "January",
+        "2": "February",
+        "3": "March",
+        "4": "April",
+        "5": "May",
+        "6": "June",
+        "7": "July",
+        "8": "August",
+        "9": "September",
+        "10": "October",
+        "11": "November",
+        "12": "December"
       }
     },
     "backups": {
-      "policy": "Automatic backup: {{when}}. The {{keep}} most recent are kept on the server.",
+      "policy": "Every night a full dump is verified (archive read back by pg_restore, SHA-256). The weekly, monthly, quarterly, half-yearly and yearly tiers keep a snapshot of it, each with its own retention.",
       "restore": "Restore (manual):",
       "now": "Back up now",
       "queued": "Backup started: it will show up here in a few seconds.",
       "file": "File",
       "date": "Date",
       "download": "Download",
-      "empty": "No backup yet."
+      "empty": "No backup yet.",
+      "tiers": {
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "quarterly": "Quarterly",
+        "semiannual": "Half-yearly",
+        "annual": "Yearly",
+        "manual": "Manual"
+      },
+      "all": "All",
+      "tier": "Tier",
+      "kept": "{{count}} / {{keep}} kept",
+      "last": "Latest: {{date}}",
+      "none": "Not yet",
+      "onDemand": "On demand",
+      "verified": "Verified (readable archive, SHA-256)",
+      "unverified": "Not verified"
     },
     "activity": {
       "search": "Search (e-mail, path, IP)…",
@@ -288,7 +335,17 @@
     "create": "Create",
     "confirm": "Confirm",
     "next": "Next",
-    "back": "Back"
+    "back": "Back",
+    "copy": "Copy",
+    "copied": "Copied to clipboard",
+    "copyFailed": "Could not copy",
+    "detailSections": {
+      "identity": "Identity",
+      "contact": "Contact",
+      "legal": "Legal information",
+      "activity": "Activity",
+      "organization": "Organization"
+    }
   },
   "news": {
     "title": "News",
@@ -520,7 +577,8 @@
     "roles": {
       "admin": "Admin",
       "staff": "Staff",
-      "user": "Client"
+      "user": "Client",
+      "manager": "Manager"
     },
     "status": {
       "confirmed": "Confirmed",
@@ -540,7 +598,11 @@
       "phone": "Phone",
       "company": "Company",
       "signInCount": "Sign-ins",
-      "lastSignIn": "Last sign-in"
+      "lastSignIn": "Last sign-in",
+      "title": "User profile",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "language": "Language"
     },
     "heading": "User management",
     "teamsEmpty": "No account belongs to a company yet.",
@@ -553,7 +615,7 @@
     }
   },
   "impersonation": {
-    "banner": "You are signed in as {{name}}.",
+    "banner": "You are signed in as <b>{{name}}</b>.",
     "stop": "Back to my admin account"
   },
   "travaux": {
@@ -616,14 +678,26 @@
         "postalCode": "Postal code",
         "city": "City",
         "country": "Country",
-        "phone": "Phone"
+        "phone": "Phone",
+        "legalName": "Legal name",
+        "legalForm": "Legal form",
+        "vatNumber": "VAT number",
+        "rcs": "Company registration (RCS)",
+        "capital": "Share capital",
+        "website": "Website",
+        "iban": "IBAN",
+        "bic": "BIC",
+        "legalLine": "Full legal line"
       },
       "detail": {
         "projects": "Projects",
         "members": "Member accounts",
         "noProjects": "No projects.",
         "noMembers": "No linked account.",
-        "referent": "Contact"
+        "referent": "Contact",
+        "title": "Company profile",
+        "membersCount_one": "{{count}} member",
+        "membersCount_other": "{{count}} members"
       },
       "creating": "Creating…",
       "steps": {
@@ -703,7 +777,8 @@
       "updateDevis": "Update the quote",
       "generateDevisNoScore": "No scored task on this deliverable (or the due date has passed): score the tasks (1-5) to compute the quote.",
       "deleteBlocked": "This deliverable has linked tasks and cannot be deleted. Mark it as done instead.",
-      "needProject": "Create a project for this client first."
+      "needProject": "Create a project for this client first.",
+      "pick": "Select a deliverable to see its details."
     },
     "tracking": {
       "new": "New task",
@@ -1049,7 +1124,8 @@
     "tabs": {
       "templates": "Templates",
       "campaigns": "Campaigns",
-      "newsletter": "Newsletter"
+      "newsletter": "Newsletter",
+      "activity": "Activity"
     },
     "stats": {
       "confirmed": "Confirmed subscribers",
@@ -1154,6 +1230,15 @@
         "pending": "Pending",
         "unsubscribed": "Unsubscribed"
       }
+    },
+    "activity": {
+      "search": "Search (subject, recipient, type)…",
+      "empty": "No e-mail sent yet.",
+      "total_one": "{{count}} e-mail",
+      "total_other": "{{count}} e-mails",
+      "type": "Type",
+      "bcc": "Bcc",
+      "sentAt": "Sent on"
     }
   }
 }
