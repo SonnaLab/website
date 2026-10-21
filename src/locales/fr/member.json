@@ -111,7 +111,51 @@
     "saving": "Enregistrement…",
     "saved": "Profil mis à jour.",
     "saveError": "Impossible d'enregistrer le profil.",
-    "heading": "Gestion du profil"
+    "heading": "Gestion du profil",
+    "sections": {
+      "details": {
+        "title": "Informations personnelles",
+        "text": "Votre nom, votre téléphone et la langue de vos e-mails."
+      },
+      "password": {
+        "title": "Mot de passe",
+        "text": "Après le changement, vos autres appareils devront se reconnecter."
+      },
+      "billing": {
+        "title": "Informations de facturation",
+        "text": "Celles de votre entreprise, reprises sur vos devis et factures. Pour les modifier, écrivez-nous."
+      },
+      "delete": {
+        "title": "Supprimer mon compte",
+        "text": "Définitif : votre accès et vos rendez-vous sont supprimés. Les devis et factures de votre entreprise restent."
+      }
+    },
+    "password": {
+      "current": "Mot de passe actuel",
+      "new": "Nouveau mot de passe",
+      "confirm": "Confirmation",
+      "mismatch": "Les mots de passe ne correspondent pas.",
+      "submit": "Changer le mot de passe",
+      "done": "Mot de passe modifié.",
+      "wrong": "Mot de passe incorrect."
+    },
+    "billing": {
+      "company": "Entreprise",
+      "siret": "SIRET",
+      "vat": "N° de TVA",
+      "address": "Adresse",
+      "contact": "E-mail de facturation",
+      "referent": "Référent",
+      "none": "Votre compte n'est rattaché à aucune entreprise."
+    },
+    "delete": {
+      "cta": "Supprimer mon compte",
+      "confirmTitle": "Supprimer définitivement votre compte ?",
+      "confirmText": "Saisissez votre mot de passe pour confirmer.",
+      "cancel": "Annuler",
+      "done": "Votre compte a été supprimé.",
+      "admin": "Un compte administrateur ne se supprime pas ici : un autre administrateur doit le faire."
+    }
   },
   "travaux": {
     "heading": "Suivi des travaux",

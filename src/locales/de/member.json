@@ -111,7 +111,51 @@
     "saving": "Wird gespeichert…",
     "saved": "Profil aktualisiert.",
     "saveError": "Profil konnte nicht gespeichert werden.",
-    "heading": "Verwaltung des Profils"
+    "heading": "Verwaltung des Profils",
+    "sections": {
+      "details": {
+        "title": "Persönliche Angaben",
+        "text": "Ihr Name, Telefon und die Sprache Ihrer E-Mails."
+      },
+      "password": {
+        "title": "Passwort",
+        "text": "Nach der Änderung müssen sich Ihre anderen Geräte neu anmelden."
+      },
+      "billing": {
+        "title": "Rechnungsangaben",
+        "text": "Die Ihres Unternehmens, auf Ihren Angeboten und Rechnungen. Für Änderungen schreiben Sie uns."
+      },
+      "delete": {
+        "title": "Mein Konto löschen",
+        "text": "Endgültig: Ihr Zugang und Ihre Termine werden gelöscht. Angebote und Rechnungen Ihres Unternehmens bleiben."
+      }
+    },
+    "password": {
+      "current": "Aktuelles Passwort",
+      "new": "Neues Passwort",
+      "confirm": "Bestätigung",
+      "mismatch": "Die Passwörter stimmen nicht überein.",
+      "submit": "Passwort ändern",
+      "done": "Passwort geändert.",
+      "wrong": "Falsches Passwort."
+    },
+    "billing": {
+      "company": "Unternehmen",
+      "siret": "SIRET",
+      "vat": "USt-IdNr.",
+      "address": "Adresse",
+      "contact": "Rechnungs-E-Mail",
+      "referent": "Ansprechpartner",
+      "none": "Ihr Konto ist keinem Unternehmen zugeordnet."
+    },
+    "delete": {
+      "cta": "Mein Konto löschen",
+      "confirmTitle": "Konto endgültig löschen?",
+      "confirmText": "Geben Sie zur Bestätigung Ihr Passwort ein.",
+      "cancel": "Abbrechen",
+      "done": "Ihr Konto wurde gelöscht.",
+      "admin": "Ein Administratorkonto wird hier nicht gelöscht: Ein anderer Administrator muss es tun."
+    }
   },
   "travaux": {
     "heading": "Arbeitsfortschritt",

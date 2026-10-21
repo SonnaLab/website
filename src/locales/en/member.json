@@ -111,7 +111,51 @@
     "saving": "Saving…",
     "saved": "Profile updated.",
     "saveError": "Could not save your profile.",
-    "heading": "Profile management"
+    "heading": "Profile management",
+    "sections": {
+      "details": {
+        "title": "Personal details",
+        "text": "Your name, phone and the language of your e-mails."
+      },
+      "password": {
+        "title": "Password",
+        "text": "After the change, your other devices will have to sign in again."
+      },
+      "billing": {
+        "title": "Billing details",
+        "text": "Those of your company, shown on your quotes and invoices. To change them, write to us."
+      },
+      "delete": {
+        "title": "Delete my account",
+        "text": "Permanent: your access and your meetings are deleted. Your company's quotes and invoices remain."
+      }
+    },
+    "password": {
+      "current": "Current password",
+      "new": "New password",
+      "confirm": "Confirmation",
+      "mismatch": "Passwords do not match.",
+      "submit": "Change password",
+      "done": "Password changed.",
+      "wrong": "Wrong password."
+    },
+    "billing": {
+      "company": "Company",
+      "siret": "SIRET",
+      "vat": "VAT number",
+      "address": "Address",
+      "contact": "Billing e-mail",
+      "referent": "Referent",
+      "none": "Your account is not attached to a company."
+    },
+    "delete": {
+      "cta": "Delete my account",
+      "confirmTitle": "Delete your account for good?",
+      "confirmText": "Enter your password to confirm.",
+      "cancel": "Cancel",
+      "done": "Your account was deleted.",
+      "admin": "An admin account is not deleted here: another admin has to do it."
+    }
   },
   "travaux": {
     "heading": "Work progress",

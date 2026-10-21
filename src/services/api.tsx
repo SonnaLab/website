@@ -651,6 +651,15 @@ class ApiService {
     const res = await this.client.patch('/api/v1/me', { user: payload });
     return res.data.user as AuthUser;
   }
+  async changeMyPassword(current_password: string, password: string) {
+    return (await this.client.patch('/api/v1/me/password', { current_password, password, password_confirmation: password })).data;
+  }
+  async myBilling(): Promise<{ billing: MyBilling | null }> {
+    return (await this.client.get('/api/v1/me/billing')).data;
+  }
+  async deleteMe(password: string) {
+    return (await this.client.delete('/api/v1/me', { data: { password } })).data;
+  }
 
   async requestPasswordReset(email: string) {
     const res = await this.client.post('/api/v1/auth/password', { email });
@@ -1157,4 +1166,10 @@ export interface MemberTravauxTask {
 export interface MemberTravaux {
   projects: Array<{ id: string; name: string; status: string; progress: number; due_on: string | null; objectives: MemberTravauxObjective[] }>;
   tasks: MemberTravauxTask[];
+}
+
+/** The company's billing details, as shown on the profile (read-only). */
+export interface MyBilling {
+  company: string; siret: string | null; vat_number: string | null; address: string[]; contact_email: string | null;
+  referent: string | null; referent_email: string | null; referent_phone: string | null;
 }

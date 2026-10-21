@@ -111,7 +111,51 @@
     "saving": "Guardando…",
     "saved": "Perfil actualizado.",
     "saveError": "No se pudo guardar el perfil.",
-    "heading": "Gestión del perfil"
+    "heading": "Gestión del perfil",
+    "sections": {
+      "details": {
+        "title": "Datos personales",
+        "text": "Su nombre, teléfono e idioma de sus correos."
+      },
+      "password": {
+        "title": "Contraseña",
+        "text": "Tras el cambio, sus otros dispositivos deberán volver a iniciar sesión."
+      },
+      "billing": {
+        "title": "Datos de facturación",
+        "text": "Los de su empresa, en sus presupuestos y facturas. Para cambiarlos, escríbanos."
+      },
+      "delete": {
+        "title": "Eliminar mi cuenta",
+        "text": "Definitivo: se eliminan su acceso y sus citas. Los presupuestos y facturas de su empresa se conservan."
+      }
+    },
+    "password": {
+      "current": "Contraseña actual",
+      "new": "Nueva contraseña",
+      "confirm": "Confirmación",
+      "mismatch": "Las contraseñas no coinciden.",
+      "submit": "Cambiar la contraseña",
+      "done": "Contraseña cambiada.",
+      "wrong": "Contraseña incorrecta."
+    },
+    "billing": {
+      "company": "Empresa",
+      "siret": "SIRET",
+      "vat": "N.º de IVA",
+      "address": "Dirección",
+      "contact": "Correo de facturación",
+      "referent": "Referente",
+      "none": "Su cuenta no está vinculada a ninguna empresa."
+    },
+    "delete": {
+      "cta": "Eliminar mi cuenta",
+      "confirmTitle": "¿Eliminar su cuenta definitivamente?",
+      "confirmText": "Introduzca su contraseña para confirmar.",
+      "cancel": "Cancelar",
+      "done": "Su cuenta ha sido eliminada.",
+      "admin": "Una cuenta de administrador no se elimina aquí: debe hacerlo otro administrador."
+    }
   },
   "travaux": {
     "heading": "Seguimiento de los trabajos",

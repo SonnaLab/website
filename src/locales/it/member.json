@@ -111,7 +111,51 @@
     "saving": "Salvataggio…",
     "saved": "Profilo aggiornato.",
     "saveError": "Impossibile salvare il profilo.",
-    "heading": "Gestione del profilo"
+    "heading": "Gestione del profilo",
+    "sections": {
+      "details": {
+        "title": "Dati personali",
+        "text": "Il tuo nome, telefono e la lingua delle e-mail."
+      },
+      "password": {
+        "title": "Password",
+        "text": "Dopo la modifica, gli altri dispositivi dovranno accedere di nuovo."
+      },
+      "billing": {
+        "title": "Dati di fatturazione",
+        "text": "Quelli della tua azienda, su preventivi e fatture. Per modificarli, scrivici."
+      },
+      "delete": {
+        "title": "Elimina il mio account",
+        "text": "Definitivo: il tuo accesso e i tuoi appuntamenti vengono eliminati. Preventivi e fatture della tua azienda restano."
+      }
+    },
+    "password": {
+      "current": "Password attuale",
+      "new": "Nuova password",
+      "confirm": "Conferma",
+      "mismatch": "Le password non corrispondono.",
+      "submit": "Cambia password",
+      "done": "Password modificata.",
+      "wrong": "Password errata."
+    },
+    "billing": {
+      "company": "Azienda",
+      "siret": "SIRET",
+      "vat": "Partita IVA",
+      "address": "Indirizzo",
+      "contact": "E-mail di fatturazione",
+      "referent": "Referente",
+      "none": "Il tuo account non è collegato ad alcuna azienda."
+    },
+    "delete": {
+      "cta": "Elimina il mio account",
+      "confirmTitle": "Eliminare definitivamente il tuo account?",
+      "confirmText": "Inserisci la password per confermare.",
+      "cancel": "Annulla",
+      "done": "Il tuo account è stato eliminato.",
+      "admin": "Un account amministratore non si elimina qui: deve farlo un altro amministratore."
+    }
   },
   "travaux": {
     "heading": "Avanzamento dei lavori",
