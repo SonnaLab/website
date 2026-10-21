@@ -139,7 +139,8 @@
       },
       "delete": {
         "title": "Eliminar mi cuenta",
-        "text": "Definitivo: se eliminan su acceso y sus citas. Los presupuestos y facturas de su empresa se conservan."
+        "text": "Definitivo: se eliminan su acceso y sus citas. Los presupuestos y facturas de su empresa se conservan.",
+        "short": "Definitivo, tras confirmar su contraseña."
       }
     },
     "password": {
@@ -158,7 +159,11 @@
       "address": "Dirección",
       "contact": "Correo de facturación",
       "referent": "Referente",
-      "none": "Su cuenta no está vinculada a ninguna empresa."
+      "none": "Su cuenta no está vinculada a ninguna empresa.",
+      "changeHint": "¿Algo que corregir?",
+      "edit": "Editar la ficha de la empresa",
+      "contactUs": "Escríbanos",
+      "noAddress": "Dirección no indicada"
     },
     "delete": {
       "cta": "Eliminar mi cuenta",
@@ -166,7 +171,13 @@
       "confirmText": "Introduzca su contraseña para confirmar.",
       "cancel": "Cancelar",
       "done": "Su cuenta ha sido eliminada.",
-      "admin": "Una cuenta de administrador no se elimina aquí: debe hacerlo otro administrador."
+      "admin": "Una cuenta de administrador no se elimina aquí: debe hacerlo otro administrador.",
+      "removedTitle": "Eliminado: ",
+      "removedText": "su acceso, su perfil y sus citas.",
+      "keptTitle": "Conservado: ",
+      "keptText": "los presupuestos y facturas de su empresa, y el acceso de sus compañeros.",
+      "mailTitle": "Confirmación: ",
+      "mailText": "un correo le confirma la eliminación."
     }
   },
   "travaux": {

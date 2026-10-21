@@ -1035,7 +1035,8 @@
       "rescheduled": "Moved",
       "cancelled": "Cancelled",
       "reminder": "Day-before reminder",
-      "appointment": "Meeting (by the client)"
+      "appointment": "Meeting (by the client)",
+      "account_deleted": "Account deleted"
     },
     "sendTest": "Send a test",
     "sending": "Sending…",

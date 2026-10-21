@@ -139,7 +139,8 @@
       },
       "delete": {
         "title": "Elimina il mio account",
-        "text": "Definitivo: il tuo accesso e i tuoi appuntamenti vengono eliminati. Preventivi e fatture della tua azienda restano."
+        "text": "Definitivo: il tuo accesso e i tuoi appuntamenti vengono eliminati. Preventivi e fatture della tua azienda restano.",
+        "short": "Definitivo, dopo la conferma della password."
       }
     },
     "password": {
@@ -158,7 +159,11 @@
       "address": "Indirizzo",
       "contact": "E-mail di fatturazione",
       "referent": "Referente",
-      "none": "Il tuo account non è collegato ad alcuna azienda."
+      "none": "Il tuo account non è collegato ad alcuna azienda.",
+      "changeHint": "Qualcosa da correggere?",
+      "edit": "Modifica la scheda dell'azienda",
+      "contactUs": "Scrivici",
+      "noAddress": "Indirizzo non indicato"
     },
     "delete": {
       "cta": "Elimina il mio account",
@@ -166,7 +171,13 @@
       "confirmText": "Inserisci la password per confermare.",
       "cancel": "Annulla",
       "done": "Il tuo account è stato eliminato.",
-      "admin": "Un account amministratore non si elimina qui: deve farlo un altro amministratore."
+      "admin": "Un account amministratore non si elimina qui: deve farlo un altro amministratore.",
+      "removedTitle": "Eliminato: ",
+      "removedText": "il tuo accesso, il profilo e gli appuntamenti.",
+      "keptTitle": "Conservato: ",
+      "keptText": "preventivi e fatture della tua azienda e l'accesso dei colleghi.",
+      "mailTitle": "Conferma: ",
+      "mailText": "un'e-mail ti conferma l'eliminazione."
     }
   },
   "travaux": {

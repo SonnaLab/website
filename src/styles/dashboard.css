@@ -5638,13 +5638,38 @@
 /* Profile: a centred column, the sections stacked below the breadcrumb. */
 .co-profile-page { max-width: 760px; margin: 0 auto; }
 .co-profile-page > .dash-crumbs { margin-bottom: 28px; }
-.co-profile-section { padding: 24px; border: 1px solid #e8eaed; border-radius: 12px; background: #ffffff; }
-.co-profile-section--danger { border-color: #fecaca; }
-.co-profile-section__head { display: flex; gap: 12px; margin-bottom: 18px; }
-.co-profile-section__head h2 { margin: 0; font-size: 16px; font-weight: 700; color: #111111; }
-.co-profile-section__head p { margin: 4px 0 0; font-size: 13px; line-height: 1.5; color: #6b7280; }
-.co-profile-section__icon { display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 9px; background: #f3f4f6; color: #111111; }
-.co-profile-section--danger .co-profile-section__icon { background: #fef2f2; color: #dc2626; }
+.co-card { margin: 0; border: 1px solid #e8eaed; border-radius: 12px; background: #ffffff; overflow: hidden; }
+.co-card--danger { border-color: #fecaca; }
+.co-card__head { display: flex; align-items: center; gap: 12px; width: 100%; padding: 18px 22px; border: 0; background: transparent; font: inherit; text-align: left; cursor: pointer; }
+.co-card__head:hover { background: #fafbfc; }
+.co-card.is-open .co-card__head { border-bottom: 1px solid #eceef1; }
+.co-card__icon { display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 9px; background: #f3f4f6; color: #111111; }
+.co-card--danger .co-card__icon { background: #fef2f2; color: #dc2626; }
+.co-card__titles { display: flex; flex: 1; flex-direction: column; gap: 3px; min-width: 0; }
+.co-card__title { font-size: 15px; font-weight: 700; color: #111111; }
+.co-card__text { font-size: 13px; line-height: 1.45; color: #6b7280; }
+.co-card__chevron { flex-shrink: 0; color: #9ca3af; transition: transform 0.2s ease; }
+.co-card.is-open .co-card__chevron { transform: rotate(180deg); }
+.co-card__body { padding: 20px 22px; }
+.co-card__foot { display: flex; align-items: center; justify-content: flex-end; gap: 12px; padding: 14px 22px; border-top: 1px solid #eceef1; background: #fafbfc; }
+.co-card__note { margin-right: auto; font-size: 13px; color: #6b7280; }
+.co-billing__company { display: flex; align-items: center; gap: 14px; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px dashed #e5e7eb; }
+.co-billing__avatar { display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: #111111; color: #ffffff; font-size: 14px; font-weight: 800; }
+.co-billing__name { margin: 0; font-size: 16px; font-weight: 700; color: #111111; }
+.co-billing__address { margin: 2px 0 0; font-size: 13px; color: #6b7280; }
+.co-billing__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; }
+.co-billing__tile { padding: 12px 14px; border: 1px solid #eceef1; border-radius: 10px; background: #fafbfc; }
+.co-billing__tile dt { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #9ca3af; }
+.co-billing__tile dd { margin: 4px 0 0; font-size: 14px; color: #111111; overflow-wrap: anywhere; }
+.co-consequences { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.co-consequences__item { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 10px; background: #f9fafb; font-size: 14px; line-height: 1.5; color: #374151; }
+.co-consequences__item svg { flex-shrink: 0; margin-top: 2px; color: #6b7280; }
+.co-consequences__item--removed { background: #fef2f2; }
+.co-consequences__item--removed svg { color: #dc2626; }
+.co-consequences__item--kept { background: #f0fdf4; }
+.co-consequences__item--kept svg { color: #16a34a; }
+.co-profile-page { display: flex; flex-direction: column; gap: 14px; }
+@media (max-width: 640px) { .co-billing__grid { grid-template-columns: minmax(0, 1fr); } .co-card__foot { flex-wrap: wrap; } }
 .co-profile__dl { display: grid; gap: 10px; margin: 0; }
 .co-profile__dl > div { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 12px; font-size: 14px; }
 .co-profile__dl dt { color: #6b7280; }

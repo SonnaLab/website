@@ -139,7 +139,8 @@
       },
       "delete": {
         "title": "Delete my account",
-        "text": "Permanent: your access and your meetings are deleted. Your company's quotes and invoices remain."
+        "text": "Permanent: your access and your meetings are deleted. Your company's quotes and invoices remain.",
+        "short": "Permanent, after confirming your password."
       }
     },
     "password": {
@@ -158,7 +159,11 @@
       "address": "Address",
       "contact": "Billing e-mail",
       "referent": "Referent",
-      "none": "Your account is not attached to a company."
+      "none": "Your account is not attached to a company.",
+      "changeHint": "Something to fix?",
+      "edit": "Edit the company sheet",
+      "contactUs": "Write to us",
+      "noAddress": "No address yet"
     },
     "delete": {
       "cta": "Delete my account",
@@ -166,7 +171,13 @@
       "confirmText": "Enter your password to confirm.",
       "cancel": "Cancel",
       "done": "Your account was deleted.",
-      "admin": "An admin account is not deleted here: another admin has to do it."
+      "admin": "An admin account is not deleted here: another admin has to do it.",
+      "removedTitle": "Deleted: ",
+      "removedText": "your access, your profile and your meetings.",
+      "keptTitle": "Kept: ",
+      "keptText": "your company's quotes and invoices, and your colleagues' access.",
+      "mailTitle": "Confirmation: ",
+      "mailText": "an e-mail confirms the deletion."
     }
   },
   "travaux": {

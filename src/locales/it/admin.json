@@ -1035,7 +1035,8 @@
       "rescheduled": "Spostato",
       "cancelled": "Annullato",
       "reminder": "Promemoria il giorno prima",
-      "appointment": "Appuntamento (dal cliente)"
+      "appointment": "Appuntamento (dal cliente)",
+      "account_deleted": "Account eliminato"
     },
     "sendTest": "Invia un test",
     "sending": "Invio…",

@@ -139,7 +139,8 @@
       },
       "delete": {
         "title": "Mein Konto löschen",
-        "text": "Endgültig: Ihr Zugang und Ihre Termine werden gelöscht. Angebote und Rechnungen Ihres Unternehmens bleiben."
+        "text": "Endgültig: Ihr Zugang und Ihre Termine werden gelöscht. Angebote und Rechnungen Ihres Unternehmens bleiben.",
+        "short": "Endgültig, nach Bestätigung Ihres Passworts."
       }
     },
     "password": {
@@ -158,7 +159,11 @@
       "address": "Adresse",
       "contact": "Rechnungs-E-Mail",
       "referent": "Ansprechpartner",
-      "none": "Ihr Konto ist keinem Unternehmen zugeordnet."
+      "none": "Ihr Konto ist keinem Unternehmen zugeordnet.",
+      "changeHint": "Etwas zu korrigieren?",
+      "edit": "Unternehmensprofil bearbeiten",
+      "contactUs": "Schreiben Sie uns",
+      "noAddress": "Keine Adresse hinterlegt"
     },
     "delete": {
       "cta": "Mein Konto löschen",
@@ -166,7 +171,13 @@
       "confirmText": "Geben Sie zur Bestätigung Ihr Passwort ein.",
       "cancel": "Abbrechen",
       "done": "Ihr Konto wurde gelöscht.",
-      "admin": "Ein Administratorkonto wird hier nicht gelöscht: Ein anderer Administrator muss es tun."
+      "admin": "Ein Administratorkonto wird hier nicht gelöscht: Ein anderer Administrator muss es tun.",
+      "removedTitle": "Gelöscht: ",
+      "removedText": "Ihr Zugang, Ihr Profil und Ihre Termine.",
+      "keptTitle": "Erhalten: ",
+      "keptText": "Angebote und Rechnungen Ihres Unternehmens sowie der Zugang Ihrer Kollegen.",
+      "mailTitle": "Bestätigung: ",
+      "mailText": "eine E-Mail bestätigt die Löschung."
     }
   },
   "travaux": {

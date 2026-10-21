@@ -139,7 +139,8 @@
       },
       "delete": {
         "title": "Supprimer mon compte",
-        "text": "Définitif : votre accès et vos rendez-vous sont supprimés. Les devis et factures de votre entreprise restent."
+        "text": "Définitif : votre accès et vos rendez-vous sont supprimés. Les devis et factures de votre entreprise restent.",
+        "short": "Définitif, après confirmation de votre mot de passe."
       }
     },
     "password": {
@@ -158,7 +159,11 @@
       "address": "Adresse",
       "contact": "E-mail de facturation",
       "referent": "Référent",
-      "none": "Votre compte n'est rattaché à aucune entreprise."
+      "none": "Votre compte n'est rattaché à aucune entreprise.",
+      "changeHint": "Une information à corriger ?",
+      "edit": "Modifier la fiche de l'entreprise",
+      "contactUs": "Nous écrire",
+      "noAddress": "Adresse non renseignée"
     },
     "delete": {
       "cta": "Supprimer mon compte",
@@ -166,7 +171,13 @@
       "confirmText": "Saisissez votre mot de passe pour confirmer.",
       "cancel": "Annuler",
       "done": "Votre compte a été supprimé.",
-      "admin": "Un compte administrateur ne se supprime pas ici : un autre administrateur doit le faire."
+      "admin": "Un compte administrateur ne se supprime pas ici : un autre administrateur doit le faire.",
+      "removedTitle": "Supprimé : ",
+      "removedText": "votre accès, votre profil et vos rendez-vous.",
+      "keptTitle": "Conservé : ",
+      "keptText": "les devis et factures de votre entreprise, et l'accès de vos collègues.",
+      "mailTitle": "Confirmation : ",
+      "mailText": "un e-mail vous confirme la suppression."
     }
   },
   "travaux": {

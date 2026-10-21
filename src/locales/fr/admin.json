@@ -1036,7 +1036,8 @@
       "rescheduled": "Déplacé",
       "cancelled": "Annulé",
       "reminder": "Rappel la veille",
-      "appointment": "Rendez-vous (par le client)"
+      "appointment": "Rendez-vous (par le client)",
+      "account_deleted": "Compte supprimé"
     },
     "sendTest": "Envoyer un test",
     "sending": "Envoi…",

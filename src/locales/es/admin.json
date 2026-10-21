@@ -1035,7 +1035,8 @@
       "rescheduled": "Cambiada",
       "cancelled": "Cancelada",
       "reminder": "Recordatorio la víspera",
-      "appointment": "Cita (por el cliente)"
+      "appointment": "Cita (por el cliente)",
+      "account_deleted": "Cuenta eliminada"
     },
     "sendTest": "Enviar una prueba",
     "sending": "Enviando…",

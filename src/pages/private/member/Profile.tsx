@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { LockIcon, ReceiptIcon, Trash2Icon, UserIcon } from '@icons';
+import { CheckCircleIcon, ChevronDownIcon, LockIcon, ReceiptIcon, Trash2Icon, UserIcon, XCircleIcon } from '@icons';
 
 import { useAuth } from '@/components/providers/AuthProvider';
 import { apiService, type MyBilling, type ProfilePayload } from '@/services/api';
@@ -30,6 +30,8 @@ const apiError = (err: unknown) => (err as { response?: { data?: { error?: strin
 export default function Profile() {
   const { t } = useTranslation('member');
   const { user } = useAuth();
+  const [open, setOpen] = useState<string | null>('details');
+  const toggle = (key: string) => setOpen((current) => (current === key ? null : key));
 
   return (
     <div className="dash-page co-profile-page">
@@ -40,30 +42,53 @@ export default function Profile() {
         title={t('profile.heading')}
         description={t('profile.subtitle')}
       />
-      <DetailsSection />
-      <PasswordSection />
-      <BillingSection />
-      <DangerSection />
+      {/* One card open at a time; the others stay collapsed to their header. */}
+      <DetailsSection open={open === 'details'} onToggle={() => toggle('details')} />
+      <PasswordSection open={open === 'password'} onToggle={() => toggle('password')} />
+      <BillingSection open={open === 'billing'} onToggle={() => toggle('billing')} />
+      <DangerSection open={open === 'delete'} onToggle={() => toggle('delete')} />
     </div>
   );
 }
 
-function Section({ icon: Icon, title, text, children, tone }: { icon: typeof UserIcon; title: string; text: string; children: React.ReactNode; tone?: 'danger' }) {
+interface SectionProps {
+  icon: typeof UserIcon;
+  title: string;
+  text: string;
+  open: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+  footer?: React.ReactNode;
+  onSubmit?: (e: React.FormEvent) => void;
+  tone?: 'danger';
+}
+
+/** A card: a header that opens/collapses it, its body, and a footer for its actions. */
+function Section({ icon: Icon, title, text, open, onToggle, children, footer, onSubmit, tone }: SectionProps) {
+  const Tag = onSubmit ? 'form' : 'section';
   return (
-    <section className={`co-profile-section${tone ? ` co-profile-section--${tone}` : ''}`}>
-      <header className="co-profile-section__head">
-        <span className="co-profile-section__icon"><Icon size={16} /></span>
-        <div>
-          <h2>{title}</h2>
-          <p>{text}</p>
-        </div>
-      </header>
-      {children}
-    </section>
+    <Tag className={`co-card${tone ? ` co-card--${tone}` : ''}${open ? ' is-open' : ''}`} onSubmit={onSubmit}>
+      <button type="button" className="co-card__head" aria-expanded={open} onClick={onToggle}>
+        <span className="co-card__icon"><Icon size={16} /></span>
+        <span className="co-card__titles">
+          <span className="co-card__title">{title}</span>
+          <span className="co-card__text">{text}</span>
+        </span>
+        <ChevronDownIcon size={18} className="co-card__chevron" />
+      </button>
+      {open && (
+        <>
+          <div className="co-card__body">{children}</div>
+          {footer && <div className="co-card__foot">{footer}</div>}
+        </>
+      )}
+    </Tag>
   );
 }
 
-function DetailsSection() {
+type CardProps = { open: boolean; onToggle: () => void };
+
+function DetailsSection({ open, onToggle }: CardProps) {
   const { t, i18n } = useTranslation('member');
   const { user, refreshMe } = useAuth();
   const [form, setForm] = useState<ProfilePayload>(() => toForm(user));
@@ -88,8 +113,16 @@ function DetailsSection() {
   }
 
   return (
-    <Section icon={UserIcon} title={t('profile.sections.details.title')} text={t('profile.sections.details.text')}>
-      <form className="adm-form" onSubmit={submit}>
+    <Section
+      icon={UserIcon} title={t('profile.sections.details.title')} text={t('profile.sections.details.text')}
+      open={open} onToggle={onToggle} onSubmit={submit}
+      footer={
+        <button type="submit" className="adm-btn adm-btn--primary" disabled={saving}>
+          {saving ? t('profile.saving') : t('profile.save')}
+        </button>
+      }
+    >
+      <div className="adm-form">
         <div className="adm-form__row">
           <div className="adm-form__field">
             <label className="adm-form__label" htmlFor="profile-email">{t('profile.fields.email')}</label>
@@ -123,17 +156,12 @@ function DetailsSection() {
             </select>
           </div>
         </div>
-        <div className="co-profile__actions">
-          <button type="submit" className="adm-btn adm-btn--primary" disabled={saving}>
-            {saving ? t('profile.saving') : t('profile.save')}
-          </button>
-        </div>
-      </form>
+      </div>
     </Section>
   );
 }
 
-function PasswordSection() {
+function PasswordSection({ open, onToggle }: CardProps) {
   const { t } = useTranslation('member');
   const [current, setCurrent] = useState('');
   const [next, setNext] = useState('');
@@ -158,8 +186,16 @@ function PasswordSection() {
   }
 
   return (
-    <Section icon={LockIcon} title={t('profile.sections.password.title')} text={t('profile.sections.password.text')}>
-      <form className="adm-form" onSubmit={submit}>
+    <Section
+      icon={LockIcon} title={t('profile.sections.password.title')} text={t('profile.sections.password.text')}
+      open={open} onToggle={onToggle} onSubmit={submit}
+      footer={
+        <button type="submit" className="adm-btn adm-btn--primary" disabled={saving || mismatch || !current || !next}>
+          {t('profile.password.submit')}
+        </button>
+      }
+    >
+      <div className="adm-form">
         <div className="adm-form__field">
           <label className="adm-form__label" htmlFor="pw-current">{t('profile.password.current')}</label>
           <input id="pw-current" type="password" autoComplete="current-password" required className="adm-input" value={current} onChange={(e) => setCurrent(e.target.value)} />
@@ -175,38 +211,53 @@ function PasswordSection() {
             {mismatch && <p className="co-profile__error">{t('profile.password.mismatch')}</p>}
           </div>
         </div>
-        <div className="co-profile__actions">
-          <button type="submit" className="adm-btn adm-btn--primary" disabled={saving || mismatch || !current || !next}>
-            {t('profile.password.submit')}
-          </button>
-        </div>
-      </form>
+      </div>
     </Section>
   );
 }
 
-function BillingSection() {
+function BillingSection({ open, onToggle }: CardProps) {
   const { t } = useTranslation('member');
+  const { user } = useAuth();
   const [billing, setBilling] = useState<MyBilling | null | undefined>(undefined);
   useEffect(() => { apiService.myBilling().then((r) => setBilling(r.billing)).catch(() => setBilling(null)); }, []);
 
-  const rows: Array<[string, string | null | undefined]> = billing ? [
-    [t('profile.billing.company'), billing.company],
+  const tiles: Array<[string, string | null | undefined]> = billing ? [
     [t('profile.billing.siret'), billing.siret],
     [t('profile.billing.vat'), billing.vat_number],
-    [t('profile.billing.address'), billing.address.join(', ')],
     [t('profile.billing.contact'), billing.contact_email],
-    [t('profile.billing.referent'), [billing.referent, billing.referent_email, billing.referent_phone].filter(Boolean).join(' · ')],
+    [t('profile.billing.referent'), [billing.referent, billing.referent_email].filter(Boolean).join(' · ')],
   ] : [];
+  const initials = (billing?.company ?? '').split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
 
   return (
-    <Section icon={ReceiptIcon} title={t('profile.sections.billing.title')} text={t('profile.sections.billing.text')}>
+    <Section
+      icon={ReceiptIcon} title={t('profile.sections.billing.title')} text={t('profile.sections.billing.text')}
+      open={open} onToggle={onToggle}
+      footer={billing && (
+        <>
+          <span className="co-card__note">{t('profile.billing.changeHint')}</span>
+          {user?.company_admin
+            ? <Link to="/dashboard/entreprise" className="adm-btn adm-btn--ghost">{t('profile.billing.edit')}</Link>
+            : <a href="mailto:contact@sonnalab.com" className="adm-btn adm-btn--ghost">{t('profile.billing.contactUs')}</a>}
+        </>
+      )}
+    >
       {billing === undefined ? <p className="co-profile__muted">…</p> : billing ? (
-        <dl className="co-profile__dl">
-          {rows.map(([label, value]) => (
-            <div key={label}><dt>{label}</dt><dd>{value || '—'}</dd></div>
-          ))}
-        </dl>
+        <div className="co-billing">
+          <div className="co-billing__company">
+            <span className="co-billing__avatar">{initials || '—'}</span>
+            <div>
+              <p className="co-billing__name">{billing.company}</p>
+              <p className="co-billing__address">{billing.address.length ? billing.address.join(', ') : t('profile.billing.noAddress')}</p>
+            </div>
+          </div>
+          <dl className="co-billing__grid">
+            {tiles.map(([label, value]) => (
+              <div key={label} className="co-billing__tile"><dt>{label}</dt><dd>{value || '—'}</dd></div>
+            ))}
+          </dl>
+        </div>
       ) : (
         <p className="co-profile__muted">{t('profile.billing.none')}</p>
       )}
@@ -214,11 +265,11 @@ function BillingSection() {
   );
 }
 
-function DangerSection() {
+function DangerSection({ open, onToggle }: CardProps) {
   const { t } = useTranslation('member');
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
+  const [modal, setModal] = useState(false);
   const [password, setPassword] = useState('');
   const [deleting, setDeleting] = useState(false);
   const isAdmin = user?.role === 'admin';
@@ -237,25 +288,35 @@ function DangerSection() {
   }
 
   return (
-    <Section icon={Trash2Icon} title={t('profile.sections.delete.title')} text={t('profile.sections.delete.text')} tone="danger">
-      {isAdmin ? (
-        <p className="co-profile__muted">{t('profile.delete.admin')}</p>
-      ) : (
-        <div className="co-profile__actions">
-          <button type="button" className="adm-btn adm-btn--danger" onClick={() => { setPassword(''); setOpen(true); }}>
-            <Trash2Icon size={14} /> {t('profile.delete.cta')}
-          </button>
-        </div>
+    <Section
+      icon={Trash2Icon} title={t('profile.sections.delete.title')} text={t('profile.sections.delete.short')}
+      open={open} onToggle={onToggle} tone="danger"
+      footer={isAdmin ? <span className="co-card__note">{t('profile.delete.admin')}</span> : (
+        <button type="button" className="adm-btn adm-btn--danger" onClick={() => { setPassword(''); setModal(true); }}>
+          <Trash2Icon size={14} /> {t('profile.delete.cta')}
+        </button>
       )}
+    >
+      <ul className="co-consequences">
+        <li className="co-consequences__item co-consequences__item--removed">
+          <XCircleIcon size={16} /><span><strong>{t('profile.delete.removedTitle')}</strong>{t('profile.delete.removedText')}</span>
+        </li>
+        <li className="co-consequences__item co-consequences__item--kept">
+          <CheckCircleIcon size={16} /><span><strong>{t('profile.delete.keptTitle')}</strong>{t('profile.delete.keptText')}</span>
+        </li>
+        <li className="co-consequences__item">
+          <LockIcon size={16} /><span><strong>{t('profile.delete.mailTitle')}</strong>{t('profile.delete.mailText')}</span>
+        </li>
+      </ul>
       <Modal
-        open={open}
-        onClose={() => setOpen(false)}
+        open={modal}
+        onClose={() => setModal(false)}
         title={t('profile.delete.confirmTitle')}
         subtitle={t('profile.delete.confirmText')}
         size="sm"
         footer={
           <>
-            <button type="button" className="adm-btn adm-btn--ghost" onClick={() => setOpen(false)}>{t('profile.delete.cancel')}</button>
+            <button type="button" className="adm-btn adm-btn--ghost" onClick={() => setModal(false)}>{t('profile.delete.cancel')}</button>
             <button type="button" className="adm-btn adm-btn--danger" disabled={!password || deleting} onClick={remove}>
               <Trash2Icon size={14} /> {t('profile.delete.cta')}
             </button>
