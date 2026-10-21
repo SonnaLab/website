@@ -14,7 +14,6 @@ import {
   EyeIcon,
   UserIcon,
   HotelIcon,
-  EllipsisVerticalIcon,
 } from '@icons';
 
 import { useAuth } from '@/components/providers/AuthProvider';
@@ -185,12 +184,7 @@ export function MemberLayout() {
           <nav className="dash-sidebar__nav">
             {navItems.map((item, i) => (
               <Fragment key={item.to}>
-                {i > 0 && item.group !== navItems[i - 1].group && (
-                  <div className="dash-nav-sep" aria-hidden="true">
-                    <EllipsisVerticalIcon size={12} className="dash-nav-sep__icon" />
-                    <span className="dash-nav-sep__line" />
-                  </div>
-                )}
+                {i > 0 && <div className="dash-nav-sep" aria-hidden="true" />}
                 <NavLink
                   to={item.to}
                   end={item.end}
