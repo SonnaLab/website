@@ -701,6 +701,10 @@ class ApiService {
   async listBillingDocuments(): Promise<{ documents: TravauxInvoice[] }> {
     return (await this.client.get('/api/v1/billing/documents')).data;
   }
+  /** The document by e-mail with its PDF: to the member by default, or to up to 5 addresses. */
+  async sendBillingDocument(id: string, recipients: string[]): Promise<{ sent_to: string[] }> {
+    return (await this.client.post(`/api/v1/billing/documents/${id}/deliver`, { recipients }, { timeout: 30000 })).data;
+  }
   async downloadBillingDocumentPdf(id: string): Promise<{ blob: Blob; filename: string }> {
     const res = await this.client.get(`/api/v1/billing/documents/${id}/pdf`, { responseType: 'blob', timeout: 30000 });
     return { blob: res.data, filename: filenameFrom(res.headers['content-disposition'], 'document.pdf') };

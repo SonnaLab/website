@@ -84,7 +84,18 @@
       "paid": "Paid"
     },
     "downloadPdf": "Download PDF",
-    "downloadPdfs": "Download PDFs"
+    "downloadPdfs": "Download PDFs",
+    "preview": "Preview",
+    "quote": "Quote",
+    "invoice": "Invoice",
+    "send": {
+      "cta": "Send",
+      "to": "Send to",
+      "submit": "Send with the PDF",
+      "hint": "Up to 5 addresses, comma-separated. Each gets the details and the PDF attached.",
+      "done": "Sent to {{to}}.",
+      "error": "Sending failed, please try again."
+    }
   },
   "profile": {
     "title": "Profile",

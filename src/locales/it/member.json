@@ -84,7 +84,18 @@
       "paid": "Pagato"
     },
     "downloadPdf": "Scarica il PDF",
-    "downloadPdfs": "Scarica i PDF"
+    "downloadPdfs": "Scarica i PDF",
+    "preview": "Anteprima",
+    "quote": "Preventivo",
+    "invoice": "Fattura",
+    "send": {
+      "cta": "Invia",
+      "to": "Invia a",
+      "submit": "Invia con il PDF",
+      "hint": "Fino a 5 indirizzi, separati da virgole. Ognuno riceve i dettagli e il PDF allegato.",
+      "done": "Inviato a {{to}}.",
+      "error": "Invio non riuscito, riprova."
+    }
   },
   "profile": {
     "title": "Profilo",

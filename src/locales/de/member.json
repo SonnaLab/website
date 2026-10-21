@@ -84,7 +84,18 @@
       "paid": "Bezahlt"
     },
     "downloadPdf": "PDF herunterladen",
-    "downloadPdfs": "PDFs herunterladen"
+    "downloadPdfs": "PDFs herunterladen",
+    "preview": "Vorschau",
+    "quote": "Angebot",
+    "invoice": "Rechnung",
+    "send": {
+      "cta": "Senden",
+      "to": "Senden an",
+      "submit": "Mit PDF senden",
+      "hint": "Bis zu 5 Adressen, durch Kommas getrennt. Jeder erhält die Details und das PDF im Anhang.",
+      "done": "Gesendet an {{to}}.",
+      "error": "Senden fehlgeschlagen, bitte erneut versuchen."
+    }
   },
   "profile": {
     "title": "Profil",

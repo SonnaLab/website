@@ -5973,3 +5973,13 @@
 /* Client space › Travaux: the same cards and board, read-only. */
 .trv-card--readonly, .trv-task--readonly { cursor: default; }
 .trv-card__tasks { margin: 8px 0 0; font-size: 12px; color: #6b7280; }
+
+/* Client billing › document preview: the PDF itself, with « Envoyer ». */
+.mb-pdf { height: 70vh; min-height: 420px; border-radius: 10px; background: #e9eaed; overflow: hidden; }
+.mb-pdf__frame { display: block; width: 100%; height: 100%; border: 0; }
+.mb-pdf__state { margin: 0; padding: 40px; text-align: center; color: #6b7280; }
+.mb-send { margin-bottom: 14px; padding: 14px; border: 1px solid #e8eaed; border-radius: 10px; background: #fafbfc; }
+.mb-send__row { display: flex; gap: 8px; margin-top: 6px; }
+.mb-send__row .adm-input { flex: 1; min-width: 0; }
+.mb-send__hint { margin: 8px 0 0; font-size: 12px; color: #6b7280; }
+@media (max-width: 640px) { .mb-send__row { flex-direction: column; } }

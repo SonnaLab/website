@@ -10,7 +10,9 @@ import {
 } from '@/components/common/DataTable';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { PaymentGauge } from '@/components/private/common/PaymentGauge';
-import { CheckCircleIcon, DownloadIcon, ReceiptIcon, FileTextIcon, WalletIcon } from '@icons';
+import { CheckCircleIcon, DownloadIcon, EyeIcon, ReceiptIcon, FileTextIcon, SendIcon, WalletIcon } from '@icons';
+import { Modal } from '@/components/common/Modal';
+import { useAuth } from '@/components/providers/AuthProvider';
 import { PageHeader } from '@/components/private/common/PageHeader';
 import { StatCard, StatRow } from '@/components/private/common/StatRow';
 import type { InvoiceStatus, TravauxInvoice } from '@/types/travaux';
@@ -104,6 +106,7 @@ function BillingTable({ rows, loading, kind, empty, emptyIcon, paidOf, fmtMoney,
   const [q, setQ] = useState('');
   const [downloading, setDownloading] = useState<string | null>(null);
   const [bulkBusy, setBulkBusy] = useState(false);
+  const [preview, setPreview] = useState<TravauxInvoice | null>(null);
 
   const visible = useMemo(
     () => filterRows(rows, q, (d) => [d.printed_number, d.title, t(`billing.statuses.${d.status}`), d.due_on]),
@@ -195,13 +198,98 @@ function BillingTable({ rows, loading, kind, empty, emptyIcon, paidOf, fmtMoney,
               <DataTableTd>{fmtMoney(doc.amount_cents)}</DataTableTd>
               <DataTableTd>
                 <div className="adm-table__actions">
-                  <DataTableAction icon={DownloadIcon} label={t('billing.downloadPdf')} disabled={downloading === doc.id} onClick={() => download(doc)} />
+                  <DataTableAction icon={EyeIcon} label={t('billing.preview')} onClick={() => setPreview(doc)} />
                 </div>
               </DataTableTd>
             </DataTableRow>
           ))}
         </DataTableBody>
       </DataTable>
+
+      <DocumentModal doc={preview} downloading={!!preview && downloading === preview.id} onDownload={download} onClose={() => setPreview(null)} />
     </>
+  );
+}
+
+/**
+ * The document as its PDF, with « Envoyer » (by e-mail, PDF attached — to
+ * oneself by default) and « Télécharger ».
+ */
+function DocumentModal({ doc, downloading, onDownload, onClose }: {
+  doc: TravauxInvoice | null;
+  downloading: boolean;
+  onDownload: (doc: TravauxInvoice) => void;
+  onClose: () => void;
+}) {
+  const { t } = useTranslation('member');
+  const { user } = useAuth();
+  const [url, setUrl] = useState<string | null>(null);
+  const [failed, setFailed] = useState(false);
+  const [sendOpen, setSendOpen] = useState(false);
+  const [to, setTo] = useState('');
+  const [sending, setSending] = useState(false);
+
+  useEffect(() => {
+    if (!doc) return undefined;
+    let objectUrl: string | null = null;
+    setUrl(null); setFailed(false); setSendOpen(false); setTo(user?.email ?? '');
+    apiService.downloadBillingDocumentPdf(doc.id)
+      .then(({ blob }) => { objectUrl = URL.createObjectURL(new Blob([blob], { type: 'application/pdf' })); setUrl(objectUrl); })
+      .catch(() => setFailed(true));
+    return () => { if (objectUrl) URL.revokeObjectURL(objectUrl); };
+  }, [doc, user?.email]);
+
+  async function send(e: React.FormEvent) {
+    e.preventDefault();
+    if (!doc) return;
+    setSending(true);
+    try {
+      const recipients = to.split(/[\s,;]+/).map((s) => s.trim()).filter(Boolean);
+      const res = await apiService.sendBillingDocument(doc.id, recipients);
+      toast.success(t('billing.send.done', { to: res.sent_to.join(', ') }));
+      setSendOpen(false);
+    } catch {
+      toast.error(t('billing.send.error'));
+    } finally {
+      setSending(false);
+    }
+  }
+
+  return (
+    <Modal
+      open={!!doc}
+      onClose={onClose}
+      title={doc ? `${doc.title || t(doc.kind === 'quote' ? 'billing.quote' : 'billing.invoice')}` : ''}
+      subtitle={doc?.printed_number}
+      size="lg"
+      footer={doc && (
+        <>
+          <button type="button" className="adm-btn adm-btn--ghost" onClick={() => setSendOpen((v) => !v)}>
+            <SendIcon size={13} /> {t('billing.send.cta')}
+          </button>
+          <button type="button" className="adm-btn adm-btn--primary" disabled={downloading} onClick={() => onDownload(doc)}>
+            <DownloadIcon size={13} /> {t('billing.downloadPdf')}
+          </button>
+        </>
+      )}
+    >
+      {sendOpen && (
+        <form className="mb-send" onSubmit={send}>
+          <label className="adm-form__label" htmlFor="mb-send-to">{t('billing.send.to')}</label>
+          <div className="mb-send__row">
+            <input id="mb-send-to" className="adm-input" value={to} onChange={(e) => setTo(e.target.value)} placeholder="compta@entreprise.fr" />
+            <button type="submit" className="adm-btn adm-btn--primary" disabled={sending || !to.trim()}>
+              <SendIcon size={13} /> {t('billing.send.submit')}
+            </button>
+          </div>
+          <p className="mb-send__hint">{t('billing.send.hint')}</p>
+        </form>
+      )}
+      <div className="mb-pdf">
+        {url ? <iframe title={doc?.printed_number ?? 'PDF'} src={url} className="mb-pdf__frame" /> : (
+          <p className="mb-pdf__state">{failed ? t('billing.downloadError') : '…'}</p>
+        )}
+      </div>
+    </Modal>
   );
 }

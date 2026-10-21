@@ -84,7 +84,18 @@
       "paid": "Réglé"
     },
     "downloadPdf": "Télécharger le PDF",
-    "downloadPdfs": "Télécharger les PDF"
+    "downloadPdfs": "Télécharger les PDF",
+    "preview": "Aperçu",
+    "quote": "Devis",
+    "invoice": "Facture",
+    "send": {
+      "cta": "Envoyer",
+      "to": "Envoyer à",
+      "submit": "Envoyer avec le PDF",
+      "hint": "Jusqu'à 5 adresses, séparées par des virgules. Chacun reçoit le détail et le PDF en pièce jointe.",
+      "done": "Envoyé à {{to}}.",
+      "error": "L'envoi n'a pas abouti, réessayez."
+    }
   },
   "profile": {
     "title": "Profil",
