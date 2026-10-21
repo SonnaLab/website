@@ -6,6 +6,7 @@ import { apiService, saveBlob } from '@/services/api';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
 import { DataTable, DataTableHead, DataTableBody, DataTableRow, DataTableTh, DataTableTd, DataTableEmpty } from '@/components/common/DataTable';
 import { StatusBadge } from '@/components/common/StatusBadge';
+import { PaymentGauge } from '@/components/private/common/PaymentGauge';
 import { CheckCircleIcon, DownloadIcon, ReceiptIcon, FileTextIcon, WalletIcon } from '@icons';
 import { PageHeader } from '@/components/private/common/PageHeader';
 import { StatCard, StatRow } from '@/components/private/common/StatRow';
@@ -31,9 +32,12 @@ export default function MemberBilling() {
 
   const quotes   = documents.filter((d) => d.kind === 'quote');
   const invoices = documents.filter((d) => d.kind === 'invoice');
-  const sum = (rows: TravauxInvoice[]) => rows.reduce((total, d) => total + d.amount_cents, 0);
-  const toPay = sum(invoices.filter((d) => d.status === 'sent' || d.status === 'overdue'));
-  const paid  = sum(invoices.filter((d) => d.status === 'paid'));
+  // Payments settle invoices: what's paid is what they received, the rest is due.
+  const paidOf = (d: TravauxInvoice) => (d.status === 'paid' ? d.amount_cents : Math.min(d.paid_cents ?? 0, d.amount_cents));
+  const toPay = invoices
+    .filter((d) => d.status === 'sent' || d.status === 'overdue')
+    .reduce((total, d) => total + d.amount_cents - paidOf(d), 0);
+  const paid = invoices.reduce((total, d) => total + paidOf(d), 0);
 
   const fmtMoney = (cents: number) =>
     new Intl.NumberFormat(i18n.language, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(cents / 100);
@@ -81,7 +85,11 @@ export default function MemberBilling() {
             <DataTableRow key={doc.id}>
               <DataTableTd className="font-mono text-sm">{doc.printed_number}</DataTableTd>
               <DataTableTd>{doc.title || '—'}</DataTableTd>
-              <DataTableTd><StatusBadge label={t(`billing.statuses.${doc.status}`)} variant={variant(doc.status)} /></DataTableTd>
+              <DataTableTd>
+                {doc.kind === 'invoice'
+                  ? <PaymentGauge status={doc.status} amountCents={doc.amount_cents} paidCents={paidOf(doc)} />
+                  : <StatusBadge label={t(`billing.statuses.${doc.status}`)} variant={variant(doc.status)} />}
+              </DataTableTd>
               <DataTableTd>{fmtDate(doc.due_on)}</DataTableTd>
               <DataTableTd>{fmtMoney(doc.amount_cents)}</DataTableTd>
               <DataTableTd>

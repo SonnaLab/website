@@ -154,6 +154,8 @@ export interface TravauxInvoice {
   source_quote_number: string | null;
   generated_invoice_id: string | null;
   current_version: number;
+  /** Member billing only: what the invoice has received (completed payments). */
+  paid_cents?: number;
   file_path: string | null;
   file_name: string | null;
   created_at: string;

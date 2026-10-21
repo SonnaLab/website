@@ -28,6 +28,7 @@ import type {
 } from '@/types/travaux';
 import type { TravauxResource } from './useTravauxData';
 import type { TravauxTabHandle } from './tabHandle';
+import { PaymentGauge } from '@/components/private/common/PaymentGauge';
 import { DocumentPreviewCard, type DocumentPreviewData } from './DocumentPreviewCard';
 import { DocumentPreviewFrame } from './DocumentPreviewFrame';
 import { FileDropzone } from './FileDropzone';
@@ -193,7 +194,7 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
                   </DataTableTd>
                   <DataTableTd>
                     {kind === 'invoice' ? (
-                      <PaymentGauge invoice={i} paidCents={paidCents(i)} />
+                      <PaymentGauge status={i.status} amountCents={i.amount_cents} paidCents={paidCents(i)} />
                     ) : i.file_path ? (
                       <a className="trv-link" href={apiAssetUrl(i.file_path) ?? undefined} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} title={i.file_name ?? ''}>
                         <PaperclipIcon size={13} />
@@ -252,27 +253,6 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
     </div>
   );
 });
-
-// ── Jauge de paiement d'une facture ─────────────────────────────────────────
-
-/** Payée (pleine, verte), impayée (rouge) ou acompte : remplie au prorata. */
-function PaymentGauge({ invoice, paidCents }: { invoice: TravauxInvoice; paidCents: number }) {
-  const { t } = useTranslation('admin');
-  if (invoice.status === 'draft' || invoice.status === 'cancelled') {
-    return <span className="trv-pay trv-pay--muted">{t(`travaux.invoices.statuses.${invoice.status}`)}</span>;
-  }
-  const ratio = invoice.amount_cents > 0 ? Math.min(paidCents / invoice.amount_cents, 1) : 1;
-  const detail = t('travaux.invoices.payment.detail', { paid: formatCents(paidCents), total: formatCents(invoice.amount_cents) });
-  if (ratio >= 1) return <span className="trv-pay trv-pay--paid" title={detail}>{t('travaux.invoices.payment.paid')}</span>;
-  if (ratio <= 0) return <span className="trv-pay trv-pay--unpaid" title={detail}>{t('travaux.invoices.payment.unpaid')}</span>;
-  const percent = Math.round(ratio * 100);
-  return (
-    <span className="trv-pay trv-pay--partial" title={detail} role="meter" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100}>
-      <span className="trv-pay__fill" style={{ width: `${percent}%` }} />
-      <span className="trv-pay__label">{t('travaux.invoices.payment.deposit')} · {percent} %</span>
-    </span>
-  );
-}
 
 // ── Nouveau devis ───────────────────────────────────────────────────────────
 

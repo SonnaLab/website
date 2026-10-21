@@ -110,6 +110,9 @@ export interface NewProjectPayload {
   phone: string;
   company?: string | null;
   role?: string | null;
+  /** fr/en: the language of the confirmation e-mail. */
+  language?: string;
+  sourcePage?: string;
 }
 
 // ==================== News types ====================

@@ -17,7 +17,7 @@ import { useTranslation } from 'react-i18next';
 const TOTAL_STEPS = 4;
 
 export function ConsultationModal() {
-  const { t } = useTranslation('consultation');
+  const { t, i18n } = useTranslation('consultation');
   const { isConsultationModalOpen, closeConsultationModal } = useModal();
   const {
     currentStep,
@@ -97,6 +97,9 @@ export function ConsultationModal() {
         phone: formData.contactInfo.phone.trim(),
         company: formData.contactInfo.company?.trim() || null,
         role: formData.contactInfo.role?.trim() || null,
+        // The confirmation e-mail follows the site's language.
+        language: i18n.language?.slice(0, 2),
+        sourcePage: window.location.pathname,
       };
 
       await apiService.submitNewProject(payload);
