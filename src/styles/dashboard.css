@@ -6418,3 +6418,29 @@
 .trv-detail__head { display: flex; flex-direction: column; gap: 10px; padding: 18px 20px; border-bottom: 1px solid #f0f2f4; }
 .trv-detail__title { margin: 0; font-size: 18px; font-weight: 700; color: #111111; }
 .trv-detail__body { display: flex; flex-direction: column; gap: 18px; padding: 18px 20px; }
+
+/* Réponse du client à un devis (espace membre et aperçu admin). */
+.mb-decision { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; padding: 16px 18px; border: 1px solid #e8eaed; border-radius: 14px; background: #ffffff; }
+.mb-decision > svg { flex-shrink: 0; margin-top: 2px; }
+.mb-decision__body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.mb-decision__title { margin: 0; font-size: 14px; font-weight: 700; color: #111111; }
+.mb-decision__text { margin: 0; font-size: 13px; line-height: 1.5; color: #4b5563; }
+.mb-decision__quote { margin: 2px 0; padding: 8px 12px; border-left: 3px solid #e5e7eb; font-size: 13px; line-height: 1.5; color: #111111; background: #fafbfc; border-radius: 0 8px 8px 0; }
+.mb-decision__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; align-self: center; }
+.mb-decision--waiting { background: #fffbeb; border-color: #fde68a; }
+.mb-decision--waiting > svg { color: #b45309; }
+.mb-decision--accepted { background: #f0fdf4; border-color: #bbf7d0; }
+.mb-decision--accepted > svg { color: #15803d; }
+.mb-decision--declined { background: #fff7ed; border-color: #fed7aa; }
+.mb-decision--declined > svg { color: #c2410c; }
+.mb-decision--form { flex-direction: column; align-items: stretch; gap: 14px; }
+.mb-decision--form .mb-decision__actions { align-self: stretch; }
+.mb-decision__reasons { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
+.mb-decision__reason { padding: 7px 12px; border: 1px solid #e5e7eb; border-radius: 999px; background: #ffffff; font: inherit; font-size: 13px; color: #374151; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+.mb-decision__reason:hover { border-color: #111111; }
+.mb-decision__reason.is-active { border-color: #111111; background: #111111; color: #ffffff; }
+@media (max-width: 640px) {
+  .mb-decision { flex-wrap: wrap; }
+  .mb-decision__actions { align-self: stretch; justify-content: stretch; }
+  .mb-decision__actions .adm-btn { flex: 1; justify-content: center; }
+}

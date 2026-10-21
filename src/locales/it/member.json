@@ -76,7 +76,9 @@
       "accepted": "Accettato",
       "paid": "Pagato",
       "overdue": "Scaduto",
-      "cancelled": "Annullato"
+      "cancelled": "Annullato",
+      "declined": "Rifiutato",
+      "awaiting": "Da approvare"
     },
     "heading": "Gestione della fatturazione",
     "stats": {
@@ -95,6 +97,41 @@
       "hint": "Fino a 5 indirizzi, separati da virgole. Ognuno riceve i dettagli e il PDF allegato.",
       "done": "Inviato a {{to}}.",
       "error": "Invio non riuscito, riprova."
+    },
+    "decision": {
+      "title": "Questo preventivo attende la sua risposta",
+      "text": "Accettandolo avviamo i lavori: la fattura viene generata e le viene inviata via e-mail.",
+      "accept": "Accetta il preventivo",
+      "decline": "Rifiuta",
+      "back": "Indietro",
+      "confirmTitle": "Accettare questo preventivo di {{amount}}?",
+      "confirmText": "La fattura corrispondente sarà emessa e inviata al suo contatto principale.",
+      "confirm": "Sì, accetto",
+      "acceptedTitle": "Preventivo accettato",
+      "acceptedInfo": "Accettato il {{date}} da {{name}}. La fattura è nella scheda Fatture.",
+      "acceptedShort": "La fattura è nella scheda Fatture.",
+      "acceptedDone": "Grazie! Il preventivo è accettato: le abbiamo inviato la fattura {{number}}.",
+      "declineTitle": "Perché rifiuta questo preventivo?",
+      "declineText": "Il suo riscontro arriva direttamente al nostro team, che la ricontatterà entro 48 ore lavorative con una proposta rivista.",
+      "reason": "Motivo",
+      "budget": "Budget previsto",
+      "budgetPlaceholder": "es. 3.500",
+      "budgetHint": "Facoltativo, in euro. Il preventivo ammonta a {{amount}}.",
+      "details": "I suoi dettagli",
+      "detailsPlaceholder": "Cosa vorrebbe cambiare: perimetro, tempi, priorità…",
+      "submit": "Invia il mio riscontro",
+      "declinedTitle": "Preventivo rifiutato",
+      "declinedInfo": "Grazie per il riscontro: la ricontatteremo entro 48 ore lavorative.",
+      "declinedDone": "Grazie, il suo riscontro è stato inoltrato al nostro team.",
+      "error": "Non è stato possibile salvare la risposta, riprovi.",
+      "reasons": {
+        "budget": "Budget troppo alto",
+        "timeline": "Tempi troppo lunghi",
+        "scope": "Perimetro da rivedere",
+        "competitor": "Scelto un altro fornitore",
+        "postponed": "Progetto rinviato",
+        "other": "Altro motivo"
+      }
     }
   },
   "profile": {

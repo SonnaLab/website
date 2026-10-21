@@ -131,7 +131,9 @@ export interface TravauxContract {
 }
 
 export type InvoiceKind = 'quote' | 'invoice';
-export type InvoiceStatus = 'draft' | 'sent' | 'accepted' | 'paid' | 'overdue' | 'cancelled';
+export type InvoiceStatus = 'draft' | 'sent' | 'accepted' | 'declined' | 'paid' | 'overdue' | 'cancelled';
+export type DeclineReason = 'budget' | 'timeline' | 'scope' | 'competitor' | 'postponed' | 'other';
+export const DECLINE_REASONS: DeclineReason[] = ['budget', 'timeline', 'scope', 'competitor', 'postponed', 'other'];
 
 export interface TravauxInvoice {
   id: string;
@@ -157,6 +159,12 @@ export interface TravauxInvoice {
   generated_invoice_id: string | null;
   current_version: number;
   last_reminded_on?: string | null;
+  /** The client's answer to a quote, from their space. */
+  decided_at?: string | null;
+  decided_by_name?: string | null;
+  decline_reason?: DeclineReason | null;
+  decline_budget_cents?: number | null;
+  decline_details?: string | null;
   /** Member billing only: what the invoice has received (completed payments). */
   paid_cents?: number;
   file_path: string | null;

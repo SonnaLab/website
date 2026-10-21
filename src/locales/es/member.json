@@ -76,7 +76,9 @@
       "accepted": "Aceptado",
       "paid": "Pagado",
       "overdue": "Vencido",
-      "cancelled": "Cancelado"
+      "cancelled": "Cancelado",
+      "declined": "Rechazado",
+      "awaiting": "Por validar"
     },
     "heading": "Gestión de la facturación",
     "stats": {
@@ -95,6 +97,41 @@
       "hint": "Hasta 5 direcciones, separadas por comas. Cada uno recibe el detalle y el PDF adjunto.",
       "done": "Enviado a {{to}}.",
       "error": "El envío falló, inténtelo de nuevo."
+    },
+    "decision": {
+      "title": "Este presupuesto espera su respuesta",
+      "text": "Al aceptarlo, iniciamos el trabajo: su factura se genera y se le envía por correo.",
+      "accept": "Aceptar el presupuesto",
+      "decline": "Rechazar",
+      "back": "Volver",
+      "confirmTitle": "¿Aceptar este presupuesto de {{amount}}?",
+      "confirmText": "La factura correspondiente se emitirá y enviará a su contacto principal.",
+      "confirm": "Sí, acepto",
+      "acceptedTitle": "Presupuesto aceptado",
+      "acceptedInfo": "Aceptado el {{date}} por {{name}}. La factura está en la pestaña Facturas.",
+      "acceptedShort": "La factura está en la pestaña Facturas.",
+      "acceptedDone": "¡Gracias! El presupuesto está aceptado: le hemos enviado la factura {{number}}.",
+      "declineTitle": "¿Por qué rechaza este presupuesto?",
+      "declineText": "Su respuesta llega directamente a nuestro equipo, que le contactará en 48 h laborables con una propuesta ajustada.",
+      "reason": "Motivo",
+      "budget": "Presupuesto previsto",
+      "budgetPlaceholder": "ej. 3.500",
+      "budgetHint": "Opcional, en euros. El presupuesto asciende a {{amount}}.",
+      "details": "Sus comentarios",
+      "detailsPlaceholder": "Lo que le gustaría cambiar: alcance, plazos, prioridades…",
+      "submit": "Enviar mi respuesta",
+      "declinedTitle": "Presupuesto rechazado",
+      "declinedInfo": "Gracias por su respuesta: le contactaremos en 48 h laborables.",
+      "declinedDone": "Gracias, su respuesta se ha enviado a nuestro equipo.",
+      "error": "No se pudo guardar su respuesta, inténtelo de nuevo.",
+      "reasons": {
+        "budget": "Presupuesto demasiado alto",
+        "timeline": "Plazos demasiado largos",
+        "scope": "Alcance por revisar",
+        "competitor": "Otro proveedor elegido",
+        "postponed": "Proyecto aplazado",
+        "other": "Otro motivo"
+      }
     }
   },
   "profile": {

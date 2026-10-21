@@ -202,8 +202,8 @@ export function MemberLayout() {
                 onClick={closeSidebar}
                 title={sidebarExpanded ? undefined : tA('infrastructure.tabs.activities')}
               >
-                <span className="dash-nav-label">{tA('infrastructure.tabs.activities')}</span>
                 <ActivityIcon size={16} />
+                <span className="dash-nav-label">{tA('infrastructure.tabs.activities')}</span>
               </Link>
             )}
             {isAdmin && <div className="dash-nav-sep dash-nav-sep--footer" aria-hidden="true" />}
@@ -213,8 +213,8 @@ export function MemberLayout() {
               onClick={closeSidebar}
               title={sidebarExpanded ? undefined : t('nav.backToSite')}
             >
-              <span className="dash-nav-label">{t('nav.backToSite')}</span>
               <ArrowUpRightIcon size={16} />
+              <span className="dash-nav-label">{t('nav.backToSite')}</span>
             </Link>
           </div>
         </aside>

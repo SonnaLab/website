@@ -76,7 +76,9 @@
       "accepted": "Angenommen",
       "paid": "Bezahlt",
       "overdue": "Überfällig",
-      "cancelled": "Storniert"
+      "cancelled": "Storniert",
+      "declined": "Abgelehnt",
+      "awaiting": "Zu bestätigen"
     },
     "heading": "Verwaltung der Abrechnung",
     "stats": {
@@ -95,6 +97,41 @@
       "hint": "Bis zu 5 Adressen, durch Kommas getrennt. Jeder erhält die Details und das PDF im Anhang.",
       "done": "Gesendet an {{to}}.",
       "error": "Senden fehlgeschlagen, bitte erneut versuchen."
+    },
+    "decision": {
+      "title": "Dieses Angebot wartet auf Ihre Antwort",
+      "text": "Mit Ihrer Annahme starten wir die Arbeit: Ihre Rechnung wird erstellt und Ihnen per E-Mail zugesandt.",
+      "accept": "Angebot annehmen",
+      "decline": "Ablehnen",
+      "back": "Zurück",
+      "confirmTitle": "Dieses Angebot über {{amount}} annehmen?",
+      "confirmText": "Die entsprechende Rechnung wird ausgestellt und an Ihren Hauptkontakt gesendet.",
+      "confirm": "Ja, ich nehme an",
+      "acceptedTitle": "Angebot angenommen",
+      "acceptedInfo": "Angenommen am {{date}} von {{name}}. Die Rechnung finden Sie unter Rechnungen.",
+      "acceptedShort": "Die Rechnung finden Sie unter Rechnungen.",
+      "acceptedDone": "Danke! Das Angebot ist angenommen: Rechnung {{number}} wurde Ihnen gesendet.",
+      "declineTitle": "Warum lehnen Sie dieses Angebot ab?",
+      "declineText": "Ihre Rückmeldung geht direkt an unser Team, das sich innerhalb von 48 Werkstunden mit einem angepassten Vorschlag meldet.",
+      "reason": "Grund",
+      "budget": "Vorgesehenes Budget",
+      "budgetPlaceholder": "z. B. 3.500",
+      "budgetHint": "Optional, in Euro. Das Angebot beläuft sich auf {{amount}}.",
+      "details": "Ihre Anmerkungen",
+      "detailsPlaceholder": "Was Sie ändern möchten: Umfang, Fristen, Prioritäten…",
+      "submit": "Rückmeldung senden",
+      "declinedTitle": "Angebot abgelehnt",
+      "declinedInfo": "Danke für Ihre Rückmeldung: Wir melden uns innerhalb von 48 Werkstunden.",
+      "declinedDone": "Danke, Ihre Rückmeldung wurde an unser Team weitergeleitet.",
+      "error": "Ihre Antwort konnte nicht gespeichert werden, bitte erneut versuchen.",
+      "reasons": {
+        "budget": "Budget zu hoch",
+        "timeline": "Fristen zu lang",
+        "scope": "Umfang überarbeiten",
+        "competitor": "Anderer Anbieter gewählt",
+        "postponed": "Projekt verschoben",
+        "other": "Anderer Grund"
+      }
     }
   },
   "profile": {

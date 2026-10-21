@@ -76,7 +76,9 @@
       "accepted": "Accepted",
       "paid": "Paid",
       "overdue": "Overdue",
-      "cancelled": "Cancelled"
+      "cancelled": "Cancelled",
+      "declined": "Declined",
+      "awaiting": "To approve"
     },
     "heading": "Billing management",
     "stats": {
@@ -95,6 +97,41 @@
       "hint": "Up to 5 addresses, comma-separated. Each gets the details and the PDF attached.",
       "done": "Sent to {{to}}.",
       "error": "Sending failed, please try again."
+    },
+    "decision": {
+      "title": "This quote is waiting for your answer",
+      "text": "Once you accept it, we start the work: your invoice is generated and sent to you by e-mail.",
+      "accept": "Accept the quote",
+      "decline": "Decline",
+      "back": "Back",
+      "confirmTitle": "Accept this {{amount}} quote?",
+      "confirmText": "The matching invoice will be issued and sent to your main contact.",
+      "confirm": "Yes, I accept",
+      "acceptedTitle": "Quote accepted",
+      "acceptedInfo": "Accepted on {{date}} by {{name}}. The invoice is in the Invoices tab.",
+      "acceptedShort": "The invoice is in the Invoices tab.",
+      "acceptedDone": "Thank you! The quote is accepted: invoice {{number}} has been sent to you.",
+      "declineTitle": "Why are you declining this quote?",
+      "declineText": "Your feedback goes straight to our team, who will get back to you within 48 business hours with an adjusted proposal.",
+      "reason": "Reason",
+      "budget": "Budget in mind",
+      "budgetPlaceholder": "e.g. 3,500",
+      "budgetHint": "Optional, in euros. The quote amounts to {{amount}}.",
+      "details": "Your details",
+      "detailsPlaceholder": "What you would like to change: scope, timeline, priorities…",
+      "submit": "Send my feedback",
+      "declinedTitle": "Quote declined",
+      "declinedInfo": "Thank you for your feedback: we will get back to you within 48 business hours.",
+      "declinedDone": "Thank you, your feedback has been passed on to our team.",
+      "error": "Your answer could not be saved, please try again.",
+      "reasons": {
+        "budget": "Over budget",
+        "timeline": "Timeline too long",
+        "scope": "Scope needs changes",
+        "competitor": "Went with another provider",
+        "postponed": "Project postponed",
+        "other": "Other reason"
+      }
     }
   },
   "profile": {

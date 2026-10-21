@@ -25,7 +25,7 @@ import {
 } from '@/components/common/DataTable';
 import { apiAssetUrl, apiService, saveBlob } from '@/services/api';
 import { calculateDevis, dueDateCountdown } from '@/lib/devisCalc';
-import { BellIcon, DownloadIcon, EyeIcon, FileTextIcon, PaperclipIcon, PenLineIcon, ReceiptIcon, SendIcon, Trash2Icon } from '@icons';
+import { BellIcon, CheckCircleIcon, DownloadIcon, EyeIcon, FileTextIcon, PaperclipIcon, PenLineIcon, ReceiptIcon, SendIcon, Trash2Icon, XCircleIcon } from '@icons';
 import type {
   BillingRecipient,
   InvoiceKind,
@@ -42,17 +42,17 @@ import { PaymentGauge } from '@/components/private/common/PaymentGauge';
 import { DocumentPreviewCard, type DocumentPreviewData } from './DocumentPreviewCard';
 import { DocumentPreviewFrame } from './DocumentPreviewFrame';
 import { FileDropzone } from './FileDropzone';
-import { apiErrorMessage, dueTone, formatCents, formatDate, formatEuros, todayIso } from './format';
+import { apiErrorMessage, dueTone, formatCents, formatDate, formatDateTime, formatEuros, todayIso } from './format';
 import { useConfirmDelete } from './useConfirmDelete';
 
-const STATUSES: InvoiceStatus[] = ['draft', 'sent', 'accepted', 'paid', 'overdue', 'cancelled'];
+const STATUSES: InvoiceStatus[] = ['draft', 'sent', 'accepted', 'declined', 'paid', 'overdue', 'cancelled'];
 const STATUS_VARIANT: Record<InvoiceStatus, 'default' | 'info' | 'success' | 'danger' | 'warning'> = {
-  draft: 'default', sent: 'info', accepted: 'success', paid: 'success', overdue: 'danger', cancelled: 'warning',
+  draft: 'default', sent: 'info', accepted: 'success', declined: 'warning', paid: 'success', overdue: 'danger', cancelled: 'warning',
 };
 
 // Past its due date, a document still waiting on the client shows in red.
 const SETTLED: Record<InvoiceKind, InvoiceStatus[]> = {
-  quote: ['accepted', 'cancelled'],
+  quote: ['accepted', 'declined', 'cancelled'],
   invoice: ['paid', 'cancelled'],
 };
 
@@ -494,12 +494,42 @@ function InvoicePreviewModal({
         </>
       )}
     >
+      {invoice && <ClientDecision invoice={invoice} />}
       {data && (
         <DocumentPreviewFrame>
           <DocumentPreviewCard data={data} />
         </DocumentPreviewFrame>
       )}
     </Modal>
+  );
+}
+
+// ── La réponse du client à un devis (depuis son espace) ─────────────────────
+
+function ClientDecision({ invoice }: { invoice: TravauxInvoice }) {
+  const { t } = useTranslation('admin');
+  if (invoice.kind !== 'quote' || !invoice.decided_at || !['accepted', 'declined'].includes(invoice.status)) return null;
+
+  const accepted = invoice.status === 'accepted';
+  const by = { name: invoice.decided_by_name ?? '—', date: formatDateTime(invoice.decided_at) };
+  return (
+    <div className={`mb-decision mb-decision--${accepted ? 'accepted' : 'declined'}`}>
+      {accepted ? <CheckCircleIcon size={18} /> : <XCircleIcon size={18} />}
+      <div className="mb-decision__body">
+        <p className="mb-decision__title">{t(`travaux.invoices.decision.${accepted ? 'accepted' : 'declined'}`, by)}</p>
+        {!accepted && (
+          <>
+            <p className="mb-decision__text">
+              {t(`travaux.invoices.decision.reasons.${invoice.decline_reason ?? 'other'}`)}
+              {' · '}
+              {t('travaux.invoices.decision.budget')} : {invoice.decline_budget_cents != null ? formatCents(invoice.decline_budget_cents) : t('travaux.invoices.decision.noBudget')}
+            </p>
+            {invoice.decline_details && <p className="mb-decision__quote">« {invoice.decline_details} »</p>}
+            <p className="mb-decision__text">{t('travaux.invoices.decision.reopen')}</p>
+          </>
+        )}
+      </div>
+    </div>
   );
 }
 

@@ -5,6 +5,7 @@ import type { BlogPost } from '@/types/blog';
 import type { Budget, ProjectType, Timeline } from '@/types/consultation';
 import type {
   BillingRecipient,
+  DeclineReason,
   TravauxClient,
   TravauxClientsListResponse,
   TravauxContract,
@@ -710,6 +711,14 @@ class ApiService {
   /** The document by e-mail with its PDF: to the member by default, or to up to 5 addresses. */
   async sendBillingDocument(id: string, recipients: string[]): Promise<{ sent_to: string[] }> {
     return (await this.client.post(`/api/v1/billing/documents/${id}/deliver`, { recipients }, { timeout: 30000 })).data;
+  }
+  /** Accepts a sent quote: its invoice is generated and sent. */
+  async acceptBillingQuote(id: string): Promise<{ document: TravauxInvoice; invoice: TravauxInvoice }> {
+    return (await this.client.post(`/api/v1/billing/documents/${id}/accept`, {}, { timeout: 30000 })).data;
+  }
+  /** Declines a sent quote, with why, the budget in mind and what to change. */
+  async declineBillingQuote(id: string, body: { reason: DeclineReason; budget_cents: number | null; details: string }): Promise<{ document: TravauxInvoice }> {
+    return (await this.client.post(`/api/v1/billing/documents/${id}/decline`, body)).data;
   }
   async downloadBillingDocumentPdf(id: string): Promise<{ blob: Blob; filename: string }> {
     const res = await this.client.get(`/api/v1/billing/documents/${id}/pdf`, { responseType: 'blob', timeout: 30000 });

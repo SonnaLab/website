@@ -13,6 +13,8 @@ const HEROES = {
   password:   { screen: 'signin',    icon: 'lock',                 side: 'right', fr: ['Mot de passe', 'Lien sécurisé'],              en: ['Password', 'Secure link'] },
   invitation: { screen: 'dashboard', icon: 'users',                side: 'left',  fr: ['Votre équipe', 'Projets, devis et factures'], en: ['Your team', 'Projects, quotes, invoices'] },
   quote:      { screen: 'quotes',    icon: 'file-text',            side: 'right', fr: ['Nouveau devis', 'PDF en pièce jointe'],       en: ['New quote', 'PDF attached'] },
+  quote_accepted: { screen: 'quotes', icon: 'check-circle-success', side: 'left',  fr: ['Devis accepté', 'Facture envoyée'],          en: ['Quote accepted', 'Invoice sent'] },
+  quote_declined: { screen: 'quotes', icon: 'file-text-warning',    side: 'right', fr: ['Votre retour', 'Réponse sous 48 h'],         en: ['Your feedback', 'Answer within 48 h'] },
   invoice:    { screen: 'invoices',  icon: 'receipt',              side: 'left',  fr: ['Nouvelle facture', 'PDF en pièce jointe'],    en: ['New invoice', 'PDF attached'] },
   reminder:   { screen: 'invoices',  icon: 'clock-warning',        side: 'right', fr: ['Reste à payer', 'Échéance à surveiller'],     en: ['Balance due', 'Mind the due date'] },
   payment:    { screen: 'invoices',  icon: 'check-circle-success', side: 'left',  fr: ['Paiement reçu', 'Merci !'],                   en: ['Payment received', 'Thank you!'] },

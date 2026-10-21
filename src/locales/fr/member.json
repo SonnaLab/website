@@ -76,7 +76,9 @@
       "accepted": "Accepté",
       "paid": "Payé",
       "overdue": "En retard",
-      "cancelled": "Annulé"
+      "cancelled": "Annulé",
+      "declined": "Décliné",
+      "awaiting": "À valider"
     },
     "heading": "Gestion de la facturation",
     "stats": {
@@ -95,6 +97,41 @@
       "hint": "Jusqu'à 5 adresses, séparées par des virgules. Chacun reçoit le détail et le PDF en pièce jointe.",
       "done": "Envoyé à {{to}}.",
       "error": "L'envoi n'a pas abouti, réessayez."
+    },
+    "decision": {
+      "title": "Ce devis attend votre réponse",
+      "text": "En l'acceptant, nous lançons les travaux : votre facture est générée et vous est envoyée par e-mail.",
+      "accept": "Accepter le devis",
+      "decline": "Décliner",
+      "back": "Retour",
+      "confirmTitle": "Accepter ce devis de {{amount}} ?",
+      "confirmText": "La facture correspondante sera émise et envoyée à votre contact principal.",
+      "confirm": "Oui, j'accepte",
+      "acceptedTitle": "Devis accepté",
+      "acceptedInfo": "Accepté le {{date}} par {{name}}. La facture est disponible dans l'onglet Factures.",
+      "acceptedShort": "La facture est disponible dans l'onglet Factures.",
+      "acceptedDone": "Merci ! Le devis est accepté : la facture {{number}} vous a été envoyée.",
+      "declineTitle": "Pourquoi déclinez-vous ce devis ?",
+      "declineText": "Votre retour part directement à notre équipe, qui revient vers vous sous 48 h ouvrées avec une proposition ajustée.",
+      "reason": "Motif",
+      "budget": "Budget envisagé",
+      "budgetPlaceholder": "ex. 3 500",
+      "budgetHint": "Facultatif, en euros. Le devis s'élève à {{amount}}.",
+      "details": "Vos précisions",
+      "detailsPlaceholder": "Ce que vous aimeriez changer : périmètre, délais, priorités…",
+      "submit": "Envoyer mon retour",
+      "declinedTitle": "Devis décliné",
+      "declinedInfo": "Merci pour votre retour : nous revenons vers vous sous 48 h ouvrées.",
+      "declinedDone": "Merci, votre retour est bien transmis à notre équipe.",
+      "error": "Votre réponse n'a pas pu être enregistrée, réessayez.",
+      "reasons": {
+        "budget": "Budget trop élevé",
+        "timeline": "Délais trop longs",
+        "scope": "Périmètre à revoir",
+        "competitor": "Autre prestataire retenu",
+        "postponed": "Projet reporté",
+        "other": "Autre raison"
+      }
     }
   },
   "profile": {

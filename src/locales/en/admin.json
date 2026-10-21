@@ -820,7 +820,8 @@
         "accepted": "Accepted",
         "paid": "Paid",
         "overdue": "Overdue",
-        "cancelled": "Cancelled"
+        "cancelled": "Cancelled",
+        "declined": "Declined"
       },
       "number": "Number",
       "amount": "Amount",
@@ -873,7 +874,22 @@
       "noRecipient": "This client has no referent nor contact e-mail: add an address below.",
       "otherRecipients": "Other addresses (comma-separated)",
       "remindHint": "Each recipient gets it in their language. Automatic reminders also go out 3 days before and 1, 7 and 14 days after the due date.",
-      "lastReminded": "Last reminder: {{date}}"
+      "lastReminded": "Last reminder: {{date}}",
+      "decision": {
+        "accepted": "Accepted by {{name}} on {{date}} from their space — the invoice was generated and sent.",
+        "declined": "Declined by {{name}} on {{date}}",
+        "budget": "Budget in mind",
+        "noBudget": "not specified",
+        "reopen": "Edit the quote then send it again: it will wait for a new answer.",
+        "reasons": {
+          "budget": "Over budget",
+          "timeline": "Timeline too long",
+          "scope": "Scope needs changes",
+          "competitor": "Went with another provider",
+          "postponed": "Project postponed",
+          "other": "Other reason"
+        }
+      }
     },
     "contracts": {
       "new": "New contract",
@@ -1111,7 +1127,12 @@
       "cancelled": "Cancelled",
       "reminder": "Day-before reminder",
       "appointment": "Meeting (by the client)",
-      "account_deleted": "Account deleted"
+      "account_deleted": "Account deleted",
+      "quote_accepted": "Quote accepted — invoice",
+      "quote_declined": "Quote declined — acknowledgement",
+      "staff_quote_accepted": "Quote accepted by the client",
+      "staff_quote_declined": "Quote declined by the client",
+      "quote_decision": "Answer to a quote (client)"
     },
     "sendTest": "Send a test",
     "sending": "Sending…",

@@ -820,7 +820,8 @@
         "accepted": "Accettato",
         "paid": "Pagato",
         "overdue": "Scaduto",
-        "cancelled": "Annullato"
+        "cancelled": "Annullato",
+        "declined": "Rifiutato"
       },
       "number": "Numero",
       "amount": "Importo",
@@ -873,7 +874,22 @@
       "noRecipient": "Questo cliente non ha né referente né e-mail di contatto: aggiungi un indirizzo qui sotto.",
       "otherRecipients": "Altri indirizzi (separati da virgole)",
       "remindHint": "Ognuno lo riceve nella sua lingua. Partono anche solleciti automatici 3 giorni prima e 1, 7 e 14 giorni dopo la scadenza.",
-      "lastReminded": "Ultimo sollecito: {{date}}"
+      "lastReminded": "Ultimo sollecito: {{date}}",
+      "decision": {
+        "accepted": "Accettato da {{name}} il {{date}} dal suo spazio — la fattura è stata generata e inviata.",
+        "declined": "Rifiutato da {{name}} il {{date}}",
+        "budget": "Budget previsto",
+        "noBudget": "non indicato",
+        "reopen": "Modifichi il preventivo e lo invii di nuovo: attenderà una nuova risposta.",
+        "reasons": {
+          "budget": "Budget troppo alto",
+          "timeline": "Tempi troppo lunghi",
+          "scope": "Perimetro da rivedere",
+          "competitor": "Scelto un altro fornitore",
+          "postponed": "Progetto rinviato",
+          "other": "Altro motivo"
+        }
+      }
     },
     "contracts": {
       "new": "Nuovo contratto",
@@ -1111,7 +1127,12 @@
       "cancelled": "Annullato",
       "reminder": "Promemoria il giorno prima",
       "appointment": "Appuntamento (dal cliente)",
-      "account_deleted": "Account eliminato"
+      "account_deleted": "Account eliminato",
+      "quote_accepted": "Preventivo accettato — fattura",
+      "quote_declined": "Preventivo rifiutato — conferma",
+      "staff_quote_accepted": "Preventivo accettato dal cliente",
+      "staff_quote_declined": "Preventivo rifiutato dal cliente",
+      "quote_decision": "Risposta a un preventivo (cliente)"
     },
     "sendTest": "Invia un test",
     "sending": "Invio…",

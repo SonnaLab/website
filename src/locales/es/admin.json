@@ -820,7 +820,8 @@
         "accepted": "Aceptado",
         "paid": "Pagado",
         "overdue": "Vencido",
-        "cancelled": "Cancelado"
+        "cancelled": "Cancelado",
+        "declined": "Rechazado"
       },
       "number": "Número",
       "amount": "Importe",
@@ -873,7 +874,22 @@
       "noRecipient": "Este cliente no tiene referente ni correo de contacto: añada una dirección abajo.",
       "otherRecipients": "Otras direcciones (separadas por comas)",
       "remindHint": "Cada uno lo recibe en su idioma. También se envían recordatorios automáticos 3 días antes y 1, 7 y 14 días después del vencimiento.",
-      "lastReminded": "Último recordatorio: {{date}}"
+      "lastReminded": "Último recordatorio: {{date}}",
+      "decision": {
+        "accepted": "Aceptado por {{name}} el {{date}} desde su espacio — la factura se generó y envió.",
+        "declined": "Rechazado por {{name}} el {{date}}",
+        "budget": "Presupuesto previsto",
+        "noBudget": "no indicado",
+        "reopen": "Modifique el presupuesto y vuelva a enviarlo: esperará una nueva respuesta.",
+        "reasons": {
+          "budget": "Presupuesto demasiado alto",
+          "timeline": "Plazos demasiado largos",
+          "scope": "Alcance por revisar",
+          "competitor": "Otro proveedor elegido",
+          "postponed": "Proyecto aplazado",
+          "other": "Otro motivo"
+        }
+      }
     },
     "contracts": {
       "new": "Nuevo contrato",
@@ -1111,7 +1127,12 @@
       "cancelled": "Cancelada",
       "reminder": "Recordatorio la víspera",
       "appointment": "Cita (por el cliente)",
-      "account_deleted": "Cuenta eliminada"
+      "account_deleted": "Cuenta eliminada",
+      "quote_accepted": "Presupuesto aceptado — factura",
+      "quote_declined": "Presupuesto rechazado — acuse",
+      "staff_quote_accepted": "Presupuesto aceptado por el cliente",
+      "staff_quote_declined": "Presupuesto rechazado por el cliente",
+      "quote_decision": "Respuesta a un presupuesto (cliente)"
     },
     "sendTest": "Enviar una prueba",
     "sending": "Enviando…",

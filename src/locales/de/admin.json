@@ -820,7 +820,8 @@
         "accepted": "Angenommen",
         "paid": "Bezahlt",
         "overdue": "Überfällig",
-        "cancelled": "Storniert"
+        "cancelled": "Storniert",
+        "declined": "Abgelehnt"
       },
       "number": "Nummer",
       "amount": "Betrag",
@@ -873,7 +874,22 @@
       "noRecipient": "Dieser Kunde hat weder Ansprechpartner noch Kontakt-E-Mail: fügen Sie unten eine Adresse hinzu.",
       "otherRecipients": "Weitere Adressen (durch Kommas getrennt)",
       "remindHint": "Jeder erhält sie in seiner Sprache. Automatische Erinnerungen gehen außerdem 3 Tage vor sowie 1, 7 und 14 Tage nach Fälligkeit raus.",
-      "lastReminded": "Letzte Erinnerung: {{date}}"
+      "lastReminded": "Letzte Erinnerung: {{date}}",
+      "decision": {
+        "accepted": "Angenommen von {{name}} am {{date}} in seinem Bereich — die Rechnung wurde erstellt und gesendet.",
+        "declined": "Abgelehnt von {{name}} am {{date}}",
+        "budget": "Vorgesehenes Budget",
+        "noBudget": "nicht angegeben",
+        "reopen": "Bearbeiten Sie das Angebot und senden Sie es erneut: Es wartet dann auf eine neue Antwort.",
+        "reasons": {
+          "budget": "Budget zu hoch",
+          "timeline": "Fristen zu lang",
+          "scope": "Umfang überarbeiten",
+          "competitor": "Anderer Anbieter gewählt",
+          "postponed": "Projekt verschoben",
+          "other": "Anderer Grund"
+        }
+      }
     },
     "contracts": {
       "new": "Neuer Vertrag",
@@ -1111,7 +1127,12 @@
       "cancelled": "Abgesagt",
       "reminder": "Erinnerung am Vortag",
       "appointment": "Termin (vom Kunden)",
-      "account_deleted": "Konto gelöscht"
+      "account_deleted": "Konto gelöscht",
+      "quote_accepted": "Angebot angenommen — Rechnung",
+      "quote_declined": "Angebot abgelehnt — Bestätigung",
+      "staff_quote_accepted": "Angebot vom Kunden angenommen",
+      "staff_quote_declined": "Angebot vom Kunden abgelehnt",
+      "quote_decision": "Antwort auf ein Angebot (Kunde)"
     },
     "sendTest": "Test senden",
     "sending": "Wird gesendet…",

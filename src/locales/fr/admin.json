@@ -821,7 +821,8 @@
         "accepted": "Accepté",
         "paid": "Payé",
         "overdue": "En retard",
-        "cancelled": "Annulé"
+        "cancelled": "Annulé",
+        "declined": "Décliné"
       },
       "number": "Numéro",
       "amount": "Montant",
@@ -874,7 +875,22 @@
       "noRecipient": "Ce client n'a ni référent ni e-mail de contact : ajoutez une adresse ci-dessous.",
       "otherRecipients": "Autres adresses (séparées par des virgules)",
       "remindHint": "Chacun le reçoit dans sa langue. Des relances automatiques partent aussi à J-3, J+1, J+7 et J+14 de l'échéance.",
-      "lastReminded": "Dernière relance : {{date}}"
+      "lastReminded": "Dernière relance : {{date}}",
+      "decision": {
+        "accepted": "Accepté par {{name}} le {{date}} depuis son espace — la facture a été générée et envoyée.",
+        "declined": "Décliné par {{name}} le {{date}}",
+        "budget": "Budget envisagé",
+        "noBudget": "non précisé",
+        "reopen": "Modifiez le devis puis renvoyez-le : il attendra une nouvelle réponse.",
+        "reasons": {
+          "budget": "Budget trop élevé",
+          "timeline": "Délais trop longs",
+          "scope": "Périmètre à revoir",
+          "competitor": "Autre prestataire retenu",
+          "postponed": "Projet reporté",
+          "other": "Autre raison"
+        }
+      }
     },
     "contracts": {
       "new": "Nouveau contrat",
@@ -1112,7 +1128,12 @@
       "cancelled": "Annulé",
       "reminder": "Rappel la veille",
       "appointment": "Rendez-vous (par le client)",
-      "account_deleted": "Compte supprimé"
+      "account_deleted": "Compte supprimé",
+      "quote_accepted": "Devis accepté — facture",
+      "quote_declined": "Devis décliné — accusé",
+      "staff_quote_accepted": "Devis accepté par le client",
+      "staff_quote_declined": "Devis refusé par le client",
+      "quote_decision": "Réponse à un devis (client)"
     },
     "sendTest": "Envoyer un test",
     "sending": "Envoi…",
