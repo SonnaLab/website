@@ -6,7 +6,7 @@ import {
   LineChartIcon,
   LogOutIcon,
   ArrowRightIcon,
-  GlobeIcon,
+  LanguagesIcon,
   MenuIcon,
   XIcon,
   ChevronLeftIcon,
@@ -112,7 +112,7 @@ export function MemberLayout() {
             className="dash-btn-lang"
             onClick={() => i18n.changeLanguage(nextLang)}
           >
-            <GlobeIcon size={13} />
+            <LanguagesIcon size={16} />
             <span>{currentLang}</span>
           </button>
 

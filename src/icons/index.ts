@@ -73,6 +73,7 @@ export {
   ClockIcon,
   AtSignIcon,
   BellIcon,
+  LanguagesIcon,
   DownloadIcon,
   UploadIcon,
   WalletIcon,

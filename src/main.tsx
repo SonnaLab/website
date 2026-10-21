@@ -30,7 +30,7 @@ const tree = (
       {/* Modals & Overlays globaux (hors Router) */}
       <ConsultationModal />
       <CookieConsent />
-      <Toaster richColors closeButton position="top-right" />
+      <Toaster richColors closeButton position="bottom-right" />
     </ModalProvider>
   </HelmetProvider>
 );
