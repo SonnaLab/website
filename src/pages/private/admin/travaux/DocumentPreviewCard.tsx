@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { apiAssetUrl } from '@/services/api';
-import { billedDays, calculateDevis, formatDays, hoursOf, workingDays, WORKDAY_HOURS } from '@/lib/devisCalc';
+import { calculateDevis, formatDays } from '@/lib/devisCalc';
 import { bankLine, footerAddress, footerSlogan, footerWebsite, vatNumber } from '@/lib/letterhead';
 import type { TravauxClient, TravauxObjective, TravauxTask } from '@/types/travaux';
 import { formatDate, formatEuros } from './format';
@@ -80,7 +80,7 @@ export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
             <tr>
               <th>{t('travaux.document.phases')}</th>
               <th>{t('travaux.document.description')}</th>
-              {hasAllocations && <th className="trv-right">{t('travaux.document.workingDays')}</th>}
+              {hasAllocations && <th className="trv-right">{t('travaux.document.days')}</th>}
               <th className="trv-right">{t('travaux.document.price')}</th>
             </tr>
           </thead>
@@ -93,7 +93,7 @@ export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
                     <p className="trv-doc__task-title">{task.title}</p>
                     {task.description && <p className="trv-doc__task-desc">{task.description}</p>}
                   </td>
-                  <td className="trv-right trv-doc__muted">{offered ? '—' : formatDays(workingDays(days))}</td>
+                  <td className="trv-right trv-doc__muted">{offered ? '—' : formatDays(days)}</td>
                   <td className="trv-right trv-num">{offered ? t('travaux.document.offered') : formatEuros(price)}</td>
                 </tr>
               ))
@@ -118,9 +118,6 @@ export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
         </table>
 
         <div className="trv-doc__mentions">
-          {hasAllocations && (
-            <p>{t('travaux.document.workingDaysMention', { hours: WORKDAY_HOURS, total: hoursOf(billedDays(calc!)) })}</p>
-          )}
           <p>{bank ? t('travaux.document.paymentMentionBank', { bank }) : t('travaux.document.paymentMention')}</p>
           <p>
             {t('travaux.document.depositMentionBefore')}{' '}

@@ -890,9 +890,7 @@
           "postponed": "Proyecto aplazado",
           "other": "Otro motivo"
         }
-      },
-      "nonstop": "{{days}} d continuos",
-      "workload": "{{days}} días laborables de 7 h · {{hours}} h de trabajo"
+      }
     },
     "contracts": {
       "new": "Nuevo contrato",
@@ -951,9 +949,7 @@
       "schedule": "Calendario",
       "zoomIn": "Acercar",
       "zoomOut": "Alejar",
-      "offered": "Gratis",
-      "workingDays": "Días laborables",
-      "workingDaysMention": "Días laborables: jornadas de desarrollo de {{hours}} h, es decir {{total}} h de trabajo en total."
+      "offered": "Gratis"
     },
     "stats": {
       "openTasks": "Tareas abiertas"

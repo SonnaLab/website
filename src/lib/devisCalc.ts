@@ -20,29 +20,6 @@ export interface DevisCalculation {
   totalPrice: number;
 }
 
-/*
- * Les jours calculés sont des jours de travail en continu (24 h). Le client
- * pense en journées de développement standard : le devis affiche leur
- * équivalent en jours ouvrés de 7 h (3,1 j en continu = 74 h = 10,6 j).
- */
-export const NONSTOP_HOURS = 24;
-export const WORKDAY_HOURS = 7;
-
-/** 3,1 jours en continu → 10,6 jours ouvrés de 7 h. */
-export function workingDays(days: number): number {
-  return Math.round(days * NONSTOP_HOURS / WORKDAY_HOURS * 10) / 10;
-}
-
-/** 3,1 jours en continu → 74 h. */
-export function hoursOf(days: number): number {
-  return Math.round(days * NONSTOP_HOURS);
-}
-
-/** Les jours facturés d'un calcul (phases offertes exclues). */
-export function billedDays(calc: DevisCalculation): number {
-  return calc.allocations.filter((a) => !a.offered).reduce((sum, a) => sum + a.days, 0);
-}
-
 /** Jours calendaires de demain jusqu'à l'échéance incluse. */
 export function remainingDaysUntil(dueDate: string, from: Date = new Date()): number {
   const tomorrow = new Date(from);

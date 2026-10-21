@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 
 import { Modal } from '@/components/common/Modal';
 import { apiService } from '@/services/api';
-import { billedDays, calculateDevis, formatDays, hoursOf, workingDays } from '@/lib/devisCalc';
+import { calculateDevis, formatDays } from '@/lib/devisCalc';
 import { DataTableAction } from '@/components/common/DataTable';
 import {
   CheckCircle2Icon, CheckCircleIcon, ChevronDownIcon, ClipboardListIcon, ClockIcon, EyeIcon, FileTextIcon, FolderKanbanIcon,
@@ -569,7 +569,7 @@ function GenerateDevisModal({
                 <thead>
                   <tr>
                     <th>{t('travaux.common.title')}</th>
-                    <th className="trv-right">{t('travaux.document.workingDays')}</th>
+                    <th className="trv-right">{t('travaux.invoices.days')}</th>
                     <th className="trv-right">{t('travaux.common.amount')}</th>
                   </tr>
                 </thead>
@@ -577,26 +577,14 @@ function GenerateDevisModal({
                   {calc.allocations.map(({ task, days, price, offered }) => (
                     <tr key={task.id}>
                       <td>{task.title} <span className="trv-muted">({t(`travaux.tracking.columns.${task.column}`)})</span></td>
-                      <td className="trv-right trv-num">
-                        {offered ? '—' : (
-                          <>
-                            {formatDays(workingDays(days))}
-                            <span className="trv-alloc__nonstop">{t('travaux.invoices.nonstop', { days: formatDays(days) })}</span>
-                          </>
-                        )}
-                      </td>
+                      <td className="trv-right trv-num">{offered ? '—' : formatDays(days)}</td>
                       <td className="trv-right trv-num">{offered ? t('travaux.document.offered') : formatEuros(price)}</td>
                     </tr>
                   ))}
                 </tbody>
                 <tfoot>
                   <tr>
-                    <td colSpan={2}>
-                      {t('travaux.invoices.total')} ({calc.remainingDays} {t('travaux.invoices.daysRemaining')})
-                      <span className="trv-alloc__nonstop">
-                        {t('travaux.invoices.workload', { days: formatDays(workingDays(billedDays(calc))), hours: hoursOf(billedDays(calc)) })}
-                      </span>
-                    </td>
+                    <td colSpan={2}>{t('travaux.invoices.total')} ({calc.remainingDays} {t('travaux.invoices.daysRemaining')})</td>
                     <td className="trv-right trv-num">{formatEuros(calc.totalPrice)}</td>
                   </tr>
                 </tfoot>
