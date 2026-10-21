@@ -1450,7 +1450,13 @@
   padding: 20px;
   overflow-y: auto;
   flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
 }
+
+.adm-modal__body::-webkit-scrollbar { width: 6px; height: 6px; }
+.adm-modal__body::-webkit-scrollbar-thumb { border-radius: 999px; background: #d1d5db; }
+.adm-modal__body::-webkit-scrollbar-track { background: transparent; }
 
 /* Language Switcher Modal */
 .lang-switcher-modal {
@@ -6000,7 +6006,11 @@
 .trv-card__tasks { margin: 8px 0 0; font-size: 12px; color: #6b7280; }
 
 /* Client billing › document preview: the PDF itself, with « Envoyer ». */
-.mb-pdf { height: 70vh; min-height: 420px; border-radius: 10px; background: #e9eaed; overflow: hidden; }
+/* The PDF fills what the modal leaves (the viewer scrolls, not the modal body). */
+.adm-modal:has(.mb-pdf) { height: calc(100vh - 32px); }
+.adm-modal:has(.mb-pdf) .adm-modal__body { display: flex; flex-direction: column; }
+.adm-modal:has(.mb-pdf) .adm-modal__body > :not(.mb-pdf) { flex-shrink: 0; }
+.mb-pdf { flex: 1 1 auto; min-height: 360px; border-radius: 10px; background: #e9eaed; overflow: hidden; }
 .mb-pdf__frame { display: block; width: 100%; height: 100%; border: 0; }
 .mb-pdf__state { margin: 0; padding: 40px; text-align: center; color: #6b7280; }
 .mb-send { margin-bottom: 14px; padding: 14px; border: 1px solid #e8eaed; border-radius: 10px; background: #fafbfc; }
