@@ -252,6 +252,8 @@
       "in_progress": "En curso",
       "review": "En revisión",
       "done": "Terminado"
-    }
+    },
+    "progress": "Progreso",
+    "pick": "Seleccione un entregable para ver su detalle."
   }
 }

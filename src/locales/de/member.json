@@ -252,6 +252,8 @@
       "in_progress": "In Arbeit",
       "review": "In Prüfung",
       "done": "Erledigt"
-    }
+    },
+    "progress": "Fortschritt",
+    "pick": "Wählen Sie ein Lieferobjekt, um die Details zu sehen."
   }
 }

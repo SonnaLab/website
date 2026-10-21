@@ -252,6 +252,8 @@
       "in_progress": "En cours",
       "review": "En relecture",
       "done": "Terminé"
-    }
+    },
+    "progress": "Progression",
+    "pick": "Sélectionnez un livrable pour voir son détail."
   }
 }

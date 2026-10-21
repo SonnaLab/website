@@ -252,6 +252,8 @@
       "in_progress": "In progress",
       "review": "In review",
       "done": "Done"
-    }
+    },
+    "progress": "Progress",
+    "pick": "Select a deliverable to see its details."
   }
 }

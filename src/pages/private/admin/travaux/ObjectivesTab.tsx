@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useImperativeHandle, useState, type ComponentType } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -7,9 +7,9 @@ import { apiService } from '@/services/api';
 import { calculateDevis, DAYS_MULTIPLIERS, formatDays, shownDays, shownTotalDays } from '@/lib/devisCalc';
 import { DataTableAction } from '@/components/common/DataTable';
 import {
-  CheckCircle2Icon, CheckCircleIcon, ChevronDownIcon, ClipboardListIcon, ClockIcon, EyeIcon, FileTextIcon, FolderKanbanIcon,
-  PenLineIcon, PlusIcon, TargetIcon, Trash2Icon, type IconProps,
+  CheckCircleIcon, ChevronDownIcon, FileTextIcon, FolderKanbanIcon, PenLineIcon, PlusIcon, TargetIcon, Trash2Icon,
 } from '@icons';
+import { COLUMN_ICONS } from './columnIcons';
 import type {
   KanbanColumn,
   ObjectiveFormat,
@@ -26,10 +26,6 @@ import { useConfirmDelete } from './useConfirmDelete';
 
 const STATUSES: ObjectiveStatus[] = ['planned', 'in_progress', 'done', 'at_risk'];
 const COLUMN_ORDER: KanbanColumn[] = ['todo', 'in_progress', 'review', 'done'];
-// The task's column, as an icon on the timeline.
-const COLUMN_ICONS: Record<KanbanColumn, ComponentType<IconProps>> = {
-  todo: ClipboardListIcon, in_progress: ClockIcon, review: EyeIcon, done: CheckCircle2Icon,
-};
 const DEFAULT_DAILY_RATE = 500;
 
 interface ObjectivesTabProps {
