@@ -16,5 +16,45 @@
     "subscribe": "Iscriviti",
     "close": "Chiudi",
     "search": "Cerca"
+  },
+  "emailPreferences": {
+    "title": "Le tue preferenze di comunicazione",
+    "for": "Per {{email}}",
+    "invalid": "Questo link non è valido o è scaduto.",
+    "saved": "Preferenze salvate.",
+    "error": "Si è verificato un errore, riprova.",
+    "categories": {
+      "newsletter": {
+        "title": "La newsletter",
+        "text": "I nostri articoli su digitale, IA e prodotto."
+      },
+      "updates": {
+        "title": "Novità SonnaLab",
+        "text": "I nostri servizi, progetti e strumenti."
+      },
+      "events": {
+        "title": "Eventi e offerte",
+        "text": "Workshop, webinar e offerte del momento."
+      }
+    },
+    "language": "Lingua delle e-mail",
+    "service": "Le e-mail relative al tuo account o ai tuoi progetti (preventivi, fatture, appuntamenti) non sono interessate.",
+    "unsubscribeAll": "Disiscrivimi da tutto",
+    "unsubscribedNotice": "Sei disiscritto: non ricevi più alcun invio.",
+    "resubscribe": "Iscrivimi di nuovo",
+    "backHome": "Torna al sito",
+    "unsubscribeTitle": "Disiscriversi",
+    "unsubscribedTitle": "Fatto",
+    "unsubscribeText": "Non riceverai più newsletter, novità né offerte.",
+    "unsubscribeConfirm": "Conferma la disiscrizione",
+    "chooseInstead": "Preferisco scegliere cosa ricevere",
+    "unsubscribedText": "Sei disiscritto: non riceverai più i nostri invii.",
+    "manage": "Gestisci le mie preferenze",
+    "confirmTitle": "Iscrizione confermata",
+    "confirmErrorTitle": "Link non valido",
+    "confirming": "Conferma in corso…",
+    "confirmText": "Benvenuto! Riceverai le nostre prossime newsletter. Puoi scegliere cosa ricevere in qualsiasi momento.",
+    "readBlog": "Leggi i nostri articoli",
+    "badge": "Le tue e-mail SonnaLab"
   }
 }

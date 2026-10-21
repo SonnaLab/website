@@ -70,6 +70,7 @@ export {
   SparklesIcon,
   BriefcaseIcon,
   ClockIcon,
+  AtSignIcon,
   DownloadIcon,
   UploadIcon,
   WalletIcon,

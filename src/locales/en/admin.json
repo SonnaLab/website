@@ -10,7 +10,8 @@
     "lesankofa": "Lesankofa",
     "billing": "Billing",
     "travaux": "Work",
-    "company": "Company"
+    "company": "Company",
+    "mailing": "Mailing"
   },
   "dashboard": {
     "title": "Welcome, =={{name}}==",
@@ -960,7 +961,9 @@
       "auth_mailer": "Account",
       "team_mailer": "Team",
       "billing_mailer": "Billing",
-      "contact_mailer": "Project requests"
+      "contact_mailer": "Project requests",
+      "newsletter_mailer": "Newsletter",
+      "campaign_mailer": "Campaigns"
     },
     "emails": {
       "confirmation": "Sign-up confirmation",
@@ -974,11 +977,123 @@
       "payment_received_deposit": "Payment received — deposit",
       "payment_received_settled": "Payment received — settled",
       "confirm_submission": "Project request — visitor",
-      "notify_team": "Project request — team"
+      "notify_team": "Project request — team",
+      "confirm_subscription": "Subscription confirmation",
+      "welcome": "Welcome",
+      "goodbye": "Unsubscribed",
+      "campaign": "Campaign"
     },
     "sendTest": "Send a test",
     "sending": "Sending…",
     "sent": "Test e-mail sent to {{to}}.",
     "sendError": "The test could not be sent."
+  },
+  "mailing": {
+    "heading": "Mailing management",
+    "subtitle": "E-mail templates, campaigns and newsletter subscribers, respecting their preferences.",
+    "tabs": {
+      "templates": "Templates",
+      "campaigns": "Campaigns",
+      "newsletter": "Newsletter"
+    },
+    "stats": {
+      "confirmed": "Confirmed subscribers",
+      "pending": "Awaiting confirmation",
+      "unsubscribed": "Unsubscribed",
+      "campaigns": "Campaigns sent",
+      "delivered": "E-mails sent (30 d)"
+    },
+    "categories": {
+      "newsletter": "Newsletter",
+      "updates": "News",
+      "events": "Events and offers"
+    },
+    "audiences": {
+      "subscribers": "Newsletter subscribers",
+      "clients": "Clients (teams)",
+      "all": "Subscribers and clients"
+    },
+    "heroes": {
+      "none": "No illustration",
+      "welcome": "The home page",
+      "request": "The services",
+      "quote": "Quotes",
+      "invoice": "Invoices",
+      "payment": "Payments",
+      "invitation": "The client space"
+    },
+    "campaigns": {
+      "new": "New campaign",
+      "edit": "Edit the campaign",
+      "formHint": "It goes out in each recipient's language (French by default), with their preferences and unsubscribe links.",
+      "name": "Campaign",
+      "category": "Category",
+      "audience": "Recipients",
+      "hero": "Illustration",
+      "ctaUrl": "Button link",
+      "results": "Results",
+      "preview": "Preview",
+      "send": "Send",
+      "sendTitle": "Send “{{name}}”?",
+      "sendMessage_one": "It will go to {{count}} recipient. This cannot be undone.",
+      "sendMessage_other": "It will go to {{count}} recipients. This cannot be undone.",
+      "sending": "Sending…",
+      "saved": "Campaign saved.",
+      "empty": "No campaign yet.",
+      "reach_one": "{{count}} recipient",
+      "reach_other": "{{count}} recipients",
+      "delivered": "{{count}} / {{total}} sent",
+      "failed": "{{count}} failed",
+      "statuses": {
+        "draft": "Draft",
+        "sending": "Sending",
+        "sent": "Sent",
+        "failed": "Failed"
+      },
+      "version": {
+        "fr": "French version",
+        "en": "English version"
+      },
+      "fields": {
+        "subject": "Subject",
+        "preheader": "Inbox preview",
+        "title": "Title",
+        "body": "Text",
+        "cta_label": "Button text"
+      },
+      "bodyHint": "One paragraph per block; leave an empty line between paragraphs.",
+      "englishHint": "Without an English version, English speakers get the French one."
+    },
+    "subscribers": {
+      "new": "Add a subscriber",
+      "doubleOptIn": "They get an e-mail to confirm: nothing is sent until they click.",
+      "added": "Confirmation request sent to {{email}}.",
+      "search": "Search a subscriber…",
+      "empty": "No subscriber.",
+      "preferences": "Receives",
+      "source": "Source",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "unsubscribe": "Unsubscribe",
+      "resubscribe": "Resubscribe",
+      "eraseTitle": "Erase this subscriber?",
+      "eraseMessage": "{{email}} and their preferences will be deleted (right to erasure).",
+      "statuses": {
+        "all": "All",
+        "confirmed": "Confirmed",
+        "pending": "Pending",
+        "unsubscribed": "Unsubscribed"
+      },
+      "sources": {
+        "site": "Website",
+        "client": "Client",
+        "admin": "Added by hand"
+      },
+      "state": {
+        "confirmed": "Confirmed",
+        "pending": "Pending",
+        "unsubscribed": "Unsubscribed"
+      }
+    }
   }
 }

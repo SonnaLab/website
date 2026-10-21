@@ -10,7 +10,8 @@
     "lesankofa": "Lesankofa",
     "billing": "Abrechnung",
     "travaux": "Arbeiten",
-    "company": "Unternehmen"
+    "company": "Unternehmen",
+    "mailing": "Mailing"
   },
   "dashboard": {
     "title": "Willkommen, =={{name}}==",
@@ -960,7 +961,9 @@
       "auth_mailer": "Konto",
       "team_mailer": "Team",
       "billing_mailer": "Abrechnung",
-      "contact_mailer": "Projektanfragen"
+      "contact_mailer": "Projektanfragen",
+      "newsletter_mailer": "Newsletter",
+      "campaign_mailer": "Kampagnen"
     },
     "emails": {
       "confirmation": "Anmeldebestätigung",
@@ -974,11 +977,123 @@
       "payment_received_deposit": "Zahlung erhalten — Anzahlung",
       "payment_received_settled": "Zahlung erhalten — beglichen",
       "confirm_submission": "Projektanfrage — Besucher",
-      "notify_team": "Projektanfrage — Team"
+      "notify_team": "Projektanfrage — Team",
+      "confirm_subscription": "Anmeldebestätigung",
+      "welcome": "Willkommen",
+      "goodbye": "Abmeldung",
+      "campaign": "Kampagne"
     },
     "sendTest": "Test senden",
     "sending": "Wird gesendet…",
     "sent": "Test-E-Mail an {{to}} gesendet.",
     "sendError": "Der Test konnte nicht gesendet werden."
+  },
+  "mailing": {
+    "heading": "Verwaltung des Mailings",
+    "subtitle": "E-Mail-Vorlagen, Kampagnen und Newsletter-Abonnenten – unter Beachtung ihrer Präferenzen.",
+    "tabs": {
+      "templates": "Vorlagen",
+      "campaigns": "Kampagnen",
+      "newsletter": "Newsletter"
+    },
+    "stats": {
+      "confirmed": "Bestätigte Abonnenten",
+      "pending": "Warten auf Bestätigung",
+      "unsubscribed": "Abgemeldet",
+      "campaigns": "Gesendete Kampagnen",
+      "delivered": "Gesendete E-Mails (30 T)"
+    },
+    "categories": {
+      "newsletter": "Newsletter",
+      "updates": "Neuigkeiten",
+      "events": "Events und Angebote"
+    },
+    "audiences": {
+      "subscribers": "Newsletter-Abonnenten",
+      "clients": "Kunden (Teams)",
+      "all": "Abonnenten und Kunden"
+    },
+    "heroes": {
+      "none": "Ohne Illustration",
+      "welcome": "Die Startseite",
+      "request": "Die Leistungen",
+      "quote": "Angebote",
+      "invoice": "Rechnungen",
+      "payment": "Zahlungen",
+      "invitation": "Der Kundenbereich"
+    },
+    "campaigns": {
+      "new": "Neue Kampagne",
+      "edit": "Kampagne bearbeiten",
+      "formHint": "Sie wird in der Sprache jedes Empfängers versendet (standardmäßig Französisch), mit Präferenz- und Abmeldelinks.",
+      "name": "Kampagne",
+      "category": "Kategorie",
+      "audience": "Empfänger",
+      "hero": "Illustration",
+      "ctaUrl": "Button-Link",
+      "results": "Ergebnisse",
+      "preview": "Vorschau",
+      "send": "Senden",
+      "sendTitle": "„{{name}}“ senden?",
+      "sendMessage_one": "Sie geht an {{count}} Empfänger. Dies ist endgültig.",
+      "sendMessage_other": "Sie geht an {{count}} Empfänger. Dies ist endgültig.",
+      "sending": "Wird gesendet…",
+      "saved": "Kampagne gespeichert.",
+      "empty": "Noch keine Kampagne.",
+      "reach_one": "{{count}} Empfänger",
+      "reach_other": "{{count}} Empfänger",
+      "delivered": "{{count}} / {{total}} gesendet",
+      "failed": "{{count}} fehlgeschlagen",
+      "statuses": {
+        "draft": "Entwurf",
+        "sending": "Wird gesendet",
+        "sent": "Gesendet",
+        "failed": "Fehlgeschlagen"
+      },
+      "version": {
+        "fr": "Französische Version",
+        "en": "Englische Version"
+      },
+      "fields": {
+        "subject": "Betreff",
+        "preheader": "Vorschautext im Posteingang",
+        "title": "Titel",
+        "body": "Text",
+        "cta_label": "Button-Text"
+      },
+      "bodyHint": "Ein Absatz pro Block; eine Leerzeile zwischen zwei Absätzen.",
+      "englishHint": "Ohne englische Version erhalten Englischsprachige die französische."
+    },
+    "subscribers": {
+      "new": "Abonnent hinzufügen",
+      "doubleOptIn": "Er erhält eine E-Mail zur Bestätigung: nichts wird gesendet, bevor er klickt.",
+      "added": "Bestätigungsanfrage an {{email}} gesendet.",
+      "search": "Abonnent suchen…",
+      "empty": "Kein Abonnent.",
+      "preferences": "Erhält",
+      "source": "Herkunft",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "unsubscribe": "Abmelden",
+      "resubscribe": "Wieder anmelden",
+      "eraseTitle": "Diesen Abonnenten löschen?",
+      "eraseMessage": "{{email}} und seine Präferenzen werden gelöscht (Recht auf Löschung).",
+      "statuses": {
+        "all": "Alle",
+        "confirmed": "Bestätigt",
+        "pending": "Ausstehend",
+        "unsubscribed": "Abgemeldet"
+      },
+      "sources": {
+        "site": "Website",
+        "client": "Kunde",
+        "admin": "Manuell hinzugefügt"
+      },
+      "state": {
+        "confirmed": "Bestätigt",
+        "pending": "Ausstehend",
+        "unsubscribed": "Abgemeldet"
+      }
+    }
   }
 }

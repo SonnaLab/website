@@ -45,7 +45,10 @@ import AdminLesankofa from '@/pages/private/admin/Lesankofa';
 import AdminTravauxClients from '@/pages/private/admin/travaux/TravauxClients';
 import AdminClientTravaux from '@/pages/private/admin/travaux/ClientTravaux';
 import AdminCompany from '@/pages/private/admin/company/Company';
-import AdminMailPreviews from '@/pages/private/admin/MailPreviews';
+import AdminMailing from '@/pages/private/admin/mailing/Mailing';
+import PreferencesPage from '@/pages/public/mailing/Preferences';
+import UnsubscribePage from '@/pages/public/mailing/Unsubscribe';
+import NewsletterConfirmPage from '@/pages/public/mailing/NewsletterConfirm';
 
 // Staff
 import StaffDashboard from '@/pages/private/staff/Dashboard';
@@ -157,6 +160,11 @@ export const routeTree: RouteObject[] = [
       { path: '/reset-password',  element: <ResetPasswordPage /> },
       { path: '/confirm-email',   element: <ConfirmEmailPage /> },
 
+      // ---- E-mail preferences (links of the marketing e-mails, no account) ----
+      { path: '/preferences',        element: <PreferencesPage /> },
+      { path: '/unsubscribe',        element: <UnsubscribePage /> },
+      { path: '/newsletter/confirm', element: <NewsletterConfirmPage /> },
+
       // ---- Legacy /fr/* redirect (fr reste non préfixé) ----
       { path: '/fr/*', element: <EnLangRedirect /> },
 
@@ -202,7 +210,8 @@ export const routeTree: RouteObject[] = [
           { path: 'travaux',        element: <AdminTravauxClients /> },
           { path: 'travaux/:clientId', element: <AdminClientTravaux /> },
           { path: 'entreprise',     element: <AdminCompany /> },
-          { path: 'mails',          element: <AdminMailPreviews /> },
+          { path: 'mailing',        element: <AdminMailing /> },
+          { path: 'mails',          element: <Navigate to="/admin/mailing?tab=templates" replace /> },
         ],
       },
     ],

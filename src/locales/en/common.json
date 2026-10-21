@@ -16,5 +16,45 @@
     "subscribe": "Subscribe",
     "close": "Close",
     "search": "Search"
+  },
+  "emailPreferences": {
+    "title": "Your communication preferences",
+    "for": "For {{email}}",
+    "invalid": "This link is invalid or has expired.",
+    "saved": "Preferences saved.",
+    "error": "Something went wrong, please try again.",
+    "categories": {
+      "newsletter": {
+        "title": "The newsletter",
+        "text": "Our articles on digital, AI and product."
+      },
+      "updates": {
+        "title": "SonnaLab news",
+        "text": "Our services, our work, our tools."
+      },
+      "events": {
+        "title": "Events and offers",
+        "text": "Workshops, webinars and current offers."
+      }
+    },
+    "language": "E-mail language",
+    "service": "E-mails about your account or your projects (quotes, invoices, meetings) are not concerned and carry on as usual.",
+    "unsubscribeAll": "Unsubscribe from everything",
+    "unsubscribedNotice": "You're unsubscribed: you no longer receive any mailing.",
+    "resubscribe": "Resubscribe",
+    "backHome": "Back to the site",
+    "unsubscribeTitle": "Unsubscribe",
+    "unsubscribedTitle": "Done",
+    "unsubscribeText": "You won't receive our newsletters, news or offers anymore.",
+    "unsubscribeConfirm": "Confirm unsubscribing",
+    "chooseInstead": "Choose what I receive instead",
+    "unsubscribedText": "You're unsubscribed: you won't receive our mailings anymore.",
+    "manage": "Manage my preferences",
+    "confirmTitle": "Subscription confirmed",
+    "confirmErrorTitle": "Invalid link",
+    "confirming": "Confirming…",
+    "confirmText": "Welcome! You will receive our next newsletters. You can choose what you receive at any time.",
+    "readBlog": "Read our articles",
+    "badge": "Your SonnaLab e-mails"
   }
 }

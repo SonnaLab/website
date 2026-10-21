@@ -16,5 +16,45 @@
     "subscribe": "Suscribirse",
     "close": "Cerrar",
     "search": "Buscar"
+  },
+  "emailPreferences": {
+    "title": "Sus preferencias de comunicación",
+    "for": "Para {{email}}",
+    "invalid": "Este enlace no es válido o ha caducado.",
+    "saved": "Preferencias guardadas.",
+    "error": "Se produjo un error, inténtelo de nuevo.",
+    "categories": {
+      "newsletter": {
+        "title": "La newsletter",
+        "text": "Nuestros artículos sobre lo digital, la IA y el producto."
+      },
+      "updates": {
+        "title": "Novedades de SonnaLab",
+        "text": "Nuestros servicios, proyectos y herramientas."
+      },
+      "events": {
+        "title": "Eventos y ofertas",
+        "text": "Talleres, webinarios y ofertas del momento."
+      }
+    },
+    "language": "Idioma de los correos",
+    "service": "Los correos sobre su cuenta o sus proyectos (presupuestos, facturas, citas) no se ven afectados.",
+    "unsubscribeAll": "Darme de baja de todo",
+    "unsubscribedNotice": "Está dado de baja: ya no recibe ningún envío.",
+    "resubscribe": "Volver a suscribirme",
+    "backHome": "Volver al sitio",
+    "unsubscribeTitle": "Darse de baja",
+    "unsubscribedTitle": "Hecho",
+    "unsubscribeText": "Ya no recibirá nuestras newsletters, novedades ni ofertas.",
+    "unsubscribeConfirm": "Confirmar la baja",
+    "chooseInstead": "Prefiero elegir lo que recibo",
+    "unsubscribedText": "Está dado de baja: ya no recibirá nuestros envíos.",
+    "manage": "Gestionar mis preferencias",
+    "confirmTitle": "Suscripción confirmada",
+    "confirmErrorTitle": "Enlace no válido",
+    "confirming": "Confirmando…",
+    "confirmText": "¡Bienvenido! Recibirá nuestras próximas newsletters. Puede elegir lo que recibe en cualquier momento.",
+    "readBlog": "Leer nuestros artículos",
+    "badge": "Sus correos SonnaLab"
   }
 }

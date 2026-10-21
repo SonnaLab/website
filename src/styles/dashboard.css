@@ -5865,3 +5865,32 @@
   .mailp-list { position: static; }
 }
 
+/* Mailing › Newsletter: what each subscriber agreed to receive. */
+.mailing-prefs { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+.mailing-prefs span { padding: 2px 8px; border-radius: 999px; background: #f3f4f6; font-size: 11px; font-weight: 600; color: #9ca3af; text-decoration: line-through; }
+.mailing-prefs span.is-on { background: #e9f8ee; color: #15803d; text-decoration: none; }
+.mailp-toolbar { justify-content: flex-start; }
+
+/* Public e-mail preferences / unsubscribe / newsletter confirmation. */
+.mprefs { display: flex; flex-direction: column; gap: 14px; }
+.mprefs__text { margin: 0; font-size: 14px; line-height: 1.6; color: #4b5563; }
+.mprefs__notice { display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 12px; background: #fff7e6; font-size: 13px; color: #92400e; }
+.mprefs__notice p { margin: 0; }
+.mprefs__list { display: flex; flex-direction: column; gap: 0; margin: 0; padding: 0; border: 1px solid #eceef1; border-radius: 14px; }
+.mprefs__list:disabled { opacity: 0.55; }
+.mprefs__item { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px; cursor: pointer; }
+/* .auth-card label forces small caps on every label; these rows are not form labels. */
+.auth-card label.mprefs__item { margin: 0 !important; font-size: inherit !important; font-weight: inherit !important; letter-spacing: normal !important; text-transform: none !important; color: inherit !important; }
+.mprefs__item + .mprefs__item { border-top: 1px solid #f1f2f4; }
+.mprefs__item strong { display: block; font-size: 14px; color: #0f0f0f; }
+.mprefs__item small { display: block; margin-top: 2px; font-size: 12.5px; color: #6b7280; }
+.mprefs__switch { position: relative; flex-shrink: 0; width: 40px; height: 22px; margin: 0; border-radius: 999px; background: #d1d5db; appearance: none; cursor: pointer; transition: background 0.15s; }
+.mprefs__switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #ffffff; transition: transform 0.15s; }
+.mprefs__switch:checked { background: #111111; }
+.mprefs__switch:checked::after { transform: translateX(18px); }
+.mprefs__lang { width: auto; }
+.mprefs__service { margin: 0; font-size: 12px; line-height: 1.5; color: #9ca3af; }
+.mprefs__unsubscribe { align-self: flex-start; padding: 0; border: 0; background: none; font: inherit; font-size: 13px; color: #b91c1c; text-decoration: underline; cursor: pointer; }
+.mprefs__wide { justify-content: center; width: 100%; }
+.mprefs__back { margin: 18px 0 0; font-size: 13px; }
+

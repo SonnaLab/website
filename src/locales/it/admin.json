@@ -10,7 +10,8 @@
     "lesankofa": "Lesankofa",
     "billing": "Fatturazione",
     "travaux": "Lavori",
-    "company": "Azienda"
+    "company": "Azienda",
+    "mailing": "Mailing"
   },
   "dashboard": {
     "title": "Benvenuto, =={{name}}==",
@@ -960,7 +961,9 @@
       "auth_mailer": "Account",
       "team_mailer": "Team",
       "billing_mailer": "Fatturazione",
-      "contact_mailer": "Richieste di progetto"
+      "contact_mailer": "Richieste di progetto",
+      "newsletter_mailer": "Newsletter",
+      "campaign_mailer": "Campagne"
     },
     "emails": {
       "confirmation": "Conferma di registrazione",
@@ -974,11 +977,123 @@
       "payment_received_deposit": "Pagamento ricevuto — acconto",
       "payment_received_settled": "Pagamento ricevuto — saldata",
       "confirm_submission": "Richiesta di progetto — visitatore",
-      "notify_team": "Richiesta di progetto — team"
+      "notify_team": "Richiesta di progetto — team",
+      "confirm_subscription": "Conferma d'iscrizione",
+      "welcome": "Benvenuto",
+      "goodbye": "Disiscrizione",
+      "campaign": "Campagna"
     },
     "sendTest": "Invia un test",
     "sending": "Invio…",
     "sent": "E-mail di prova inviata a {{to}}.",
     "sendError": "Impossibile inviare il test."
+  },
+  "mailing": {
+    "heading": "Gestione del mailing",
+    "subtitle": "Modelli e-mail, campagne e iscritti alla newsletter, nel rispetto delle loro preferenze.",
+    "tabs": {
+      "templates": "Modelli",
+      "campaigns": "Campagne",
+      "newsletter": "Newsletter"
+    },
+    "stats": {
+      "confirmed": "Iscritti confermati",
+      "pending": "In attesa di conferma",
+      "unsubscribed": "Disiscritti",
+      "campaigns": "Campagne inviate",
+      "delivered": "E-mail inviate (30 g)"
+    },
+    "categories": {
+      "newsletter": "Newsletter",
+      "updates": "Novità",
+      "events": "Eventi e offerte"
+    },
+    "audiences": {
+      "subscribers": "Iscritti newsletter",
+      "clients": "Clienti (team)",
+      "all": "Iscritti e clienti"
+    },
+    "heroes": {
+      "none": "Senza illustrazione",
+      "welcome": "La home page",
+      "request": "I servizi",
+      "quote": "Preventivi",
+      "invoice": "Fatture",
+      "payment": "Pagamenti",
+      "invitation": "L'area clienti"
+    },
+    "campaigns": {
+      "new": "Nuova campagna",
+      "edit": "Modifica la campagna",
+      "formHint": "Parte nella lingua di ogni destinatario (francese di default), con i link di preferenze e disiscrizione.",
+      "name": "Campagna",
+      "category": "Categoria",
+      "audience": "Destinatari",
+      "hero": "Illustrazione",
+      "ctaUrl": "Link del pulsante",
+      "results": "Risultati",
+      "preview": "Anteprima",
+      "send": "Invia",
+      "sendTitle": "Inviare «{{name}}»?",
+      "sendMessage_one": "Partirà verso {{count}} destinatario. È definitivo.",
+      "sendMessage_other": "Partirà verso {{count}} destinatari. È definitivo.",
+      "sending": "Invio in corso…",
+      "saved": "Campagna salvata.",
+      "empty": "Ancora nessuna campagna.",
+      "reach_one": "{{count}} destinatario",
+      "reach_other": "{{count}} destinatari",
+      "delivered": "{{count}} / {{total}} inviate",
+      "failed": "{{count}} fallite",
+      "statuses": {
+        "draft": "Bozza",
+        "sending": "In invio",
+        "sent": "Inviata",
+        "failed": "Fallita"
+      },
+      "version": {
+        "fr": "Versione francese",
+        "en": "Versione inglese"
+      },
+      "fields": {
+        "subject": "Oggetto",
+        "preheader": "Anteprima nella casella",
+        "title": "Titolo",
+        "body": "Testo",
+        "cta_label": "Testo del pulsante"
+      },
+      "bodyHint": "Un paragrafo per blocco; lasciate una riga vuota tra due paragrafi.",
+      "englishHint": "Senza versione inglese, gli anglofoni ricevono quella francese."
+    },
+    "subscribers": {
+      "new": "Aggiungi un iscritto",
+      "doubleOptIn": "Riceve un'e-mail di conferma: nulla parte finché non clicca.",
+      "added": "Richiesta di conferma inviata a {{email}}.",
+      "search": "Cerca un iscritto…",
+      "empty": "Nessun iscritto.",
+      "preferences": "Riceve",
+      "source": "Origine",
+      "firstName": "Nome",
+      "lastName": "Cognome",
+      "unsubscribe": "Disiscrivi",
+      "resubscribe": "Riscrivi",
+      "eraseTitle": "Cancellare questo iscritto?",
+      "eraseMessage": "{{email}} e le sue preferenze saranno eliminati (diritto all'oblio).",
+      "statuses": {
+        "all": "Tutti",
+        "confirmed": "Confermati",
+        "pending": "In attesa",
+        "unsubscribed": "Disiscritti"
+      },
+      "sources": {
+        "site": "Sito",
+        "client": "Cliente",
+        "admin": "Aggiunto a mano"
+      },
+      "state": {
+        "confirmed": "Confermato",
+        "pending": "In attesa",
+        "unsubscribed": "Disiscritto"
+      }
+    }
   }
 }

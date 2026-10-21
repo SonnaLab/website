@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react';
 import {
+  AtSignIcon,
   BrainIcon,
   CalendarIcon,
   CookieIcon,
@@ -39,6 +40,7 @@ export const ADMIN_NAV: NavEntry[] = [
   { to: '/admin/infrastructure',            labelKey: 'nav.infrastructure', ns: 'admin', icon: ServerIcon,          group: 2 },
   { to: '/admin/cookies',                   labelKey: 'nav.tracking',       ns: 'admin', icon: CookieIcon,          group: 2 },
   { to: '/admin/news',                      labelKey: 'nav.news',           ns: 'admin', icon: NewsIcon,            group: 3 },
+  { to: '/admin/mailing',                   labelKey: 'nav.mailing',        ns: 'admin', icon: AtSignIcon,          group: 3 },
   { to: '/admin/lesankofa',                 labelKey: 'nav.lesankofa',      ns: 'admin', icon: BrainIcon,           group: 3 },
   { to: '/admin/users',                     labelKey: 'nav.users',          ns: 'admin', icon: UsersIcon,           group: 3 },
   { to: '/admin/travaux',                   labelKey: 'nav.travaux',        ns: 'admin', icon: TrafficConeIcon,     group: 4 },

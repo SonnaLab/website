@@ -16,5 +16,45 @@
     "subscribe": "Abonnieren",
     "close": "Schließen",
     "search": "Suchen"
+  },
+  "emailPreferences": {
+    "title": "Ihre Kommunikationseinstellungen",
+    "for": "Für {{email}}",
+    "invalid": "Dieser Link ist ungültig oder abgelaufen.",
+    "saved": "Einstellungen gespeichert.",
+    "error": "Ein Fehler ist aufgetreten, bitte erneut versuchen.",
+    "categories": {
+      "newsletter": {
+        "title": "Der Newsletter",
+        "text": "Unsere Artikel zu Digitalem, KI und Produkt."
+      },
+      "updates": {
+        "title": "SonnaLab-Neuigkeiten",
+        "text": "Unsere Leistungen, Projekte und Tools."
+      },
+      "events": {
+        "title": "Events und Angebote",
+        "text": "Workshops, Webinare und aktuelle Angebote."
+      }
+    },
+    "language": "Sprache der E-Mails",
+    "service": "E-Mails zu Ihrem Konto oder Ihren Projekten (Angebote, Rechnungen, Termine) sind nicht betroffen.",
+    "unsubscribeAll": "Von allem abmelden",
+    "unsubscribedNotice": "Sie sind abgemeldet: Sie erhalten keine Mailings mehr.",
+    "resubscribe": "Wieder anmelden",
+    "backHome": "Zurück zur Website",
+    "unsubscribeTitle": "Abmelden",
+    "unsubscribedTitle": "Erledigt",
+    "unsubscribeText": "Sie erhalten keine Newsletter, Neuigkeiten oder Angebote mehr.",
+    "unsubscribeConfirm": "Abmeldung bestätigen",
+    "chooseInstead": "Lieber auswählen, was ich erhalte",
+    "unsubscribedText": "Sie sind abgemeldet: Sie erhalten keine Mailings mehr.",
+    "manage": "Einstellungen verwalten",
+    "confirmTitle": "Anmeldung bestätigt",
+    "confirmErrorTitle": "Ungültiger Link",
+    "confirming": "Wird bestätigt…",
+    "confirmText": "Willkommen! Sie erhalten unsere nächsten Newsletter. Sie können jederzeit wählen, was Sie erhalten.",
+    "readBlog": "Unsere Artikel lesen",
+    "badge": "Ihre SonnaLab-E-Mails"
   }
 }

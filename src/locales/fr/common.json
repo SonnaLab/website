@@ -16,5 +16,45 @@
     "subscribe": "S'abonner",
     "close": "Fermer",
     "search": "Rechercher"
+  },
+  "emailPreferences": {
+    "title": "Vos préférences de communication",
+    "for": "Pour {{email}}",
+    "invalid": "Ce lien n'est pas valide ou a expiré.",
+    "saved": "Préférences enregistrées.",
+    "error": "Une erreur est survenue, réessayez.",
+    "categories": {
+      "newsletter": {
+        "title": "La newsletter",
+        "text": "Nos articles sur le digital, l'IA et le produit."
+      },
+      "updates": {
+        "title": "Les nouveautés SonnaLab",
+        "text": "Nos services, nos réalisations, nos outils."
+      },
+      "events": {
+        "title": "Événements et offres",
+        "text": "Ateliers, webinaires et offres du moment."
+      }
+    },
+    "language": "Langue des e-mails",
+    "service": "Les e-mails liés à votre compte ou à vos projets (devis, factures, rendez-vous) ne sont pas concernés et continuent normalement.",
+    "unsubscribeAll": "Me désinscrire de tout",
+    "unsubscribedNotice": "Vous êtes désinscrit : vous ne recevez plus aucun e-mail de diffusion.",
+    "resubscribe": "Me réinscrire",
+    "backHome": "Retour au site",
+    "unsubscribeTitle": "Se désinscrire",
+    "unsubscribedTitle": "C'est noté",
+    "unsubscribeText": "Vous ne recevrez plus nos newsletters, nouveautés ni offres.",
+    "unsubscribeConfirm": "Confirmer la désinscription",
+    "chooseInstead": "Plutôt choisir ce que je reçois",
+    "unsubscribedText": "Vous êtes désinscrit : vous ne recevrez plus nos e-mails de diffusion.",
+    "manage": "Gérer mes préférences",
+    "confirmTitle": "Inscription confirmée",
+    "confirmErrorTitle": "Lien invalide",
+    "confirming": "Confirmation en cours…",
+    "confirmText": "Bienvenue ! Vous recevrez nos prochaines newsletters. Vous pouvez choisir ce que vous recevez à tout moment.",
+    "readBlog": "Lire nos articles",
+    "badge": "Vos e-mails SonnaLab"
   }
 }

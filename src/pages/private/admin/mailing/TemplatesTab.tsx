@@ -3,9 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { apiService, type MailPreview } from '@/services/api';
-import { Breadcrumbs } from '@/components/private/common/Breadcrumbs';
-import { PageHeader } from '@/components/private/common/PageHeader';
-import { PaperclipIcon, SendIcon, ServerIcon } from '@icons';
+import { PaperclipIcon, SendIcon } from '@icons';
 
 type Locale = 'fr' | 'en';
 type Device = 'desktop' | 'mobile';
@@ -16,16 +14,17 @@ const ORDER = [
   'billing_mailer', 'quote_sent', 'invoice_sent', 'invoice_sent_after_deposit', 'payment_reminder_upcoming',
   'payment_reminder_overdue', 'payment_received_deposit', 'payment_received_settled',
   'contact_mailer', 'confirm_submission', 'notify_team',
+  'newsletter_mailer', 'confirm_subscription', 'welcome', 'goodbye', 'campaign_mailer', 'campaign',
 ];
 const rank = (key: string) => (ORDER.indexOf(key) + 1 || ORDER.length + 1);
 const byJourney = (a: string, b: string) => rank(a) - rank(b);
 
 /**
- * « Aperçu des mails » (temporary, reached from Infrastructure): every
- * SonnaLab e-mail rendered by the API on fictional data — nothing is sent.
- * Pick one on the left; French or English, desktop or phone width.
+ * Mailing › Templates: every SonnaLab e-mail rendered by the API on
+ * fictional data — nothing is sent unless « Envoyer un test ». Pick one on
+ * the left; French or English, desktop or phone width.
  */
-export default function AdminMailPreviews() {
+export function TemplatesTab() {
   const { t } = useTranslation('admin');
   const [mailers, setMailers] = useState<{ key: string; emails: string[] }[]>([]);
   const [selected, setSelected] = useState<{ mailer: string; email: string } | null>(null);
@@ -85,27 +84,19 @@ export default function AdminMailPreviews() {
   const label = (mailer: string, email: string) => t(`mails.emails.${email}`, { defaultValue: `${mailer} · ${email}` });
 
   return (
-    <div className="dash-page">
-      <Breadcrumbs items={[{ label: t('nav.infrastructure'), to: '/admin/infrastructure' }, { label: t('mails.heading') }]} />
-      <PageHeader
-        badge={{ icon: ServerIcon, label: t('nav.infrastructure') }}
-        title={t('mails.heading')}
-        description={t('mails.subtitle')}
-        actions={
-          <>
-            <div className="mailp-toggle" role="group" aria-label={t('mails.locale')}>
-              {(['fr', 'en'] as Locale[]).map((code) => (
-                <button key={code} type="button" className={locale === code ? 'is-active' : ''} onClick={() => setLocale(code)}>{code.toUpperCase()}</button>
-              ))}
-            </div>
-            <div className="mailp-toggle" role="group" aria-label={t('mails.device.label')}>
-              {(['desktop', 'mobile'] as Device[]).map((d) => (
-                <button key={d} type="button" className={device === d ? 'is-active' : ''} onClick={() => setDevice(d)}>{t(`mails.device.${d}`)}</button>
-              ))}
-            </div>
-          </>
-        }
-      />
+    <div className="infra-stack">
+      <div className="infra-toolbar mailp-toolbar">
+        <div className="mailp-toggle" role="group" aria-label={t('mails.locale')}>
+          {(['fr', 'en'] as Locale[]).map((code) => (
+            <button key={code} type="button" className={locale === code ? 'is-active' : ''} onClick={() => setLocale(code)}>{code.toUpperCase()}</button>
+          ))}
+        </div>
+        <div className="mailp-toggle" role="group" aria-label={t('mails.device.label')}>
+          {(['desktop', 'mobile'] as Device[]).map((d) => (
+            <button key={d} type="button" className={device === d ? 'is-active' : ''} onClick={() => setDevice(d)}>{t(`mails.device.${d}`)}</button>
+          ))}
+        </div>
+      </div>
 
       <div className="mailp">
         <nav className="mailp-list" aria-label={t('mails.heading')}>

@@ -10,7 +10,8 @@
     "lesankofa": "Lesankofa",
     "billing": "Facturación",
     "travaux": "Trabajos",
-    "company": "Empresa"
+    "company": "Empresa",
+    "mailing": "Mailing"
   },
   "dashboard": {
     "title": "Bienvenido, =={{name}}==",
@@ -960,7 +961,9 @@
       "auth_mailer": "Cuenta",
       "team_mailer": "Equipo",
       "billing_mailer": "Facturación",
-      "contact_mailer": "Solicitudes de proyecto"
+      "contact_mailer": "Solicitudes de proyecto",
+      "newsletter_mailer": "Newsletter",
+      "campaign_mailer": "Campañas"
     },
     "emails": {
       "confirmation": "Confirmación de registro",
@@ -974,11 +977,123 @@
       "payment_received_deposit": "Pago recibido — anticipo",
       "payment_received_settled": "Pago recibido — saldada",
       "confirm_submission": "Solicitud de proyecto — visitante",
-      "notify_team": "Solicitud de proyecto — equipo"
+      "notify_team": "Solicitud de proyecto — equipo",
+      "confirm_subscription": "Confirmación de suscripción",
+      "welcome": "Bienvenida",
+      "goodbye": "Baja",
+      "campaign": "Campaña"
     },
     "sendTest": "Enviar una prueba",
     "sending": "Enviando…",
     "sent": "Correo de prueba enviado a {{to}}.",
     "sendError": "No se pudo enviar la prueba."
+  },
+  "mailing": {
+    "heading": "Gestión del mailing",
+    "subtitle": "Plantillas de correo, campañas y suscriptores, respetando sus preferencias.",
+    "tabs": {
+      "templates": "Plantillas",
+      "campaigns": "Campañas",
+      "newsletter": "Newsletter"
+    },
+    "stats": {
+      "confirmed": "Suscriptores confirmados",
+      "pending": "Pendientes de confirmar",
+      "unsubscribed": "Dados de baja",
+      "campaigns": "Campañas enviadas",
+      "delivered": "Correos enviados (30 d)"
+    },
+    "categories": {
+      "newsletter": "Newsletter",
+      "updates": "Novedades",
+      "events": "Eventos y ofertas"
+    },
+    "audiences": {
+      "subscribers": "Suscriptores",
+      "clients": "Clientes (equipos)",
+      "all": "Suscriptores y clientes"
+    },
+    "heroes": {
+      "none": "Sin ilustración",
+      "welcome": "La página de inicio",
+      "request": "Los servicios",
+      "quote": "Presupuestos",
+      "invoice": "Facturas",
+      "payment": "Pagos",
+      "invitation": "El área de cliente"
+    },
+    "campaigns": {
+      "new": "Nueva campaña",
+      "edit": "Editar la campaña",
+      "formHint": "Se envía en el idioma de cada destinatario (francés por defecto), con sus enlaces de preferencias y de baja.",
+      "name": "Campaña",
+      "category": "Categoría",
+      "audience": "Destinatarios",
+      "hero": "Ilustración",
+      "ctaUrl": "Enlace del botón",
+      "results": "Resultados",
+      "preview": "Vista previa",
+      "send": "Enviar",
+      "sendTitle": "¿Enviar «{{name}}»?",
+      "sendMessage_one": "Se enviará a {{count}} destinatario. Es definitivo.",
+      "sendMessage_other": "Se enviará a {{count}} destinatarios. Es definitivo.",
+      "sending": "Enviando…",
+      "saved": "Campaña guardada.",
+      "empty": "Aún no hay campañas.",
+      "reach_one": "{{count}} destinatario",
+      "reach_other": "{{count}} destinatarios",
+      "delivered": "{{count}} / {{total}} enviados",
+      "failed": "{{count}} fallidos",
+      "statuses": {
+        "draft": "Borrador",
+        "sending": "Enviando",
+        "sent": "Enviada",
+        "failed": "Fallida"
+      },
+      "version": {
+        "fr": "Versión francesa",
+        "en": "Versión inglesa"
+      },
+      "fields": {
+        "subject": "Asunto",
+        "preheader": "Vista previa en la bandeja",
+        "title": "Título",
+        "body": "Texto",
+        "cta_label": "Texto del botón"
+      },
+      "bodyHint": "Un párrafo por bloque; deje una línea vacía entre párrafos.",
+      "englishHint": "Sin versión inglesa, los anglófonos reciben la francesa."
+    },
+    "subscribers": {
+      "new": "Añadir un suscriptor",
+      "doubleOptIn": "Recibe un correo para confirmar: no se envía nada hasta que haga clic.",
+      "added": "Solicitud de confirmación enviada a {{email}}.",
+      "search": "Buscar un suscriptor…",
+      "empty": "Ningún suscriptor.",
+      "preferences": "Recibe",
+      "source": "Origen",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "unsubscribe": "Dar de baja",
+      "resubscribe": "Volver a suscribir",
+      "eraseTitle": "¿Borrar este suscriptor?",
+      "eraseMessage": "{{email}} y sus preferencias se eliminarán (derecho de supresión).",
+      "statuses": {
+        "all": "Todos",
+        "confirmed": "Confirmados",
+        "pending": "Pendientes",
+        "unsubscribed": "Dados de baja"
+      },
+      "sources": {
+        "site": "Sitio",
+        "client": "Cliente",
+        "admin": "Añadido a mano"
+      },
+      "state": {
+        "confirmed": "Confirmado",
+        "pending": "Pendiente",
+        "unsubscribed": "Dado de baja"
+      }
+    }
   }
 }

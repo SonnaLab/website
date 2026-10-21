@@ -342,6 +342,55 @@ export interface AdminUsersOverview {
   acquisition: number;
 }
 
+// ── Mailing ──
+export interface MailingOverview {
+  subscribers: { confirmed: number; pending: number; unsubscribed: number };
+  campaigns: { total: number; sent: number };
+  delivered_30d: number;
+}
+
+export interface MailingSubscriber {
+  id: string;
+  email: string;
+  first_name: string | null;
+  last_name: string | null;
+  language: string;
+  status: 'pending' | 'confirmed' | 'unsubscribed';
+  source: string | null;
+  confirmed_at: string | null;
+  unsubscribed_at: string | null;
+  created_at: string;
+  preferences: Record<'newsletter' | 'updates' | 'events', boolean>;
+}
+
+export interface MailingCampaign {
+  id: string;
+  name: string;
+  category: 'newsletter' | 'updates' | 'events';
+  audience: 'subscribers' | 'clients' | 'all';
+  status: 'draft' | 'sending' | 'sent' | 'failed';
+  hero: string | null;
+  cta_url?: string | null;
+  sent_at: string | null;
+  recipients_count: number;
+  delivered_count: number;
+  failed_count: number;
+  audience_count?: number;
+  created_at: string;
+  subject_fr: string | null; subject_en: string | null;
+  preheader_fr?: string | null; preheader_en?: string | null;
+  title_fr?: string | null; title_en?: string | null;
+  body_fr?: string | null; body_en?: string | null;
+  cta_label_fr?: string | null; cta_label_en?: string | null;
+}
+
+export interface EmailPreferences {
+  email: string;
+  language: string;
+  subscribed: boolean;
+  preferences: Record<'newsletter' | 'updates' | 'events', boolean>;
+}
+
 // ── Gestion de l'infrastructure ──
 export interface InfraDatabase {
   version: string;
@@ -758,6 +807,45 @@ class ApiService {
   }
 
   // ==================== Admin: Users ====================
+
+  // ── Mailing (back office) ──
+  async adminMailingOverview(): Promise<MailingOverview> { return (await this.client.get('/api/v1/admin/mailing/overview')).data; }
+  async adminMailingSubscribers(params: { q?: string; status?: string; page?: number }): Promise<{ subscribers: MailingSubscriber[]; meta: { total: number; page: number; pages: number } }> {
+    return (await this.client.get('/api/v1/admin/mailing/subscribers', { params })).data;
+  }
+  async adminMailingCreateSubscriber(payload: { email: string; first_name?: string; last_name?: string; language: string }) {
+    return (await this.client.post('/api/v1/admin/mailing/subscribers', payload)).data;
+  }
+  async adminMailingUpdateSubscriber(id: string, status: 'confirmed' | 'unsubscribed') {
+    return (await this.client.patch(`/api/v1/admin/mailing/subscribers/${id}`, { status })).data;
+  }
+  async adminMailingDeleteSubscriber(id: string) { return (await this.client.delete(`/api/v1/admin/mailing/subscribers/${id}`)).data; }
+  async adminMailingCampaigns(): Promise<{ campaigns: MailingCampaign[] }> { return (await this.client.get('/api/v1/admin/mailing/campaigns')).data; }
+  async adminMailingCampaign(id: string): Promise<{ campaign: MailingCampaign }> { return (await this.client.get(`/api/v1/admin/mailing/campaigns/${id}`)).data; }
+  async adminMailingSaveCampaign(payload: Partial<MailingCampaign>, id?: string): Promise<{ campaign: MailingCampaign }> {
+    return id
+      ? (await this.client.patch(`/api/v1/admin/mailing/campaigns/${id}`, { campaign: payload })).data
+      : (await this.client.post('/api/v1/admin/mailing/campaigns', { campaign: payload })).data;
+  }
+  async adminMailingDeleteCampaign(id: string) { return (await this.client.delete(`/api/v1/admin/mailing/campaigns/${id}`)).data; }
+  async adminMailingPreviewCampaign(id: string, locale: string): Promise<{ subject: string; html: string }> {
+    return (await this.client.get(`/api/v1/admin/mailing/campaigns/${id}/preview`, { params: { locale } })).data;
+  }
+  async adminMailingTestCampaign(id: string, to: string, locale: string) {
+    return (await this.client.post(`/api/v1/admin/mailing/campaigns/${id}/test`, { to, locale })).data;
+  }
+  async adminMailingSendCampaign(id: string) { return (await this.client.post(`/api/v1/admin/mailing/campaigns/${id}/send`)).data; }
+
+  // ── Communication preferences (public, token from the e-mail's links) ──
+  async emailPreferences(token: string): Promise<EmailPreferences> { return (await this.client.get(`/api/v1/email_preferences/${token}`)).data; }
+  async updateEmailPreferences(token: string, payload: { preferences?: Record<string, boolean>; language?: string }): Promise<EmailPreferences> {
+    return (await this.client.patch(`/api/v1/email_preferences/${token}`, payload)).data;
+  }
+  async unsubscribeEmail(token: string): Promise<EmailPreferences> { return (await this.client.post(`/api/v1/email_preferences/${token}/unsubscribe`)).data; }
+  async resubscribeEmail(token: string): Promise<EmailPreferences> { return (await this.client.post(`/api/v1/email_preferences/${token}/resubscribe`)).data; }
+  async confirmNewsletter(token: string): Promise<{ success: boolean; preferences_token: string }> {
+    return (await this.client.post('/api/v1/newsletter/confirm', { token })).data;
+  }
 
   async adminMailPreviews(): Promise<{ mailers: { key: string; emails: string[] }[] }> {
     return (await this.client.get('/api/v1/admin/mail_previews')).data;

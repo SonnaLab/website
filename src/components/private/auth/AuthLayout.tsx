@@ -8,6 +8,8 @@ import wLogo from '@/assets/logo/wSonnaLab.png';
 interface AuthLayoutProps {
   title: string;
   subtitle?: string;
+  /** Replaces the « Espace membre sécurisé » badge. */
+  badge?: string;
   children: ReactNode;
   footer?: ReactNode;
 }
@@ -16,7 +18,7 @@ interface AuthLayoutProps {
  * Shell visuel pour les pages d'authentification.
  * Fond animé + carte glassmorphisme — sans Header/Footer global.
  */
-export function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProps) {
+export function AuthLayout({ title, subtitle, badge, children, footer }: AuthLayoutProps) {
   const { t } = useTranslation('auth');
 
   return (
@@ -61,7 +63,7 @@ export function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProp
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
           </svg>
-          {t('badge')}
+          {badge ?? t('badge')}
         </div>
 
         {/* En-tête */}
