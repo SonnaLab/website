@@ -9,7 +9,7 @@ import { apiService, type MyBilling, type ProfilePayload } from '@/services/api'
 import { Breadcrumbs } from '@/components/private/common/Breadcrumbs';
 import { PageHeader } from '@/components/private/common/PageHeader';
 import { Modal } from '@/components/common/Modal';
-import { getDashboardPath } from '@/utils/auth';
+import { getDashboardPath, roleKey } from '@/utils/auth';
 
 const LANGUAGES = ['fr', 'en'] as const;
 
@@ -97,7 +97,7 @@ function DetailsSection() {
           </div>
           <div className="adm-form__field">
             <label className="adm-form__label" htmlFor="profile-role">{t('profile.fields.role')}</label>
-            <input id="profile-role" className="adm-input" value={user ? t(`profile.roles.${user.role}`) : ''} readOnly disabled />
+            <input id="profile-role" className="adm-input" value={user ? t(`profile.roles.${roleKey(user)}`) : ''} readOnly disabled />
           </div>
         </div>
         <div className="adm-form__row">

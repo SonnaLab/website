@@ -5983,3 +5983,7 @@
 .mb-send__row .adm-input { flex: 1; min-width: 0; }
 .mb-send__hint { margin: 8px 0 0; font-size: 12px; color: #6b7280; }
 @media (max-width: 640px) { .mb-send__row { flex-direction: column; } }
+
+/* Sidebar footer: the divider spans the column like the ones between menus. */
+.dash-sidebar__footer .dash-nav-sep--footer { align-self: stretch; margin: 0 10px; }
+.dash-shell[data-sidebar-expanded="true"] .dash-sidebar__footer .dash-nav-sep--footer { margin: 0 14px; }

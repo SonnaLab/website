@@ -112,7 +112,8 @@
     "roles": {
       "user": "Membre",
       "staff": "Staff",
-      "admin": "Administrateur"
+      "admin": "Administrateur",
+      "manager": "Manager"
     },
     "languages": {
       "fr": "Français",

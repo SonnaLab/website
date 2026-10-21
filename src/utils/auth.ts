@@ -11,3 +11,9 @@ export function getDashboardPath(role: AuthRole | undefined | null): string {
     default:      return '/dashboard';
   }
 }
+
+/** The profile as people read it (member.json profile.roles): a company's main contact is its « Manager ». */
+export function roleKey(user: { role?: AuthRole | null; company_admin?: boolean } | null | undefined): string {
+  if (!user?.role) return 'user';
+  return user.role === 'user' && user.company_admin ? 'manager' : user.role;
+}

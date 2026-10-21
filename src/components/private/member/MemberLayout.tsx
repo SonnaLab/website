@@ -20,7 +20,7 @@ import {
 
 import { useAuth } from '@/components/providers/AuthProvider';
 import { ConfirmProvider } from '@/components/common/ConfirmDialog';
-import { getDashboardPath } from '@/utils/auth';
+import { getDashboardPath, roleKey } from '@/utils/auth';
 import { ADMIN_NAV, MEMBER_NAV } from './navigation';
 import sonnaLabLogo from '@/assets/logo/bSonnaLab.png';
 
@@ -131,7 +131,7 @@ export function MemberLayout() {
               <div className="dash-avatar-dropdown">
                 <div className="dash-avatar-info">
                   <span className="dash-avatar-info__name">{displayName}</span>
-                  <span className="dash-avatar-info__role">{user?.role}</span>
+                  <span className="dash-avatar-info__role">{t(`profile.roles.${roleKey(user)}`)}</span>
                 </div>
 
                 <Link to="/dashboard/profile" className="dash-avatar-menu-item" onClick={() => setAvatarOpen(false)}>
@@ -206,6 +206,7 @@ export function MemberLayout() {
                 <ActivityIcon size={16} />
               </Link>
             )}
+            {isAdmin && <div className="dash-nav-sep dash-nav-sep--footer" aria-hidden="true" />}
             <Link
               to="/"
               className="dash-footer-link"
