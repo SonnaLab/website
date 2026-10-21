@@ -1527,6 +1527,7 @@
 
 .adm-modal__footer {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
@@ -6460,3 +6461,9 @@
 .trv-multiplier__toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #111111; cursor: pointer; }
 .trv-multiplier__toggle input { width: 16px; height: 16px; accent-color: #111111; }
 .trv-multiplier .trv-hint { flex-basis: 100%; margin: 0; }
+.mb-decision__error { margin: -2px 0 4px; font-size: 12px; font-weight: 600; color: #b91c1c; }
+
+/* Aperçu d'un document (espace membre) : sur mobile, les actions vont par deux. */
+@media (max-width: 640px) {
+  .adm-modal:has(.mb-pdf) .adm-modal__footer .adm-btn { flex: 1 1 calc(50% - 4px); justify-content: center; }
+}

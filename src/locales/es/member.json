@@ -132,7 +132,8 @@
         "postponed": "Proyecto aplazado",
         "other": "Otro motivo"
       },
-      "managerOnly": "Solo el responsable de su empresa puede aceptarlo o rechazarlo. En cuanto responda, la factura o nuestra propuesta ajustada aparecerá aquí."
+      "managerOnly": "Solo el responsable de su empresa puede aceptarlo o rechazarlo. En cuanto responda, la factura o nuestra propuesta ajustada aparecerá aquí.",
+      "reasonRequired": "Elija un motivo para enviar su respuesta."
     }
   },
   "profile": {

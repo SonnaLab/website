@@ -132,7 +132,8 @@
         "postponed": "Progetto rinviato",
         "other": "Altro motivo"
       },
-      "managerOnly": "Solo il manager della sua azienda può accettarlo o rifiutarlo. Appena risponde, la fattura o la nostra proposta rivista compare qui."
+      "managerOnly": "Solo il manager della sua azienda può accettarlo o rifiutarlo. Appena risponde, la fattura o la nostra proposta rivista compare qui.",
+      "reasonRequired": "Scelga un motivo per inviare il suo riscontro."
     }
   },
   "profile": {

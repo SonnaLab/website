@@ -132,7 +132,8 @@
         "postponed": "Projet reporté",
         "other": "Autre raison"
       },
-      "managerOnly": "Seul le manager de votre entreprise peut l'accepter ou le décliner. Dès sa réponse, la facture ou notre proposition ajustée arrive ici."
+      "managerOnly": "Seul le manager de votre entreprise peut l'accepter ou le décliner. Dès sa réponse, la facture ou notre proposition ajustée arrive ici.",
+      "reasonRequired": "Choisissez un motif pour envoyer votre retour."
     }
   },
   "profile": {

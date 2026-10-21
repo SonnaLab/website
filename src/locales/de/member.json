@@ -132,7 +132,8 @@
         "postponed": "Projekt verschoben",
         "other": "Anderer Grund"
       },
-      "managerOnly": "Nur der Manager Ihres Unternehmens kann es annehmen oder ablehnen. Sobald er antwortet, erscheint hier die Rechnung oder unser angepasster Vorschlag."
+      "managerOnly": "Nur der Manager Ihres Unternehmens kann es annehmen oder ablehnen. Sobald er antwortet, erscheint hier die Rechnung oder unser angepasster Vorschlag.",
+      "reasonRequired": "Wählen Sie einen Grund, um Ihre Rückmeldung zu senden."
     }
   },
   "profile": {

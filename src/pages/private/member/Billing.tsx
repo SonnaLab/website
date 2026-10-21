@@ -246,11 +246,15 @@ function DocumentModal({ doc, downloading, onDownload, onClose, onDecided, fmtMo
   const [sendOpen, setSendOpen] = useState(false);
   const [to, setTo] = useState('');
   const [sending, setSending] = useState(false);
+  // The answer to a quote: its step, and while it is being saved.
+  const [mode, setMode] = useState<DecisionMode>('idle');
+  const [busy, setBusy] = useState(false);
+  const canAnswer = !!doc && doc.kind === 'quote' && doc.status === 'sent' && !!user?.company_admin;
 
   useEffect(() => {
     if (!doc) return undefined;
     let objectUrl: string | null = null;
-    setUrl(null); setFailed(false); setSendOpen(false); setTo(user?.email ?? '');
+    setUrl(null); setFailed(false); setSendOpen(false); setTo(user?.email ?? ''); setMode('idle');
     apiService.downloadBillingDocumentPdf(doc.id)
       .then(({ blob }) => { objectUrl = URL.createObjectURL(new Blob([blob], { type: 'application/pdf' })); setUrl(objectUrl); })
       .catch(() => setFailed(true));
@@ -273,6 +277,20 @@ function DocumentModal({ doc, downloading, onDownload, onClose, onDecided, fmtMo
     }
   }
 
+  async function accept() {
+    if (!doc) return;
+    setBusy(true);
+    try {
+      const res = await apiService.acceptBillingQuote(doc.id);
+      toast.success(t('billing.decision.acceptedDone', { number: res.invoice.printed_number }));
+      onDecided(res.document);
+    } catch {
+      toast.error(t('billing.decision.error'));
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <Modal
       open={!!doc}
@@ -285,13 +303,40 @@ function DocumentModal({ doc, downloading, onDownload, onClose, onDecided, fmtMo
           <button type="button" className="adm-btn adm-btn--ghost" onClick={() => setSendOpen((v) => !v)}>
             <SendIcon size={13} /> {t('billing.send.cta')}
           </button>
-          <button type="button" className="adm-btn adm-btn--primary" disabled={downloading} onClick={() => onDownload(doc)}>
+          {/* Only one black button: « Accepter le devis » when the quote waits for an answer. */}
+          <button type="button" className={`adm-btn adm-btn--${canAnswer ? 'ghost' : 'primary'}`} disabled={downloading} onClick={() => onDownload(doc)}>
             <DownloadIcon size={13} /> {t('billing.downloadPdf')}
           </button>
+          {canAnswer && mode === 'idle' && (
+            <>
+              <button type="button" className="adm-btn adm-btn--ghost" onClick={() => setMode('decline')}>
+                <XCircleIcon size={13} /> {t('billing.decision.decline')}
+              </button>
+              <button type="button" className="adm-btn adm-btn--primary" onClick={() => setMode('accept')}>
+                <CheckCircleIcon size={13} /> {t('billing.decision.accept')}
+              </button>
+            </>
+          )}
+          {canAnswer && mode !== 'idle' && (
+            <>
+              <button type="button" className="adm-btn adm-btn--ghost" onClick={() => setMode('idle')}>{t('billing.decision.back')}</button>
+              {mode === 'accept' ? (
+                <button type="button" className="adm-btn adm-btn--primary" disabled={busy} onClick={accept}>
+                  <CheckCircleIcon size={13} /> {t('billing.decision.confirm')}
+                </button>
+              ) : (
+                <button type="submit" form="mb-decline-form" className="adm-btn adm-btn--primary" disabled={busy}>
+                  <SendIcon size={13} /> {t('billing.decision.submit')}
+                </button>
+              )}
+            </>
+          )}
         </>
       )}
     >
-      {doc?.kind === 'quote' && <QuoteDecision doc={doc} onDecided={onDecided} fmtMoney={fmtMoney} />}
+      {doc?.kind === 'quote' && (
+        <QuoteDecision doc={doc} mode={mode} setBusy={setBusy} onDecided={onDecided} fmtMoney={fmtMoney} />
+      )}
       {sendOpen && (
         <form className="mb-send" onSubmit={send}>
           <label className="adm-form__label" htmlFor="mb-send-to">{t('billing.send.to')}</label>
@@ -313,26 +358,30 @@ function DocumentModal({ doc, downloading, onDownload, onClose, onDecided, fmtMo
   );
 }
 
+type DecisionMode = 'idle' | 'accept' | 'decline';
+
 /**
  * The client's answer to a quote, reserved to the company's managers.
  * Waiting: accept (after a confirmation — the invoice follows by e-mail) or
  * decline (why, the budget in mind, what to change); other members see that
  * it waits for their manager. Answered: what was decided, when and by whom.
+ * Its buttons sit in the modal's footer, next to « Envoyer » / « Télécharger ».
  */
-function QuoteDecision({ doc, onDecided, fmtMoney }: {
+function QuoteDecision({ doc, mode, setBusy, onDecided, fmtMoney }: {
   doc: TravauxInvoice;
+  mode: DecisionMode;
+  setBusy: (busy: boolean) => void;
   onDecided: (doc: TravauxInvoice) => void;
   fmtMoney: (cents: number) => string;
 }) {
   const { t, i18n } = useTranslation('member');
   const { user } = useAuth();
-  const [mode, setMode] = useState<'idle' | 'accept' | 'decline'>('idle');
   const [reason, setReason] = useState<DeclineReason | null>(null);
+  const [missingReason, setMissingReason] = useState(false);
   const [budget, setBudget] = useState('');
   const [details, setDetails] = useState('');
-  const [busy, setBusy] = useState(false);
 
-  useEffect(() => { setMode('idle'); setReason(null); setBudget(''); setDetails(''); }, [doc.id]);
+  useEffect(() => { setReason(null); setMissingReason(false); setBudget(''); setDetails(''); }, [doc.id]);
 
   const decidedOn = doc.decided_at
     ? new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }).format(new Date(doc.decided_at))
@@ -380,22 +429,9 @@ function QuoteDecision({ doc, onDecided, fmtMoney }: {
     );
   }
 
-  async function accept() {
-    setBusy(true);
-    try {
-      const res = await apiService.acceptBillingQuote(doc.id);
-      toast.success(t('billing.decision.acceptedDone', { number: res.invoice.printed_number }));
-      onDecided(res.document);
-    } catch {
-      toast.error(t('billing.decision.error'));
-    } finally {
-      setBusy(false);
-    }
-  }
-
   async function decline(e: React.FormEvent) {
     e.preventDefault();
-    if (!reason) return;
+    if (!reason) { setMissingReason(true); return; }
     setBusy(true);
     try {
       const euros = Number(budget.replace(/\s/g, '').replace(',', '.'));
@@ -415,7 +451,7 @@ function QuoteDecision({ doc, onDecided, fmtMoney }: {
 
   if (mode === 'decline') {
     return (
-      <form className="mb-decision mb-decision--form" onSubmit={decline}>
+      <form id="mb-decline-form" className="mb-decision mb-decision--form" onSubmit={decline}>
         <div className="mb-decision__body">
           <p className="mb-decision__title">{t('billing.decision.declineTitle')}</p>
           <p className="mb-decision__text">{t('billing.decision.declineText')}</p>
@@ -429,12 +465,13 @@ function QuoteDecision({ doc, onDecided, fmtMoney }: {
                 role="radio"
                 aria-checked={reason === r}
                 className={['mb-decision__reason', reason === r ? 'is-active' : ''].filter(Boolean).join(' ')}
-                onClick={() => setReason(r)}
+                onClick={() => { setReason(r); setMissingReason(false); }}
               >
                 {t(`billing.decision.reasons.${r}`)}
               </button>
             ))}
           </div>
+          {missingReason && <p className="mb-decision__error">{t('billing.decision.reasonRequired')}</p>}
 
           <div className="adm-form__row">
             <div className="adm-form__field">
@@ -450,12 +487,6 @@ function QuoteDecision({ doc, onDecided, fmtMoney }: {
                       placeholder={t('billing.decision.detailsPlaceholder')} value={details} onChange={(e) => setDetails(e.target.value)} />
           </div>
         </div>
-        <div className="mb-decision__actions">
-          <button type="button" className="adm-btn adm-btn--ghost" onClick={() => setMode('idle')}>{t('billing.decision.back')}</button>
-          <button type="submit" className="adm-btn adm-btn--primary" disabled={busy || !reason}>
-            <SendIcon size={13} /> {t('billing.decision.submit')}
-          </button>
-        </div>
       </form>
     );
   }
@@ -468,23 +499,6 @@ function QuoteDecision({ doc, onDecided, fmtMoney }: {
           {mode === 'accept' ? t('billing.decision.confirmTitle', { amount: fmtMoney(doc.amount_cents) }) : t('billing.decision.title')}
         </p>
         <p className="mb-decision__text">{mode === 'accept' ? t('billing.decision.confirmText') : t('billing.decision.text')}</p>
-      </div>
-      <div className="mb-decision__actions">
-        {mode === 'accept' ? (
-          <>
-            <button type="button" className="adm-btn adm-btn--ghost" onClick={() => setMode('idle')}>{t('billing.decision.back')}</button>
-            <button type="button" className="adm-btn adm-btn--primary" disabled={busy} onClick={accept}>
-              <CheckCircleIcon size={13} /> {t('billing.decision.confirm')}
-            </button>
-          </>
-        ) : (
-          <>
-            <button type="button" className="adm-btn adm-btn--ghost" onClick={() => setMode('decline')}>{t('billing.decision.decline')}</button>
-            <button type="button" className="adm-btn adm-btn--primary" onClick={() => setMode('accept')}>
-              <CheckCircleIcon size={13} /> {t('billing.decision.accept')}
-            </button>
-          </>
-        )}
       </div>
     </div>
   );
