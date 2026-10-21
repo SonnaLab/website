@@ -94,7 +94,7 @@ export function MemberLayout() {
             onMouseLeave={() => setSidebarHover(false)}
           >
             <img
-              src="/favicon/favicon-32x32.png"
+              src="/favicon/android-chrome-192x192.png"
               alt="SonnaLab"
               className="dash-topbar__favicon"
             />
@@ -158,17 +158,6 @@ export function MemberLayout() {
         </div>
       </header>
 
-      {/* ── Impersonation banner, under the top bar ── */}
-      {impersonatingAdmin && (
-        <div className="dash-impersonation-banner">
-          <EyeIcon size={14} />
-          <span className="dash-impersonation-banner__text">{tA('impersonation.banner', { name: displayName || user?.email })}</span>
-          <button type="button" className="dash-impersonation-banner__btn" onClick={stopImpersonating} title={tA('impersonation.stop')}>
-            <span className="dash-impersonation-banner__label">{tA('impersonation.stop')}</span> <ArrowRightFromLineIcon size={14} />
-          </button>
-        </div>
-      )}
-
       {/* ── Body ── */}
       <div className="dash-body">
 
@@ -218,6 +207,16 @@ export function MemberLayout() {
 
         {/* ── Main content ── */}
         <main className="dash-main">
+          {/* ── Impersonation banner: under the top bar, beside the sidebar ── */}
+          {impersonatingAdmin && (
+            <div className="dash-impersonation-banner">
+              <EyeIcon size={14} />
+              <span className="dash-impersonation-banner__text">{tA('impersonation.banner', { name: displayName || user?.email })}</span>
+              <button type="button" className="dash-impersonation-banner__btn" onClick={stopImpersonating} title={tA('impersonation.stop')}>
+                <span className="dash-impersonation-banner__label">{tA('impersonation.stop')}</span> <ArrowRightFromLineIcon size={14} />
+              </button>
+            </div>
+          )}
           <div className="dash-main__inner">
             <ConfirmProvider>
               <Outlet />

@@ -42,9 +42,12 @@
 /* ── Impersonation banner ── */
 .dash-shell[data-impersonating="true"] { --dash-banner-h: 40px; }
 .dash-impersonation-banner {
+  /* First thing of the content column: under the top bar, beside the
+     sidebar; the negative margins cancel .dash-main's padding. */
   position: sticky;
-  top: var(--dash-topbar-h); /* right under the top bar, which stays above it */
-  z-index: 29;
+  top: var(--dash-topbar-h);
+  z-index: 20;
+  margin: -32px -32px 32px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -159,8 +162,8 @@
   display: flex;
   flex-direction: column;
   position: sticky;
-  top: calc(var(--dash-topbar-h) + var(--dash-banner-h));
-  height: calc(100vh - var(--dash-topbar-h) - var(--dash-banner-h));
+  top: var(--dash-topbar-h);
+  height: calc(100vh - var(--dash-topbar-h));
   overflow-y: auto;
   scrollbar-width: none;
 }
@@ -405,6 +408,10 @@
 
   .dash-main {
     padding: 20px 16px;
+  }
+
+  .dash-impersonation-banner {
+    margin: -20px -16px 20px;
   }
 }
 
