@@ -90,7 +90,8 @@ export function dueDateCountdown(dueDate: string, from: Date = new Date()): stri
   return days >= 0 ? `J-${days}` : `J+${Math.abs(days)}`;
 }
 
-/** « 2,6 » : virgule décimale, comme sur le PDF. */
+/** « 2,6J », « 135J » (pas de « ,0 ») : virgule décimale, comme sur le PDF. */
 export function formatDays(days: number): string {
-  return days.toFixed(1).replace('.', ',');
+  const text = Number.isInteger(days) ? String(days) : days.toFixed(1).replace('.', ',');
+  return `${text}J`;
 }
