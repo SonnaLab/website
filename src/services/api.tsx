@@ -824,9 +824,6 @@ class ApiService {
   async adminTravauxDeleteInvoice(id: string) {
     return (await this.client.delete(`/api/v1/admin/travaux/invoices/${id}`)).data;
   }
-  async adminTravauxGenerateInvoice(id: string): Promise<{ invoice: TravauxInvoice }> {
-    return (await this.client.post(`/api/v1/admin/travaux/invoices/${id}/generate_invoice`)).data;
-  }
   /** « Envoyer » / « Relancer » by e-mail (PDF attached), each recipient in their language. */
   async adminTravauxInvoiceRecipients(id: string): Promise<{ recipients: BillingRecipient[] }> {
     return (await this.client.get(`/api/v1/admin/travaux/invoices/${id}/recipients`)).data;

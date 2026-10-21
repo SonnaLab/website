@@ -25,7 +25,7 @@ import {
 } from '@/components/common/DataTable';
 import { apiAssetUrl, apiService, saveBlob } from '@/services/api';
 import { calculateDevis, dueDateCountdown } from '@/lib/devisCalc';
-import { BellIcon, CheckCircleIcon, DownloadIcon, EyeIcon, FileTextIcon, PaperclipIcon, PenLineIcon, ReceiptIcon, SendIcon, Trash2Icon, XCircleIcon } from '@icons';
+import { BellIcon, CheckCircleIcon, DownloadIcon, EyeIcon, PaperclipIcon, PenLineIcon, ReceiptIcon, SendIcon, Trash2Icon, XCircleIcon } from '@icons';
 import type {
   BillingRecipient,
   InvoiceKind,
@@ -69,15 +69,13 @@ interface InvoicesTabProps {
   /** Pour la jauge de paiement des factures. */
   payments: TravauxPayment[];
   reload: (resources?: TravauxResource[]) => Promise<void>;
-  /** Défini juste après « Générer un devis » / « Générer la facture » : ouvre son aperçu. */
+  /** Défini juste après « Générer un devis » : ouvre son aperçu. */
   autoPreviewId: string | null;
   onAutoPreviewConsumed: () => void;
-  /** La facture tirée d'un devis : la page passe à l'onglet Factures. */
-  onInvoiceGenerated?: (invoice: TravauxInvoice) => void;
 }
 
 export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(function InvoicesTab(
-  { kind, clientId, client, issuer, invoices, objectives, tasks, payments, reload, autoPreviewId, onAutoPreviewConsumed, onInvoiceGenerated },
+  { kind, clientId, client, issuer, invoices, objectives, tasks, payments, reload, autoPreviewId, onAutoPreviewConsumed },
   ref,
 ) {
   const { t } = useTranslation('admin');
@@ -88,7 +86,6 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
   const [preview, setPreview] = useState<TravauxInvoice | null>(null);
   const [edit, setEdit] = useState<TravauxInvoice | null>(null);
   const [send, setSend] = useState<SendRequest | null>(null);
-  const [generating, setGenerating] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [q, setQ] = useState('');
   useImperativeHandle(ref, () => ({ openNew: () => setNewOpen(true) }));
@@ -124,22 +121,6 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
       toast.success(t('travaux.invoices.deleted'));
     } catch (err) {
       toast.error(apiErrorMessage(err, t('common.error')));
-    }
-  }
-
-  async function generateInvoice(quote: TravauxInvoice) {
-    setGenerating(true);
-    try {
-      const { invoice } = await apiService.adminTravauxGenerateInvoice(quote.id);
-      await reload(['invoices']);
-      setPreview(null);
-      toast.success(t('travaux.invoices.invoiceGenerated'));
-      if (onInvoiceGenerated) onInvoiceGenerated(invoice);
-      else setPreview(invoice);
-    } catch (err) {
-      toast.error(apiErrorMessage(err, t('travaux.invoices.generateInvoiceError')));
-    } finally {
-      setGenerating(false);
     }
   }
 
@@ -273,11 +254,7 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
                       <button type="button" className="trv-doc-ref" onClick={() => setPreview(linked)}>
                         {linked.printed_number.replace(/V\d+$/, '')}
                       </button>
-                    ) : kind === 'quote' ? (
-                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" disabled={generating} onClick={() => generateInvoice(i)}>
-                        <FileTextIcon size={13} /> {t('travaux.invoices.generateInvoice')}
-                      </button>
-                    ) : (i.source_quote_number ?? '—')}
+                    ) : kind === 'quote' ? '—' : (i.source_quote_number ?? '—')}
                   </DataTableTd>
                   <DataTableTd>
                     {kind === 'invoice' ? (
@@ -312,13 +289,11 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
       <InvoicePreviewModal
         invoice={preview}
         data={preview ? previewData(preview) : null}
-        generating={generating}
         onClose={() => setPreview(null)}
         onEdit={(i) => { setPreview(null); setEdit(i); }}
         onDelete={remove}
         onSend={(i) => { setPreview(null); setSend({ invoice: i, mode: 'send' }); }}
         onRemind={preview && remindable(preview) ? (i) => { setPreview(null); setSend({ invoice: i, mode: 'remind' }); } : undefined}
-        onGenerateInvoice={generateInvoice}
       />
       <EditInvoiceModal
         invoice={edit}
@@ -441,18 +416,16 @@ function NewInvoiceModal({
 // ── Aperçu (lecture seule) ──────────────────────────────────────────────────
 
 function InvoicePreviewModal({
-  invoice, data, generating, onClose, onEdit, onDelete, onSend, onRemind, onGenerateInvoice,
+  invoice, data, onClose, onEdit, onDelete, onSend, onRemind,
 }: {
   invoice: TravauxInvoice | null;
   data: DocumentPreviewData | null;
-  generating: boolean;
   onClose: () => void;
   onEdit: (i: TravauxInvoice) => void;
   onDelete: (i: TravauxInvoice) => void;
   onSend: (i: TravauxInvoice) => void;
   /** Only when the invoice still waits for money. */
   onRemind?: (i: TravauxInvoice) => void;
-  onGenerateInvoice: (i: TravauxInvoice) => void;
 }) {
   const { t } = useTranslation('admin');
   const [downloading, setDownloading] = useState(false);
@@ -480,11 +453,6 @@ function InvoicePreviewModal({
         <>
           <button type="button" className="adm-btn adm-btn--ghost" onClick={() => onEdit(invoice)}><PenLineIcon size={13} /> {t('common.edit')}</button>
           <button type="button" className="adm-btn adm-btn--danger" onClick={() => onDelete(invoice)}><Trash2Icon size={13} /> {t('common.delete')}</button>
-          {invoice.kind === 'quote' && !invoice.generated_invoice_id && (
-            <button type="button" className="adm-btn adm-btn--ghost" disabled={generating} onClick={() => onGenerateInvoice(invoice)}>
-              <FileTextIcon size={13} /> {t('travaux.invoices.generateInvoice')}
-            </button>
-          )}
           {onRemind && (
             <button type="button" className="adm-btn adm-btn--ghost" onClick={() => onRemind(invoice)}><BellIcon size={13} /> {t('travaux.invoices.remind')}</button>
           )}

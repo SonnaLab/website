@@ -100,10 +100,6 @@ export default function AdminClientTravaux() {
       reload={data.reload}
       autoPreviewId={autoPreviewId}
       onAutoPreviewConsumed={consumeAutoPreview}
-      onInvoiceGenerated={(invoice) => {
-        setAutoPreviewId(invoice.id);
-        setTab('invoices');
-      }}
     />
   );
   const newLabel = NEW_LABEL[tab];
