@@ -18,6 +18,8 @@ export interface DocumentPreviewData {
   dailyRate: number | null;
   /** « Facteur de multiplication » of the days shown (1 = off). */
   daysMultiplier?: number;
+  /** An invoice is priced like its quote: the quote's dates and rate (as the PDF does). */
+  pricing?: { dueDate: string | null; issuedOn: string | null; dailyRate: number | null };
   objective: TravauxObjective | null;
   /** Tâches du livrable : la répartition jours/prix est recalculée en direct. */
   tasks: TravauxTask[];
@@ -51,7 +53,8 @@ function PartyBlock({ party, label }: { party: TravauxClient | null; label: stri
  */
 export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
   const { t } = useTranslation('admin');
-  const calc = data.objective ? calculateDevis(data.tasks, data.dueDate, data.dailyRate, data.issuedOn) : null;
+  const basis = data.pricing ?? { dueDate: data.dueDate, issuedOn: data.issuedOn ?? null, dailyRate: data.dailyRate };
+  const calc = data.objective ? calculateDevis(data.tasks, basis.dueDate, basis.dailyRate, basis.issuedOn) : null;
   const hasAllocations = !!calc && calc.allocations.length > 0;
   const deliverableTitle = data.objective?.title || data.title || '—';
   const bank = bankLine(data.issuer);

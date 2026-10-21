@@ -168,6 +168,15 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
     ], selection.selectedRows);
   }
 
+  // An invoice keeps its quote's phases: priced from the quote's dates and rate.
+  const pricingOf = (invoice: TravauxInvoice): DocumentPreviewData['pricing'] => {
+    const quote = invoice.source_quote_id ? invoices.find((i) => i.id === invoice.source_quote_id) : null;
+    return quote ? {
+      dueDate: quote.due_on, issuedOn: quote.issued_on,
+      dailyRate: quote.daily_rate_cents != null ? quote.daily_rate_cents / 100 : null,
+    } : undefined;
+  };
+
   const previewData = (invoice: TravauxInvoice): DocumentPreviewData => ({
     kindLabel: t(`travaux.invoices.kinds.${invoice.kind}`),
     printedNumber: invoice.printed_number,
@@ -177,6 +186,7 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
     issuedOn: invoice.issued_on,
     dailyRate: invoice.daily_rate_cents != null ? invoice.daily_rate_cents / 100 : null,
     daysMultiplier: invoice.days_multiplier ?? 1,
+    pricing: pricingOf(invoice),
     objective: objectives.find((o) => o.id === invoice.objective_id) ?? null,
     tasks: tasks.filter((task) => task.objective_id === invoice.objective_id),
     issuer,
