@@ -127,7 +127,8 @@
         "backup_quarterly": "Vierteljährliche Sicherung",
         "backup_semiannual": "Halbjährliche Sicherung",
         "backup_annual": "Jährliche Sicherung",
-        "backup_manual": "Manuelle Sicherung"
+        "backup_manual": "Manuelle Sicherung",
+        "quote_reminders": "Erinnerungen an unbeantwortete Angebote (T+3, T+7, T+14)"
       },
       "days": {
         "0": "Sonntag",
@@ -891,7 +892,9 @@
       "multiplier": {
         "enable": "Multiplikationsfaktor aktivieren",
         "hint": "Die im Angebot angezeigten Tage werden mit diesem Faktor multipliziert; die Preise ändern sich nicht."
-      }
+      },
+      "remindQuoteIntro": "Erinnerung an das Angebot « {{title}} », das auf die Antwort des Kunden wartet, PDF im Anhang.",
+      "remindQuoteHint": "Jeder erhält es in seiner Sprache. Automatische Erinnerungen gehen auch 3, 7 und 14 Tage nach dem Versand raus."
     },
     "contracts": {
       "new": "Neuer Vertrag",
@@ -1135,7 +1138,8 @@
       "quote_declined": "Angebot abgelehnt — Bestätigung",
       "staff_quote_accepted": "Angebot vom Kunden angenommen",
       "staff_quote_declined": "Angebot vom Kunden abgelehnt",
-      "quote_decision": "Antwort auf ein Angebot (Kunde)"
+      "quote_decision": "Antwort auf ein Angebot (Kunde)",
+      "quote_reminder": "Angebot — Erinnerung ohne Antwort"
     },
     "sendTest": "Test senden",
     "sending": "Wird gesendet…",

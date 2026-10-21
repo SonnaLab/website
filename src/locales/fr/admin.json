@@ -127,7 +127,8 @@
         "backup_quarterly": "Sauvegarde trimestrielle",
         "backup_semiannual": "Sauvegarde semestrielle",
         "backup_annual": "Sauvegarde annuelle",
-        "backup_manual": "Sauvegarde manuelle"
+        "backup_manual": "Sauvegarde manuelle",
+        "quote_reminders": "Relances des devis sans réponse (J+3, J+7, J+14)"
       },
       "days": {
         "0": "dimanche",
@@ -892,7 +893,9 @@
       "multiplier": {
         "enable": "Activer le facteur de multiplication",
         "hint": "Les jours affichés sur le devis sont multipliés par ce facteur ; les prix ne changent pas."
-      }
+      },
+      "remindQuoteIntro": "Rappel du devis « {{title}} » qui attend la réponse du client, PDF joint.",
+      "remindQuoteHint": "Chacun le reçoit dans sa langue. Des relances automatiques partent aussi 3, 7 et 14 jours après l'envoi du devis."
     },
     "contracts": {
       "new": "Nouveau contrat",
@@ -1136,7 +1139,8 @@
       "quote_declined": "Devis décliné — accusé",
       "staff_quote_accepted": "Devis accepté par le client",
       "staff_quote_declined": "Devis refusé par le client",
-      "quote_decision": "Réponse à un devis (client)"
+      "quote_decision": "Réponse à un devis (client)",
+      "quote_reminder": "Devis — relance sans réponse"
     },
     "sendTest": "Envoyer un test",
     "sending": "Envoi…",

@@ -17,7 +17,7 @@ const ORDER = [
   // the account's and the newsletter's neighbours).
   'confirmation', 'confirm_subscription', 'welcome', 'reset_password', 'password_changed', 'account_locked', 'account_deleted', 'goodbye',
   'invitation', 'invitation_existing',
-  'quote_sent', 'quote_accepted', 'quote_declined', 'invoice_sent', 'invoice_sent_after_deposit', 'payment_reminder_upcoming', 'payment_reminder_overdue',
+  'quote_sent', 'quote_reminder', 'quote_accepted', 'quote_declined', 'invoice_sent', 'invoice_sent_after_deposit', 'payment_reminder_upcoming', 'payment_reminder_overdue',
   'payment_received_deposit', 'payment_received_settled',
   'appointment_requested', 'appointment_confirmed', 'appointment_rescheduled', 'appointment_cancelled',
   'appointment_reminder', 'appointment_reminder_staff',

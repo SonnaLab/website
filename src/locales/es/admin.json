@@ -127,7 +127,8 @@
         "backup_quarterly": "Copia trimestral",
         "backup_semiannual": "Copia semestral",
         "backup_annual": "Copia anual",
-        "backup_manual": "Copia manual"
+        "backup_manual": "Copia manual",
+        "quote_reminders": "Recordatorios de presupuestos sin respuesta (D+3, D+7, D+14)"
       },
       "days": {
         "0": "domingo",
@@ -891,7 +892,9 @@
       "multiplier": {
         "enable": "Activar el factor de multiplicación",
         "hint": "Los días mostrados en el presupuesto se multiplican por este factor; los precios no cambian."
-      }
+      },
+      "remindQuoteIntro": "Recordatorio del presupuesto « {{title}} » pendiente de respuesta del cliente, PDF adjunto.",
+      "remindQuoteHint": "Cada uno lo recibe en su idioma. También se envían recordatorios automáticos 3, 7 y 14 días después del envío."
     },
     "contracts": {
       "new": "Nuevo contrato",
@@ -1135,7 +1138,8 @@
       "quote_declined": "Presupuesto rechazado — acuse",
       "staff_quote_accepted": "Presupuesto aceptado por el cliente",
       "staff_quote_declined": "Presupuesto rechazado por el cliente",
-      "quote_decision": "Respuesta a un presupuesto (cliente)"
+      "quote_decision": "Respuesta a un presupuesto (cliente)",
+      "quote_reminder": "Presupuesto — recordatorio sin respuesta"
     },
     "sendTest": "Enviar una prueba",
     "sending": "Enviando…",

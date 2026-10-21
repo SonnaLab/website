@@ -161,6 +161,8 @@ export interface TravauxInvoice {
   generated_invoice_id: string | null;
   current_version: number;
   last_reminded_on?: string | null;
+  /** When it was last sent to the client (the quote reminders count from it). */
+  sent_at?: string | null;
   /** The client's answer to a quote, from their space. */
   decided_at?: string | null;
   decided_by_name?: string | null;

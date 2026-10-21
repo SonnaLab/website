@@ -127,7 +127,8 @@
         "backup_quarterly": "Quarterly backup",
         "backup_semiannual": "Half-yearly backup",
         "backup_annual": "Yearly backup",
-        "backup_manual": "Manual backup"
+        "backup_manual": "Manual backup",
+        "quote_reminders": "Reminders for unanswered quotes (D+3, D+7, D+14)"
       },
       "days": {
         "0": "Sunday",
@@ -891,7 +892,9 @@
       "multiplier": {
         "enable": "Enable the multiplying factor",
         "hint": "The days shown on the quote are multiplied by this factor; prices do not change."
-      }
+      },
+      "remindQuoteIntro": "Reminder of the quote « {{title}} » waiting for the client's answer, PDF attached.",
+      "remindQuoteHint": "Each gets it in their language. Automatic reminders also go out 3, 7 and 14 days after the quote was sent."
     },
     "contracts": {
       "new": "New contract",
@@ -1135,7 +1138,8 @@
       "quote_declined": "Quote declined — acknowledgement",
       "staff_quote_accepted": "Quote accepted by the client",
       "staff_quote_declined": "Quote declined by the client",
-      "quote_decision": "Answer to a quote (client)"
+      "quote_decision": "Answer to a quote (client)",
+      "quote_reminder": "Quote — reminder, no answer"
     },
     "sendTest": "Send a test",
     "sending": "Sending…",

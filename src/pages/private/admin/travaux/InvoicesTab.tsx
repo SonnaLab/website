@@ -100,8 +100,9 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
     .reduce((sum, p) => sum + p.amount_cents, 0);
   const byId = new Map(invoices.map((i) => [i.id, i]));
   // « Relancer »: an invoice sent and not fully paid.
-  const remindable = (invoice: TravauxInvoice) => invoice.kind === 'invoice'
-    && (invoice.status === 'sent' || invoice.status === 'overdue') && paidCents(invoice) < invoice.amount_cents;
+  // An invoice still waiting for money, or a quote still waiting for the client's answer.
+  const remindable = (invoice: TravauxInvoice) => (invoice.kind === 'quote' ? invoice.status === 'sent'
+    : (invoice.status === 'sent' || invoice.status === 'overdue') && paidCents(invoice) < invoice.amount_cents);
 
   useEffect(() => {
     if (!autoPreviewId) return;
@@ -714,7 +715,7 @@ function SendInvoiceModal({
       open={!!invoice}
       onClose={onClose}
       title={t(remind ? 'travaux.invoices.remind' : 'travaux.invoices.send')}
-      subtitle={invoice ? t(remind ? 'travaux.invoices.remindIntro' : 'travaux.invoices.sendIntro', {
+      subtitle={invoice ? t(remind ? (invoice.kind === 'quote' ? 'travaux.invoices.remindQuoteIntro' : 'travaux.invoices.remindIntro') : 'travaux.invoices.sendIntro', {
         title: invoice.title, amount: formatCents(dueCents), kind: t(`travaux.invoices.kinds.${invoice.kind}`).toLowerCase(),
       }) : undefined}
       size="sm"
@@ -754,7 +755,7 @@ function SendInvoiceModal({
             <label className="adm-form__label" htmlFor="trv-send-extra">{t('travaux.invoices.otherRecipients')}</label>
             <input id="trv-send-extra" className="adm-input" value={extra} placeholder="compta@entreprise.fr" onChange={(e) => setExtra(e.target.value)} />
           </div>
-          <p className="trv-muted">{t(remind ? 'travaux.invoices.remindHint' : 'travaux.invoices.sendHint')}</p>
+          <p className="trv-muted">{t(remind ? (invoice.kind === 'quote' ? 'travaux.invoices.remindQuoteHint' : 'travaux.invoices.remindHint') : 'travaux.invoices.sendHint')}</p>
           {remind && invoice.last_reminded_on && (
             <p className="trv-muted">{t('travaux.invoices.lastReminded', { date: formatDate(invoice.last_reminded_on) })}</p>
           )}

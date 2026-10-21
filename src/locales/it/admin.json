@@ -127,7 +127,8 @@
         "backup_quarterly": "Backup trimestrale",
         "backup_semiannual": "Backup semestrale",
         "backup_annual": "Backup annuale",
-        "backup_manual": "Backup manuale"
+        "backup_manual": "Backup manuale",
+        "quote_reminders": "Solleciti dei preventivi senza risposta (G+3, G+7, G+14)"
       },
       "days": {
         "0": "domenica",
@@ -891,7 +892,9 @@
       "multiplier": {
         "enable": "Attiva il fattore di moltiplicazione",
         "hint": "I giorni mostrati sul preventivo sono moltiplicati per questo fattore; i prezzi non cambiano."
-      }
+      },
+      "remindQuoteIntro": "Promemoria del preventivo « {{title}} » in attesa della risposta del cliente, PDF allegato.",
+      "remindQuoteHint": "Ognuno lo riceve nella sua lingua. Partono anche solleciti automatici 3, 7 e 14 giorni dopo l'invio."
     },
     "contracts": {
       "new": "Nuovo contratto",
@@ -1135,7 +1138,8 @@
       "quote_declined": "Preventivo rifiutato — conferma",
       "staff_quote_accepted": "Preventivo accettato dal cliente",
       "staff_quote_declined": "Preventivo rifiutato dal cliente",
-      "quote_decision": "Risposta a un preventivo (cliente)"
+      "quote_decision": "Risposta a un preventivo (cliente)",
+      "quote_reminder": "Preventivo — sollecito senza risposta"
     },
     "sendTest": "Invia un test",
     "sending": "Invio…",
