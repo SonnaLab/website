@@ -891,7 +891,9 @@
           "postponed": "Projet reporté",
           "other": "Autre raison"
         }
-      }
+      },
+      "nonstop": "{{days}} j en continu",
+      "workload": "{{days}} jours ouvrés de 7 h · {{hours}} h de travail"
     },
     "contracts": {
       "new": "Nouveau contrat",
@@ -950,7 +952,9 @@
       "schedule": "Échéancier",
       "zoomIn": "Zoom avant",
       "zoomOut": "Zoom arrière",
-      "offered": "Offert"
+      "offered": "Offert",
+      "workingDays": "Jours ouvrés",
+      "workingDaysMention": "Jours ouvrés : journées de développement de {{hours}} h, soit {{total}} h de travail au total."
     },
     "stats": {
       "openTasks": "Tâches ouvertes"

@@ -890,7 +890,9 @@
           "postponed": "Projekt verschoben",
           "other": "Anderer Grund"
         }
-      }
+      },
+      "nonstop": "{{days}} T. durchgehend",
+      "workload": "{{days}} Arbeitstage à 7 Std. · {{hours}} Std. Arbeit"
     },
     "contracts": {
       "new": "Neuer Vertrag",
@@ -949,7 +951,9 @@
       "schedule": "Zahlungsplan",
       "zoomIn": "Vergrößern",
       "zoomOut": "Verkleinern",
-      "offered": "Kostenlos"
+      "offered": "Kostenlos",
+      "workingDays": "Arbeitstage",
+      "workingDaysMention": "Arbeitstage: Entwicklungstage zu {{hours}} Std., insgesamt {{total}} Std. Arbeit."
     },
     "stats": {
       "openTasks": "Offene Aufgaben"

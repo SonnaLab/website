@@ -6454,3 +6454,6 @@
 
 .trv-hint { margin: 6px 0 0; font-size: 12px; color: #6b7280; }
 .trv-score--offered { background: #e9f8ee; color: #15803d; }
+
+/* « Générer le devis » : sous les jours ouvrés, leur équivalent en continu. */
+.trv-alloc__nonstop { display: block; margin-top: 2px; font-size: 11px; font-weight: 400; color: #9ca3af; }

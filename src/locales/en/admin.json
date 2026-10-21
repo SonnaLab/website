@@ -890,7 +890,9 @@
           "postponed": "Project postponed",
           "other": "Other reason"
         }
-      }
+      },
+      "nonstop": "{{days}} d non-stop",
+      "workload": "{{days}} 7-hour working days · {{hours}} h of work"
     },
     "contracts": {
       "new": "New contract",
@@ -949,7 +951,9 @@
       "schedule": "Schedule",
       "zoomIn": "Zoom in",
       "zoomOut": "Zoom out",
-      "offered": "Free"
+      "offered": "Free",
+      "workingDays": "Working days",
+      "workingDaysMention": "Working days: {{hours}}-hour development days, {{total}} hours of work in total."
     },
     "stats": {
       "openTasks": "Open tasks"

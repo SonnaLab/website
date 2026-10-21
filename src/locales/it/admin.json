@@ -890,7 +890,9 @@
           "postponed": "Progetto rinviato",
           "other": "Altro motivo"
         }
-      }
+      },
+      "nonstop": "{{days}} g continui",
+      "workload": "{{days}} giorni lavorativi da 7 h · {{hours}} h di lavoro"
     },
     "contracts": {
       "new": "Nuovo contratto",
@@ -949,7 +951,9 @@
       "schedule": "Scadenzario",
       "zoomIn": "Ingrandisci",
       "zoomOut": "Riduci",
-      "offered": "Offerto"
+      "offered": "Offerto",
+      "workingDays": "Giorni lavorativi",
+      "workingDaysMention": "Giorni lavorativi: giornate di sviluppo da {{hours}} h, ovvero {{total}} h di lavoro in totale."
     },
     "stats": {
       "openTasks": "Attività aperte"
