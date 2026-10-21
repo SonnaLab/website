@@ -131,7 +131,8 @@
         "competitor": "Scelto un altro fornitore",
         "postponed": "Progetto rinviato",
         "other": "Altro motivo"
-      }
+      },
+      "managerOnly": "Solo il manager della sua azienda può accettarlo o rifiutarlo. Appena risponde, la fattura o la nostra proposta rivista compare qui."
     }
   },
   "profile": {

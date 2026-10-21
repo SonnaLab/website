@@ -131,7 +131,8 @@
         "competitor": "Anderer Anbieter gewählt",
         "postponed": "Projekt verschoben",
         "other": "Anderer Grund"
-      }
+      },
+      "managerOnly": "Nur der Manager Ihres Unternehmens kann es annehmen oder ablehnen. Sobald er antwortet, erscheint hier die Rechnung oder unser angepasster Vorschlag."
     }
   },
   "profile": {

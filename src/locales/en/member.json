@@ -131,7 +131,8 @@
         "competitor": "Went with another provider",
         "postponed": "Project postponed",
         "other": "Other reason"
-      }
+      },
+      "managerOnly": "Only your company's manager can accept or decline it. As soon as they answer, the invoice or our adjusted proposal shows up here."
     }
   },
   "profile": {

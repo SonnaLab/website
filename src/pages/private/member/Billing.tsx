@@ -314,9 +314,10 @@ function DocumentModal({ doc, downloading, onDownload, onClose, onDecided, fmtMo
 }
 
 /**
- * The client's answer to a quote. Waiting: accept (after a confirmation —
- * the invoice follows by e-mail) or decline (why, the budget in mind, what to
- * change). Answered: what was decided, when and by whom.
+ * The client's answer to a quote, reserved to the company's managers.
+ * Waiting: accept (after a confirmation — the invoice follows by e-mail) or
+ * decline (why, the budget in mind, what to change); other members see that
+ * it waits for their manager. Answered: what was decided, when and by whom.
  */
 function QuoteDecision({ doc, onDecided, fmtMoney }: {
   doc: TravauxInvoice;
@@ -324,6 +325,7 @@ function QuoteDecision({ doc, onDecided, fmtMoney }: {
   fmtMoney: (cents: number) => string;
 }) {
   const { t, i18n } = useTranslation('member');
+  const { user } = useAuth();
   const [mode, setMode] = useState<'idle' | 'accept' | 'decline'>('idle');
   const [reason, setReason] = useState<DeclineReason | null>(null);
   const [budget, setBudget] = useState('');
@@ -366,6 +368,17 @@ function QuoteDecision({ doc, onDecided, fmtMoney }: {
     );
   }
   if (doc.status !== 'sent') return null;
+  if (!user?.company_admin) {
+    return (
+      <div className="mb-decision mb-decision--waiting">
+        <ClockIcon size={18} />
+        <div className="mb-decision__body">
+          <p className="mb-decision__title">{t('billing.decision.title')}</p>
+          <p className="mb-decision__text">{t('billing.decision.managerOnly')}</p>
+        </div>
+      </div>
+    );
+  }
 
   async function accept() {
     setBusy(true);
