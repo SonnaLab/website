@@ -159,7 +159,7 @@
     },
     "backups": {
       "policy": "Chaque nuit un dump complet est vérifié (archive relue par pg_restore, empreinte SHA-256). Les niveaux hebdomadaire, mensuel, trimestriel, semestriel et annuel en gardent un instantané, chacun avec sa durée de conservation.",
-      "restore": "Restauration (manuelle) :",
+      "restore": "Restauration (manuelle)",
       "now": "Sauvegarder maintenant",
       "queued": "Sauvegarde lancée : elle apparaîtra ici dans quelques secondes.",
       "file": "Fichier",
@@ -786,7 +786,7 @@
       "objective": "Livrable",
       "noObjective": "Aucun livrable",
       "column": "Colonne",
-      "score": "Score d'effort (1-5)",
+      "score": "Score d'effort (0-5)",
       "scoreHint": "ex. 2.5",
       "priority": "Priorité",
       "priorities": {
@@ -800,7 +800,8 @@
         "in_progress": "En cours",
         "review": "En relecture",
         "done": "Terminé"
-      }
+      },
+      "scoreOffered": "0 = phase offerte : elle figure au devis, sans jours ni prix."
     },
     "invoices": {
       "new": "Nouveau devis",
@@ -948,7 +949,8 @@
       "depositMentionAfter": "est exigible à la commande, le solde à la livraison.",
       "schedule": "Échéancier",
       "zoomIn": "Zoom avant",
-      "zoomOut": "Zoom arrière"
+      "zoomOut": "Zoom arrière",
+      "offered": "Offert"
     },
     "stats": {
       "openTasks": "Tâches ouvertes"

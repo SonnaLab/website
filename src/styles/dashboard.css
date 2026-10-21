@@ -5495,14 +5495,14 @@
 .trv-score { margin-left: auto; padding: 2px 8px; border-radius: 999px; background: #f3f4f6; color: #4b5563; font-size: 11px; font-weight: 600; }
 
 /* Fiche livrable : frise des tâches */
-.trv-timeline { list-style: none; margin: 0; padding: 0 0 0 16px; border-left: 1px solid #e8eaed; display: flex; flex-direction: column; gap: 14px; }
+.trv-timeline { list-style: none; margin: 0 0 0 11px; padding: 0 0 0 22px; border-left: 1px solid #e8eaed; display: flex; flex-direction: column; gap: 14px; }
 .trv-timeline--scroll { max-height: 360px; overflow-y: auto; padding-right: 4px; }
 .trv-timeline__item { position: relative; }
-.trv-timeline__dot { position: absolute; left: -21px; top: 4px; width: 10px; height: 10px; border-radius: 999px; box-shadow: 0 0 0 4px #ffffff; }
-.trv-timeline__dot--todo        { background: #9ca3af; }
-.trv-timeline__dot--in_progress { background: #404c99; }
-.trv-timeline__dot--review      { background: #f59e0b; }
-.trv-timeline__dot--done        { background: #22c55e; }
+.trv-timeline__icon { position: absolute; left: -34px; top: -2px; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 999px; box-shadow: 0 0 0 4px #ffffff; }
+.trv-timeline__icon--todo        { background: #f3f4f6; color: #6b7280; }
+.trv-timeline__icon--in_progress { background: #eef0fb; color: #404c99; }
+.trv-timeline__icon--review      { background: #fff4e0; color: #b45309; }
+.trv-timeline__icon--done        { background: #e9f8ee; color: #15803d; }
 .trv-timeline__row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .trv-timeline__title { font-size: 13px; font-weight: 600; margin: 0; }
 
@@ -6354,15 +6354,7 @@
   }
 }
 
-/* Infrastructure › Backups: one card per tier. */
-.bk-tiers { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; }
-.bk-tier { display: flex; flex-direction: column; gap: 4px; padding: 14px; border: 1px solid #e8eaed; border-radius: 10px; background: #ffffff; text-align: left; font: inherit; cursor: pointer; }
-.bk-tier:hover { border-color: #d1d5db; }
-.bk-tier.is-active { border-color: #111111; box-shadow: 0 0 0 1px #111111; }
-.bk-tier__name { font-size: 14px; font-weight: 700; color: #111111; }
-.bk-tier__when { font-size: 12px; color: #6b7280; }
-.bk-tier__count { margin-top: 6px; font-size: 13px; font-weight: 600; color: #111111; }
-.bk-tier__last { font-size: 12px; color: #9ca3af; }
+/* Infrastructure › Backups: the files, verified or not. */
 .bk-file { display: inline-flex; align-items: center; gap: 8px; }
 .bk-file__ok { display: inline-flex; color: #16a34a; }
 .bk-file__warn { display: inline-flex; color: #d97706; }
@@ -6444,3 +6436,21 @@
   .mb-decision__actions { align-self: stretch; justify-content: stretch; }
   .mb-decision__actions .adm-btn { flex: 1; justify-content: center; }
 }
+
+/* « i » : more on hover or focus (InfoTip). */
+.info-tip { position: relative; display: inline-flex; align-items: center; justify-content: center; margin-left: 6px; color: #9ca3af; cursor: help; vertical-align: middle; outline: none; }
+.info-tip:hover, .info-tip:focus-visible { color: #111111; }
+.info-tip__bubble { position: absolute; z-index: 30; width: max-content; max-width: 320px; padding: 8px 10px; border-radius: 8px; background: #111111; color: #ffffff; font-size: 12px; font-weight: 500; line-height: 1.5; text-transform: none; letter-spacing: 0; white-space: normal; text-align: left; box-shadow: 0 8px 24px rgba(15, 15, 15, 0.18); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.12s; }
+.info-tip--right .info-tip__bubble { left: calc(100% + 8px); top: 50%; transform: translateY(-50%); }
+.info-tip--bottom .info-tip__bubble { left: 50%; top: calc(100% + 8px); transform: translateX(-50%); }
+.info-tip:hover .info-tip__bubble, .info-tip:focus-visible .info-tip__bubble { opacity: 1; visibility: visible; }
+
+/* Sauvegardes : la commande de restauration, en bloc de code. */
+.bk-restore { display: flex; flex-direction: column; gap: 8px; }
+.bk-restore__label { display: inline-flex; align-items: center; margin: 0; font-size: 13px; font-weight: 600; color: #111111; }
+.bk-code { margin: 0; padding: 12px 16px; overflow-x: auto; border-radius: 10px; background: #0f172a; color: #e2e8f0; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; line-height: 1.6; }
+.bk-code code { font: inherit; color: inherit; background: none; padding: 0; }
+.bk-tier-cell { display: inline-flex; align-items: center; }
+
+.trv-hint { margin: 6px 0 0; font-size: 12px; color: #6b7280; }
+.trv-score--offered { background: #e9f8ee; color: #15803d; }

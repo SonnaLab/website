@@ -102,7 +102,11 @@ export const TasksTab = forwardRef<TravauxTabHandle, TasksTabProps>(function Tas
                   {task.objective_title && <p className="trv-task__objective">{task.objective_title}</p>}
                   <div className="trv-task__meta">
                     <span className={`trv-pill trv-pill--${task.priority}`}>{t(`travaux.tracking.priorities.${task.priority}`)}</span>
-                    {task.score != null && <span className="trv-score">{task.score}/5</span>}
+                    {task.score != null && (
+                      <span className={`trv-score${Number(task.score) === 0 ? ' trv-score--offered' : ''}`}>
+                        {Number(task.score) === 0 ? t('travaux.document.offered') : `${task.score}/5`}
+                      </span>
+                    )}
                   </div>
                 </div>
               ))}
@@ -167,7 +171,7 @@ function TaskFormModal({
     await onSubmit({
       title, description, column, priority,
       objective_id: objectiveId || null,
-      score: score ? Number(score) : null,
+      score: score !== '' ? Number(score) : null,
     });
     setSaving(false);
   }
@@ -235,7 +239,7 @@ function TaskFormModal({
           <input
             id="trv-task-score"
             type="number"
-            min={1}
+            min={0}
             max={5}
             step={0.5}
             className="adm-input"
@@ -243,6 +247,7 @@ function TaskFormModal({
             placeholder={t('travaux.tracking.scoreHint')}
             onChange={(e) => setScore(e.target.value)}
           />
+          <p className="trv-hint">{t('travaux.tracking.scoreOffered')}</p>
         </div>
       </form>
     </Modal>

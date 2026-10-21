@@ -8,14 +8,16 @@ import {
   DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
   DataTableSelectTd, DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, filterRows, useRowSelection,
 } from '@/components/common/DataTable';
+import { InfoTip } from '@/components/common/InfoTip';
 import { CheckCircleIcon, DownloadIcon, LayersIcon, AlertTriangleIcon } from '@icons';
 import { cronLabel, formatBytes, formatDateTime } from './format';
 
 const idOf = (backup: InfraBackup) => backup.name;
 
 /**
- * Database backups by tier (daily → annual, and manual): what each keeps,
- * the latest one, every file with its verification, downloads. « Sauvegarder
+ * Database backups by tier (daily → annual, and manual): every file with its
+ * verification and downloads; each tier's schedule, retention and latest one
+ * behind the « i » of its pill. « Sauvegarder
  * maintenant » lives in the page header; `reloadKey` changes when it ran.
  */
 export function BackupsTab({ reloadKey = 0 }: { reloadKey?: number }) {
@@ -31,6 +33,16 @@ export function BackupsTab({ reloadKey = 0 }: { reloadKey?: number }) {
   useEffect(() => { load(); }, [reloadKey]);
 
   const tierLabel = (key: BackupTier) => t(`infrastructure.backups.tiers.${key}`);
+  // Behind the tier's « i »: when it runs, how many it keeps, the latest one.
+  const tierInfo = (key: BackupTier) => {
+    const item = data?.tiers.find((x) => x.tier === key);
+    if (!item) return tierLabel(key);
+    return [
+      key === 'manual' ? t('infrastructure.backups.onDemand') : cronLabel(item.cron, t),
+      t('infrastructure.backups.kept', { count: item.count, keep: item.keep }),
+      item.last_at ? t('infrastructure.backups.last', { date: formatDateTime(item.last_at, locale) }) : t('infrastructure.backups.none'),
+    ].join(' · ');
+  };
   const rows = useMemo(() => filterRows(
     (data?.backups ?? []).filter((b) => tier === 'all' || b.tier === tier),
     query,
@@ -81,29 +93,13 @@ export function BackupsTab({ reloadKey = 0 }: { reloadKey?: number }) {
 
   return (
     <div className="infra-stack">
-      <p className="trv-info">
-        {t('infrastructure.backups.policy')}
-        <br />
-        <span className="trv-muted">{t('infrastructure.backups.restore')} <code className="infra-mono">pg_restore --clean --if-exists --no-owner -d sonnalab &lt;fichier&gt;</code></span>
-      </p>
-
-      {/* One card per tier: schedule, how many kept, the latest. */}
-      <div className="bk-tiers">
-        {(data?.tiers ?? []).map((item) => (
-          <button
-            key={item.tier}
-            type="button"
-            className={`bk-tier${tier === item.tier ? ' is-active' : ''}`}
-            onClick={() => setTier(tier === item.tier ? 'all' : item.tier)}
-          >
-            <span className="bk-tier__name">{tierLabel(item.tier)}</span>
-            <span className="bk-tier__when">{item.tier === 'manual' ? t('infrastructure.backups.onDemand') : cronLabel(item.cron, t)}</span>
-            <span className="bk-tier__count">{t('infrastructure.backups.kept', { count: item.count, keep: item.keep })}</span>
-            <span className="bk-tier__last">
-              {item.last_at ? t('infrastructure.backups.last', { date: formatDateTime(item.last_at, locale) }) : t('infrastructure.backups.none')}
-            </span>
-          </button>
-        ))}
+      {/* How to restore; the backup policy behind the « i ». */}
+      <div className="bk-restore">
+        <p className="bk-restore__label">
+          {t('infrastructure.backups.restore')}
+          <InfoTip text={t('infrastructure.backups.policy')} placement="bottom" />
+        </p>
+        <pre className="bk-code"><code>pg_restore --clean --if-exists --no-owner -d sonnalab &lt;fichier&gt;</code></pre>
       </div>
 
       <DataTableToolbar right={
@@ -152,7 +148,12 @@ export function BackupsTab({ reloadKey = 0 }: { reloadKey?: number }) {
                     <span className="infra-mono">{backup.name}</span>
                   </span>
                 </DataTableTd>
-                <DataTableTd><span className={`bk-pill bk-pill--${backup.tier}`}>{tierLabel(backup.tier)}</span></DataTableTd>
+                <DataTableTd>
+                  <span className="bk-tier-cell">
+                    <span className={`bk-pill bk-pill--${backup.tier}`}>{tierLabel(backup.tier)}</span>
+                    <InfoTip text={tierInfo(backup.tier)} />
+                  </span>
+                </DataTableTd>
                 <DataTableTd className="trv-col-num trv-num">{formatBytes(backup.size_bytes, locale)}</DataTableTd>
                 <DataTableTd className="trv-num">{formatDateTime(backup.created_at, locale)}</DataTableTd>
                 <DataTableTd>

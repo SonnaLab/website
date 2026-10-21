@@ -159,7 +159,7 @@
     },
     "backups": {
       "policy": "Cada noche se verifica un volcado completo (archivo releído por pg_restore, SHA-256). Los niveles semanal, mensual, trimestral, semestral y anual guardan una instantánea, cada uno con su propia retención.",
-      "restore": "Restauración (manual):",
+      "restore": "Restauración (manual)",
       "now": "Hacer copia ahora",
       "queued": "Copia iniciada: aparecerá aquí en unos segundos.",
       "file": "Archivo",
@@ -785,7 +785,7 @@
       "objective": "Entregable",
       "noObjective": "Sin entregable",
       "column": "Columna",
-      "score": "Puntuación de esfuerzo (1-5)",
+      "score": "Puntuación de esfuerzo (0-5)",
       "scoreHint": "p. ej. 2.5",
       "priority": "Prioridad",
       "priorities": {
@@ -799,7 +799,8 @@
         "in_progress": "En curso",
         "review": "En revisión",
         "done": "Terminado"
-      }
+      },
+      "scoreOffered": "0 = fase gratuita: figura en el presupuesto, sin días ni precio."
     },
     "invoices": {
       "new": "Nuevo presupuesto",
@@ -947,7 +948,8 @@
       "depositMentionAfter": "es exigible al pedido, el saldo a la entrega.",
       "schedule": "Calendario",
       "zoomIn": "Acercar",
-      "zoomOut": "Alejar"
+      "zoomOut": "Alejar",
+      "offered": "Gratis"
     },
     "stats": {
       "openTasks": "Tareas abiertas"

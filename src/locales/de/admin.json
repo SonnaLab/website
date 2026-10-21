@@ -159,7 +159,7 @@
     },
     "backups": {
       "policy": "Jede Nacht wird ein vollständiger Dump geprüft (Archiv von pg_restore gelesen, SHA-256). Die wöchentliche, monatliche, vierteljährliche, halbjährliche und jährliche Stufe behalten davon eine Momentaufnahme mit eigener Aufbewahrung.",
-      "restore": "Wiederherstellung (manuell):",
+      "restore": "Wiederherstellung (manuell)",
       "now": "Jetzt sichern",
       "queued": "Backup gestartet: es erscheint hier in wenigen Sekunden.",
       "file": "Datei",
@@ -785,7 +785,7 @@
       "objective": "Liefergegenstand",
       "noObjective": "Kein Liefergegenstand",
       "column": "Spalte",
-      "score": "Aufwandsbewertung (1-5)",
+      "score": "Aufwandswert (0-5)",
       "scoreHint": "z. B. 2.5",
       "priority": "Priorität",
       "priorities": {
@@ -799,7 +799,8 @@
         "in_progress": "In Arbeit",
         "review": "In Prüfung",
         "done": "Erledigt"
-      }
+      },
+      "scoreOffered": "0 = kostenlose Phase: steht im Angebot, ohne Tage und Preis."
     },
     "invoices": {
       "new": "Neues Angebot",
@@ -947,7 +948,8 @@
       "depositMentionAfter": "ist bei Bestellung fällig, der Rest bei Lieferung.",
       "schedule": "Zahlungsplan",
       "zoomIn": "Vergrößern",
-      "zoomOut": "Verkleinern"
+      "zoomOut": "Verkleinern",
+      "offered": "Kostenlos"
     },
     "stats": {
       "openTasks": "Offene Aufgaben"

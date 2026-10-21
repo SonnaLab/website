@@ -10,6 +10,8 @@ export interface TaskAllocation {
   task: TravauxTask;
   days: number;
   price: number;
+  /** Score 0 : phase offerte, au devis sans jours ni prix. */
+  offered: boolean;
 }
 
 export interface DevisCalculation {
@@ -31,7 +33,8 @@ export function remainingDaysUntil(dueDate: string, from: Date = new Date()): nu
 
 /**
  * Répartit le temps restant jusqu'à l'échéance entre les tâches d'un livrable,
- * au prorata de leur score d'effort (1-5), puis valorise chaque part au TJM.
+ * au prorata de leur score d'effort (0-5), puis valorise chaque part au TJM.
+ * Un score de 0 = phase offerte : listée, sans jours ni prix.
  * `issuedOn` (aaaa-mm-jj) : un document déjà émis se calcule depuis sa date
  * d'émission, pas depuis aujourd'hui — sinon ses phases changeraient, puis
  * disparaîtraient une fois l'échéance passée. Sans date : aujourd'hui.
@@ -48,13 +51,14 @@ export function calculateDevis(
   const remainingDays = dueDate ? remainingDaysUntil(dueDate, from) : 0;
   const rate = Number(dailyRate ?? 0);
 
-  if (!scoredTasks.length || totalScore <= 0 || !remainingDays) {
+  if (!scoredTasks.length || !remainingDays) {
     return { allocations: [], remainingDays, totalPrice: 0 };
   }
 
   const allocations = scoredTasks.map((task) => {
+    if (Number(task.score) === 0) return { task, days: 0, price: 0, offered: true };
     const days = Math.round((remainingDays * Number(task.score) / totalScore) * 10) / 10;
-    return { task, days, price: Math.round(days * rate) };
+    return { task, days, price: Math.round(days * rate), offered: false };
   });
 
   return { allocations, remainingDays, totalPrice: allocations.reduce((sum, a) => sum + a.price, 0) };

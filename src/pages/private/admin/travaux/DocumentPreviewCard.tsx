@@ -86,15 +86,15 @@ export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
           </thead>
           <tbody>
             {hasAllocations ? (
-              calc!.allocations.map(({ task, days, price }, index) => (
+              calc!.allocations.map(({ task, days, price, offered }, index) => (
                 <tr key={task.id}>
                   <td className="trv-doc__muted">{index + 1}</td>
                   <td>
                     <p className="trv-doc__task-title">{task.title}</p>
                     {task.description && <p className="trv-doc__task-desc">{task.description}</p>}
                   </td>
-                  <td className="trv-right trv-doc__muted">{formatDays(days)}</td>
-                  <td className="trv-right trv-num">{formatEuros(price)}</td>
+                  <td className="trv-right trv-doc__muted">{offered ? '—' : formatDays(days)}</td>
+                  <td className="trv-right trv-num">{offered ? t('travaux.document.offered') : formatEuros(price)}</td>
                 </tr>
               ))
             ) : (

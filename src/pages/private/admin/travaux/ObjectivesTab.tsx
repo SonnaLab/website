@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useState, type ComponentType } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -7,7 +7,8 @@ import { apiService } from '@/services/api';
 import { calculateDevis, formatDays } from '@/lib/devisCalc';
 import { DataTableAction } from '@/components/common/DataTable';
 import {
-  CheckCircleIcon, ChevronDownIcon, FileTextIcon, FolderKanbanIcon, PenLineIcon, PlusIcon, TargetIcon, Trash2Icon,
+  CheckCircle2Icon, CheckCircleIcon, ChevronDownIcon, ClipboardListIcon, ClockIcon, EyeIcon, FileTextIcon, FolderKanbanIcon,
+  PenLineIcon, PlusIcon, TargetIcon, Trash2Icon, type IconProps,
 } from '@icons';
 import type {
   KanbanColumn,
@@ -25,6 +26,10 @@ import { useConfirmDelete } from './useConfirmDelete';
 
 const STATUSES: ObjectiveStatus[] = ['planned', 'in_progress', 'done', 'at_risk'];
 const COLUMN_ORDER: KanbanColumn[] = ['todo', 'in_progress', 'review', 'done'];
+// The task's column, as an icon on the timeline.
+const COLUMN_ICONS: Record<KanbanColumn, ComponentType<IconProps>> = {
+  todo: ClipboardListIcon, in_progress: ClockIcon, review: EyeIcon, done: CheckCircle2Icon,
+};
 const DEFAULT_DAILY_RATE = 500;
 
 interface ObjectivesTabProps {
@@ -452,7 +457,9 @@ function ObjectiveDetail({ objective, tasks }: { objective: TravauxObjective; ta
             <ol className="trv-timeline">
               {linked.map((task) => (
                 <li key={task.id} className="trv-timeline__item">
-                  <span className={`trv-timeline__dot trv-timeline__dot--${task.column}`} />
+                  <span className={`trv-timeline__icon trv-timeline__icon--${task.column}`} title={t(`travaux.tracking.columns.${task.column}`)}>
+                    {(() => { const Icon = COLUMN_ICONS[task.column]; return <Icon size={12} />; })()}
+                  </span>
                   <div className="trv-timeline__row">
                     <p className="trv-timeline__title">{task.title}</p>
                     <span className="trv-pill trv-pill--soft">{t(`travaux.tracking.columns.${task.column}`)}</span>
@@ -567,11 +574,11 @@ function GenerateDevisModal({
                   </tr>
                 </thead>
                 <tbody>
-                  {calc.allocations.map(({ task, days, price }) => (
+                  {calc.allocations.map(({ task, days, price, offered }) => (
                     <tr key={task.id}>
                       <td>{task.title} <span className="trv-muted">({t(`travaux.tracking.columns.${task.column}`)})</span></td>
-                      <td className="trv-right trv-num">{formatDays(days)}</td>
-                      <td className="trv-right trv-num">{formatEuros(price)}</td>
+                      <td className="trv-right trv-num">{offered ? '—' : formatDays(days)}</td>
+                      <td className="trv-right trv-num">{offered ? t('travaux.document.offered') : formatEuros(price)}</td>
                     </tr>
                   ))}
                 </tbody>

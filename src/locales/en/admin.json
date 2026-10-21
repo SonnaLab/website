@@ -159,7 +159,7 @@
     },
     "backups": {
       "policy": "Every night a full dump is verified (archive read back by pg_restore, SHA-256). The weekly, monthly, quarterly, half-yearly and yearly tiers keep a snapshot of it, each with its own retention.",
-      "restore": "Restore (manual):",
+      "restore": "Restore (manual)",
       "now": "Back up now",
       "queued": "Backup started: it will show up here in a few seconds.",
       "file": "File",
@@ -785,7 +785,7 @@
       "objective": "Deliverable",
       "noObjective": "No deliverable",
       "column": "Column",
-      "score": "Effort score (1-5)",
+      "score": "Effort score (0-5)",
       "scoreHint": "e.g. 2.5",
       "priority": "Priority",
       "priorities": {
@@ -799,7 +799,8 @@
         "in_progress": "In progress",
         "review": "In review",
         "done": "Done"
-      }
+      },
+      "scoreOffered": "0 = free phase: listed on the quote, with no days or price."
     },
     "invoices": {
       "new": "New quote",
@@ -947,7 +948,8 @@
       "depositMentionAfter": "is due upon order, the balance upon delivery.",
       "schedule": "Schedule",
       "zoomIn": "Zoom in",
-      "zoomOut": "Zoom out"
+      "zoomOut": "Zoom out",
+      "offered": "Free"
     },
     "stats": {
       "openTasks": "Open tasks"
