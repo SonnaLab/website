@@ -11,13 +11,15 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/common/Tabs';
 import { PageHeader } from '@/components/private/common/PageHeader';
 import { StatCard, StatRow } from '@/components/private/common/StatRow';
 import { Modal } from '@/components/common/Modal';
+import { useConfirm } from '@/components/common/ConfirmDialog';
 import {
-  DataTable, DataTableHead, DataTableBody, DataTableRow, DataTableTh, DataTableTd, DataTableEmpty,
+  DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
+  DataTableSelectTd, DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, useRowSelection,
 } from '@/components/common/DataTable';
 import {
   UsersIcon, LayoutDashboardIcon, ShieldIcon, UserIcon, CheckCircleIcon, LockIcon,
-  SearchIcon, EyeIcon, ArrowUpRightIcon, ChevronLeftIcon, ChevronRightIcon, TrendingUpIcon,
-  HotelIcon, PenLineIcon, PlusIcon, TrafficConeIcon,
+  EyeIcon, ArrowUpRightIcon, ChevronLeftIcon, ChevronRightIcon, TrendingUpIcon,
+  HotelIcon, PenLineIcon, PlusIcon, TrafficConeIcon, Trash2Icon,
 } from '@icons';
 import type { TravauxClient } from '@/types/travaux';
 import { ClientAvatar } from './travaux/ClientAvatar';
@@ -49,9 +51,19 @@ function Pagination({
 
 // ── Utilisateurs (table) ─────────────────────────────────────────────────────
 
+const idOf = (row: { id: string }) => row.id;
+
+/** Bulk: one request per row, then a single toast. */
+async function runBulk<T>(rows: T[], action: (row: T) => Promise<unknown>, tc: (key: string, opts?: Record<string, unknown>) => string) {
+  const results = await Promise.allSettled(rows.map(action));
+  if (results.some((r) => r.status === 'rejected')) toast.error(tc('table.bulkFailed'));
+  else toast.success(tc('table.bulkDone', { count: results.length }));
+}
+
 /** The accounts table; the page's tab picks the role, the companies' teams or the acquisition. */
-function UsersListTab({ role = '', withClient = false, segment }: { role?: AuthRole | ''; withClient?: boolean; segment?: 'active' | 'acquisition' }) {
+function UsersListTab({ role = '', withClient = false, segment, onChanged }: { role?: AuthRole | ''; withClient?: boolean; segment?: 'active' | 'acquisition'; onChanged?: () => void }) {
   const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
   const navigate = useNavigate();
   const { user: currentUser, impersonate } = useAuth();
 
@@ -64,22 +76,19 @@ function UsersListTab({ role = '', withClient = false, segment }: { role?: AuthR
   const [selected, setSelected] = useState<AdminUser | null>(null);
   const [impersonatingId, setImpersonatingId] = useState<string | null>(null);
 
-  const load = useCallback((p: number, q: string, r: AuthRole | '') => {
+  const load = useCallback(() => {
     setLoading(true);
     setErr(false);
-    apiService.adminUsersList({ page: p, per_page: PER_PAGE, q: q || undefined, role: r || undefined, with_client: withClient ? 'true' : undefined, segment })
+    apiService.adminUsersList({ page, per_page: PER_PAGE, q: search || undefined, role: role || undefined, with_client: withClient ? 'true' : undefined, segment })
       .then((res) => { setUsers(res.users); setTotal(res.meta.total); })
       .catch(() => setErr(true))
       .finally(() => setLoading(false));
-  }, [withClient, segment]);
+  }, [page, search, role, withClient, segment]);
 
-  useEffect(() => { load(page, search, role); }, [page, load]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Server-side search, debounced while typing.
+  useEffect(() => { const id = window.setTimeout(load, search ? 300 : 0); return () => window.clearTimeout(id); }, [load, search]);
 
-  const applySearch = (q: string) => {
-    setSearch(q);
-    setPage(1);
-    load(1, q, role);
-  };
+  const selection = useRowSelection(users, idOf);
 
   const handleImpersonate = async (target: AdminUser) => {
     setImpersonatingId(target.id);
@@ -94,26 +103,49 @@ function UsersListTab({ role = '', withClient = false, segment }: { role?: AuthR
     }
   };
 
+  async function bulk(rows: AdminUser[], action: (u: AdminUser) => Promise<unknown>) {
+    await runBulk(rows, action, tc);
+    selection.clear(); load(); onChanged?.();
+  }
+
+  // Never lock one's own account.
+  const bulkLock = () => bulk(selection.selectedRows.filter((u) => u.id !== currentUser?.id && !u.locked), (u) => apiService.adminUserLock(u.id));
+  const bulkUnlock = () => bulk(selection.selectedRows.filter((u) => u.locked), (u) => apiService.adminUserUnlock(u.id));
+
   const roleLabel = (r: AuthRole) => t(`users.roles.${r}`);
+  const statusLabel = (u: AdminUser) => u.locked ? t('users.status.locked') : u.confirmed ? t('users.status.confirmed') : t('users.status.unconfirmed');
+
+  function exportSelection() {
+    exportRowsCsv('utilisateurs', [
+      [t('users.table.name'), (u) => u.full_name ?? ''],
+      [t('users.table.email'), (u) => u.email],
+      [t('users.table.company'), (u) => u.client_name ?? ''],
+      [t('users.table.role'), (u) => roleLabel(u.role)],
+      [t('users.table.status'), statusLabel],
+      [t('users.table.createdAt'), (u) => fmt(u.created_at)],
+    ], selection.selectedRows);
+  }
 
   if (err) return <p className="trk-empty">{t('tracking.loadError')}</p>;
 
+  const emptyLabel = search
+    ? tc('table.noResults', { query: search })
+    : withClient ? t('users.teamsEmpty') : segment === 'acquisition' ? t('users.acquisitionEmpty') : t('users.empty');
+
   return (
     <div className="trk-tab space-y-4">
-      <div className="adm-toolbar">
-        <div className="adm-toolbar__search-group">
-          <div className="adm-search">
-            <SearchIcon size={15} />
-            <input
-              type="text"
-              className="adm-search__input"
-              placeholder={t('users.searchPlaceholder')}
-              value={search}
-              onChange={(e) => applySearch(e.target.value)}
-            />
-          </div>
-        </div>
-      </div>
+      <DataTableToolbar>
+        <DataTableSearch value={search} placeholder={t('users.searchPlaceholder')} onChange={(value) => { setSearch(value); setPage(1); }} />
+      </DataTableToolbar>
+
+      <DataTableSelectionBar count={selection.count} onClear={selection.clear} onExport={exportSelection}>
+        <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={bulkLock}>
+          <LockIcon size={13} /> {t('users.lock')}
+        </button>
+        <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={bulkUnlock}>
+          <CheckCircleIcon size={13} /> {t('users.unlock')}
+        </button>
+      </DataTableSelectionBar>
 
       {loading ? (
         <p className="trk-loading">…</p>
@@ -122,6 +154,7 @@ function UsersListTab({ role = '', withClient = false, segment }: { role?: AuthR
           <DataTable>
             <DataTableHead>
               <DataTableRow>
+                <DataTableSelectTh checked={selection.allChecked} indeterminate={selection.someChecked} onChange={selection.toggleAll} ariaLabel={tc('table.selectAll')} />
                 <DataTableTh>{t('users.table.name')}</DataTableTh>
                 <DataTableTh>{t('users.table.email')}</DataTableTh>
                 <DataTableTh>{t('users.table.company')}</DataTableTh>
@@ -133,14 +166,15 @@ function UsersListTab({ role = '', withClient = false, segment }: { role?: AuthR
             </DataTableHead>
             <DataTableBody>
               {users.length === 0 ? (
-                <DataTableEmpty icon={<UsersIcon size={28} />} label={withClient ? t('users.teamsEmpty') : segment === 'acquisition' ? t('users.acquisitionEmpty') : t('users.empty')} />
+                <DataTableEmpty icon={<UsersIcon size={28} />} label={emptyLabel} />
               ) : users.map((u) => {
                 const isSelf = u.id === currentUser?.id;
                 const canImpersonate = !isSelf && u.role !== 'admin' && !u.locked;
                 return (
                   <DataTableRow key={u.id}>
+                    <DataTableSelectTd checked={selection.isSelected(u.id)} onChange={(checked) => selection.toggle(u.id, checked)} ariaLabel={tc('table.selectRow')} />
                     <DataTableTd>{u.full_name || '—'}</DataTableTd>
-                    <DataTableTd className="text-xs">{u.email}</DataTableTd>
+                    <DataTableTd>{u.email}</DataTableTd>
                     <DataTableTd>{u.client_name || '—'}</DataTableTd>
                     <DataTableTd>
                       <span className={`adm-badge adm-badge--${u.role === 'admin' ? 'info' : u.role === 'staff' ? 'default' : 'muted'}`}>
@@ -156,26 +190,16 @@ function UsersListTab({ role = '', withClient = false, segment }: { role?: AuthR
                         <span className="adm-badge adm-badge--warning">{t('users.status.unconfirmed')}</span>
                       )}
                     </DataTableTd>
-                    <DataTableTd className="text-xs">{fmt(u.created_at)}</DataTableTd>
+                    <DataTableTd>{fmt(u.created_at)}</DataTableTd>
                     <DataTableTd>
                       <div className="adm-table__actions">
-                        <button
-                          type="button"
-                          className="adm-btn adm-btn--ghost adm-btn--xs"
-                          onClick={() => setSelected(u)}
-                          title={t('tracking.viewDetails')}
-                        >
-                          <EyeIcon size={13} />
-                        </button>
-                        <button
-                          type="button"
-                          className="adm-btn adm-btn--ghost adm-btn--xs"
-                          onClick={() => handleImpersonate(u)}
+                        <DataTableAction icon={EyeIcon} label={t('tracking.viewDetails')} onClick={() => setSelected(u)} />
+                        <DataTableAction
+                          icon={ArrowUpRightIcon}
+                          label={isSelf ? t('users.cantImpersonateSelf') : u.role === 'admin' ? t('users.cantImpersonateAdmin') : t('users.impersonate')}
                           disabled={!canImpersonate || impersonatingId === u.id}
-                          title={isSelf ? t('users.cantImpersonateSelf') : u.role === 'admin' ? t('users.cantImpersonateAdmin') : t('users.impersonate')}
-                        >
-                          <ArrowUpRightIcon size={13} />
-                        </button>
+                          onClick={() => handleImpersonate(u)}
+                        />
                       </div>
                     </DataTableTd>
                   </DataTableRow>
@@ -203,11 +227,7 @@ function UsersListTab({ role = '', withClient = false, segment }: { role?: AuthR
             <dt>{t('users.detail.lastSignIn')}</dt><dd>{fmt(selected.last_sign_in_at)}</dd>
             <dt>{t('users.table.createdAt')}</dt><dd>{fmt(selected.created_at)}</dd>
             <dt>{t('users.table.status')}</dt>
-            <dd>
-              {selected.locked
-                ? t('users.status.locked')
-                : selected.confirmed ? t('users.status.confirmed') : t('users.status.unconfirmed')}
-            </dd>
+            <dd>{statusLabel(selected)}</dd>
           </dl>
         )}
       </Modal>
@@ -217,9 +237,11 @@ function UsersListTab({ role = '', withClient = false, segment }: { role?: AuthR
 
 // ── Clients : the companies (Travaux clients) ────────────────────────────────
 
-function CompaniesTab({ reloadKey, onEdit }: { reloadKey: number; onEdit: (id: string) => void }) {
+function CompaniesTab({ reloadKey, onEdit, onChanged }: { reloadKey: number; onEdit: (id: string) => void; onChanged?: () => void }) {
   const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
   const navigate = useNavigate();
+  const confirm = useConfirm();
   const [clients, setClients] = useState<TravauxClient[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -227,39 +249,56 @@ function CompaniesTab({ reloadKey, onEdit }: { reloadKey: number; onEdit: (id: s
   const [loading, setLoading] = useState(true);
   const [viewId, setViewId] = useState<string | null>(null);
 
-  const load = useCallback((p: number, q: string) => {
+  const load = useCallback(() => {
     setLoading(true);
-    apiService.adminTravauxClients({ page: p, per_page: PER_PAGE, q: q || undefined })
+    apiService.adminTravauxClients({ page, per_page: PER_PAGE, q: search || undefined })
       .then((res) => { setClients(res.clients); setTotal(res.meta.total); })
       .catch(() => toast.error(t('travaux.clients.loadError')))
       .finally(() => setLoading(false));
-  }, [t]);
+  }, [page, search, t]);
 
-  useEffect(() => { load(page, search); }, [page, load, reloadKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Server-side search, debounced while typing.
+  useEffect(() => { const id = window.setTimeout(load, search ? 300 : 0); return () => window.clearTimeout(id); }, [load, search, reloadKey]);
+
+  const selection = useRowSelection(clients, idOf);
 
   const referentOf = (c: TravauxClient) => [c.referent_first_name, c.referent_last_name].filter(Boolean).join(' ');
 
+  async function bulkDelete() {
+    if (!(await confirm({ title: tc('table.bulkDeleteTitle', { count: selection.count }), message: tc('table.bulkDeleteMessage') }))) return;
+    await runBulk(selection.selectedRows, (c) => apiService.adminTravauxDeleteClient(c.id), tc);
+    selection.clear(); load(); onChanged?.();
+  }
+
+  function exportSelection() {
+    exportRowsCsv('clients', [
+      [t('travaux.clients.table.company'), (c) => c.name],
+      [t('travaux.clients.fields.siret'), (c) => c.siret ?? ''],
+      [t('travaux.clients.table.referent'), referentOf],
+      [t('travaux.clients.fields.referentEmail'), (c) => c.referent_email ?? ''],
+      [t('travaux.clients.fields.contactEmail'), (c) => c.contact_email ?? ''],
+      [t('travaux.clients.table.members'), (c) => c.stats?.members_count ?? 0],
+      [t('travaux.clients.table.projects'), (c) => c.stats?.projects_count ?? 0],
+    ], selection.selectedRows);
+  }
+
   return (
     <div className="trk-tab space-y-4">
-      <div className="adm-toolbar">
-        <div className="adm-toolbar__search-group">
-          <div className="adm-search">
-            <SearchIcon size={15} />
-            <input
-              type="text"
-              className="adm-search__input"
-              placeholder={t('travaux.clients.search')}
-              value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(1); load(1, e.target.value); }}
-            />
-          </div>
-        </div>
-      </div>
+      <DataTableToolbar>
+        <DataTableSearch value={search} placeholder={t('users.companies.search')} onChange={(value) => { setSearch(value); setPage(1); }} />
+      </DataTableToolbar>
+
+      <DataTableSelectionBar count={selection.count} onClear={selection.clear} onExport={exportSelection}>
+        <button type="button" className="adm-btn adm-btn--danger adm-btn--sm" onClick={bulkDelete}>
+          <Trash2Icon size={13} /> {tc('table.delete')}
+        </button>
+      </DataTableSelectionBar>
 
       <Card className="overflow-hidden gap-0">
         <DataTable>
           <DataTableHead>
             <DataTableRow>
+              <DataTableSelectTh checked={selection.allChecked} indeterminate={selection.someChecked} onChange={selection.toggleAll} ariaLabel={tc('table.selectAll')} />
               <DataTableTh className="trv-col-logo">{t('travaux.clients.table.logo')}</DataTableTh>
               <DataTableTh>{t('travaux.clients.table.company')}</DataTableTh>
               <DataTableTh>{t('travaux.clients.table.referent')}</DataTableTh>
@@ -270,25 +309,25 @@ function CompaniesTab({ reloadKey, onEdit }: { reloadKey: number; onEdit: (id: s
           </DataTableHead>
           <DataTableBody>
             {loading && <DataTableEmpty label={t('common.loading')} />}
-            {!loading && clients.length === 0 && <DataTableEmpty icon={<UsersIcon size={28} />} label={t('travaux.clients.empty')} />}
+            {!loading && clients.length === 0 && (
+              <DataTableEmpty icon={<UsersIcon size={28} />} label={search ? tc('table.noResults', { query: search }) : t('travaux.clients.empty')} />
+            )}
             {!loading && clients.map((c) => (
               <DataTableRow key={c.id} onClick={() => setViewId(c.id)}>
+                {/* Select cell: keep the click from opening the detail. */}
+                <DataTableTd className="adm-table__td--select" onClick={(e) => e.stopPropagation()}>
+                  <input type="checkbox" checked={selection.isSelected(c.id)} aria-label={tc('table.selectRow')} onChange={(e) => selection.toggle(c.id, e.target.checked)} />
+                </DataTableTd>
                 <DataTableTd className="trv-col-logo"><ClientAvatar client={c} /></DataTableTd>
                 <DataTableTd><span className="trv-client-cell__name">{c.name}</span></DataTableTd>
                 <DataTableTd>{referentOf(c) || '—'}</DataTableTd>
                 <DataTableTd className="trv-col-num trv-num">{c.stats?.members_count ?? 0}</DataTableTd>
                 <DataTableTd className="trv-col-num trv-num">{c.stats?.projects_count ?? 0}</DataTableTd>
-                <DataTableTd onClick={(e) => e.stopPropagation()}>
+                <DataTableTd>
                   <div className="adm-table__actions">
-                    <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title={t('travaux.clients.actions.view')} onClick={() => setViewId(c.id)}>
-                      <EyeIcon size={13} />
-                    </button>
-                    <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title={t('travaux.clients.actions.edit')} onClick={() => onEdit(c.id)}>
-                      <PenLineIcon size={13} />
-                    </button>
-                    <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title={t('travaux.clients.actions.travaux')} onClick={() => navigate(`/admin/travaux/${c.id}`)}>
-                      <TrafficConeIcon size={13} />
-                    </button>
+                    <DataTableAction icon={EyeIcon} label={t('travaux.clients.actions.view')} onClick={() => setViewId(c.id)} />
+                    <DataTableAction icon={PenLineIcon} label={t('travaux.clients.actions.edit')} onClick={() => onEdit(c.id)} />
+                    <DataTableAction icon={TrafficConeIcon} label={t('travaux.clients.actions.travaux')} onClick={() => navigate(`/admin/travaux/${c.id}`)} />
                   </div>
                 </DataTableTd>
               </DataTableRow>
@@ -351,7 +390,7 @@ export default function AdminUsers() {
         description={t('users.subtitle')}
         actions={tab === 'clients' && (
           <button type="button" className="adm-btn adm-btn--primary" onClick={() => { setEditClient(null); setFormOpen(true); }}>
-            <PlusIcon size={14} /> {t('travaux.clients.new')}
+            <PlusIcon size={14} /> {t('users.companies.new')}
           </button>
         )}
       />
@@ -374,11 +413,11 @@ export default function AdminUsers() {
           <TabsTrigger value="teams" icon={<LayoutDashboardIcon size={14} />} count={kpis?.company_members}>{t('users.tabs.teams')}</TabsTrigger>
           <TabsTrigger value="acquisition" icon={<TrendingUpIcon size={14} />} count={kpis?.acquisition}>{t('users.tabs.acquisition')}</TabsTrigger>
         </TabsList>
-        {tab === 'all' && <UsersListTab key="all" segment="active" />}
-        {tab === 'acquisition' && <UsersListTab key="acquisition" segment="acquisition" />}
-        {tab === 'admins' && <UsersListTab key="admins" role="admin" />}
-        {tab === 'teams' && <UsersListTab key="teams" withClient />}
-        {tab === 'clients' && <CompaniesTab reloadKey={reloadKey} onEdit={openEdit} />}
+        {tab === 'all' && <UsersListTab key="all" segment="active" onChanged={loadKpis} />}
+        {tab === 'acquisition' && <UsersListTab key="acquisition" segment="acquisition" onChanged={loadKpis} />}
+        {tab === 'admins' && <UsersListTab key="admins" role="admin" onChanged={loadKpis} />}
+        {tab === 'teams' && <UsersListTab key="teams" withClient onChanged={loadKpis} />}
+        {tab === 'clients' && <CompaniesTab reloadKey={reloadKey} onEdit={openEdit} onChanged={loadKpis} />}
       </Tabs>
 
       <ClientFormModal open={formOpen} client={editClient} onClose={() => setFormOpen(false)} onSaved={saved} onDeleted={saved} />

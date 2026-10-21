@@ -503,7 +503,7 @@
       "overview": "Resumen",
       "list": "Usuarios",
       "all": "Todos",
-      "companies": "Clientes",
+      "companies": "Empresas",
       "teams": "Equipos",
       "acquisition": "Captación"
     },
@@ -544,7 +544,13 @@
     },
     "heading": "Gestión de los usuarios",
     "teamsEmpty": "Ninguna cuenta pertenece aún a una empresa.",
-    "acquisitionEmpty": "Ninguna cuenta espera una empresa."
+    "acquisitionEmpty": "Ninguna cuenta espera una empresa.",
+    "lock": "Bloquear",
+    "unlock": "Desbloquear",
+    "companies": {
+      "new": "Nueva empresa",
+      "search": "Buscar una empresa…"
+    }
   },
   "impersonation": {
     "banner": "Has iniciado sesión como {{name}}.",
@@ -1111,7 +1117,10 @@
         "cta_label": "Texto del botón"
       },
       "bodyHint": "Un párrafo por bloque; deje una línea vacía entre párrafos.",
-      "englishHint": "Sin versión inglesa, los anglófonos reciben la francesa."
+      "englishHint": "Sin versión inglesa, los anglófonos reciben la francesa.",
+      "bulkDraftsOnly": "Solo se pueden eliminar los borradores.",
+      "bulkSkipped_one": "Se conservará {{count}} campaña ya enviada.",
+      "bulkSkipped_other": "Se conservarán {{count}} campañas ya enviadas."
     },
     "subscribers": {
       "new": "Añadir un suscriptor",

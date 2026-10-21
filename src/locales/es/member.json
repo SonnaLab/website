@@ -6,7 +6,8 @@
     "account": "Mi cuenta",
     "signOut": "Cerrar sesión",
     "backToSite": "Volver al sitio",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "travaux": "Trabajos"
   },
   "dashboard": {
     "title": "Bienvenido {{name}}",
@@ -81,7 +82,9 @@
     "stats": {
       "toPay": "Pendiente",
       "paid": "Pagado"
-    }
+    },
+    "downloadPdf": "Descargar el PDF",
+    "downloadPdfs": "Descargar los PDF"
   },
   "profile": {
     "title": "Perfil",
@@ -109,5 +112,40 @@
     "saved": "Perfil actualizado.",
     "saveError": "No se pudo guardar el perfil.",
     "heading": "Gestión del perfil"
+  },
+  "travaux": {
+    "heading": "Seguimiento de los trabajos",
+    "subtitle": "El avance de sus proyectos, entregable por entregable, tarea por tarea.",
+    "stats": {
+      "projects": "Proyectos",
+      "inProgress": "Entregables en curso",
+      "tasksDone": "Tareas terminadas",
+      "overall": "Avance global"
+    },
+    "tabs": {
+      "objectives": "Entregables",
+      "tasks": "Tareas"
+    },
+    "empty": "Aún no hay proyectos: aparecerá aquí en cuanto empiece.",
+    "noObjectives": "Ningún entregable para este proyecto.",
+    "noTasks": "Ninguna tarea",
+    "tasksDone": "{{done}} / {{total}} tareas terminadas",
+    "dueOn": "Vencimiento: {{date}}",
+    "statuses": {
+      "planned": "Planificado",
+      "in_progress": "En curso",
+      "done": "Entregado",
+      "at_risk": "En riesgo"
+    },
+    "formats": {
+      "web": "Web",
+      "mobile": "Móvil"
+    },
+    "columns": {
+      "todo": "Por hacer",
+      "in_progress": "En curso",
+      "review": "En revisión",
+      "done": "Terminado"
+    }
   }
 }

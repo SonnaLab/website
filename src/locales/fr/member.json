@@ -6,7 +6,8 @@
     "account": "Mon compte",
     "signOut": "Déconnexion",
     "backToSite": "Retour au site",
-    "profile": "Profil"
+    "profile": "Profil",
+    "travaux": "Travaux"
   },
   "dashboard": {
     "title": "Bienvenue {{name}}",
@@ -81,7 +82,9 @@
     "stats": {
       "toPay": "À régler",
       "paid": "Réglé"
-    }
+    },
+    "downloadPdf": "Télécharger le PDF",
+    "downloadPdfs": "Télécharger les PDF"
   },
   "profile": {
     "title": "Profil",
@@ -109,5 +112,40 @@
     "saved": "Profil mis à jour.",
     "saveError": "Impossible d'enregistrer le profil.",
     "heading": "Gestion du profil"
+  },
+  "travaux": {
+    "heading": "Suivi des travaux",
+    "subtitle": "L'avancée de vos projets, livrable par livrable, tâche par tâche.",
+    "stats": {
+      "projects": "Projets",
+      "inProgress": "Livrables en cours",
+      "tasksDone": "Tâches terminées",
+      "overall": "Avancement global"
+    },
+    "tabs": {
+      "objectives": "Livrables",
+      "tasks": "Tâches"
+    },
+    "empty": "Aucun projet pour le moment : il apparaîtra ici dès son lancement.",
+    "noObjectives": "Aucun livrable pour ce projet.",
+    "noTasks": "Aucune tâche",
+    "tasksDone": "{{done}} / {{total}} tâches terminées",
+    "dueOn": "Échéance : {{date}}",
+    "statuses": {
+      "planned": "Planifié",
+      "in_progress": "En cours",
+      "done": "Livré",
+      "at_risk": "À risque"
+    },
+    "formats": {
+      "web": "Web",
+      "mobile": "Mobile"
+    },
+    "columns": {
+      "todo": "À faire",
+      "in_progress": "En cours",
+      "review": "En relecture",
+      "done": "Terminé"
+    }
   }
 }

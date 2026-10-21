@@ -503,7 +503,7 @@
       "overview": "Panoramica",
       "list": "Utenti",
       "all": "Tutti",
-      "companies": "Clienti",
+      "companies": "Aziende",
       "teams": "Team",
       "acquisition": "Acquisizione"
     },
@@ -544,7 +544,13 @@
     },
     "heading": "Gestione degli utenti",
     "teamsEmpty": "Nessun account appartiene ancora a un'azienda.",
-    "acquisitionEmpty": "Nessun account in attesa di un’azienda."
+    "acquisitionEmpty": "Nessun account in attesa di un’azienda.",
+    "lock": "Blocca",
+    "unlock": "Sblocca",
+    "companies": {
+      "new": "Nuova azienda",
+      "search": "Cerca un'azienda…"
+    }
   },
   "impersonation": {
     "banner": "Hai effettuato l'accesso come {{name}}.",
@@ -1111,7 +1117,10 @@
         "cta_label": "Testo del pulsante"
       },
       "bodyHint": "Un paragrafo per blocco; lasciate una riga vuota tra due paragrafi.",
-      "englishHint": "Senza versione inglese, gli anglofoni ricevono quella francese."
+      "englishHint": "Senza versione inglese, gli anglofoni ricevono quella francese.",
+      "bulkDraftsOnly": "Solo le bozze possono essere eliminate.",
+      "bulkSkipped_one": "{{count}} campagna già inviata verrà mantenuta.",
+      "bulkSkipped_other": "{{count}} campagne già inviate verranno mantenute."
     },
     "subscribers": {
       "new": "Aggiungi un iscritto",

@@ -6,13 +6,17 @@ import { apiService, type ActivityEntry } from '@/services/api';
 import { Card } from '@/components/ui/card';
 import { Modal } from '@/components/common/Modal';
 import { StatusBadge } from '@/components/common/StatusBadge';
-import { DataTable, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableTd, DataTableTh } from '@/components/common/DataTable';
-import { ActivityIcon, ChevronLeftIcon, ChevronRightIcon, SearchIcon } from '@icons';
+import {
+  DataTable, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
+  DataTableSelectTd, DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, useRowSelection,
+} from '@/components/common/DataTable';
+import { ActivityIcon, ChevronLeftIcon, ChevronRightIcon } from '@icons';
 import { formatDateTime } from './format';
 
 const KINDS = ['all', 'auth', 'admin', 'site', 'jobs', 'mails', 'errors'] as const;
 type Kind = typeof KINDS[number];
 const PER_PAGE = 30;
+const idOf = (row: ActivityEntry) => row.id;
 
 // « controller#action » with a label of its own (others: verb · resource).
 const NAMED: Record<string, string> = {
@@ -47,6 +51,7 @@ export function activityLabel(key: string, t: TFunction): string {
 /** Everything done on the platform, newest first: who, what, where from, outcome. */
 export function ActivitiesTab() {
   const { t, i18n } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
   const [kind, setKind] = useState<Kind>('all');
   const [q, setQ] = useState('');
   const [page, setPage] = useState(1);
@@ -68,14 +73,23 @@ export function ActivitiesTab() {
     return () => window.clearTimeout(id);
   }, [load, q]);
 
+  const selection = useRowSelection(rows ?? [], idOf);
+
+  // Read-only log: the CSV export is the bulk action.
+  function exportSelection() {
+    exportRowsCsv('journal-activite', [
+      [t('infrastructure.activity.when'), (r) => formatDateTime(r.created_at, locale)],
+      [t('infrastructure.activity.who'), (r) => (r.actor_role === 'system' ? t('infrastructure.activity.system') : r.actor_email ?? '')],
+      [t('infrastructure.activity.what'), (r) => activityLabel(r.action_key, t)],
+      [t('infrastructure.activity.request'), (r) => [r.http_method, r.path].filter(Boolean).join(' ')],
+      ['IP', (r) => r.ip ?? ''],
+      [t('infrastructure.activity.outcome'), (r) => r.status ?? ''],
+    ], selection.selectedRows);
+  }
+
   return (
     <div className="infra-stack">
-      <div className="infra-toolbar">
-        <div className="adm-search">
-          <SearchIcon size={15} />
-          <input className="adm-search__input" value={q} placeholder={t('infrastructure.activity.search')}
-                 onChange={(e) => { setQ(e.target.value); setPage(1); }} />
-        </div>
+      <DataTableToolbar right={
         <div className="infra-chips" role="group">
           {KINDS.map((k) => (
             <button key={k} type="button" className={kind === k ? 'is-active' : ''} onClick={() => { setKind(k); setPage(1); }}>
@@ -83,12 +97,17 @@ export function ActivitiesTab() {
             </button>
           ))}
         </div>
-      </div>
+      }>
+        <DataTableSearch value={q} placeholder={t('infrastructure.activity.search')} onChange={(value) => { setQ(value); setPage(1); }} />
+      </DataTableToolbar>
+
+      <DataTableSelectionBar count={selection.count} onClear={selection.clear} onExport={exportSelection} />
 
       <Card className="overflow-hidden gap-0">
         <DataTable>
           <DataTableHead>
             <DataTableRow>
+              <DataTableSelectTh checked={selection.allChecked} indeterminate={selection.someChecked} onChange={selection.toggleAll} ariaLabel={tc('table.selectAll')} />
               <DataTableTh>{t('infrastructure.activity.when')}</DataTableTh>
               <DataTableTh>{t('infrastructure.activity.who')}</DataTableTh>
               <DataTableTh>{t('infrastructure.activity.what')}</DataTableTh>
@@ -98,34 +117,41 @@ export function ActivitiesTab() {
           </DataTableHead>
           <DataTableBody>
             {rows === null && <DataTableEmpty label={t('common.loading')} />}
-            {rows?.length === 0 && <DataTableEmpty icon={<ActivityIcon size={28} />} label={t('infrastructure.activity.empty')} />}
-            {rows?.map((row) => (
-              <DataTableRow key={row.id} onClick={() => setOpen(row)}>
-                <DataTableTd className="trv-num">{formatDateTime(row.created_at, locale)}</DataTableTd>
-                <DataTableTd>
-                  {row.actor_role === 'system' ? (
-                    <span className="trv-muted">{t('infrastructure.activity.system')}</span>
-                  ) : (
-                    <>
-                      <span className="trv-client-cell__name">{row.actor_name || row.actor_email || t('infrastructure.activity.anonymous')}</span>
-                      {row.actor_name && <span className="infra-sub">{row.actor_email}</span>}
-                      {row.impersonated && <span className="infra-sub infra-sub--warn">{t('infrastructure.activity.impersonated')}</span>}
-                    </>
-                  )}
-                </DataTableTd>
-                <DataTableTd>
-                  {activityLabel(row.action_key, t)}
-                  {row.path && <span className="infra-sub infra-mono">{row.http_method} {row.path}</span>}
-                  {row.action_key.startsWith('mail:') && Array.isArray(row.details?.to) && (
-                    <span className="infra-sub">{t('infrastructure.activity.mailTo', { to: (row.details.to as string[]).join(', ') })}</span>
-                  )}
-                </DataTableTd>
-                <DataTableTd className="infra-mono">{row.ip || '—'}</DataTableTd>
-                <DataTableTd>
-                  <StatusBadge label={String(row.status ?? '—')} variant={(row.status ?? 0) >= 400 ? 'danger' : 'success'} />
-                </DataTableTd>
-              </DataTableRow>
-            ))}
+            {rows?.length === 0 && (
+              <DataTableEmpty icon={<ActivityIcon size={28} />} label={q ? tc('table.noResults', { query: q }) : t('infrastructure.activity.empty')} />
+            )}
+            {rows?.map((row) => {
+              // The data cells (not the checkbox) open the detail.
+              const show = () => setOpen(row);
+              return (
+                <DataTableRow key={row.id} className="adm-table__row--clickable">
+                  <DataTableSelectTd checked={selection.isSelected(row.id)} onChange={(checked) => selection.toggle(row.id, checked)} ariaLabel={tc('table.selectRow')} />
+                  <DataTableTd className="trv-num" onClick={show}>{formatDateTime(row.created_at, locale)}</DataTableTd>
+                  <DataTableTd onClick={show}>
+                    {row.actor_role === 'system' ? (
+                      <span className="trv-muted">{t('infrastructure.activity.system')}</span>
+                    ) : (
+                      <>
+                        <span className="trv-client-cell__name">{row.actor_name || row.actor_email || t('infrastructure.activity.anonymous')}</span>
+                        {row.actor_name && <span className="infra-sub">{row.actor_email}</span>}
+                        {row.impersonated && <span className="infra-sub infra-sub--warn">{t('infrastructure.activity.impersonated')}</span>}
+                      </>
+                    )}
+                  </DataTableTd>
+                  <DataTableTd onClick={show}>
+                    {activityLabel(row.action_key, t)}
+                    {row.path && <span className="infra-sub infra-mono">{row.http_method} {row.path}</span>}
+                    {row.action_key.startsWith('mail:') && Array.isArray(row.details?.to) && (
+                      <span className="infra-sub">{t('infrastructure.activity.mailTo', { to: (row.details.to as string[]).join(', ') })}</span>
+                    )}
+                  </DataTableTd>
+                  <DataTableTd className="infra-mono" onClick={show}>{row.ip || '—'}</DataTableTd>
+                  <DataTableTd onClick={show}>
+                    <StatusBadge label={String(row.status ?? '—')} variant={(row.status ?? 0) >= 400 ? 'danger' : 'success'} />
+                  </DataTableTd>
+                </DataTableRow>
+              );
+            })}
           </DataTableBody>
         </DataTable>
         <div className="trk-pagination">

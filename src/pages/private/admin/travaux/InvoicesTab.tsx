@@ -1,18 +1,27 @@
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { Card } from '@/components/ui/card';
 import { Modal } from '@/components/common/Modal';
 import { StatusBadge } from '@/components/common/StatusBadge';
+import { useConfirm } from '@/components/common/ConfirmDialog';
 import {
   DataTable,
+  DataTableAction,
   DataTableBody,
   DataTableEmpty,
   DataTableHead,
   DataTableRow,
+  DataTableSearch,
+  DataTableSelectionBar,
+  DataTableSelectTh,
   DataTableTd,
   DataTableTh,
+  DataTableToolbar,
+  exportRowsCsv,
+  filterRows,
+  useRowSelection,
 } from '@/components/common/DataTable';
 import { apiAssetUrl, apiService, saveBlob } from '@/services/api';
 import { calculateDevis, dueDateCountdown } from '@/lib/devisCalc';
@@ -72,14 +81,23 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
   ref,
 ) {
   const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
+  const confirm = useConfirm();
   const confirmDelete = useConfirmDelete();
   const [newOpen, setNewOpen] = useState(false);
   const [preview, setPreview] = useState<TravauxInvoice | null>(null);
   const [edit, setEdit] = useState<TravauxInvoice | null>(null);
   const [send, setSend] = useState<SendRequest | null>(null);
   const [generating, setGenerating] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const [q, setQ] = useState('');
   useImperativeHandle(ref, () => ({ openNew: () => setNewOpen(true) }));
-  const rows = invoices.filter((i) => i.kind === kind);
+  const ofKind = useMemo(() => invoices.filter((i) => i.kind === kind), [invoices, kind]);
+  const rows = useMemo(() => filterRows(ofKind, q, (i) => [
+    i.printed_number, i.title, formatCents(i.amount_cents), formatDate(i.due_on), t(`travaux.invoices.statuses.${i.status}`),
+    i.objective_title, i.source_quote_number, i.file_name,
+  ]), [ofKind, q, t]);
+  const selection = useRowSelection(rows, (i) => i.id);
   const paidCents = (invoice: TravauxInvoice) => payments
     .filter((p) => p.invoice_id === invoice.id && p.status === 'completed')
     .reduce((sum, p) => sum + p.amount_cents, 0);
@@ -125,6 +143,50 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
     }
   }
 
+  function bulkReport(total: number, failed: number) {
+    if (failed) toast.error(tc('table.bulkFailed'));
+    else toast.success(tc('table.bulkDone', { count: total }));
+  }
+
+  // Bulk delete: one request per document (the API refuses e.g. an invoice with payments).
+  async function bulkDelete() {
+    if (!(await confirm({ title: tc('table.bulkDeleteTitle', { count: selection.count }), message: tc('table.bulkDeleteMessage') }))) return;
+    const results = await Promise.allSettled(selection.selectedRows.map((i) => apiService.adminTravauxDeleteInvoice(i.id)));
+    bulkReport(results.length, results.filter((r) => r.status === 'rejected').length);
+    selection.clear();
+    await reload(['invoices', 'payments', 'client']);
+  }
+
+  // PDFs one after the other, so the browser keeps every download.
+  async function bulkDownload() {
+    setDownloading(true);
+    let failed = 0;
+    for (const i of selection.selectedRows) {
+      try {
+        const { blob, filename } = await apiService.adminTravauxDownloadInvoicePdf(i.id);
+        saveBlob(blob, filename);
+      } catch {
+        failed += 1;
+      }
+    }
+    bulkReport(selection.count, failed);
+    setDownloading(false);
+    selection.clear();
+  }
+
+  function exportSelection() {
+    exportRowsCsv(kind === 'quote' ? 'devis' : 'factures', [
+      [t('travaux.invoices.number'), (i) => i.printed_number],
+      [t('travaux.common.title'), (i) => i.title],
+      [t('travaux.invoices.amount'), (i) => formatCents(i.amount_cents)],
+      [t('travaux.invoices.dueDate'), (i) => formatDate(i.due_on)],
+      [t('travaux.common.status'), (i) => t(`travaux.invoices.statuses.${i.status}`)],
+      [t(kind === 'quote' ? 'travaux.invoices.invoiceRef' : 'travaux.invoices.quoteRef'), (i) => (kind === 'quote'
+        ? byId.get(i.generated_invoice_id ?? '')?.printed_number.replace(/V\d+$/, '')
+        : i.source_quote_number) ?? ''],
+    ], selection.selectedRows);
+  }
+
   const previewData = (invoice: TravauxInvoice): DocumentPreviewData => ({
     kindLabel: t(`travaux.invoices.kinds.${invoice.kind}`),
     printedNumber: invoice.printed_number,
@@ -141,10 +203,24 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
 
   return (
     <div className="adm-form">
+      <DataTableToolbar>
+        <DataTableSearch value={q} onChange={setQ} />
+      </DataTableToolbar>
+
+      <DataTableSelectionBar count={selection.count} onClear={selection.clear} onExport={exportSelection}>
+        <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" disabled={downloading} onClick={bulkDownload}>
+          <DownloadIcon size={13} /> {t('travaux.invoices.download')}
+        </button>
+        <button type="button" className="adm-btn adm-btn--danger adm-btn--sm" onClick={bulkDelete}>
+          <Trash2Icon size={13} /> {tc('table.delete')}
+        </button>
+      </DataTableSelectionBar>
+
       <Card className="overflow-hidden gap-0">
         <DataTable>
           <DataTableHead>
             <DataTableRow>
+              <DataTableSelectTh checked={selection.allChecked} indeterminate={selection.someChecked} onChange={selection.toggleAll} ariaLabel={tc('table.selectAll')} />
               <DataTableTh>{t('travaux.invoices.number')}</DataTableTh>
               <DataTableTh>{t('travaux.common.title')}</DataTableTh>
               <DataTableTh>{t('travaux.invoices.amount')}</DataTableTh>
@@ -157,18 +233,24 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
             </DataTableRow>
           </DataTableHead>
           <DataTableBody>
-            {rows.length === 0 && (
+            {rows.length === 0 && (q ? (
+              <DataTableEmpty icon={<ReceiptIcon size={28} />} label={tc('table.noResults', { query: q })} />
+            ) : (
               <DataTableEmpty
                 icon={<ReceiptIcon size={28} />}
                 label={t(kind === 'quote' ? 'travaux.invoices.emptyQuotes' : 'travaux.invoices.emptyInvoices')}
                 hint={kind === 'invoice' ? t('travaux.invoices.fromQuote') : undefined}
               />
-            )}
+            ))}
             {rows.map((i) => {
               // Devis → sa facture ; facture → son devis d'origine.
               const linked = byId.get((kind === 'quote' ? i.generated_invoice_id : i.source_quote_id) ?? '');
               return (
                 <DataTableRow key={i.id} onClick={() => setPreview(i)}>
+                  {/* Select cell: keep the click from opening the preview. */}
+                  <DataTableTd className="adm-table__td--select" onClick={(e) => e.stopPropagation()}>
+                    <input type="checkbox" checked={selection.isSelected(i.id)} aria-label={tc('table.selectRow')} onChange={(e) => selection.toggle(i.id, e.target.checked)} />
+                  </DataTableTd>
                   <DataTableTd className="trv-num">{i.printed_number.replace(/V\d+$/, '')}<span className="trv-muted">V{i.current_version}</span></DataTableTd>
                   <DataTableTd><span className="trv-client-cell__name">{i.title}</span></DataTableTd>
                   <DataTableTd className="trv-num">{formatCents(i.amount_cents)}</DataTableTd>
@@ -207,15 +289,9 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
                   </DataTableTd>
                   <DataTableTd onClick={(e) => e.stopPropagation()}>
                     <div className="adm-table__actions">
-                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title={t('travaux.common.view')} onClick={() => setPreview(i)}>
-                        <EyeIcon size={13} />
-                      </button>
-                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title={t('common.edit')} onClick={() => setEdit(i)}>
-                        <PenLineIcon size={13} />
-                      </button>
-                      <button type="button" className="adm-btn adm-btn--danger adm-btn--xs" title={t('common.delete')} onClick={() => remove(i)}>
-                        <Trash2Icon size={13} />
-                      </button>
+                      <DataTableAction icon={EyeIcon} label={t('travaux.common.view')} onClick={() => setPreview(i)} />
+                      <DataTableAction icon={PenLineIcon} label={t('common.edit')} onClick={() => setEdit(i)} />
+                      <DataTableAction icon={Trash2Icon} label={t('common.delete')} variant="danger" onClick={() => remove(i)} />
                     </div>
                   </DataTableTd>
                 </DataTableRow>

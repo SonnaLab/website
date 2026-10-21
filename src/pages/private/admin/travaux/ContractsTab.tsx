@@ -1,18 +1,27 @@
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { Card } from '@/components/ui/card';
 import { Modal } from '@/components/common/Modal';
 import { StatusBadge } from '@/components/common/StatusBadge';
+import { useConfirm } from '@/components/common/ConfirmDialog';
 import {
   DataTable,
+  DataTableAction,
   DataTableBody,
   DataTableEmpty,
   DataTableHead,
   DataTableRow,
+  DataTableSearch,
+  DataTableSelectionBar,
+  DataTableSelectTh,
   DataTableTd,
   DataTableTh,
+  DataTableToolbar,
+  exportRowsCsv,
+  filterRows,
+  useRowSelection,
 } from '@/components/common/DataTable';
 import { apiAssetUrl, apiService } from '@/services/api';
 import { EyeIcon, FileSignatureIcon, PaperclipIcon, Trash2Icon } from '@icons';
@@ -39,10 +48,44 @@ export const ContractsTab = forwardRef<TravauxTabHandle, ContractsTabProps>(func
   ref,
 ) {
   const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
+  const confirm = useConfirm();
   const confirmDelete = useConfirmDelete();
   const [newOpen, setNewOpen] = useState(false);
   const [preview, setPreview] = useState<TravauxContract | null>(null);
+  const [q, setQ] = useState('');
   useImperativeHandle(ref, () => ({ openNew: () => setNewOpen(true) }));
+
+  const rows = useMemo(() => filterRows(contracts, q, (c) => [
+    c.title, c.notes, c.file_name, formatDate(c.starts_on), formatDate(c.ends_on), t(`travaux.contracts.statuses.${c.status}`),
+  ]), [contracts, q, t]);
+  const selection = useRowSelection(rows, (c) => c.id);
+
+  // Bulk: one request per contract, then a single reload.
+  async function bulk(action: (c: TravauxContract) => Promise<unknown>) {
+    const results = await Promise.allSettled(selection.selectedRows.map(action));
+    const failed = results.filter((r) => r.status === 'rejected').length;
+    if (failed) toast.error(tc('table.bulkFailed'));
+    else toast.success(tc('table.bulkDone', { count: results.length }));
+    selection.clear();
+    await reload(['contracts']);
+  }
+
+  async function bulkDelete() {
+    if (!(await confirm({ title: tc('table.bulkDeleteTitle', { count: selection.count }), message: tc('table.bulkDeleteMessage') }))) return;
+    await bulk((c) => apiService.adminTravauxDeleteContract(c.id));
+  }
+
+  function exportSelection() {
+    exportRowsCsv('contrats', [
+      [t('travaux.common.title'), (c) => c.title],
+      [t('travaux.contracts.amount'), (c) => formatCents(c.amount_cents)],
+      [t('travaux.contracts.startDate'), (c) => formatDate(c.starts_on)],
+      [t('travaux.contracts.endDate'), (c) => formatDate(c.ends_on)],
+      [t('travaux.common.status'), (c) => t(`travaux.contracts.statuses.${c.status}`)],
+      [t('travaux.contracts.notes'), (c) => c.notes ?? ''],
+    ], selection.selectedRows);
+  }
 
   async function remove(c: TravauxContract) {
     if (!(await confirmDelete())) return;
@@ -57,10 +100,21 @@ export const ContractsTab = forwardRef<TravauxTabHandle, ContractsTabProps>(func
 
   return (
     <div className="adm-form">
+      <DataTableToolbar>
+        <DataTableSearch value={q} onChange={setQ} />
+      </DataTableToolbar>
+
+      <DataTableSelectionBar count={selection.count} onClear={selection.clear} onExport={exportSelection}>
+        <button type="button" className="adm-btn adm-btn--danger adm-btn--sm" onClick={bulkDelete}>
+          <Trash2Icon size={13} /> {tc('table.delete')}
+        </button>
+      </DataTableSelectionBar>
+
       <Card className="overflow-hidden gap-0">
         <DataTable>
           <DataTableHead>
             <DataTableRow>
+              <DataTableSelectTh checked={selection.allChecked} indeterminate={selection.someChecked} onChange={selection.toggleAll} ariaLabel={tc('table.selectAll')} />
               <DataTableTh>{t('travaux.common.title')}</DataTableTh>
               <DataTableTh>{t('travaux.contracts.amount')}</DataTableTh>
               <DataTableTh>{t('travaux.contracts.startDate')}</DataTableTh>
@@ -71,9 +125,15 @@ export const ContractsTab = forwardRef<TravauxTabHandle, ContractsTabProps>(func
             </DataTableRow>
           </DataTableHead>
           <DataTableBody>
-            {contracts.length === 0 && <DataTableEmpty icon={<FileSignatureIcon size={28} />} label={t('travaux.contracts.empty')} />}
-            {contracts.map((c) => (
+            {rows.length === 0 && (
+              <DataTableEmpty icon={<FileSignatureIcon size={28} />} label={q ? tc('table.noResults', { query: q }) : t('travaux.contracts.empty')} />
+            )}
+            {rows.map((c) => (
               <DataTableRow key={c.id} onClick={() => setPreview(c)}>
+                {/* Select cell: keep the click from opening the preview. */}
+                <DataTableTd className="adm-table__td--select" onClick={(e) => e.stopPropagation()}>
+                  <input type="checkbox" checked={selection.isSelected(c.id)} aria-label={tc('table.selectRow')} onChange={(e) => selection.toggle(c.id, e.target.checked)} />
+                </DataTableTd>
                 <DataTableTd><span className="trv-client-cell__name">{c.title}</span></DataTableTd>
                 <DataTableTd className="trv-num">{formatCents(c.amount_cents)}</DataTableTd>
                 <DataTableTd className="trv-num">{formatDate(c.starts_on)}</DataTableTd>
@@ -88,12 +148,8 @@ export const ContractsTab = forwardRef<TravauxTabHandle, ContractsTabProps>(func
                 </DataTableTd>
                 <DataTableTd>
                   <div className="adm-table__actions" onClick={(e) => e.stopPropagation()}>
-                    <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title={t('travaux.common.view')} onClick={() => setPreview(c)}>
-                      <EyeIcon size={13} />
-                    </button>
-                    <button type="button" className="adm-btn adm-btn--danger adm-btn--xs" title={t('common.delete')} onClick={() => remove(c)}>
-                      <Trash2Icon size={13} />
-                    </button>
+                    <DataTableAction icon={EyeIcon} label={t('travaux.common.view')} onClick={() => setPreview(c)} />
+                    <DataTableAction icon={Trash2Icon} label={t('common.delete')} variant="danger" onClick={() => remove(c)} />
                   </div>
                 </DataTableTd>
               </DataTableRow>

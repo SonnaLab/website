@@ -1073,6 +1073,12 @@ class ApiService {
     }
   }
 
+  // ==================== Client space: Travaux ====================
+
+  async memberTravaux(): Promise<MemberTravaux> {
+    return (await this.client.get('/api/v1/travaux')).data;
+  }
+
   // ==================== Newsletter ====================
   
   async subscribeNewsletter(email: string, preferences?: { language?: string; topics?: string[] }) {
@@ -1138,3 +1144,17 @@ class ApiService {
 }
 
 export const apiService = new ApiService();
+
+/** The progress of the work, as the client sees it (GET /api/v1/travaux). */
+export interface MemberTravauxObjective {
+  id: string; title: string; description: string | null; status: string; format: string;
+  progress: number; due_on: string | null; tasks_total: number; tasks_done: number;
+}
+export interface MemberTravauxTask {
+  id: string; title: string; description: string | null; column: 'todo' | 'in_progress' | 'review' | 'done'; priority: string;
+  objective_id: string | null; objective_title: string | null; due_on: string | null; completed_at: string | null; updated_at: string;
+}
+export interface MemberTravaux {
+  projects: Array<{ id: string; name: string; status: string; progress: number; due_on: string | null; objectives: MemberTravauxObjective[] }>;
+  tasks: MemberTravauxTask[];
+}

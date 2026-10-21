@@ -1,18 +1,28 @@
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { Card } from '@/components/ui/card';
 import { Modal } from '@/components/common/Modal';
 import { StatusBadge } from '@/components/common/StatusBadge';
+import { useConfirm } from '@/components/common/ConfirmDialog';
 import {
   DataTable,
+  DataTableAction,
   DataTableBody,
   DataTableEmpty,
   DataTableHead,
   DataTableRow,
+  DataTableSearch,
+  DataTableSelectionBar,
+  DataTableSelectTd,
+  DataTableSelectTh,
   DataTableTd,
   DataTableTh,
+  DataTableToolbar,
+  exportRowsCsv,
+  filterRows,
+  useRowSelection,
 } from '@/components/common/DataTable';
 import { apiService } from '@/services/api';
 import { Trash2Icon, WalletIcon } from '@icons';
@@ -40,9 +50,44 @@ export const PaymentsTab = forwardRef<TravauxTabHandle, PaymentsTabProps>(functi
   ref,
 ) {
   const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
+  const confirm = useConfirm();
   const confirmDelete = useConfirmDelete();
   const [newOpen, setNewOpen] = useState(false);
+  const [q, setQ] = useState('');
   useImperativeHandle(ref, () => ({ openNew: () => setNewOpen(true) }));
+
+  const rows = useMemo(() => filterRows(payments, q, (p) => [
+    formatCents(p.amount_cents), p.invoice_number, p.invoice_title, formatDate(p.paid_on),
+    t(`travaux.payments.methods.${p.payment_method}`), t(`travaux.payments.statuses.${p.status}`),
+  ]), [payments, q, t]);
+  const selection = useRowSelection(rows, (p) => p.id);
+
+  // Bulk: one request per payment, then a single reload.
+  async function bulk(action: (p: TravauxPayment) => Promise<unknown>) {
+    const results = await Promise.allSettled(selection.selectedRows.map(action));
+    const failed = results.filter((r) => r.status === 'rejected').length;
+    if (failed) toast.error(tc('table.bulkFailed'));
+    else toast.success(tc('table.bulkDone', { count: results.length }));
+    selection.clear();
+    await reload(['payments', 'client']);
+  }
+
+  async function bulkDelete() {
+    if (!(await confirm({ title: tc('table.bulkDeleteTitle', { count: selection.count }), message: tc('table.bulkDeleteMessage') }))) return;
+    await bulk((p) => apiService.adminTravauxDeletePayment(p.id));
+  }
+
+  function exportSelection() {
+    exportRowsCsv('paiements', [
+      [t('travaux.payments.amount'), (p) => formatCents(p.amount_cents)],
+      [t('travaux.payments.invoice'), (p) => [p.invoice_number, p.invoice_title].filter(Boolean).join(' ')],
+      [t('travaux.payments.method'), (p) => t(`travaux.payments.methods.${p.payment_method}`)],
+      [t('travaux.payments.paidAt'), (p) => formatDate(p.paid_on)],
+      [t('travaux.common.status'), (p) => t(`travaux.payments.statuses.${p.status}`)],
+      [t('travaux.payments.notes'), (p) => p.notes ?? ''],
+    ], selection.selectedRows);
+  }
 
   async function remove(p: TravauxPayment) {
     if (!(await confirmDelete())) return;
@@ -56,10 +101,21 @@ export const PaymentsTab = forwardRef<TravauxTabHandle, PaymentsTabProps>(functi
 
   return (
     <div className="adm-form">
+      <DataTableToolbar>
+        <DataTableSearch value={q} onChange={setQ} />
+      </DataTableToolbar>
+
+      <DataTableSelectionBar count={selection.count} onClear={selection.clear} onExport={exportSelection}>
+        <button type="button" className="adm-btn adm-btn--danger adm-btn--sm" onClick={bulkDelete}>
+          <Trash2Icon size={13} /> {tc('table.delete')}
+        </button>
+      </DataTableSelectionBar>
+
       <Card className="overflow-hidden gap-0">
         <DataTable>
           <DataTableHead>
             <DataTableRow>
+              <DataTableSelectTh checked={selection.allChecked} indeterminate={selection.someChecked} onChange={selection.toggleAll} ariaLabel={tc('table.selectAll')} />
               <DataTableTh>{t('travaux.payments.amount')}</DataTableTh>
               <DataTableTh>{t('travaux.payments.invoice')}</DataTableTh>
               <DataTableTh>{t('travaux.payments.method')}</DataTableTh>
@@ -69,9 +125,12 @@ export const PaymentsTab = forwardRef<TravauxTabHandle, PaymentsTabProps>(functi
             </DataTableRow>
           </DataTableHead>
           <DataTableBody>
-            {payments.length === 0 && <DataTableEmpty icon={<WalletIcon size={28} />} label={t('travaux.payments.empty')} />}
-            {payments.map((p) => (
+            {rows.length === 0 && (
+              <DataTableEmpty icon={<WalletIcon size={28} />} label={q ? tc('table.noResults', { query: q }) : t('travaux.payments.empty')} />
+            )}
+            {rows.map((p) => (
               <DataTableRow key={p.id}>
+                <DataTableSelectTd checked={selection.isSelected(p.id)} onChange={(checked) => selection.toggle(p.id, checked)} ariaLabel={tc('table.selectRow')} />
                 <DataTableTd className="trv-num"><span className="trv-client-cell__name">{formatCents(p.amount_cents)}</span></DataTableTd>
                 <DataTableTd>
                   {p.invoice_number ? <><span className="trv-num">{p.invoice_number}</span> <span className="trv-muted">{p.invoice_title}</span></> : '—'}
@@ -80,9 +139,9 @@ export const PaymentsTab = forwardRef<TravauxTabHandle, PaymentsTabProps>(functi
                 <DataTableTd className="trv-num">{formatDate(p.paid_on)}</DataTableTd>
                 <DataTableTd><StatusBadge label={t(`travaux.payments.statuses.${p.status}`)} variant={STATUS_VARIANT[p.status]} /></DataTableTd>
                 <DataTableTd>
-                  <button type="button" className="adm-btn adm-btn--danger adm-btn--xs" title={t('common.delete')} onClick={() => remove(p)}>
-                    <Trash2Icon size={13} />
-                  </button>
+                  <div className="adm-table__actions">
+                    <DataTableAction icon={Trash2Icon} label={t('common.delete')} variant="danger" onClick={() => remove(p)} />
+                  </div>
                 </DataTableTd>
               </DataTableRow>
             ))}

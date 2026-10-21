@@ -6,7 +6,8 @@
     "account": "My account",
     "signOut": "Sign out",
     "backToSite": "Back to site",
-    "profile": "Profile"
+    "profile": "Profile",
+    "travaux": "Work"
   },
   "dashboard": {
     "title": "Welcome {{name}}",
@@ -81,7 +82,9 @@
     "stats": {
       "toPay": "To pay",
       "paid": "Paid"
-    }
+    },
+    "downloadPdf": "Download PDF",
+    "downloadPdfs": "Download PDFs"
   },
   "profile": {
     "title": "Profile",
@@ -109,5 +112,40 @@
     "saved": "Profile updated.",
     "saveError": "Could not save your profile.",
     "heading": "Profile management"
+  },
+  "travaux": {
+    "heading": "Work progress",
+    "subtitle": "How your projects are going, deliverable by deliverable, task by task.",
+    "stats": {
+      "projects": "Projects",
+      "inProgress": "Deliverables in progress",
+      "tasksDone": "Tasks done",
+      "overall": "Overall progress"
+    },
+    "tabs": {
+      "objectives": "Deliverables",
+      "tasks": "Tasks"
+    },
+    "empty": "No project yet: it will show here as soon as it starts.",
+    "noObjectives": "No deliverable for this project.",
+    "noTasks": "No task",
+    "tasksDone": "{{done}} / {{total}} tasks done",
+    "dueOn": "Due: {{date}}",
+    "statuses": {
+      "planned": "Planned",
+      "in_progress": "In progress",
+      "done": "Delivered",
+      "at_risk": "At risk"
+    },
+    "formats": {
+      "web": "Web",
+      "mobile": "Mobile"
+    },
+    "columns": {
+      "todo": "To do",
+      "in_progress": "In progress",
+      "review": "In review",
+      "done": "Done"
+    }
   }
 }

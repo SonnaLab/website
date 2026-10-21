@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -7,7 +7,10 @@ import { Card } from '@/components/ui/card';
 import { Modal } from '@/components/common/Modal';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { useConfirm } from '@/components/common/ConfirmDialog';
-import { DataTable, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableTd, DataTableTh } from '@/components/common/DataTable';
+import {
+  DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
+  DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, filterRows, useRowSelection,
+} from '@/components/common/DataTable';
 import { EyeIcon, MegaphoneIcon, PenLineIcon, SendIcon, Trash2Icon } from '@icons';
 
 const CATEGORIES = ['newsletter', 'updates', 'events'] as const;
@@ -21,8 +24,10 @@ type Draft = Partial<MailingCampaign> & Record<string, unknown>;
 /** Campaigns: drafts to edit, preview and test, then send; sent ones with their figures. */
 export function CampaignsTab({ creating, onCreated, onChange }: { creating: boolean; onCreated: () => void; onChange: () => void }) {
   const { t, i18n } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
   const confirm = useConfirm();
   const [campaigns, setCampaigns] = useState<MailingCampaign[] | null>(null);
+  const [q, setQ] = useState('');
   const [editing, setEditing] = useState<Draft | null>(null);
   const [previewing, setPreviewing] = useState<MailingCampaign | null>(null);
 
@@ -63,14 +68,56 @@ export function CampaignsTab({ creating, onCreated, onChange }: { creating: bool
     load(); onChange();
   }
 
+  const visible = useMemo(
+    () => (campaigns ? filterRows(campaigns, q, (c) => [c.name, c.subject_fr, t(`mailing.categories.${c.category}`), t(`mailing.audiences.${c.audience}`), t(`mailing.campaigns.statuses.${c.status}`)]) : null),
+    [campaigns, q, t],
+  );
+  const selection = useRowSelection(visible ?? [], (c) => c.id);
+
+  // Bulk delete: drafts only, sent campaigns are kept (their figures matter).
+  async function bulkDelete() {
+    const drafts = selection.selectedRows.filter((c) => c.status === 'draft');
+    const skipped = selection.count - drafts.length;
+    if (!drafts.length) { toast.error(t('mailing.campaigns.bulkDraftsOnly')); return; }
+    const message = skipped ? `${tc('table.bulkDeleteMessage')} ${t('mailing.campaigns.bulkSkipped', { count: skipped })}` : tc('table.bulkDeleteMessage');
+    if (!(await confirm({ title: tc('table.bulkDeleteTitle', { count: drafts.length }), message }))) return;
+    const results = await Promise.allSettled(drafts.map((c) => apiService.adminMailingDeleteCampaign(c.id)));
+    if (results.some((r) => r.status === 'rejected')) toast.error(tc('table.bulkFailed'));
+    else toast.success(tc('table.bulkDone', { count: results.length }));
+    selection.clear(); load(); onChange();
+  }
+
+  function exportSelection() {
+    exportRowsCsv('campagnes', [
+      [t('mailing.campaigns.name'), (c) => c.name],
+      [t('mailing.campaigns.fields.subject'), (c) => c.subject_fr ?? ''],
+      [t('mailing.campaigns.category'), (c) => t(`mailing.categories.${c.category}`)],
+      [t('mailing.campaigns.audience'), (c) => t(`mailing.audiences.${c.audience}`)],
+      [t('travaux.common.status'), (c) => t(`mailing.campaigns.statuses.${c.status}`)],
+      [t('mailing.campaigns.results'), (c) => (c.status === 'draft' ? '' : `${c.delivered_count}/${c.recipients_count}`)],
+      ['Date', (c) => (c.sent_at ? date(c.sent_at) : '')],
+    ], selection.selectedRows);
+  }
+
   const date = (iso: string | null) => (iso ? new Intl.DateTimeFormat(i18n.language, { dateStyle: 'short', timeStyle: 'short' }).format(new Date(iso)) : '—');
 
   return (
-    <>
+    <div className="infra-stack">
+      <DataTableToolbar>
+        <DataTableSearch value={q} onChange={setQ} />
+      </DataTableToolbar>
+
+      <DataTableSelectionBar count={selection.count} onClear={selection.clear} onExport={exportSelection}>
+        <button type="button" className="adm-btn adm-btn--danger adm-btn--sm" onClick={bulkDelete}>
+          <Trash2Icon size={13} /> {tc('table.delete')}
+        </button>
+      </DataTableSelectionBar>
+
       <Card className="overflow-hidden gap-0">
         <DataTable>
           <DataTableHead>
             <DataTableRow>
+              <DataTableSelectTh checked={selection.allChecked} indeterminate={selection.someChecked} onChange={selection.toggleAll} ariaLabel={tc('table.selectAll')} />
               <DataTableTh>{t('mailing.campaigns.name')}</DataTableTh>
               <DataTableTh>{t('mailing.campaigns.category')}</DataTableTh>
               <DataTableTh>{t('mailing.campaigns.audience')}</DataTableTh>
@@ -81,9 +128,15 @@ export function CampaignsTab({ creating, onCreated, onChange }: { creating: bool
           </DataTableHead>
           <DataTableBody>
             {campaigns === null && <DataTableEmpty label={t('common.loading')} />}
-            {campaigns?.length === 0 && <DataTableEmpty icon={<MegaphoneIcon size={28} />} label={t('mailing.campaigns.empty')} />}
-            {campaigns?.map((c) => (
+            {visible?.length === 0 && (
+              <DataTableEmpty icon={<MegaphoneIcon size={28} />} label={q ? tc('table.noResults', { query: q }) : t('mailing.campaigns.empty')} />
+            )}
+            {visible?.map((c) => (
               <DataTableRow key={c.id} onClick={() => setPreviewing(c)}>
+                {/* Select cell: keep the click from opening the preview. */}
+                <DataTableTd className="adm-table__td--select" onClick={(e) => e.stopPropagation()}>
+                  <input type="checkbox" checked={selection.isSelected(c.id)} aria-label={tc('table.selectRow')} onChange={(e) => selection.toggle(c.id, e.target.checked)} />
+                </DataTableTd>
                 <DataTableTd>
                   <span className="trv-client-cell__name">{c.name}</span>
                   <span className="infra-sub">{c.subject_fr}</span>
@@ -104,12 +157,12 @@ export function CampaignsTab({ creating, onCreated, onChange }: { creating: bool
                 </DataTableTd>
                 <DataTableTd onClick={(e) => e.stopPropagation()}>
                   <div className="adm-table__actions">
-                    <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title={t('mailing.campaigns.preview')} onClick={() => setPreviewing(c)}><EyeIcon size={13} /></button>
+                    <DataTableAction icon={EyeIcon} label={t('mailing.campaigns.preview')} onClick={() => setPreviewing(c)} />
                     {c.status === 'draft' && (
                       <>
-                        <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title={t('common.edit')} onClick={() => edit(c)}><PenLineIcon size={13} /></button>
-                        <button type="button" className="adm-btn adm-btn--primary adm-btn--xs" onClick={() => send(c)}><SendIcon size={13} /> {t('mailing.campaigns.send')}</button>
-                        <button type="button" className="adm-btn adm-btn--danger adm-btn--xs" title={t('common.delete')} onClick={() => remove(c)}><Trash2Icon size={13} /></button>
+                        <DataTableAction icon={PenLineIcon} label={t('common.edit')} onClick={() => edit(c)} />
+                        <DataTableAction icon={SendIcon} label={t('mailing.campaigns.send')} variant="success" onClick={() => send(c)} />
+                        <DataTableAction icon={Trash2Icon} label={t('common.delete')} variant="danger" onClick={() => remove(c)} />
                       </>
                     )}
                   </div>
@@ -122,7 +175,7 @@ export function CampaignsTab({ creating, onCreated, onChange }: { creating: bool
 
       <CampaignFormModal draft={editing} onClose={() => setEditing(null)} onSaved={(c) => { setEditing(null); load(); onChange(); setPreviewing(c); }} />
       <CampaignPreviewModal campaign={previewing} onClose={() => setPreviewing(null)} />
-    </>
+    </div>
   );
 }
 

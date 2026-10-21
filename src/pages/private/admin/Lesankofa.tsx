@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 import { apiService } from '@/services/api';
 import { BaseTab } from '@/components/common/BaseTab';
@@ -9,7 +10,10 @@ import { StepperModal } from '@/components/common/StepperModal';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
 import { PageHeader } from '@/components/private/common/PageHeader';
 import { StatCard, StatRow } from '@/components/private/common/StatRow';
-import { DataTable, DataTableHead, DataTableBody, DataTableRow, DataTableTh, DataTableTd, DataTableEmpty } from '@/components/common/DataTable';
+import {
+  DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
+  DataTableSelectTd, DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, filterRows, useRowSelection,
+} from '@/components/common/DataTable';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -456,6 +460,8 @@ function RecentActivityCard() {
 // ─────────────────────────────────────────────
 
 function ModelsTab() {
+  const { t: tc } = useTranslation('common');
+  const [q,             setQ]             = useState('');
   const [models,        setModels]        = useState<AIModelRow[] | null>(null);
   const [loading,       setLoading]       = useState(true);
   const [error,         setError]         = useState<string | null>(null);
@@ -482,20 +488,55 @@ function ModelsTab() {
 
   useEffect(() => { load(); }, []);
 
-  const pagedModels = models?.slice((modelPage - 1) * MODEL_PER_PAGE, modelPage * MODEL_PER_PAGE);
-  const totalPages  = models ? Math.ceil(models.length / MODEL_PER_PAGE) : 1;
+  // Search first, then paginate what matches.
+  const filteredModels = useMemo(
+    () => (models ? filterRows(models, q, (m) => [m.name, m.model_identifier, m.provider, m.tier]) : null),
+    [models, q],
+  );
+  const pagedModels = useMemo(
+    () => filteredModels?.slice((modelPage - 1) * MODEL_PER_PAGE, modelPage * MODEL_PER_PAGE) ?? [],
+    [filteredModels, modelPage],
+  );
+  const totalPages  = filteredModels ? Math.max(1, Math.ceil(filteredModels.length / MODEL_PER_PAGE)) : 1;
+  const selection   = useRowSelection(pagedModels, (m) => String(m.id));
+
+  // Bulk (de)activation: the endpoint toggles, so only rows not yet in the target state are sent.
+  async function bulkSetActive(active: boolean) {
+    const targets = selection.selectedRows.filter((m) => m.is_active !== active);
+    const results = await Promise.allSettled(targets.map((m) => apiService.adminLesankofaModelToggle(String(m.id))));
+    if (results.some((r) => r.status === 'rejected')) toast.error(tc('table.bulkFailed'));
+    else toast.success(tc('table.bulkDone', { count: selection.count }));
+    selection.clear(); load();
+  }
+
+  function exportSelection() {
+    exportRowsCsv('lesankofa-modeles', [
+      ['Modèle', (m) => m.name],
+      ['Identifiant', (m) => m.model_identifier],
+      ['Provider', (m) => m.provider],
+      ['Tier', (m) => m.tier],
+      ['Statut', (m) => (m.is_available ? 'Disponible' : m.is_active ? 'Quota épuisé' : 'Inactif')],
+      ["Req. aujourd'hui", (m) => m.requests_today],
+      ['Tokens', (m) => m.tokens_today],
+      ['Quota restant', (m) => m.quota_remaining ?? ''],
+    ], selection.selectedRows);
+  }
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <span className="text-xs text-muted-foreground">
-          {models ? `${models.length} modèles` : ''}
-        </span>
-        <Button variant="outline" size="sm" onClick={load} disabled={loading}>
-          <RefreshCwIcon className={`size-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-          Actualiser
-        </Button>
-      </div>
+      <DataTableToolbar right={
+        <>
+          <span className="text-xs text-muted-foreground">
+            {models ? `${models.length} modèles` : ''}
+          </span>
+          <Button variant="outline" size="sm" onClick={load} disabled={loading}>
+            <RefreshCwIcon className={`size-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Actualiser
+          </Button>
+        </>
+      }>
+        <DataTableSearch value={q} onChange={(value) => { setQ(value); setModelPage(1); }} />
+      </DataTableToolbar>
 
       {error && (
         <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-4 py-3">
@@ -503,9 +544,19 @@ function ModelsTab() {
         </p>
       )}
 
+      <DataTableSelectionBar count={selection.count} onClear={selection.clear} onExport={exportSelection}>
+        <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => bulkSetActive(true)}>
+          <MegaphoneIcon size={13} /> Activer
+        </button>
+        <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => bulkSetActive(false)}>
+          <MegaphoneOffIcon size={13} /> Désactiver
+        </button>
+      </DataTableSelectionBar>
+
       <DataTable>
         <DataTableHead>
           <DataTableRow>
+            <DataTableSelectTh checked={selection.allChecked} indeterminate={selection.someChecked} onChange={selection.toggleAll} ariaLabel={tc('table.selectAll')} />
             <DataTableTh>Modèle</DataTableTh>
             <DataTableTh>Provider</DataTableTh>
             <DataTableTh>Tier</DataTableTh>
@@ -518,9 +569,12 @@ function ModelsTab() {
         </DataTableHead>
         <DataTableBody>
           {!models && !error && <DataTableEmpty label="Chargement…" />}
-          {models && models.length === 0 && <DataTableEmpty label="Aucun modèle trouvé" />}
-          {pagedModels?.map(m => (
+          {filteredModels && filteredModels.length === 0 && (
+            <DataTableEmpty icon={<BrainIcon size={28} />} label={q ? tc('table.noResults', { query: q }) : 'Aucun modèle trouvé'} />
+          )}
+          {pagedModels.map(m => (
             <DataTableRow key={m.id}>
+              <DataTableSelectTd checked={selection.isSelected(String(m.id))} onChange={(checked) => selection.toggle(String(m.id), checked)} ariaLabel={tc('table.selectRow')} />
               <DataTableTd>
                 <div className="font-medium text-foreground">{m.name}</div>
                 <div className="text-xs text-muted-foreground">{m.model_identifier}</div>
@@ -540,26 +594,11 @@ function ModelsTab() {
               <DataTableTd>{fmtNum(m.tokens_today)}</DataTableTd>
               <DataTableTd>{m.quota_remaining ?? '∞'}</DataTableTd>
               <DataTableTd>
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    className="adm-btn adm-btn--ghost adm-btn--xs"
-                    onClick={() => setSelectedModel(m)}
-                    title="Détails du modèle"
-                  >
-                    <EyeIcon size={13} />
-                  </button>
-                  <button
-                    type="button"
-                    className="adm-btn adm-btn--ghost adm-btn--xs"
-                    onClick={() => toggleModel(String(m.id))}
-                    disabled={togglingId === String(m.id)}
-                    title={m.is_active ? 'Désactiver ce modèle' : 'Activer ce modèle'}
-                  >
-                    {m.is_active
-                      ? <MegaphoneIcon size={13} className="text-primary" />
-                      : <MegaphoneOffIcon size={13} className="text-muted-foreground" />}
-                  </button>
+                <div className="adm-table__actions">
+                  <DataTableAction icon={EyeIcon} label="Détails du modèle" onClick={() => setSelectedModel(m)} />
+                  {m.is_active
+                    ? <DataTableAction icon={MegaphoneIcon} label="Désactiver ce modèle" disabled={togglingId === String(m.id)} onClick={() => toggleModel(String(m.id))} />
+                    : <DataTableAction icon={MegaphoneOffIcon} label="Activer ce modèle" variant="success" disabled={togglingId === String(m.id)} onClick={() => toggleModel(String(m.id))} />}
                 </div>
               </DataTableTd>
             </DataTableRow>
@@ -653,6 +692,8 @@ function ModelsTab() {
 // ─────────────────────────────────────────────
 
 function TasksTab() {
+  const { t: tc } = useTranslation('common');
+  const [q,        setQ]        = useState('');
   const [tasks,    setTasks]    = useState<TaskRow[]>([]);
   const [loading,  setLoading]  = useState(true);
   const [error,    setError]    = useState<string | null>(null);
@@ -669,12 +710,33 @@ function TasksTab() {
 
   useEffect(() => { load(); }, []);
 
+  const visibleTasks = useMemo(() => filterRows(tasks, q, (t) => [t.name, t.task, t.schedule, t.status]), [tasks, q]);
+  // No bulk endpoint for tasks: selection is for the CSV export.
+  const selection = useRowSelection(visibleTasks, (t) => t.name);
+
+  function exportSelection() {
+    exportRowsCsv('lesankofa-taches', [
+      ['Tâche', (t) => t.name],
+      ['Fonction', (t) => t.task],
+      ['Planification (cron)', (t) => t.schedule ?? ''],
+      ['Dernier déclenchement', (t) => t.last_run_at ?? ''],
+      ['Statut', (t) => t.status],
+    ], selection.selectedRows);
+  }
+
   return (
     <div className="space-y-4">
+      <DataTableToolbar>
+        <DataTableSearch value={q} onChange={setQ} />
+      </DataTableToolbar>
+
+      <DataTableSelectionBar count={selection.count} onClear={selection.clear} onExport={exportSelection} />
+
       <BaseTab loading={loading} error={error} onRetry={load}>
         <DataTable>
           <DataTableHead>
             <DataTableRow>
+              <DataTableSelectTh checked={selection.allChecked} indeterminate={selection.someChecked} onChange={selection.toggleAll} ariaLabel={tc('table.selectAll')} />
               <DataTableTh>Tâche</DataTableTh>
               <DataTableTh>Planification (cron)</DataTableTh>
               <DataTableTh>Dernier déclenchement</DataTableTh>
@@ -683,11 +745,12 @@ function TasksTab() {
             </DataTableRow>
           </DataTableHead>
           <DataTableBody>
-            {tasks.length === 0 && (
-              <DataTableEmpty label="Aucune tâche trouvée." />
+            {visibleTasks.length === 0 && (
+              <DataTableEmpty icon={<ZapIcon size={28} />} label={q ? tc('table.noResults', { query: q }) : 'Aucune tâche trouvée.'} />
             )}
-            {tasks.map(t => (
+            {visibleTasks.map(t => (
               <DataTableRow key={t.name}>
+                <DataTableSelectTd checked={selection.isSelected(t.name)} onChange={(checked) => selection.toggle(t.name, checked)} ariaLabel={tc('table.selectRow')} />
                 <DataTableTd>
                   <code className="text-xs bg-muted px-1.5 py-0.5 rounded">{t.name}</code>
                 </DataTableTd>
@@ -698,12 +761,8 @@ function TasksTab() {
                 <DataTableTd><StatusBadgeLocal status={t.status} /></DataTableTd>
                 <DataTableTd>
                   <div className="adm-table__actions">
-                    <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(t)} title="Détails">
-                      <EyeIcon size={13} />
-                    </button>
-                    <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title="Modifier (à venir)" disabled>
-                      <PenLineIcon size={13} />
-                    </button>
+                    <DataTableAction icon={EyeIcon} label="Détails" onClick={() => setSelected(t)} />
+                    <DataTableAction icon={PenLineIcon} label="Modifier (à venir)" disabled />
                   </div>
                 </DataTableTd>
               </DataTableRow>
@@ -878,6 +937,8 @@ function ContainerLogPanel({ container, onClose }: { container: ContainerRow; on
 // ─────────────────────────────────────────────
 
 function ClientsTab() {
+  const { t: tc } = useTranslation('common');
+  const [q,                  setQ]                  = useState('');
   const [clients,            setClients]            = useState<AIClientRow[] | null>(null);
   const [loading,            setLoading]            = useState(true);
   const [error,              setError]              = useState<string | null>(null);
@@ -885,12 +946,42 @@ function ClientsTab() {
   const [clientDetail,       setClientDetail]       = useState<AIClientDetail | null>(null);
   const [detailLoading,      setDetailLoading]      = useState(false);
 
-  useEffect(() => {
+  const loadClients = () => {
     apiService.adminLesankofaClients()
       .then(data => setClients(data.clients ?? data))
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
-  }, []);
+  };
+  useEffect(() => { loadClients(); }, []);
+
+  const visibleClients = useMemo(
+    () => (clients ? filterRows(clients, q, (c) => [c.name, c.slug]) : null),
+    [clients, q],
+  );
+  const selection = useRowSelection(visibleClients ?? [], (c) => c.id);
+
+  // Bulk: same daily capacity for every selected client.
+  async function bulkCapacity(capacity: number) {
+    const results = await Promise.allSettled(
+      selection.selectedRows.map((c) => apiService.adminLesankofaClientUpdate(c.id, { daily_generation_capacity: capacity })),
+    );
+    if (results.some((r) => r.status === 'rejected')) toast.error(tc('table.bulkFailed'));
+    else toast.success(tc('table.bulkDone', { count: results.length }));
+    selection.clear(); loadClients();
+  }
+
+  function exportSelection() {
+    exportRowsCsv('lesankofa-clients', [
+      ['Client', (c) => c.name],
+      ['Slug', (c) => c.slug],
+      ['Total articles', (c) => c.articles_total],
+      ['Succès', (c) => c.articles_success],
+      ['Échecs', (c) => c.articles_failed],
+      ['Capacité', (c) => c.daily_generation_capacity],
+      ['Dernière génération', (c) => c.last_generation ?? ''],
+      ['Statut', (c) => (c.is_active ? 'Actif' : 'Inactif')],
+    ], selection.selectedRows);
+  }
 
   useEffect(() => {
     if (!selectedClient) { setClientDetail(null); return; }
@@ -913,9 +1004,26 @@ function ClientsTab() {
       {error && (
         <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-4 py-3">Erreur : {error}</p>
       )}
+      <DataTableToolbar>
+        <DataTableSearch value={q} onChange={setQ} />
+      </DataTableToolbar>
+
+      <DataTableSelectionBar count={selection.count} onClear={selection.clear} onExport={exportSelection}>
+        <select
+          className="adm-select adm-select--sm"
+          aria-label="Capacité"
+          value=""
+          onChange={(e) => { if (e.target.value) bulkCapacity(Number(e.target.value)); }}
+        >
+          <option value="">Capacité…</option>
+          {CAPACITY_TIERS.map((tier) => <option key={tier.value} value={tier.value}>{tier.label}</option>)}
+        </select>
+      </DataTableSelectionBar>
+
       <DataTable>
         <DataTableHead>
           <DataTableRow>
+            <DataTableSelectTh checked={selection.allChecked} indeterminate={selection.someChecked} onChange={selection.toggleAll} ariaLabel={tc('table.selectAll')} />
             <DataTableTh>Client</DataTableTh>
             <DataTableTh>Total articles</DataTableTh>
             <DataTableTh>Succès</DataTableTh>
@@ -928,9 +1036,12 @@ function ClientsTab() {
         </DataTableHead>
         <DataTableBody>
           {!clients && !error && <DataTableEmpty label="Chargement…" />}
-          {clients && clients.length === 0 && <DataTableEmpty label="Aucun client" />}
-          {clients?.map(c => (
+          {visibleClients && visibleClients.length === 0 && (
+            <DataTableEmpty icon={<UsersIcon size={28} />} label={q ? tc('table.noResults', { query: q }) : 'Aucun client'} />
+          )}
+          {visibleClients?.map(c => (
             <DataTableRow key={c.id}>
+              <DataTableSelectTd checked={selection.isSelected(c.id)} onChange={(checked) => selection.toggle(c.id, checked)} ariaLabel={tc('table.selectRow')} />
               <DataTableTd>
                 <div className="font-medium text-foreground">{c.name}</div>
                 <div className="text-xs text-muted-foreground">{c.slug}</div>
@@ -946,12 +1057,8 @@ function ClientsTab() {
               <DataTableTd><StatusBadgeLocal status={c.is_active ? 'active' : 'paused'} /></DataTableTd>
               <DataTableTd>
                 <div className="adm-table__actions">
-                  <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelectedClient(c)} title="Détails">
-                    <EyeIcon size={13} />
-                  </button>
-                  <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setEditingClient(c)} title="Modifier">
-                    <PenLineIcon size={13} />
-                  </button>
+                  <DataTableAction icon={EyeIcon} label="Détails" onClick={() => setSelectedClient(c)} />
+                  <DataTableAction icon={PenLineIcon} label="Modifier" onClick={() => setEditingClient(c)} />
                 </div>
               </DataTableTd>
             </DataTableRow>
@@ -1644,32 +1751,30 @@ function SchemaModal({ entity, onClose }: { entity: string | null; onClose: () =
           <p className="text-sm text-muted-foreground">{schema.description}</p>
 
           <Section title={`Colonnes · ${schema.columns.length}`}>
-            <div className="rounded-lg border border-border overflow-hidden">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-muted/50 text-xs text-muted-foreground">
-                    <th className="text-left font-medium px-3 py-2">Colonne</th>
-                    <th className="text-left font-medium px-3 py-2">Type</th>
-                    <th className="text-left font-medium px-3 py-2 w-20">Clé</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {schema.columns.map(c => (
-                    <tr key={c.name} className="hover:bg-muted/30 transition-colors">
-                      <td className="px-3 py-1.5 font-mono text-xs text-foreground">{c.name}</td>
-                      <td className="px-3 py-1.5 font-mono text-xs text-muted-foreground">{c.type}</td>
-                      <td className="px-3 py-1.5">
-                        {c.tag && (
-                          <span className={`inline-block rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase ${TAG_STYLE[c.tag]}`}>
-                            {c.tag}
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <DataTable>
+              <DataTableHead>
+                <DataTableRow>
+                  <DataTableTh>Colonne</DataTableTh>
+                  <DataTableTh>Type</DataTableTh>
+                  <DataTableTh className="w-20">Clé</DataTableTh>
+                </DataTableRow>
+              </DataTableHead>
+              <DataTableBody>
+                {schema.columns.map(c => (
+                  <DataTableRow key={c.name}>
+                    <DataTableTd className="font-mono text-xs text-foreground">{c.name}</DataTableTd>
+                    <DataTableTd className="font-mono text-xs text-muted-foreground">{c.type}</DataTableTd>
+                    <DataTableTd>
+                      {c.tag && (
+                        <span className={`inline-block rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase ${TAG_STYLE[c.tag]}`}>
+                          {c.tag}
+                        </span>
+                      )}
+                    </DataTableTd>
+                  </DataTableRow>
+                ))}
+              </DataTableBody>
+            </DataTable>
           </Section>
 
           {relations.length > 0 && (

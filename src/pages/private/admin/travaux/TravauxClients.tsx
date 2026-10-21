@@ -5,14 +5,22 @@ import { toast } from 'sonner';
 
 import { apiService } from '@/services/api';
 import { Card } from '@/components/ui/card';
+import { useConfirm } from '@/components/common/ConfirmDialog';
 import {
   DataTable,
+  DataTableAction,
   DataTableBody,
   DataTableEmpty,
   DataTableHead,
   DataTableRow,
+  DataTableSearch,
+  DataTableSelectionBar,
+  DataTableSelectTh,
   DataTableTd,
   DataTableTh,
+  DataTableToolbar,
+  exportRowsCsv,
+  useRowSelection,
 } from '@/components/common/DataTable';
 import { PageHeader } from '@/components/private/common/PageHeader';
 import { StatCard, StatRow } from '@/components/private/common/StatRow';
@@ -24,9 +32,9 @@ import {
   PenLineIcon,
   PlusIcon,
   ReceiptIcon,
-  SearchIcon,
   TargetIcon,
   TrafficConeIcon,
+  Trash2Icon,
   UsersIcon,
   HotelIcon,
   WalletIcon,
@@ -48,6 +56,8 @@ const PER_PAGE = 20;
  */
 export default function AdminTravauxClients() {
   const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
+  const confirm = useConfirm();
   const navigate = useNavigate();
   const [clients, setClients] = useState<TravauxClient[]>([]);
   const [total, setTotal] = useState(0);
@@ -69,9 +79,40 @@ export default function AdminTravauxClients() {
       .finally(() => setLoading(false));
   }, [t]);
 
-  useEffect(() => { load(page, search); }, [page, load]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Server-side search, debounced while typing.
+  useEffect(() => {
+    const id = window.setTimeout(() => load(page, search), search ? 300 : 0);
+    return () => window.clearTimeout(id);
+  }, [page, search, load]);
 
-  const applySearch = (q: string) => { setSearch(q); setPage(1); load(1, q); };
+  const applySearch = (q: string) => { setSearch(q); setPage(1); };
+
+  const selection = useRowSelection(clients, (c) => c.id);
+
+  // Bulk: one request per client, then a single reload.
+  async function bulk(action: (c: TravauxClient) => Promise<unknown>) {
+    const results = await Promise.allSettled(selection.selectedRows.map(action));
+    const failed = results.filter((r) => r.status === 'rejected').length;
+    if (failed) toast.error(tc('table.bulkFailed'));
+    else toast.success(tc('table.bulkDone', { count: results.length }));
+    selection.clear(); load(page, search);
+  }
+
+  async function bulkDelete() {
+    if (!(await confirm({ title: tc('table.bulkDeleteTitle', { count: selection.count }), message: tc('table.bulkDeleteMessage') }))) return;
+    await bulk((c) => apiService.adminTravauxDeleteClient(c.id));
+  }
+
+  function exportSelection() {
+    exportRowsCsv('travaux-clients', [
+      [t('travaux.clients.table.company'), (c) => c.name],
+      [t('travaux.clients.table.referent'), (c) => referentOf(c)],
+      [t('travaux.clients.table.projects'), (c) => c.stats?.projects_count ?? 0],
+      [t('travaux.clients.table.inProgress'), (c) => c.stats?.objectives_in_progress ?? 0],
+      [t('travaux.clients.table.invoiced'), (c) => formatCents(c.stats?.invoiced_cents ?? 0)],
+      [t('travaux.clients.table.paid'), (c) => formatCents(c.stats?.paid_cents ?? 0)],
+    ], selection.selectedRows);
+  }
 
   async function openEdit(id: string) {
     try {
@@ -112,24 +153,21 @@ export default function AdminTravauxClients() {
         <StatCard icon={<WalletIcon size={18} />} label={t('travaux.clients.table.paid')} value={totals ? formatCents(totals.paidCents) : '—'} tone={totals?.paidCents ? 'success' : undefined} />
       </StatRow>
 
-      <div className="adm-toolbar">
-        <div className="adm-toolbar__search-group">
-          <div className="adm-search">
-            <SearchIcon size={15} />
-            <input
-              className="adm-search__input"
-              value={search}
-              onChange={(e) => applySearch(e.target.value)}
-              placeholder={t('travaux.clients.search')}
-            />
-          </div>
-        </div>
-      </div>
+      <DataTableToolbar>
+        <DataTableSearch value={search} placeholder={t('travaux.clients.search')} onChange={applySearch} />
+      </DataTableToolbar>
+
+      <DataTableSelectionBar count={selection.count} onClear={selection.clear} onExport={exportSelection}>
+        <button type="button" className="adm-btn adm-btn--danger adm-btn--sm" onClick={bulkDelete}>
+          <Trash2Icon size={13} /> {tc('table.delete')}
+        </button>
+      </DataTableSelectionBar>
 
       <Card className="overflow-hidden gap-0">
         <DataTable>
           <DataTableHead>
             <DataTableRow>
+              <DataTableSelectTh checked={selection.allChecked} indeterminate={selection.someChecked} onChange={selection.toggleAll} ariaLabel={tc('table.selectAll')} />
               <DataTableTh className="trv-col-logo">{t('travaux.clients.table.logo')}</DataTableTh>
               <DataTableTh>{t('travaux.clients.table.company')}</DataTableTh>
               <DataTableTh>{t('travaux.clients.table.referent')}</DataTableTh>
@@ -142,10 +180,16 @@ export default function AdminTravauxClients() {
           </DataTableHead>
           <DataTableBody>
             {loading && <DataTableEmpty label={t('common.loading')} />}
-            {!loading && clients.length === 0 && <DataTableEmpty icon={<UsersIcon size={28} />} label={t('travaux.clients.empty')} />}
+            {!loading && clients.length === 0 && (
+              <DataTableEmpty icon={<UsersIcon size={28} />} label={search ? tc('table.noResults', { query: search }) : t('travaux.clients.empty')} />
+            )}
             {!loading && clients.map((c) => (
               // The whole row opens the client's Travaux (but its actions).
               <DataTableRow key={c.id} onClick={() => navigate(`/admin/travaux/${c.id}`)}>
+                {/* Select cell: keep the click from opening the client. */}
+                <DataTableTd className="adm-table__td--select" onClick={(e) => e.stopPropagation()}>
+                  <input type="checkbox" checked={selection.isSelected(c.id)} aria-label={tc('table.selectRow')} onChange={(e) => selection.toggle(c.id, e.target.checked)} />
+                </DataTableTd>
                 <DataTableTd className="trv-col-logo">
                   <ClientAvatar client={c} />
                 </DataTableTd>
@@ -159,15 +203,9 @@ export default function AdminTravauxClients() {
                 <DataTableTd className="trv-col-num trv-num">{formatCents(c.stats?.paid_cents ?? 0)}</DataTableTd>
                 <DataTableTd onClick={(e) => e.stopPropagation()}>
                   <div className="adm-table__actions">
-                    <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title={t('travaux.clients.actions.view')} onClick={() => setViewId(c.id)}>
-                      <EyeIcon size={13} />
-                    </button>
-                    <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title={t('travaux.clients.actions.travaux')} onClick={() => navigate(`/admin/travaux/${c.id}`)}>
-                      <TrafficConeIcon size={13} />
-                    </button>
-                    <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" title={t('travaux.clients.actions.edit')} onClick={() => openEdit(c.id)}>
-                      <PenLineIcon size={13} />
-                    </button>
+                    <DataTableAction icon={EyeIcon} label={t('travaux.clients.actions.view')} onClick={() => setViewId(c.id)} />
+                    <DataTableAction icon={TrafficConeIcon} label={t('travaux.clients.actions.travaux')} onClick={() => navigate(`/admin/travaux/${c.id}`)} />
+                    <DataTableAction icon={PenLineIcon} label={t('travaux.clients.actions.edit')} onClick={() => openEdit(c.id)} />
                   </div>
                 </DataTableTd>
               </DataTableRow>

@@ -503,7 +503,7 @@
       "overview": "Übersicht",
       "list": "Benutzer",
       "all": "Alle",
-      "companies": "Kunden",
+      "companies": "Unternehmen",
       "teams": "Teams",
       "acquisition": "Akquise"
     },
@@ -544,7 +544,13 @@
     },
     "heading": "Verwaltung der Benutzer",
     "teamsEmpty": "Noch kein Konto gehört zu einem Unternehmen.",
-    "acquisitionEmpty": "Kein Konto wartet auf ein Unternehmen."
+    "acquisitionEmpty": "Kein Konto wartet auf ein Unternehmen.",
+    "lock": "Sperren",
+    "unlock": "Entsperren",
+    "companies": {
+      "new": "Neues Unternehmen",
+      "search": "Unternehmen suchen…"
+    }
   },
   "impersonation": {
     "banner": "Sie sind als {{name}} angemeldet.",
@@ -1111,7 +1117,10 @@
         "cta_label": "Button-Text"
       },
       "bodyHint": "Ein Absatz pro Block; eine Leerzeile zwischen zwei Absätzen.",
-      "englishHint": "Ohne englische Version erhalten Englischsprachige die französische."
+      "englishHint": "Ohne englische Version erhalten Englischsprachige die französische.",
+      "bulkDraftsOnly": "Nur Entwürfe können gelöscht werden.",
+      "bulkSkipped_one": "{{count}} bereits versendete Kampagne bleibt erhalten.",
+      "bulkSkipped_other": "{{count}} bereits versendete Kampagnen bleiben erhalten."
     },
     "subscribers": {
       "new": "Abonnent hinzufügen",

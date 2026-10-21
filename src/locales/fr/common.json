@@ -56,5 +56,23 @@
     "confirmText": "Bienvenue ! Vous recevrez nos prochaines newsletters. Vous pouvez choisir ce que vous recevez à tout moment.",
     "readBlog": "Lire nos articles",
     "badge": "Vos e-mails SonnaLab"
+  },
+  "table": {
+    "search": "Rechercher…",
+    "selectAll": "Tout sélectionner",
+    "selectRow": "Sélectionner la ligne",
+    "selected_one": "{{count}} élément sélectionné",
+    "selected_other": "{{count}} éléments sélectionnés",
+    "export": "Exporter (CSV)",
+    "clear": "Désélectionner",
+    "delete": "Supprimer",
+    "bulkDeleteTitle_one": "Supprimer {{count}} élément ?",
+    "bulkDeleteTitle_other": "Supprimer {{count}} éléments ?",
+    "bulkDeleteMessage": "Cette action est définitive.",
+    "bulkDone_one": "{{count}} élément traité.",
+    "bulkDone_other": "{{count}} éléments traités.",
+    "bulkFailed": "Certains éléments n’ont pas pu être traités.",
+    "noResults": "Aucun résultat pour « {{query}} ».",
+    "actions": "Actions"
   }
 }

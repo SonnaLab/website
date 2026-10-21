@@ -6,7 +6,8 @@
     "account": "Il mio account",
     "signOut": "Disconnetti",
     "backToSite": "Torna al sito",
-    "profile": "Profilo"
+    "profile": "Profilo",
+    "travaux": "Lavori"
   },
   "dashboard": {
     "title": "Benvenuto {{name}}",
@@ -81,7 +82,9 @@
     "stats": {
       "toPay": "Da pagare",
       "paid": "Pagato"
-    }
+    },
+    "downloadPdf": "Scarica il PDF",
+    "downloadPdfs": "Scarica i PDF"
   },
   "profile": {
     "title": "Profilo",
@@ -109,5 +112,40 @@
     "saved": "Profilo aggiornato.",
     "saveError": "Impossibile salvare il profilo.",
     "heading": "Gestione del profilo"
+  },
+  "travaux": {
+    "heading": "Avanzamento dei lavori",
+    "subtitle": "L'avanzamento dei vostri progetti, consegna per consegna, attività per attività.",
+    "stats": {
+      "projects": "Progetti",
+      "inProgress": "Consegne in corso",
+      "tasksDone": "Attività completate",
+      "overall": "Avanzamento complessivo"
+    },
+    "tabs": {
+      "objectives": "Consegne",
+      "tasks": "Attività"
+    },
+    "empty": "Nessun progetto per ora: apparirà qui appena inizia.",
+    "noObjectives": "Nessuna consegna per questo progetto.",
+    "noTasks": "Nessuna attività",
+    "tasksDone": "{{done}} / {{total}} attività completate",
+    "dueOn": "Scadenza: {{date}}",
+    "statuses": {
+      "planned": "Pianificato",
+      "in_progress": "In corso",
+      "done": "Consegnato",
+      "at_risk": "A rischio"
+    },
+    "formats": {
+      "web": "Web",
+      "mobile": "Mobile"
+    },
+    "columns": {
+      "todo": "Da fare",
+      "in_progress": "In corso",
+      "review": "In revisione",
+      "done": "Completato"
+    }
   }
 }

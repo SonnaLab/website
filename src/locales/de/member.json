@@ -6,7 +6,8 @@
     "account": "Mein Konto",
     "signOut": "Abmelden",
     "backToSite": "Zurück zur Website",
-    "profile": "Profil"
+    "profile": "Profil",
+    "travaux": "Arbeiten"
   },
   "dashboard": {
     "title": "Willkommen {{name}}",
@@ -81,7 +82,9 @@
     "stats": {
       "toPay": "Offen",
       "paid": "Bezahlt"
-    }
+    },
+    "downloadPdf": "PDF herunterladen",
+    "downloadPdfs": "PDFs herunterladen"
   },
   "profile": {
     "title": "Profil",
@@ -109,5 +112,40 @@
     "saved": "Profil aktualisiert.",
     "saveError": "Profil konnte nicht gespeichert werden.",
     "heading": "Verwaltung des Profils"
+  },
+  "travaux": {
+    "heading": "Arbeitsfortschritt",
+    "subtitle": "Der Stand Ihrer Projekte, Lieferung für Lieferung, Aufgabe für Aufgabe.",
+    "stats": {
+      "projects": "Projekte",
+      "inProgress": "Laufende Lieferungen",
+      "tasksDone": "Erledigte Aufgaben",
+      "overall": "Gesamtfortschritt"
+    },
+    "tabs": {
+      "objectives": "Lieferungen",
+      "tasks": "Aufgaben"
+    },
+    "empty": "Noch kein Projekt: Es erscheint hier, sobald es startet.",
+    "noObjectives": "Keine Lieferung für dieses Projekt.",
+    "noTasks": "Keine Aufgabe",
+    "tasksDone": "{{done}} / {{total}} Aufgaben erledigt",
+    "dueOn": "Fällig: {{date}}",
+    "statuses": {
+      "planned": "Geplant",
+      "in_progress": "In Arbeit",
+      "done": "Geliefert",
+      "at_risk": "Gefährdet"
+    },
+    "formats": {
+      "web": "Web",
+      "mobile": "Mobil"
+    },
+    "columns": {
+      "todo": "Zu erledigen",
+      "in_progress": "In Arbeit",
+      "review": "In Prüfung",
+      "done": "Erledigt"
+    }
   }
 }

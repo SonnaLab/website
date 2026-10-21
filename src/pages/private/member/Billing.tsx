@@ -1,10 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { apiService, saveBlob } from '@/services/api';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
-import { DataTable, DataTableHead, DataTableBody, DataTableRow, DataTableTh, DataTableTd, DataTableEmpty } from '@/components/common/DataTable';
+import {
+  DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
+  DataTableSelectTd, DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, filterRows, useRowSelection,
+} from '@/components/common/DataTable';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { PaymentGauge } from '@/components/private/common/PaymentGauge';
 import { CheckCircleIcon, DownloadIcon, ReceiptIcon, FileTextIcon, WalletIcon } from '@icons';
@@ -21,7 +24,6 @@ export default function MemberBilling() {
   const [tab, setTab]             = useState('invoices');
   const [documents, setDocuments] = useState<TravauxInvoice[]>([]);
   const [loading, setLoading]     = useState(true);
-  const [downloading, setDownloading] = useState<string | null>(null);
 
   useEffect(() => {
     apiService.listBillingDocuments()
@@ -45,71 +47,6 @@ export default function MemberBilling() {
     ? new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }).format(new Date(`${iso}T00:00:00`))
     : '—';
 
-  async function download(doc: TravauxInvoice) {
-    setDownloading(doc.id);
-    try {
-      const { blob, filename } = await apiService.downloadBillingDocumentPdf(doc.id);
-      saveBlob(blob, filename);
-    } catch {
-      toast.error(t('billing.downloadError'));
-    } finally {
-      setDownloading(null);
-    }
-  }
-
-  function variant(status: InvoiceStatus) {
-    if (status === 'paid' || status === 'accepted') return 'success' as const;
-    if (status === 'overdue')                       return 'danger'  as const;
-    if (status === 'sent')                          return 'info'    as const;
-    if (status === 'cancelled')                     return 'muted'   as const;
-    return 'default' as const;
-  }
-
-  function table(rows: TravauxInvoice[], empty: string, emptyIcon: React.ReactNode) {
-    return (
-      <DataTable>
-        <DataTableHead>
-          <DataTableRow>
-            <DataTableTh>{t('billing.number')}</DataTableTh>
-            <DataTableTh>{t('billing.label')}</DataTableTh>
-            <DataTableTh>{t('billing.status')}</DataTableTh>
-            <DataTableTh>{t('billing.dueOn')}</DataTableTh>
-            <DataTableTh>{t('billing.total')}</DataTableTh>
-            <DataTableTh>{t('billing.download')}</DataTableTh>
-          </DataTableRow>
-        </DataTableHead>
-        <DataTableBody>
-          {loading && <DataTableEmpty label="…" />}
-          {!loading && rows.length === 0 && <DataTableEmpty icon={emptyIcon} label={empty} />}
-          {rows.map((doc) => (
-            <DataTableRow key={doc.id}>
-              <DataTableTd className="font-mono text-sm">{doc.printed_number}</DataTableTd>
-              <DataTableTd>{doc.title || '—'}</DataTableTd>
-              <DataTableTd>
-                {doc.kind === 'invoice'
-                  ? <PaymentGauge status={doc.status} amountCents={doc.amount_cents} paidCents={paidOf(doc)} />
-                  : <StatusBadge label={t(`billing.statuses.${doc.status}`)} variant={variant(doc.status)} />}
-              </DataTableTd>
-              <DataTableTd>{fmtDate(doc.due_on)}</DataTableTd>
-              <DataTableTd>{fmtMoney(doc.amount_cents)}</DataTableTd>
-              <DataTableTd>
-                <button
-                  type="button"
-                  className="adm-btn adm-btn--ghost adm-btn--xs"
-                  disabled={downloading === doc.id}
-                  onClick={() => download(doc)}
-                  title={t('billing.download')}
-                >
-                  <DownloadIcon size={13} /> PDF
-                </button>
-              </DataTableTd>
-            </DataTableRow>
-          ))}
-        </DataTableBody>
-      </DataTable>
-    );
-  }
-
   return (
     <div className="dash-page">
       <PageHeader title={t('billing.heading')} description={t('billing.subtitle')} />
@@ -127,9 +64,144 @@ export default function MemberBilling() {
           <TabsTrigger value="quotes"   icon={<FileTextIcon size={14} />} count={quotes.length}>{t('billing.quotes')}</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="invoices">{table(invoices, t('billing.noInvoices'), <ReceiptIcon size={16} />)}</TabsContent>
-        <TabsContent value="quotes">{table(quotes, t('billing.noQuotes'), <FileTextIcon size={16} />)}</TabsContent>
+        <TabsContent value="invoices">
+          <BillingTable rows={invoices} loading={loading} kind="factures" empty={t('billing.noInvoices')} emptyIcon={<ReceiptIcon size={16} />}
+                        paidOf={paidOf} fmtMoney={fmtMoney} fmtDate={fmtDate} />
+        </TabsContent>
+        <TabsContent value="quotes">
+          <BillingTable rows={quotes} loading={loading} kind="devis" empty={t('billing.noQuotes')} emptyIcon={<FileTextIcon size={16} />}
+                        paidOf={paidOf} fmtMoney={fmtMoney} fmtDate={fmtDate} />
+        </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+function variant(status: InvoiceStatus) {
+  if (status === 'paid' || status === 'accepted') return 'success' as const;
+  if (status === 'overdue')                       return 'danger'  as const;
+  if (status === 'sent')                          return 'info'    as const;
+  if (status === 'cancelled')                     return 'muted'   as const;
+  return 'default' as const;
+}
+
+interface BillingTableProps {
+  rows: TravauxInvoice[];
+  loading: boolean;
+  /** CSV file name. */
+  kind: string;
+  empty: string;
+  emptyIcon: ReactNode;
+  paidOf: (d: TravauxInvoice) => number;
+  fmtMoney: (cents: number) => string;
+  fmtDate: (iso?: string | null) => string;
+}
+
+/** One tab's documents: search, selection (PDFs + CSV), icon-only download. */
+function BillingTable({ rows, loading, kind, empty, emptyIcon, paidOf, fmtMoney, fmtDate }: BillingTableProps) {
+  const { t } = useTranslation('member');
+  const { t: tc } = useTranslation('common');
+  const [q, setQ] = useState('');
+  const [downloading, setDownloading] = useState<string | null>(null);
+  const [bulkBusy, setBulkBusy] = useState(false);
+
+  const visible = useMemo(
+    () => filterRows(rows, q, (d) => [d.printed_number, d.title, t(`billing.statuses.${d.status}`), d.due_on]),
+    [rows, q, t],
+  );
+  const selection = useRowSelection(visible, (d) => d.id);
+
+  async function download(doc: TravauxInvoice) {
+    setDownloading(doc.id);
+    try {
+      const { blob, filename } = await apiService.downloadBillingDocumentPdf(doc.id);
+      saveBlob(blob, filename);
+    } catch {
+      toast.error(t('billing.downloadError'));
+    } finally {
+      setDownloading(null);
+    }
+  }
+
+  // One PDF after the other: browsers drop simultaneous downloads.
+  async function downloadSelection() {
+    setBulkBusy(true);
+    let failed = 0;
+    for (const doc of selection.selectedRows) {
+      try {
+        const { blob, filename } = await apiService.downloadBillingDocumentPdf(doc.id);
+        saveBlob(blob, filename);
+      } catch {
+        failed += 1;
+      }
+    }
+    setBulkBusy(false);
+    if (failed) toast.error(tc('table.bulkFailed'));
+    else toast.success(tc('table.bulkDone', { count: selection.count }));
+    selection.clear();
+  }
+
+  function exportSelection() {
+    exportRowsCsv(kind, [
+      [t('billing.number'), (d) => d.printed_number],
+      [t('billing.label'), (d) => d.title ?? ''],
+      [t('billing.status'), (d) => t(`billing.statuses.${d.status}`)],
+      [t('billing.dueOn'), (d) => d.due_on ?? ''],
+      [t('billing.total'), (d) => (d.amount_cents / 100).toFixed(2)],
+      [t('billing.stats.paid'), (d) => (paidOf(d) / 100).toFixed(2)],
+    ], selection.selectedRows);
+  }
+
+  return (
+    <>
+      <DataTableToolbar>
+        <DataTableSearch value={q} onChange={setQ} />
+      </DataTableToolbar>
+
+      <DataTableSelectionBar count={selection.count} onClear={selection.clear} onExport={exportSelection}>
+        <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" disabled={bulkBusy} onClick={downloadSelection}>
+          <DownloadIcon size={13} /> {t('billing.downloadPdfs')}
+        </button>
+      </DataTableSelectionBar>
+
+      <DataTable>
+        <DataTableHead>
+          <DataTableRow>
+            <DataTableSelectTh checked={selection.allChecked} indeterminate={selection.someChecked} onChange={selection.toggleAll} ariaLabel={tc('table.selectAll')} />
+            <DataTableTh>{t('billing.number')}</DataTableTh>
+            <DataTableTh>{t('billing.label')}</DataTableTh>
+            <DataTableTh>{t('billing.status')}</DataTableTh>
+            <DataTableTh>{t('billing.dueOn')}</DataTableTh>
+            <DataTableTh>{t('billing.total')}</DataTableTh>
+            <DataTableTh>{tc('table.actions')}</DataTableTh>
+          </DataTableRow>
+        </DataTableHead>
+        <DataTableBody>
+          {loading && <DataTableEmpty label="…" />}
+          {!loading && visible.length === 0 && (
+            <DataTableEmpty icon={emptyIcon} label={q ? tc('table.noResults', { query: q }) : empty} />
+          )}
+          {visible.map((doc) => (
+            <DataTableRow key={doc.id}>
+              <DataTableSelectTd checked={selection.isSelected(doc.id)} onChange={(checked) => selection.toggle(doc.id, checked)} ariaLabel={tc('table.selectRow')} />
+              <DataTableTd className="font-mono text-sm">{doc.printed_number}</DataTableTd>
+              <DataTableTd>{doc.title || '—'}</DataTableTd>
+              <DataTableTd>
+                {doc.kind === 'invoice'
+                  ? <PaymentGauge status={doc.status} amountCents={doc.amount_cents} paidCents={paidOf(doc)} />
+                  : <StatusBadge label={t(`billing.statuses.${doc.status}`)} variant={variant(doc.status)} />}
+              </DataTableTd>
+              <DataTableTd>{fmtDate(doc.due_on)}</DataTableTd>
+              <DataTableTd>{fmtMoney(doc.amount_cents)}</DataTableTd>
+              <DataTableTd>
+                <div className="adm-table__actions">
+                  <DataTableAction icon={DownloadIcon} label={t('billing.downloadPdf')} disabled={downloading === doc.id} onClick={() => download(doc)} />
+                </div>
+              </DataTableTd>
+            </DataTableRow>
+          ))}
+        </DataTableBody>
+      </DataTable>
+    </>
   );
 }

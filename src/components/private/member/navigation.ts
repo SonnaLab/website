@@ -30,6 +30,7 @@ export interface NavEntry {
 export const MEMBER_NAV: NavEntry[] = [
   { to: '/dashboard',              end: true, labelKey: 'nav.dashboard',    ns: 'member', icon: LayoutDashboardIcon },
   { to: '/dashboard/appointments',            labelKey: 'nav.appointments', ns: 'member', icon: CalendarIcon },
+  { to: '/dashboard/travaux',                 labelKey: 'nav.travaux',      ns: 'member', icon: TrafficConeIcon },
   { to: '/dashboard/billing',                 labelKey: 'nav.billing',      ns: 'member', icon: ReceiptIcon },
 ];
 

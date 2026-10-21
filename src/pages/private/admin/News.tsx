@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -23,7 +23,11 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveCo
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
 import { PageHeader } from '@/components/private/common/PageHeader';
 import { StatCard, StatRow } from '@/components/private/common/StatRow';
-import { DataTable, DataTableHead, DataTableBody, DataTableRow, DataTableTh, DataTableTd, DataTableEmpty, DataTableBulkBar, DataTableSelectTh, DataTableSelectTd } from '@/components/common/DataTable';
+import {
+  DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
+  DataTableSelectTd, DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, filterRows, useRowSelection,
+} from '@/components/common/DataTable';
+import { useConfirm } from '@/components/common/ConfirmDialog';
 import { Modal } from '@/components/common/Modal';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { MarkdownRenderer } from '@/components/public/blog/MarkdownRenderer';
@@ -336,6 +340,7 @@ function articlePublicUrl(article: Partial<Article>) {
 
 function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
   const { t, i18n } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
   const [articles, setArticles]   = useState<Article[]>([]);
   const [loading, setLoading]     = useState(true);
   const [search, setSearch]       = useState('');
@@ -755,20 +760,22 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
   const paginated = articles;
   const localeOptions = Array.from(new Set([...ARTICLE_LOCALES, editing.locale].filter(Boolean) as string[]));
 
+  function exportSelectedArticles() {
+    exportRowsCsv('articles', [
+      ['N°', (a) => a.lesankofa_transaction_id ?? ''],
+      [t('news.articles.title'), (a) => a.title],
+      [t('news.articles.status'), (a) => t(`news.articles.statuses.${a.status}`)],
+      [t('news.articles.locale'), (a) => a.locale?.toUpperCase() ?? ''],
+      [t('news.articles.format'), (a) => articleMetadataValue(a, 'article_format') || ''],
+      [t('news.articles.date'), (a) => a.published_at ?? a.created_at ?? ''],
+      ['URL', (a) => (a.status === 'published' ? articlePublicUrl(a) ?? '' : '')],
+    ], articles.filter(a => selectedIds.has(a.id)));
+  }
+
   return (
     <div className="admin-news-articles">
-      <div className="admin-news-articles__toolbar">
-        <div className="admin-news-articles__search-group">
-          <div className="adm-search">
-            <SearchIcon size={15} />
-            <input
-              type="text"
-              className="adm-search__input"
-              placeholder={t('news.articles.searchPlaceholder')}
-              value={search}
-              onChange={e => { setSearch(e.target.value); setPage(1); setSelectedIds(new Set()); reload(e.target.value, statusFilter, 1); }}
-            />
-          </div>
+      <DataTableToolbar right={
+        <>
           <select
             className="adm-select adm-select--sm"
             value={statusFilter}
@@ -780,15 +787,21 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
             <option value="scheduled">{t('news.articles.statuses.scheduled')}</option>
             <option value="published">{t('news.articles.statuses.published')}</option>
           </select>
-        </div>
-        <button type="button" className="adm-btn adm-btn--primary" onClick={generateNextArticle} disabled={generating}>
-          {generating ? <RefreshCwIcon size={14} className="adm-spin" /> : <ZapIcon size={14} />}
-          {t('news.articles.generate')}
-        </button>
-      </div>
+          <button type="button" className="adm-btn adm-btn--primary" onClick={generateNextArticle} disabled={generating}>
+            {generating ? <RefreshCwIcon size={14} className="adm-spin" /> : <ZapIcon size={14} />}
+            {t('news.articles.generate')}
+          </button>
+        </>
+      }>
+        {/* Server-side search, the selection is dropped on each change. */}
+        <DataTableSearch
+          value={search}
+          placeholder={t('news.articles.searchPlaceholder')}
+          onChange={value => { setSearch(value); setPage(1); setSelectedIds(new Set()); reload(value, statusFilter, 1); }}
+        />
+      </DataTableToolbar>
 
-      {selectedIds.size > 0 && (
-        <DataTableBulkBar count={selectedIds.size}>
+      <DataTableSelectionBar count={selectedIds.size} onClear={() => setSelectedIds(new Set())} onExport={exportSelectedArticles}>
           <button
             type="button"
             className="adm-btn adm-btn--primary adm-btn--sm"
@@ -807,8 +820,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
             {bulkActionRunning ? <RefreshCwIcon size={13} className="adm-spin" /> : <Trash2Icon size={13} />}
             {t('news.articles.delete')}
           </button>
-        </DataTableBulkBar>
-      )}
+      </DataTableSelectionBar>
 
       <DataTable>
         <DataTableHead>
@@ -837,12 +849,12 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
               <DataTableTd className="adm-table__loading">{t('common.loading')}</DataTableTd>
             </DataTableRow>
           ) : articles.length === 0 ? (
-            <DataTableEmpty label={t('news.articles.empty')} />
+            <DataTableEmpty icon={<NewsIcon size={28} />} label={search ? tc('table.noResults', { query: search }) : t('news.articles.empty')} />
           ) : paginated.map(a => (
             <DataTableRow key={a.id}>
               <DataTableSelectTd
                 checked={selectedIds.has(a.id)}
-                ariaLabel={t('news.articles.title')}
+                ariaLabel={tc('table.selectRow')}
                 onChange={(checked) => {
                   setSelectedIds(prev => {
                     const next = new Set(prev);
@@ -881,58 +893,22 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
               <DataTableTd>{fmtDate(a.published_at ?? a.created_at, i18n.language)}</DataTableTd>
               <DataTableTd>
                 <div className="adm-table__actions">
-                  <button
-                    type="button"
-                    className="adm-btn adm-btn--ghost adm-btn--xs"
-                    onClick={() => openArticle(a, 'preview')}
-                    aria-label={t('news.articles.preview')}
-                    title={t('news.articles.preview')}
-                  >
-                    <EyeIcon size={13} />
-                  </button>
+                  <DataTableAction icon={EyeIcon} label={t('news.articles.preview')} onClick={() => openArticle(a, 'preview')} />
                   {!!a.lesankofa_transaction_id && (
-                    <button
-                      type="button"
-                      className="adm-btn adm-btn--ghost adm-btn--xs"
-                      onClick={() => openReview(a)}
+                    <DataTableAction
+                      icon={RefreshCwIcon}
+                      label="Review IA"
                       disabled={reviewModal.open && reviewModal.article?.id === a.id && reviewModal.status === 'reviewing'}
-                      aria-label="Review IA"
-                      title="Review IA"
-                    >
-                      <RefreshCwIcon size={13} />
-                    </button>
+                      onClick={() => openReview(a)}
+                    />
                   )}
                   {!!a.lesankofa_transaction_id && (
-                    <button
-                      type="button"
-                      className="adm-btn adm-btn--ghost adm-btn--xs"
-                      onClick={e => { e.stopPropagation(); openPromptModal(a); }}
-                      aria-label="Détails du prompt"
-                      title="Détails du prompt"
-                    >
-                      <TerminalIcon size={13} />
-                    </button>
+                    <DataTableAction icon={TerminalIcon} label="Détails du prompt" onClick={() => openPromptModal(a)} />
                   )}
                   {a.status === 'published' && (
-                    <button
-                      type="button"
-                      className="adm-btn adm-btn--ghost adm-btn--xs"
-                      onClick={() => gotoArticle(a)}
-                      aria-label={t('news.articles.goto')}
-                      title={t('news.articles.goto')}
-                    >
-                      <ArrowUpRightIcon size={13} />
-                    </button>
+                    <DataTableAction icon={ArrowUpRightIcon} label={t('news.articles.goto')} onClick={() => gotoArticle(a)} />
                   )}
-                  <button
-                    type="button"
-                    className="adm-btn adm-btn--ghost adm-btn--xs adm-btn--danger"
-                    onClick={() => deleteArticle(a)}
-                    aria-label={t('common.delete')}
-                    title={t('common.delete')}
-                  >
-                    <Trash2Icon size={13} />
-                  </button>
+                  <DataTableAction icon={Trash2Icon} label={t('common.delete')} variant="danger" onClick={() => deleteArticle(a)} />
                 </div>
               </DataTableTd>
             </DataTableRow>
@@ -1863,6 +1839,9 @@ function promptReason(prompt: NewsAIPrompt, fallback: string) {
 
 function PromptsTab({ onStatsChange }: { onStatsChange?: () => void }) {
   const { t, i18n } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
+  const confirmDialog = useConfirm();
+  const [query, setQuery]         = useState('');
   const [prompts, setPrompts]     = useState<NewsAIPrompt[]>([]);
   const [loading, setLoading]     = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -1926,20 +1905,52 @@ function PromptsTab({ onStatsChange }: { onStatsChange?: () => void }) {
     }
   };
 
-  useEffect(() => { setPage(1); }, [statusFilter, localeFilter]);
+  useEffect(() => { setPage(1); }, [statusFilter, localeFilter, query]);
 
-  const filteredPrompts = prompts.filter(p => {
-    if (statusFilter && p.status !== statusFilter) return false;
-    if (localeFilter && p.locale !== localeFilter) return false;
-    return true;
-  });
+  const filteredPrompts = useMemo(() => filterRows(
+    prompts.filter(p => {
+      if (statusFilter && p.status !== statusFilter) return false;
+      if (localeFilter && p.locale !== localeFilter) return false;
+      return true;
+    }),
+    query,
+    p => [p.title, p.keyword, p.generation_id, p.article_format, p.locale, promptReason(p, '')],
+  ), [prompts, statusFilter, localeFilter, query]);
 
   const selectedReason = selectedPrompt ? promptReason(selectedPrompt, t('news.prompts.noReason')) : '';
   const totalPages = Math.max(1, Math.ceil(filteredPrompts.length / PROMPTS_PER_PAGE));
   const currentPage = Math.min(page, totalPages);
   const pageStart = (currentPage - 1) * PROMPTS_PER_PAGE;
   const pageEnd = Math.min(pageStart + PROMPTS_PER_PAGE, filteredPrompts.length);
-  const visiblePrompts = filteredPrompts.slice(pageStart, pageEnd);
+  const visiblePrompts = useMemo(() => filteredPrompts.slice(pageStart, pageEnd), [filteredPrompts, pageStart, pageEnd]);
+  const selection = useRowSelection(visiblePrompts, p => p.id);
+
+  // Bulk: one request per prompt, then a single reload.
+  async function bulkPrompts(action: (p: NewsAIPrompt) => Promise<unknown>) {
+    const results = await Promise.allSettled(selection.selectedRows.map(action));
+    if (results.some(r => r.status === 'rejected')) toast.error(tc('table.bulkFailed'));
+    else toast.success(tc('table.bulkDone', { count: results.length }));
+    selection.clear();
+    await reload();
+    onStatsChange?.();
+  }
+
+  async function bulkDeletePrompts() {
+    if (!(await confirmDialog({ title: tc('table.bulkDeleteTitle', { count: selection.count }), message: tc('table.bulkDeleteMessage') }))) return;
+    await bulkPrompts(p => apiService.adminNewsDeleteAIPrompt(p.id));
+  }
+
+  function exportSelectedPrompts() {
+    exportRowsCsv('prompts', [
+      ['#', p => p.generation_id],
+      [t('news.prompts.title'), p => p.title || p.keyword || ''],
+      [t('news.prompts.status'), p => t(`news.prompts.statuses.${p.status}`, { defaultValue: p.status })],
+      [t('news.prompts.locale'), p => p.locale ?? ''],
+      [t('news.prompts.format'), p => p.article_format ?? ''],
+      [t('news.prompts.reason'), p => promptReason(p, '')],
+      [t('news.prompts.date'), p => p.created_at ?? ''],
+    ], selection.selectedRows);
+  }
   const selectedStatusInfo = selectedPrompt ? aiPromptStatusInfo(selectedPrompt) : null;
 
   const selectedDetails = selectedPrompt ? [
@@ -1975,8 +1986,8 @@ function PromptsTab({ onStatsChange }: { onStatsChange?: () => void }) {
 
   return (
     <div className="admin-news-prompts">
-      <div className="admin-news-prompts__toolbar">
-        <div className="admin-news-prompts__filters">
+      <DataTableToolbar right={
+        <>
           <select
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
@@ -1996,17 +2007,30 @@ function PromptsTab({ onStatsChange }: { onStatsChange?: () => void }) {
             <option value="">{t('news.prompts.allLocales')}</option>
             {ARTICLE_LOCALES.map(l => <option key={l} value={l}>{l.toUpperCase()}</option>)}
           </select>
-        </div>
-        {failedCount > 0 && (
-          <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={purgeFailed}>
-            <Trash2Icon size={13} />
-            Purger les échecs ({failedCount})
-          </button>
-        )}
-      </div>
+          {failedCount > 0 && (
+            <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={purgeFailed}>
+              <Trash2Icon size={13} />
+              Purger les échecs ({failedCount})
+            </button>
+          )}
+        </>
+      }>
+        <DataTableSearch value={query} onChange={setQuery} />
+      </DataTableToolbar>
+
+      <DataTableSelectionBar count={selection.count} onClear={selection.clear} onExport={exportSelectedPrompts}>
+        <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => bulkPrompts(p => apiService.adminNewsRestartAIPrompt(p.id))}>
+          <RefreshCwIcon size={13} /> {t('news.prompts.restart')}
+        </button>
+        <button type="button" className="adm-btn adm-btn--danger adm-btn--sm" onClick={bulkDeletePrompts}>
+          <Trash2Icon size={13} /> {tc('table.delete')}
+        </button>
+      </DataTableSelectionBar>
+
       <DataTable>
         <DataTableHead>
           <DataTableRow>
+            <DataTableSelectTh checked={selection.allChecked} indeterminate={selection.someChecked} onChange={selection.toggleAll} ariaLabel={tc('table.selectAll')} />
             <DataTableTh>{t('news.prompts.title')}</DataTableTh>
             <DataTableTh>{t('news.prompts.status')}</DataTableTh>
             <DataTableTh>{t('news.prompts.locale')}</DataTableTh>
@@ -2021,13 +2045,17 @@ function PromptsTab({ onStatsChange }: { onStatsChange?: () => void }) {
             <DataTableRow>
               <DataTableTd className="adm-table__loading">{t('common.loading')}</DataTableTd>
             </DataTableRow>
-          ) : prompts.length === 0 ? (
-            <DataTableEmpty icon={<ClipboardListIcon size={28} />} label={t('news.prompts.empty')} />
+          ) : filteredPrompts.length === 0 ? (
+            <DataTableEmpty icon={<ClipboardListIcon size={28} />} label={query ? tc('table.noResults', { query }) : t('news.prompts.empty')} />
           ) : visiblePrompts.map(prompt => {
             const statusInfo = aiPromptStatusInfo(prompt);
 
             return (
               <DataTableRow key={prompt.id} onClick={() => openPreview(prompt)}>
+                {/* Select cell: keep the click from opening the preview. */}
+                <DataTableTd className="adm-table__td--select" onClick={event => event.stopPropagation()}>
+                  <input type="checkbox" checked={selection.isSelected(prompt.id)} aria-label={tc('table.selectRow')} onChange={e => selection.toggle(prompt.id, e.target.checked)} />
+                </DataTableTd>
                 <DataTableTd>
                   <div className="admin-news-prompts__name">
                     <span className="admin-news-prompts__title">{prompt.title || prompt.keyword || `#${prompt.generation_id}`}</span>
@@ -2056,35 +2084,9 @@ function PromptsTab({ onStatsChange }: { onStatsChange?: () => void }) {
                 <DataTableTd>{fmtDate(prompt.created_at, i18n.language)}</DataTableTd>
                 <DataTableTd>
                   <div className="adm-table__actions">
-                    <button
-                      type="button"
-                      className="adm-btn adm-btn--ghost adm-btn--xs"
-                      onClick={event => { event.stopPropagation(); restart(prompt.id); }}
-                      disabled={actionId === `restart-${prompt.id}`}
-                      aria-label={t('news.prompts.restart')}
-                      title={t('news.prompts.restart')}
-                    >
-                      <RefreshCwIcon size={13} className={actionId === `restart-${prompt.id}` ? 'adm-spin' : undefined} />
-                    </button>
-                    <button
-                      type="button"
-                      className="adm-btn adm-btn--ghost adm-btn--xs"
-                      onClick={event => { event.stopPropagation(); openPreview(prompt); }}
-                      aria-label={t('news.prompts.preview')}
-                      title={t('news.prompts.preview')}
-                    >
-                      <EyeIcon size={13} />
-                    </button>
-                    <button
-                      type="button"
-                      className="adm-btn adm-btn--ghost adm-btn--xs adm-btn--danger"
-                      onClick={event => { event.stopPropagation(); remove(prompt.id); }}
-                      disabled={actionId === `delete-${prompt.id}`}
-                      aria-label={t('common.delete')}
-                      title={t('common.delete')}
-                    >
-                      <Trash2Icon size={13} />
-                    </button>
+                    <DataTableAction icon={RefreshCwIcon} label={t('news.prompts.restart')} disabled={actionId === `restart-${prompt.id}`} onClick={() => restart(prompt.id)} />
+                    <DataTableAction icon={EyeIcon} label={t('news.prompts.preview')} onClick={() => openPreview(prompt)} />
+                    <DataTableAction icon={Trash2Icon} label={t('common.delete')} variant="danger" disabled={actionId === `delete-${prompt.id}`} onClick={() => remove(prompt.id)} />
                   </div>
                 </DataTableTd>
               </DataTableRow>

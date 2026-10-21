@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PlusIcon, RefreshCwIcon, SearchIcon, Trash2Icon } from '@icons';
+import { GlobeIcon, PlusIcon, RefreshCwIcon, SearchIcon, TargetIcon, Trash2Icon } from '@icons';
 import { PageHeader } from '@/components/private/common/PageHeader';
 import { toast } from 'sonner';
 
@@ -12,7 +12,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useConfirm } from '@/components/common/ConfirmDialog';
+import {
+  DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
+  DataTableSelectTd, DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, filterRows, useRowSelection,
+} from '@/components/common/DataTable';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 interface SeoPage {
@@ -46,69 +50,107 @@ export default function AdminSeo() {
 
 function PagesTab() {
   const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
+  const confirm = useConfirm();
   const [pages, setPages]     = useState<SeoPage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [q, setQ]             = useState('');
 
   const reload = () => apiService.adminSeoPages().then((d) => setPages(d.pages || [])).finally(() => setLoading(false));
   useEffect(() => { reload(); }, []);
+
+  const visible = useMemo(() => filterRows(pages, q, (p) => [p.path, p.locale, p.title, p.meta_description]), [pages, q]);
+  const selection = useRowSelection(visible, (p) => p.id);
 
   const audit = async (id: string) => {
     try { await apiService.adminSeoAuditPage(id); toast.success(t('seo.audit')); reload(); }
     catch { toast.error(t('common.error')); }
   };
-  const remove = async (id: string) => {
-    if (!confirm('?')) return;
-    try { await apiService.adminSeoDeletePage(id); reload(); } catch { toast.error(t('common.error')); }
+  const remove = async (p: SeoPage) => {
+    if (!(await confirm({ title: t('travaux.common.confirmDelete'), message: p.path }))) return;
+    try { await apiService.adminSeoDeletePage(p.id); reload(); } catch { toast.error(t('common.error')); }
   };
+
+  // Bulk: one request per page, then a single reload.
+  async function bulk(action: (p: SeoPage) => Promise<unknown>) {
+    const results = await Promise.allSettled(selection.selectedRows.map(action));
+    if (results.some((r) => r.status === 'rejected')) toast.error(tc('table.bulkFailed'));
+    else toast.success(tc('table.bulkDone', { count: results.length }));
+    selection.clear(); reload();
+  }
+  async function bulkDelete() {
+    if (!(await confirm({ title: tc('table.bulkDeleteTitle', { count: selection.count }), message: tc('table.bulkDeleteMessage') }))) return;
+    await bulk((p) => apiService.adminSeoDeletePage(p.id));
+  }
+  function exportSelection() {
+    exportRowsCsv('seo-pages', [
+      [t('seo.path'), (p) => p.path],
+      [t('seo.locale'), (p) => p.locale],
+      [t('seo.metaTitle'), (p) => p.title ?? ''],
+      [t('seo.metaDescription'), (p) => p.meta_description ?? ''],
+      [t('seo.indexable'), (p) => (p.indexable ? 'oui' : 'non')],
+      [t('seo.priority'), (p) => p.priority],
+      [t('seo.score'), (p) => p.last_audit_score ?? ''],
+    ], selection.selectedRows);
+  }
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
-        <CreatePageDialog onCreated={reload} />
-      </div>
+      <DataTableToolbar right={<CreatePageDialog onCreated={reload} />}>
+        <DataTableSearch value={q} onChange={setQ} />
+      </DataTableToolbar>
 
-      <Card className="overflow-hidden">
-        {loading ? <p className="p-6 text-sm text-muted-foreground">…</p>
-          : pages.length === 0 ? <p className="p-6 text-sm text-muted-foreground">{t('common.loading')}</p>
-          : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t('seo.path')}</TableHead>
-                  <TableHead>{t('seo.locale')}</TableHead>
-                  <TableHead>{t('seo.metaTitle')}</TableHead>
-                  <TableHead>{t('seo.indexable')}</TableHead>
-                  <TableHead>{t('seo.priority')}</TableHead>
-                  <TableHead>{t('seo.score')}</TableHead>
-                  <TableHead className="text-right">{t('appointments.actions')}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {pages.map((p) => (
-                  <TableRow key={p.id}>
-                    <TableCell className="font-mono text-xs">{p.path}</TableCell>
-                    <TableCell>{p.locale}</TableCell>
-                    <TableCell className="max-w-xs truncate">{p.title || '—'}</TableCell>
-                    <TableCell>{p.indexable ? '✓' : '—'}</TableCell>
-                    <TableCell>{p.priority}</TableCell>
-                    <TableCell>
-                      {p.last_audit_score != null
-                        ? <Badge variant={p.last_audit_score >= 80 ? 'default' : 'secondary'}>{p.last_audit_score}</Badge>
-                        : '—'}
-                    </TableCell>
-                    <TableCell className="text-right space-x-1">
-                      <Button size="sm" variant="ghost" onClick={() => audit(p.id)}>
-                        <RefreshCwIcon className="size-3.5 mr-1" />{t('seo.audit')}
-                      </Button>
-                      <Button size="sm" variant="ghost" onClick={() => remove(p.id)}>
-                        <Trash2Icon className="size-3.5" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
+      <DataTableSelectionBar count={selection.count} onClear={selection.clear} onExport={exportSelection}>
+        <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => bulk((p) => apiService.adminSeoAuditPage(p.id))}>
+          <RefreshCwIcon size={13} /> {t('seo.audit')}
+        </button>
+        <button type="button" className="adm-btn adm-btn--danger adm-btn--sm" onClick={bulkDelete}>
+          <Trash2Icon size={13} /> {tc('table.delete')}
+        </button>
+      </DataTableSelectionBar>
+
+      <Card className="overflow-hidden gap-0">
+        <DataTable>
+          <DataTableHead>
+            <DataTableRow>
+              <DataTableSelectTh checked={selection.allChecked} indeterminate={selection.someChecked} onChange={selection.toggleAll} ariaLabel={tc('table.selectAll')} />
+              <DataTableTh>{t('seo.path')}</DataTableTh>
+              <DataTableTh>{t('seo.locale')}</DataTableTh>
+              <DataTableTh>{t('seo.metaTitle')}</DataTableTh>
+              <DataTableTh>{t('seo.indexable')}</DataTableTh>
+              <DataTableTh>{t('seo.priority')}</DataTableTh>
+              <DataTableTh>{t('seo.score')}</DataTableTh>
+              <DataTableTh>{tc('table.actions')}</DataTableTh>
+            </DataTableRow>
+          </DataTableHead>
+          <DataTableBody>
+            {loading && <DataTableEmpty label={t('common.loading')} />}
+            {!loading && visible.length === 0 && (
+              <DataTableEmpty icon={<GlobeIcon size={28} />} label={q ? tc('table.noResults', { query: q }) : '—'} />
+            )}
+            {visible.map((p) => (
+              <DataTableRow key={p.id}>
+                <DataTableSelectTd checked={selection.isSelected(p.id)} onChange={(checked) => selection.toggle(p.id, checked)} ariaLabel={tc('table.selectRow')} />
+                <DataTableTd className="font-mono text-xs">{p.path}</DataTableTd>
+                <DataTableTd>{p.locale}</DataTableTd>
+                <DataTableTd className="max-w-xs truncate">{p.title || '—'}</DataTableTd>
+                <DataTableTd>{p.indexable ? '✓' : '—'}</DataTableTd>
+                <DataTableTd>{p.priority}</DataTableTd>
+                <DataTableTd>
+                  {p.last_audit_score != null
+                    ? <Badge variant={p.last_audit_score >= 80 ? 'default' : 'secondary'}>{p.last_audit_score}</Badge>
+                    : '—'}
+                </DataTableTd>
+                <DataTableTd>
+                  <div className="adm-table__actions">
+                    <DataTableAction icon={RefreshCwIcon} label={t('seo.audit')} onClick={() => audit(p.id)} />
+                    <DataTableAction icon={Trash2Icon} label={t('common.delete')} variant="danger" onClick={() => remove(p)} />
+                  </div>
+                </DataTableTd>
+              </DataTableRow>
+            ))}
+          </DataTableBody>
+        </DataTable>
       </Card>
     </div>
   );
@@ -160,44 +202,65 @@ function CreatePageDialog({ onCreated }: { onCreated: () => void }) {
 
 function KeywordsTab() {
   const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
   const [items, setItems]   = useState<Keyword[]>([]);
   const [loading, setLoading] = useState(true);
+  const [q, setQ]             = useState('');
 
   const reload = () => apiService.adminSeoKeywords().then((d) => setItems(d.keywords || [])).finally(() => setLoading(false));
   useEffect(() => { reload(); }, []);
 
+  const visible = useMemo(() => filterRows(items, q, (k) => [k.keyword, k.locale, k.intent]), [items, q]);
+  // No bulk endpoint for keywords: selection is for the CSV export.
+  const selection = useRowSelection(visible, (k) => k.id);
+
+  function exportSelection() {
+    exportRowsCsv('seo-mots-cles', [
+      [t('seo.keyword'), (k) => k.keyword],
+      [t('seo.locale'), (k) => k.locale],
+      [t('seo.intent'), (k) => k.intent ?? ''],
+      [t('seo.rank'), (k) => k.rank ?? ''],
+      [t('seo.volume'), (k) => k.search_volume ?? ''],
+    ], selection.selectedRows);
+  }
+
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
-        <CreateKeywordDialog onCreated={reload} />
-      </div>
-      <Card className="overflow-hidden">
-        {loading ? <p className="p-6 text-sm text-muted-foreground">…</p>
-          : items.length === 0 ? <p className="p-6 text-sm text-muted-foreground">—</p>
-          : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t('seo.keyword')}</TableHead>
-                  <TableHead>{t('seo.locale')}</TableHead>
-                  <TableHead>{t('seo.intent')}</TableHead>
-                  <TableHead>{t('seo.rank')}</TableHead>
-                  <TableHead>{t('seo.volume')}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {items.map((k) => (
-                  <TableRow key={k.id}>
-                    <TableCell>{k.keyword}</TableCell>
-                    <TableCell>{k.locale}</TableCell>
-                    <TableCell>{k.intent || '—'}</TableCell>
-                    <TableCell>{k.rank ?? '—'}</TableCell>
-                    <TableCell>{k.search_volume ?? '—'}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
+      <DataTableToolbar right={<CreateKeywordDialog onCreated={reload} />}>
+        <DataTableSearch value={q} onChange={setQ} />
+      </DataTableToolbar>
+
+      <DataTableSelectionBar count={selection.count} onClear={selection.clear} onExport={exportSelection} />
+
+      <Card className="overflow-hidden gap-0">
+        <DataTable>
+          <DataTableHead>
+            <DataTableRow>
+              <DataTableSelectTh checked={selection.allChecked} indeterminate={selection.someChecked} onChange={selection.toggleAll} ariaLabel={tc('table.selectAll')} />
+              <DataTableTh>{t('seo.keyword')}</DataTableTh>
+              <DataTableTh>{t('seo.locale')}</DataTableTh>
+              <DataTableTh>{t('seo.intent')}</DataTableTh>
+              <DataTableTh>{t('seo.rank')}</DataTableTh>
+              <DataTableTh>{t('seo.volume')}</DataTableTh>
+            </DataTableRow>
+          </DataTableHead>
+          <DataTableBody>
+            {loading && <DataTableEmpty label={t('common.loading')} />}
+            {!loading && visible.length === 0 && (
+              <DataTableEmpty icon={<TargetIcon size={28} />} label={q ? tc('table.noResults', { query: q }) : '—'} />
+            )}
+            {visible.map((k) => (
+              <DataTableRow key={k.id}>
+                <DataTableSelectTd checked={selection.isSelected(k.id)} onChange={(checked) => selection.toggle(k.id, checked)} ariaLabel={tc('table.selectRow')} />
+                <DataTableTd>{k.keyword}</DataTableTd>
+                <DataTableTd>{k.locale}</DataTableTd>
+                <DataTableTd>{k.intent || '—'}</DataTableTd>
+                <DataTableTd>{k.rank ?? '—'}</DataTableTd>
+                <DataTableTd>{k.search_volume ?? '—'}</DataTableTd>
+              </DataTableRow>
+            ))}
+          </DataTableBody>
+        </DataTable>
       </Card>
     </div>
   );

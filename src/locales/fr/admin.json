@@ -504,7 +504,7 @@
       "overview": "Vue d'ensemble",
       "list": "Utilisateurs",
       "all": "Tous",
-      "companies": "Clients",
+      "companies": "Entreprises",
       "teams": "Équipes",
       "acquisition": "Acquisition"
     },
@@ -545,7 +545,13 @@
     },
     "heading": "Gestion des utilisateurs",
     "teamsEmpty": "Aucun compte rattaché à une entreprise.",
-    "acquisitionEmpty": "Aucun compte en attente d’entreprise."
+    "acquisitionEmpty": "Aucun compte en attente d’entreprise.",
+    "lock": "Verrouiller",
+    "unlock": "Déverrouiller",
+    "companies": {
+      "new": "Nouvelle entreprise",
+      "search": "Rechercher une entreprise…"
+    }
   },
   "impersonation": {
     "banner": "Vous êtes connecté(e) en tant que {{name}}.",
@@ -1112,7 +1118,10 @@
         "cta_label": "Texte du bouton"
       },
       "bodyHint": "Un paragraphe par bloc ; laissez une ligne vide entre deux paragraphes.",
-      "englishHint": "Sans version anglaise, les destinataires anglophones reçoivent la version française."
+      "englishHint": "Sans version anglaise, les destinataires anglophones reçoivent la version française.",
+      "bulkDraftsOnly": "Seuls les brouillons peuvent être supprimés.",
+      "bulkSkipped_one": "{{count}} campagne déjà envoyée sera conservée.",
+      "bulkSkipped_other": "{{count}} campagnes déjà envoyées seront conservées."
     },
     "subscribers": {
       "new": "Ajouter un abonné",

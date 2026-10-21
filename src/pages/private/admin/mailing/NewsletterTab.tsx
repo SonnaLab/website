@@ -7,8 +7,11 @@ import { Card } from '@/components/ui/card';
 import { Modal } from '@/components/common/Modal';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { useConfirm } from '@/components/common/ConfirmDialog';
-import { DataTable, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableTd, DataTableTh } from '@/components/common/DataTable';
-import { ChevronLeftIcon, ChevronRightIcon, SearchIcon, Trash2Icon, UsersIcon } from '@icons';
+import {
+  DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
+  DataTableSelectTd, DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, useRowSelection,
+} from '@/components/common/DataTable';
+import { ChevronLeftIcon, ChevronRightIcon, MegaphoneOffIcon, RefreshCwIcon, Trash2Icon, UsersIcon } from '@icons';
 
 const STATUSES = ['all', 'confirmed', 'pending', 'unsubscribed'] as const;
 const STATUS_VARIANT = { confirmed: 'success', pending: 'warning', unsubscribed: 'default' } as const;
@@ -17,6 +20,7 @@ const PREFERENCES = ['newsletter', 'updates', 'events'] as const;
 /** The subscribers: who, what they agreed to receive, and how they came in. */
 export function NewsletterTab({ creating, onCreated, onChange }: { creating: boolean; onCreated: () => void; onChange: () => void }) {
   const { t, i18n } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
   const confirm = useConfirm();
   const [status, setStatus] = useState<typeof STATUSES[number]>('all');
   const [q, setQ] = useState('');
@@ -33,6 +37,32 @@ export function NewsletterTab({ creating, onCreated, onChange }: { creating: boo
   useEffect(() => { const id = window.setTimeout(load, q ? 300 : 0); return () => window.clearTimeout(id); }, [load, q]);
   useEffect(() => { if (creating) { setAdding(true); onCreated(); } }, [creating, onCreated]);
 
+  const selection = useRowSelection(rows ?? [], (s) => s.id);
+
+  // Bulk: one request per subscriber, then a single reload.
+  async function bulk(action: (s: MailingSubscriber) => Promise<unknown>) {
+    const results = await Promise.allSettled(selection.selectedRows.map(action));
+    const failed = results.filter((r) => r.status === 'rejected').length;
+    if (failed) toast.error(tc('table.bulkFailed'));
+    else toast.success(tc('table.bulkDone', { count: results.length }));
+    selection.clear(); load(); onChange();
+  }
+
+  async function bulkErase() {
+    if (!(await confirm({ title: tc('table.bulkDeleteTitle', { count: selection.count }), message: tc('table.bulkDeleteMessage') }))) return;
+    await bulk((s) => apiService.adminMailingDeleteSubscriber(s.id));
+  }
+
+  function exportSelection() {
+    exportRowsCsv('abonnes-newsletter', [
+      [t('users.table.email'), (s) => s.email],
+      [t('users.table.name'), (s) => [s.first_name, s.last_name].filter(Boolean).join(' ')],
+      [t('travaux.common.status'), (s) => t(`mailing.subscribers.state.${s.status}`)],
+      [t('mailing.subscribers.source'), (s) => s.source ?? ''],
+      ['Langue', (s) => s.language],
+    ], selection.selectedRows);
+  }
+
   async function toggle(s: MailingSubscriber) {
     await apiService.adminMailingUpdateSubscriber(s.id, s.status === 'unsubscribed' ? 'confirmed' : 'unsubscribed').catch(() => toast.error(t('common.error')));
     load(); onChange();
@@ -48,11 +78,7 @@ export function NewsletterTab({ creating, onCreated, onChange }: { creating: boo
 
   return (
     <div className="infra-stack">
-      <div className="infra-toolbar">
-        <div className="adm-search">
-          <SearchIcon size={15} />
-          <input className="adm-search__input" value={q} placeholder={t('mailing.subscribers.search')} onChange={(e) => { setQ(e.target.value); setPage(1); }} />
-        </div>
+      <DataTableToolbar right={
         <div className="infra-chips" role="group">
           {STATUSES.map((s) => (
             <button key={s} type="button" className={status === s ? 'is-active' : ''} onClick={() => { setStatus(s); setPage(1); }}>
@@ -60,12 +86,27 @@ export function NewsletterTab({ creating, onCreated, onChange }: { creating: boo
             </button>
           ))}
         </div>
-      </div>
+      }>
+        <DataTableSearch value={q} placeholder={t('mailing.subscribers.search')} onChange={(value) => { setQ(value); setPage(1); }} />
+      </DataTableToolbar>
+
+      <DataTableSelectionBar count={selection.count} onClear={selection.clear} onExport={exportSelection}>
+        <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => bulk((s) => apiService.adminMailingUpdateSubscriber(s.id, 'unsubscribed'))}>
+          <MegaphoneOffIcon size={13} /> {t('mailing.subscribers.unsubscribe')}
+        </button>
+        <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => bulk((s) => apiService.adminMailingUpdateSubscriber(s.id, 'confirmed'))}>
+          <RefreshCwIcon size={13} /> {t('mailing.subscribers.resubscribe')}
+        </button>
+        <button type="button" className="adm-btn adm-btn--danger adm-btn--sm" onClick={bulkErase}>
+          <Trash2Icon size={13} /> {tc('table.delete')}
+        </button>
+      </DataTableSelectionBar>
 
       <Card className="overflow-hidden gap-0">
         <DataTable>
           <DataTableHead>
             <DataTableRow>
+              <DataTableSelectTh checked={selection.allChecked} indeterminate={selection.someChecked} onChange={selection.toggleAll} ariaLabel={tc('table.selectAll')} />
               <DataTableTh>{t('users.table.email')}</DataTableTh>
               <DataTableTh>{t('users.table.name')}</DataTableTh>
               <DataTableTh>{t('travaux.common.status')}</DataTableTh>
@@ -76,9 +117,12 @@ export function NewsletterTab({ creating, onCreated, onChange }: { creating: boo
           </DataTableHead>
           <DataTableBody>
             {rows === null && <DataTableEmpty label={t('common.loading')} />}
-            {rows?.length === 0 && <DataTableEmpty icon={<UsersIcon size={28} />} label={t('mailing.subscribers.empty')} />}
+            {rows?.length === 0 && (
+              <DataTableEmpty icon={<UsersIcon size={28} />} label={q ? tc('table.noResults', { query: q }) : t('mailing.subscribers.empty')} />
+            )}
             {rows?.map((s) => (
               <DataTableRow key={s.id}>
+                <DataTableSelectTd checked={selection.isSelected(s.id)} onChange={(checked) => selection.toggle(s.id, checked)} ariaLabel={tc('table.selectRow')} />
                 <DataTableTd>
                   <span className="trv-client-cell__name">{s.email}</span>
                   <span className="infra-sub">{s.language.toUpperCase()} · {date(s.created_at)}</span>
@@ -95,10 +139,10 @@ export function NewsletterTab({ creating, onCreated, onChange }: { creating: boo
                 <DataTableTd>{t(`mailing.subscribers.sources.${s.source ?? 'site'}`, { defaultValue: s.source ?? '—' })}</DataTableTd>
                 <DataTableTd>
                   <div className="adm-table__actions">
-                    <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => toggle(s)}>
-                      {s.status === 'unsubscribed' ? t('mailing.subscribers.resubscribe') : t('mailing.subscribers.unsubscribe')}
-                    </button>
-                    <button type="button" className="adm-btn adm-btn--danger adm-btn--xs" title={t('mailing.subscribers.eraseTitle')} onClick={() => erase(s)}><Trash2Icon size={13} /></button>
+                    {s.status === 'unsubscribed'
+                      ? <DataTableAction icon={RefreshCwIcon} label={t('mailing.subscribers.resubscribe')} variant="success" onClick={() => toggle(s)} />
+                      : <DataTableAction icon={MegaphoneOffIcon} label={t('mailing.subscribers.unsubscribe')} onClick={() => toggle(s)} />}
+                    <DataTableAction icon={Trash2Icon} label={t('mailing.subscribers.eraseTitle')} variant="danger" onClick={() => erase(s)} />
                   </div>
                 </DataTableTd>
               </DataTableRow>

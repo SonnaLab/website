@@ -2,12 +2,15 @@
  * TrackingTabs — sub-tab components for the Cookies & consentement page.
  * Each tab handles its own data fetching, pagination and detail modal.
  */
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { apiService } from '@/services/api';
 import { Card } from '@/components/ui/card';
 import { Modal } from '@/components/common/Modal';
-import { DataTable, DataTableHead, DataTableBody, DataTableRow, DataTableTh, DataTableTd, DataTableEmpty } from '@/components/common/DataTable';
+import {
+  DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
+  DataTableSelectTd, DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, filterRows, useRowSelection,
+} from '@/components/common/DataTable';
 import { ChevronLeftIcon, ChevronRightIcon, EyeIcon } from '@icons';
 
 const SITE = 'sonnalab.com';
@@ -39,6 +42,54 @@ function LoadingState() {
   return <p className="trk-loading">…</p>;
 }
 
+// ─── Table standard helpers (search, selection, CSV export) ──────────────────
+
+type Selection = ReturnType<typeof useRowSelection<any>>;
+type Fields = (row: any) => Array<string | number | null | undefined>;
+type Columns = Array<[string, (row: any) => unknown]>;
+
+/** Rows matching the search; `fields` must be a stable (module-level) function. */
+function useSearch(rows: any[] | null | undefined, fields: Fields) {
+  const [query, setQuery] = useState('');
+  const filtered = useMemo(() => filterRows(rows ?? [], query, fields), [rows, query, fields]);
+  return { query, setQuery, filtered };
+}
+
+/** Search above the table, then the selection bar (CSV export: these lists are read-only). */
+function TableTools({ query, onQuery, selection, filename, columns }: {
+  query: string; onQuery: (value: string) => void; selection: Selection; filename: string; columns: Columns;
+}) {
+  return (
+    <>
+      <DataTableToolbar>
+        <DataTableSearch value={query} onChange={onQuery} />
+      </DataTableToolbar>
+      <DataTableSelectionBar
+        count={selection.count}
+        onClear={selection.clear}
+        onExport={() => exportRowsCsv(filename, columns, selection.selectedRows)}
+      />
+    </>
+  );
+}
+
+function SelectAllTh({ selection }: { selection: Selection }) {
+  const { t: tc } = useTranslation('common');
+  return <DataTableSelectTh checked={selection.allChecked} indeterminate={selection.someChecked} onChange={selection.toggleAll} ariaLabel={tc('table.selectAll')} />;
+}
+
+function SelectTd({ selection, id }: { selection: Selection; id: string }) {
+  const { t: tc } = useTranslation('common');
+  return <DataTableSelectTd checked={selection.isSelected(id)} onChange={(checked) => selection.toggle(id, checked)} ariaLabel={tc('table.selectRow')} />;
+}
+
+function NoResults({ query }: { query: string }) {
+  const { t: tc } = useTranslation('common');
+  return <DataTableEmpty label={tc('table.noResults', { query })} />;
+}
+
+const byId = (row: any) => String(row.id);
+
 function fmt(date: string | null | undefined) {
   if (!date) return '—';
   return new Date(date).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' });
@@ -68,8 +119,12 @@ function countryName(code: string | null | undefined): string {
 
 // ─── Géographie ────────────────────────────────────────────────────────────────
 
+const GEO_ID = (r: any) => String(r.country ?? r.country_name);
+const GEO_FIELDS: Fields = (r) => [r.country, r.country_name];
+
 export function GeoTab() {
   const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
   const [data, setData] = useState<any[] | null>(null);
   const [page, setPage] = useState(1);
   const [err, setErr] = useState(false);
@@ -81,39 +136,50 @@ export function GeoTab() {
       .then(setData).catch(() => setErr(true));
   }, []);
 
+  const { query, setQuery, filtered } = useSearch(data, GEO_FIELDS);
+  const slice = useMemo(() => filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE), [filtered, page]);
+  const selection = useRowSelection(slice, GEO_ID);
+
   if (err) return <EmptyState message={t('tracking.loadError')} />;
   if (!data) return <LoadingState />;
-
-  const slice = data.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
   return (
     <div className="trk-tab">
       {data.length === 0 ? (
         <EmptyState message={t('tracking.noData')} />
       ) : (
+        <>
+        <TableTools
+          query={query}
+          onQuery={(value) => { setQuery(value); setPage(1); }}
+          selection={selection}
+          filename="tracking-geographie"
+          columns={[['Code', (r) => r.country ?? ''], [t('tracking.country'), (r) => r.country_name ?? r.country ?? ''], ['Sessions', (r) => r.sessions], ['%', (r) => r.pct]]}
+        />
         <Card className="overflow-hidden gap-0">
           <DataTable>
             <DataTableHead>
               <DataTableRow>
+                <SelectAllTh selection={selection} />
                 <DataTableTh>Code</DataTableTh>
                 <DataTableTh>{t('tracking.country')}</DataTableTh>
                 <DataTableTh>Sessions</DataTableTh>
                 <DataTableTh>%</DataTableTh>
-                <DataTableTh>Actions</DataTableTh>
+                <DataTableTh>{tc('table.actions')}</DataTableTh>
               </DataTableRow>
             </DataTableHead>
             <DataTableBody>
+              {slice.length === 0 && <NoResults query={query} />}
               {slice.map((r: any) => (
-                <DataTableRow key={r.country ?? r.country_name}>
+                <DataTableRow key={GEO_ID(r)}>
+                  <SelectTd selection={selection} id={GEO_ID(r)} />
                   <DataTableTd className="font-mono text-xs">{r.country ?? '—'}</DataTableTd>
                   <DataTableTd>{r.country_name ?? r.country ?? '—'}</DataTableTd>
                   <DataTableTd>{r.sessions}</DataTableTd>
                   <DataTableTd>{r.pct}%</DataTableTd>
                   <DataTableTd>
                     <div className="adm-table__actions">
-                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(r)} title={t('tracking.viewDetails')}>
-                        <EyeIcon size={13} />
-                      </button>
+                      <DataTableAction icon={EyeIcon} label={t('tracking.viewDetails')} onClick={() => setSelected(r)} />
                     </div>
                   </DataTableTd>
                 </DataTableRow>
@@ -122,11 +188,12 @@ export function GeoTab() {
           </DataTable>
           <Pagination
             page={page}
-            hasMore={page * PER_PAGE < data.length}
+            hasMore={page * PER_PAGE < filtered.length}
             onPrev={() => setPage(p => p - 1)}
             onNext={() => setPage(p => p + 1)}
           />
         </Card>
+        </>
       )}
 
       <Modal open={!!selected} onClose={() => setSelected(null)} title={selected?.country_name ?? selected?.country ?? '—'} size="sm">
@@ -145,8 +212,11 @@ export function GeoTab() {
 
 // ─── Temps réel ────────────────────────────────────────────────────────────────
 
+const SESSION_FIELDS: Fields = (s) => [s.id, s.landing_page, s.device_type, s.browser, s.country, countryName(s.country), s.utm_source];
+
 export function RealtimeTab() {
   const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
   const [overview, setOverview] = useState<any>(null);
   const [sessions, setSessions] = useState<any[]>([]);
   const [err, setErr] = useState(false);
@@ -171,6 +241,9 @@ export function RealtimeTab() {
     return () => { clearInterval(pollId); clearInterval(tickId); };
   }, [reload]);
 
+  const { query, setQuery, filtered } = useSearch(sessions, SESSION_FIELDS);
+  const selection = useRowSelection(filtered, byId);
+
   if (err) return <EmptyState message={t('tracking.loadError')} />;
 
   const activeCount = overview?.realtime_active ?? 0;
@@ -192,21 +265,38 @@ export function RealtimeTab() {
       {sessions.length === 0 ? (
         <EmptyState message={t('tracking.noData')} />
       ) : (
+        <>
+        <TableTools
+          query={query}
+          onQuery={setQuery}
+          selection={selection}
+          filename="tracking-temps-reel"
+          columns={[
+            ['Landing page', (s) => s.landing_page ?? '/'],
+            [t('tracking.device'), (s) => s.device_type ?? ''],
+            [t('tracking.country'), (s) => countryName(s.country)],
+            ['Pages', (s) => s.page_count ?? 0],
+            ['Dernière activité', (s) => fmt(s.last_activity_at)],
+          ]}
+        />
         <Card className="overflow-hidden gap-0">
           <DataTable>
             <DataTableHead>
               <DataTableRow>
+                <SelectAllTh selection={selection} />
                 <DataTableTh>Landing page</DataTableTh>
                 <DataTableTh>{t('tracking.device')}</DataTableTh>
                 <DataTableTh>{t('tracking.country')}</DataTableTh>
                 <DataTableTh>Pages</DataTableTh>
                 <DataTableTh>Dernière activité</DataTableTh>
-                <DataTableTh>Actions</DataTableTh>
+                <DataTableTh>{tc('table.actions')}</DataTableTh>
               </DataTableRow>
             </DataTableHead>
             <DataTableBody>
-              {sessions.map((s: any) => (
+              {filtered.length === 0 && <NoResults query={query} />}
+              {filtered.map((s: any) => (
                 <DataTableRow key={s.id}>
+                  <SelectTd selection={selection} id={byId(s)} />
                   <DataTableTd className="font-mono text-xs max-w-[180px] truncate" title={s.landing_page ?? '/'}>
                     {s.landing_page ? s.landing_page.replace('https://sonnalab.com', '') || '/' : '/'}
                   </DataTableTd>
@@ -216,9 +306,7 @@ export function RealtimeTab() {
                   <DataTableTd className="text-xs tabular-nums">{timeAgo(s.last_activity_at)}</DataTableTd>
                   <DataTableTd>
                     <div className="adm-table__actions">
-                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(s)} title={t('tracking.viewDetails')}>
-                        <EyeIcon size={13} />
-                      </button>
+                      <DataTableAction icon={EyeIcon} label={t('tracking.viewDetails')} onClick={() => setSelected(s)} />
                     </div>
                   </DataTableTd>
                 </DataTableRow>
@@ -226,6 +314,7 @@ export function RealtimeTab() {
             </DataTableBody>
           </DataTable>
         </Card>
+        </>
       )}
 
       <Modal open={!!selected} onClose={() => setSelected(null)} title="Détails session" size="sm">
@@ -248,8 +337,11 @@ export function RealtimeTab() {
 
 // ─── Visiteurs ─────────────────────────────────────────────────────────────────
 
+const VISITOR_FIELDS: Fields = (v) => [v.fingerprint_id, v.country, countryName(v.country), v.device_type, v.browser];
+
 export function VisitorsTab() {
   const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
   const [data, setData] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -284,6 +376,10 @@ export function VisitorsTab() {
     }).finally(() => setDetailLoading(false));
   }, [selected]);
 
+  // Search within the loaded page (the API has no search).
+  const { query, setQuery, filtered } = useSearch(data, VISITOR_FIELDS);
+  const selection = useRowSelection(filtered, byId);
+
   if (err) return <EmptyState message={t('tracking.loadError')} />;
   if (loading) return <LoadingState />;
 
@@ -292,33 +388,50 @@ export function VisitorsTab() {
       {data.length === 0 ? (
         <EmptyState message={t('tracking.noData')} />
       ) : (
+        <>
+        <TableTools
+          query={query}
+          onQuery={setQuery}
+          selection={selection}
+          filename="tracking-visiteurs"
+          columns={[
+            ['ID', (v) => v.fingerprint_id],
+            ['1ère visite', (v) => fmt(v.first_seen_at)],
+            ['Dernière visite', (v) => fmt(v.last_seen_at)],
+            ['Visites', (v) => v.visit_count],
+            [t('tracking.country'), (v) => countryName(v.country)],
+            [t('tracking.device'), (v) => v.device_type ?? ''],
+            ['Navigateur', (v) => v.browser ?? ''],
+          ]}
+        />
         <Card className="overflow-hidden gap-0">
           <DataTable>
             <DataTableHead>
               <DataTableRow>
+                <SelectAllTh selection={selection} />
                 <DataTableTh>ID</DataTableTh>
                 <DataTableTh>1ère visite</DataTableTh>
                 <DataTableTh>Dernière visite</DataTableTh>
                 <DataTableTh>Visites</DataTableTh>
                 <DataTableTh>{t('tracking.country')}</DataTableTh>
                 <DataTableTh>{t('tracking.device')}</DataTableTh>
-                <DataTableTh>Actions</DataTableTh>
+                <DataTableTh>{tc('table.actions')}</DataTableTh>
               </DataTableRow>
             </DataTableHead>
             <DataTableBody>
-              {data.map((v: any) => (
+              {filtered.length === 0 && <NoResults query={query} />}
+              {filtered.map((v: any) => (
                 <DataTableRow key={v.id}>
+                  <SelectTd selection={selection} id={byId(v)} />
                   <DataTableTd className="font-mono text-xs">{v.fingerprint_id}</DataTableTd>
-                  <DataTableTd className="text-xs">{fmt(v.first_seen_at)}</DataTableTd>
-                  <DataTableTd className="text-xs">{fmt(v.last_seen_at)}</DataTableTd>
+                  <DataTableTd>{fmt(v.first_seen_at)}</DataTableTd>
+                  <DataTableTd>{fmt(v.last_seen_at)}</DataTableTd>
                   <DataTableTd>{v.visit_count}</DataTableTd>
                   <DataTableTd>{countryName(v.country)}</DataTableTd>
                   <DataTableTd>{v.device_type ?? '—'}</DataTableTd>
                   <DataTableTd>
                     <div className="adm-table__actions">
-                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(v)} title={t('tracking.viewDetails')}>
-                        <EyeIcon size={13} />
-                      </button>
+                      <DataTableAction icon={EyeIcon} label={t('tracking.viewDetails')} onClick={() => setSelected(v)} />
                     </div>
                   </DataTableTd>
                 </DataTableRow>
@@ -332,6 +445,7 @@ export function VisitorsTab() {
             onNext={() => setPage(p => p + 1)}
           />
         </Card>
+        </>
       )}
 
       <Modal open={!!selected} onClose={() => setSelected(null)} title="Détails visiteur" size="md">
@@ -394,8 +508,11 @@ export function VisitorsTab() {
 
 // ─── Bots ──────────────────────────────────────────────────────────────────────
 
+const BOT_FIELDS: Fields = (v) => [v.ip_address, v.bot_type, v.country, countryName(v.country), v.isp, v.user_agent];
+
 export function BotsTab() {
   const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
   const [overview, setOverview] = useState<any>(null);
   const [visits, setVisits] = useState<any[]>([]);
   const [page, setPage] = useState(1);
@@ -420,6 +537,10 @@ export function BotsTab() {
     if (!loading && visits.length === 0 && page > 1) setPage(p => p - 1);
   }, [loading, visits, page]);
 
+  // Search within the loaded page (the API has no search).
+  const { query, setQuery, filtered } = useSearch(visits, BOT_FIELDS);
+  const selection = useRowSelection(filtered, byId);
+
   if (err) return <EmptyState message={t('tracking.loadError')} />;
   if (loading) return <LoadingState />;
 
@@ -428,33 +549,51 @@ export function BotsTab() {
       {visits.length === 0 ? (
         <EmptyState message={t('tracking.noData')} />
       ) : (
+        <>
+        <TableTools
+          query={query}
+          onQuery={setQuery}
+          selection={selection}
+          filename="tracking-bots"
+          columns={[
+            ['IP', (v) => v.ip_address ?? ''],
+            ['Type', (v) => v.bot_type ?? ''],
+            ['Score', (v) => v.confidence_score ?? ''],
+            [t('tracking.country'), (v) => (v.country != null ? countryName(v.country) : '')],
+            ['ISP', (v) => v.isp ?? ''],
+            ['User-Agent', (v) => v.user_agent ?? ''],
+            ['Requêtes', (v) => v.request_count ?? 0],
+            ['Dernière vue', (v) => fmt(v.last_seen_at)],
+          ]}
+        />
         <Card className="overflow-hidden gap-0">
           <DataTable>
             <DataTableHead>
               <DataTableRow>
+                <SelectAllTh selection={selection} />
                 <DataTableTh>IP</DataTableTh>
                 <DataTableTh>Type</DataTableTh>
                 <DataTableTh>Score</DataTableTh>
                 <DataTableTh>{t('tracking.country')}</DataTableTh>
                 <DataTableTh>Requêtes</DataTableTh>
                 <DataTableTh>Dernière vue</DataTableTh>
-                <DataTableTh>Actions</DataTableTh>
+                <DataTableTh>{tc('table.actions')}</DataTableTh>
               </DataTableRow>
             </DataTableHead>
             <DataTableBody>
-              {visits.map((v: any) => (
+              {filtered.length === 0 && <NoResults query={query} />}
+              {filtered.map((v: any) => (
                 <DataTableRow key={v.id}>
+                  <SelectTd selection={selection} id={byId(v)} />
                   <DataTableTd className="font-mono text-xs">{v.ip_address ?? '—'}</DataTableTd>
                   <DataTableTd>{v.bot_type ?? '—'}</DataTableTd>
                   <DataTableTd>{v.confidence_score != null ? `${v.confidence_score}%` : '—'}</DataTableTd>
                   <DataTableTd>{v.country != null ? countryName(v.country) : '—'}</DataTableTd>
                   <DataTableTd>{v.request_count ?? 0}</DataTableTd>
-                  <DataTableTd className="text-xs">{fmt(v.last_seen_at)}</DataTableTd>
+                  <DataTableTd>{fmt(v.last_seen_at)}</DataTableTd>
                   <DataTableTd>
                     <div className="adm-table__actions">
-                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(v)} title={t('tracking.viewDetails')}>
-                        <EyeIcon size={13} />
-                      </button>
+                      <DataTableAction icon={EyeIcon} label={t('tracking.viewDetails')} onClick={() => setSelected(v)} />
                     </div>
                   </DataTableTd>
                 </DataTableRow>
@@ -468,6 +607,7 @@ export function BotsTab() {
             onNext={() => setPage(p => p + 1)}
           />
         </Card>
+        </>
       )}
 
       <Modal open={!!selected} onClose={() => setSelected(null)} title="Détails bot" size="md">
@@ -496,6 +636,7 @@ export function BotsTab() {
 
 export function SessionsTab() {
   const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
   const [data, setData] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -515,6 +656,10 @@ export function SessionsTab() {
     if (!loading && data.length === 0 && page > 1) setPage(p => p - 1);
   }, [loading, data, page]);
 
+  // Search within the loaded page (the API has no search).
+  const { query, setQuery, filtered } = useSearch(data, SESSION_FIELDS);
+  const selection = useRowSelection(filtered, byId);
+
   if (err) return <EmptyState message={t('tracking.loadError')} />;
   if (loading) return <LoadingState />;
 
@@ -523,10 +668,30 @@ export function SessionsTab() {
       {data.length === 0 ? (
         <EmptyState message={t('tracking.noData')} />
       ) : (
+        <>
+        <TableTools
+          query={query}
+          onQuery={setQuery}
+          selection={selection}
+          filename="tracking-sessions"
+          columns={[
+            ['ID', (s) => s.id],
+            [t('tracking.device'), (s) => s.device_type ?? ''],
+            ['Navigateur', (s) => s.browser ?? ''],
+            [t('tracking.country'), (s) => countryName(s.country)],
+            ['Pages', (s) => s.page_count ?? 0],
+            [t('tracking.duration'), (s) => dur(s.duration_seconds)],
+            ['Rebond', (s) => (s.is_bounce ? 'Oui' : 'Non')],
+            ['Landing page', (s) => s.landing_page ?? ''],
+            ['Source UTM', (s) => s.utm_source ?? ''],
+            ['Début', (s) => fmt(s.started_at)],
+          ]}
+        />
         <Card className="overflow-hidden gap-0">
           <DataTable>
             <DataTableHead>
               <DataTableRow>
+                <SelectAllTh selection={selection} />
                 <DataTableTh>ID</DataTableTh>
                 <DataTableTh>{t('tracking.device')}</DataTableTh>
                 <DataTableTh>{t('tracking.country')}</DataTableTh>
@@ -534,24 +699,24 @@ export function SessionsTab() {
                 <DataTableTh>{t('tracking.duration')}</DataTableTh>
                 <DataTableTh>Rebond</DataTableTh>
                 <DataTableTh>Début</DataTableTh>
-                <DataTableTh>Actions</DataTableTh>
+                <DataTableTh>{tc('table.actions')}</DataTableTh>
               </DataTableRow>
             </DataTableHead>
             <DataTableBody>
-              {data.map((s: any) => (
+              {filtered.length === 0 && <NoResults query={query} />}
+              {filtered.map((s: any) => (
                 <DataTableRow key={s.id}>
+                  <SelectTd selection={selection} id={byId(s)} />
                   <DataTableTd className="font-mono text-xs">{s.id?.slice(0, 8)}…</DataTableTd>
                   <DataTableTd>{s.device_type ?? '—'}</DataTableTd>
                   <DataTableTd>{countryName(s.country)}</DataTableTd>
                   <DataTableTd>{s.page_count ?? 0}</DataTableTd>
                   <DataTableTd>{dur(s.duration_seconds)}</DataTableTd>
                   <DataTableTd>{s.is_bounce ? 'Oui' : 'Non'}</DataTableTd>
-                  <DataTableTd className="text-xs">{fmt(s.started_at)}</DataTableTd>
+                  <DataTableTd>{fmt(s.started_at)}</DataTableTd>
                   <DataTableTd>
                     <div className="adm-table__actions">
-                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(s)} title={t('tracking.viewDetails')}>
-                        <EyeIcon size={13} />
-                      </button>
+                      <DataTableAction icon={EyeIcon} label={t('tracking.viewDetails')} onClick={() => setSelected(s)} />
                     </div>
                   </DataTableTd>
                 </DataTableRow>
@@ -565,6 +730,7 @@ export function SessionsTab() {
             onNext={() => setPage(p => p + 1)}
           />
         </Card>
+        </>
       )}
 
       <Modal open={!!selected} onClose={() => setSelected(null)} title="Détails session" size="md">
@@ -590,8 +756,12 @@ export function SessionsTab() {
 
 // ─── Pages ─────────────────────────────────────────────────────────────────────
 
+const PAGE_ID = (r: any) => String(r.url_path);
+const PAGE_FIELDS: Fields = (r) => [r.url_path];
+
 export function PagesTab() {
   const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
   const [data, setData] = useState<any[] | null>(null);
   const [page, setPage] = useState(1);
   const [err, setErr] = useState(false);
@@ -603,39 +773,55 @@ export function PagesTab() {
       .then(setData).catch(() => setErr(true));
   }, []);
 
+  const { query, setQuery, filtered } = useSearch(data, PAGE_FIELDS);
+  const slice = useMemo(() => filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE), [filtered, page]);
+  const selection = useRowSelection(slice, PAGE_ID);
+
   if (err) return <EmptyState message={t('tracking.loadError')} />;
   if (!data) return <LoadingState />;
-
-  const slice = data.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
   return (
     <div className="trk-tab">
       {data.length === 0 ? (
         <EmptyState message={t('tracking.noData')} />
       ) : (
+        <>
+        <TableTools
+          query={query}
+          onQuery={(value) => { setQuery(value); setPage(1); }}
+          selection={selection}
+          filename="tracking-pages"
+          columns={[
+            ['Chemin', (r) => r.url_path],
+            ['Vues', (r) => r.views],
+            ['Visiteurs uniques', (r) => r.unique_visitors],
+            ['Temps moyen (s)', (r) => (r.avg_time_on_page_ms != null ? Math.round(r.avg_time_on_page_ms / 1000) : '')],
+          ]}
+        />
         <Card className="overflow-hidden gap-0">
           <DataTable>
             <DataTableHead>
               <DataTableRow>
+                <SelectAllTh selection={selection} />
                 <DataTableTh>Chemin</DataTableTh>
                 <DataTableTh>Vues</DataTableTh>
                 <DataTableTh>Visiteurs uniques</DataTableTh>
                 <DataTableTh>Temps moyen</DataTableTh>
-                <DataTableTh>Actions</DataTableTh>
+                <DataTableTh>{tc('table.actions')}</DataTableTh>
               </DataTableRow>
             </DataTableHead>
             <DataTableBody>
+              {slice.length === 0 && <NoResults query={query} />}
               {slice.map((r: any) => (
                 <DataTableRow key={r.url_path}>
+                  <SelectTd selection={selection} id={PAGE_ID(r)} />
                   <DataTableTd className="font-mono text-xs">{r.url_path}</DataTableTd>
                   <DataTableTd>{r.views}</DataTableTd>
                   <DataTableTd>{r.unique_visitors}</DataTableTd>
                   <DataTableTd>{r.avg_time_on_page_ms != null ? `${Math.round(r.avg_time_on_page_ms / 1000)}s` : '—'}</DataTableTd>
                   <DataTableTd>
                     <div className="adm-table__actions">
-                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(r)} title={t('tracking.viewDetails')}>
-                        <EyeIcon size={13} />
-                      </button>
+                      <DataTableAction icon={EyeIcon} label={t('tracking.viewDetails')} onClick={() => setSelected(r)} />
                     </div>
                   </DataTableTd>
                 </DataTableRow>
@@ -644,11 +830,12 @@ export function PagesTab() {
           </DataTable>
           <Pagination
             page={page}
-            hasMore={page * PER_PAGE < data.length}
+            hasMore={page * PER_PAGE < filtered.length}
             onPrev={() => setPage(p => p - 1)}
             onNext={() => setPage(p => p + 1)}
           />
         </Card>
+        </>
       )}
 
       <Modal open={!!selected} onClose={() => setSelected(null)} title="Détails page" size="sm">
@@ -667,8 +854,12 @@ export function PagesTab() {
 
 // ─── Acquisition ───────────────────────────────────────────────────────────────
 
+const REFERRAL_ID = (r: any) => String(r.referrer_domain);
+const REFERRAL_FIELDS: Fields = (r) => [r.referrer_domain];
+
 export function AcquisitionTab() {
   const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
   const [referrals, setReferrals] = useState<any[] | null>(null);
   const [page, setPage] = useState(1);
   const [err, setErr] = useState(false);
@@ -681,37 +872,48 @@ export function AcquisitionTab() {
       .catch(() => setErr(true));
   }, []);
 
+  const { query, setQuery, filtered } = useSearch(referrals, REFERRAL_FIELDS);
+  const slice = useMemo(() => filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE), [filtered, page]);
+  const selection = useRowSelection(slice, REFERRAL_ID);
+
   if (err) return <EmptyState message={t('tracking.loadError')} />;
   if (!referrals) return <LoadingState />;
-
-  const slice = referrals.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
   return (
     <div className="trk-tab">
       {referrals.length === 0 ? (
         <EmptyState message={t('tracking.noData')} />
       ) : (
+        <>
+        <TableTools
+          query={query}
+          onQuery={(value) => { setQuery(value); setPage(1); }}
+          selection={selection}
+          filename="tracking-acquisition"
+          columns={[['Domaine référent', (r) => r.referrer_domain], ['Sessions', (r) => r.sessions], ['%', (r) => r.pct]]}
+        />
         <Card className="overflow-hidden gap-0">
           <DataTable>
             <DataTableHead>
               <DataTableRow>
+                <SelectAllTh selection={selection} />
                 <DataTableTh>Domaine référent</DataTableTh>
                 <DataTableTh>Sessions</DataTableTh>
                 <DataTableTh>%</DataTableTh>
-                <DataTableTh>Actions</DataTableTh>
+                <DataTableTh>{tc('table.actions')}</DataTableTh>
               </DataTableRow>
             </DataTableHead>
             <DataTableBody>
+              {slice.length === 0 && <NoResults query={query} />}
               {slice.map((r: any) => (
                 <DataTableRow key={r.referrer_domain}>
+                  <SelectTd selection={selection} id={REFERRAL_ID(r)} />
                   <DataTableTd>{r.referrer_domain}</DataTableTd>
                   <DataTableTd>{r.sessions}</DataTableTd>
                   <DataTableTd>{r.pct}%</DataTableTd>
                   <DataTableTd>
                     <div className="adm-table__actions">
-                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(r)} title={t('tracking.viewDetails')}>
-                        <EyeIcon size={13} />
-                      </button>
+                      <DataTableAction icon={EyeIcon} label={t('tracking.viewDetails')} onClick={() => setSelected(r)} />
                     </div>
                   </DataTableTd>
                 </DataTableRow>
@@ -720,11 +922,12 @@ export function AcquisitionTab() {
           </DataTable>
           <Pagination
             page={page}
-            hasMore={page * PER_PAGE < referrals.length}
+            hasMore={page * PER_PAGE < filtered.length}
             onPrev={() => setPage(p => p - 1)}
             onNext={() => setPage(p => p + 1)}
           />
         </Card>
+        </>
       )}
 
       <Modal open={!!selected} onClose={() => setSelected(null)} title="Détails référent" size="sm">
@@ -742,8 +945,11 @@ export function AcquisitionTab() {
 
 // ─── Consentements ─────────────────────────────────────────────────────────────
 
+const CONSENT_FIELDS: Fields = (c) => [c.id, c.visitor_id, c.consent_level];
+
 export function ConsentsTab() {
   const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
   const [data, setData] = useState<any>(null);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -765,6 +971,10 @@ export function ConsentsTab() {
     if (!loading && items.length === 0 && page > 1) setPage(p => p - 1);
   }, [loading, items, page]);
 
+  // Search within the loaded page (the API has no search).
+  const { query, setQuery, filtered } = useSearch(data?.items, CONSENT_FIELDS);
+  const selection = useRowSelection(filtered, byId);
+
   if (err) return <EmptyState message={t('tracking.loadError')} />;
   if (loading) return <LoadingState />;
 
@@ -774,33 +984,50 @@ export function ConsentsTab() {
       {items.length === 0 ? (
         <EmptyState message={t('tracking.noData')} />
       ) : (
+        <>
+        <TableTools
+          query={query}
+          onQuery={setQuery}
+          selection={selection}
+          filename="tracking-consentements"
+          columns={[
+            ['ID', (c) => c.id],
+            ['Visiteur', (c) => c.visitor_id],
+            ['Niveau', (c) => c.consent_level],
+            ['Analytics', (c) => (c.analytics ? 'Oui' : 'Non')],
+            ['Marketing', (c) => (c.marketing ? 'Oui' : 'Non')],
+            ['Consenti le', (c) => fmt(c.consented_at)],
+            ['Retiré le', (c) => (c.withdrawn_at ? fmt(c.withdrawn_at) : '')],
+          ]}
+        />
         <Card className="overflow-hidden gap-0">
           <DataTable>
             <DataTableHead>
               <DataTableRow>
+                <SelectAllTh selection={selection} />
                 <DataTableTh>Visiteur</DataTableTh>
                 <DataTableTh>Niveau</DataTableTh>
                 <DataTableTh>Analytics</DataTableTh>
                 <DataTableTh>Marketing</DataTableTh>
                 <DataTableTh>Consenti le</DataTableTh>
                 <DataTableTh>Retiré</DataTableTh>
-                <DataTableTh>Actions</DataTableTh>
+                <DataTableTh>{tc('table.actions')}</DataTableTh>
               </DataTableRow>
             </DataTableHead>
             <DataTableBody>
-              {items.map((c: any) => (
+              {filtered.length === 0 && <NoResults query={query} />}
+              {filtered.map((c: any) => (
                 <DataTableRow key={c.id} className={c.withdrawn_at ? 'opacity-50' : ''}>
+                  <SelectTd selection={selection} id={byId(c)} />
                   <DataTableTd className="font-mono text-xs">{c.visitor_id}</DataTableTd>
                   <DataTableTd>{c.consent_level}</DataTableTd>
                   <DataTableTd>{c.analytics ? '✓' : '—'}</DataTableTd>
                   <DataTableTd>{c.marketing ? '✓' : '—'}</DataTableTd>
-                  <DataTableTd className="text-xs">{fmt(c.consented_at)}</DataTableTd>
-                  <DataTableTd className="text-xs">{c.withdrawn_at ? fmt(c.withdrawn_at) : '—'}</DataTableTd>
+                  <DataTableTd>{fmt(c.consented_at)}</DataTableTd>
+                  <DataTableTd>{c.withdrawn_at ? fmt(c.withdrawn_at) : '—'}</DataTableTd>
                   <DataTableTd>
                     <div className="adm-table__actions">
-                      <button type="button" className="adm-btn adm-btn--ghost adm-btn--xs" onClick={() => setSelected(c)} title={t('tracking.viewDetails')}>
-                        <EyeIcon size={13} />
-                      </button>
+                      <DataTableAction icon={EyeIcon} label={t('tracking.viewDetails')} onClick={() => setSelected(c)} />
                     </div>
                   </DataTableTd>
                 </DataTableRow>
@@ -814,6 +1041,7 @@ export function ConsentsTab() {
             onNext={() => setPage(p => p + 1)}
           />
         </Card>
+        </>
       )}
 
       <Modal open={!!selected} onClose={() => setSelected(null)} title="Détails consentement" size="sm">
