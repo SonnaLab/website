@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import {
   LineChartIcon,
   LogOutIcon,
-  ArrowRightIcon,
+  ActivityIcon,
+  ArrowUpRightIcon,
   LanguagesIcon,
   MenuIcon,
   XIcon,
@@ -193,6 +194,18 @@ export function MemberLayout() {
           </nav>
 
           <div className="dash-sidebar__footer">
+            {/* Admins: one click to « Activités » (everything done on the platform). */}
+            {isAdmin && (
+              <Link
+                to="/admin/infrastructure?tab=activities"
+                className="dash-footer-link"
+                onClick={closeSidebar}
+                title={sidebarExpanded ? undefined : tA('infrastructure.tabs.activities')}
+              >
+                <span className="dash-nav-label">{tA('infrastructure.tabs.activities')}</span>
+                <ActivityIcon size={16} />
+              </Link>
+            )}
             <Link
               to="/"
               className="dash-footer-link"
@@ -200,7 +213,7 @@ export function MemberLayout() {
               title={sidebarExpanded ? undefined : t('nav.backToSite')}
             >
               <span className="dash-nav-label">{t('nav.backToSite')}</span>
-              <ArrowRightIcon size={16} />
+              <ArrowUpRightIcon size={16} />
             </Link>
           </div>
         </aside>
