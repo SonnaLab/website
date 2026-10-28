@@ -894,7 +894,23 @@
         "hint": "The days shown on the quote are multiplied by this factor; prices do not change."
       },
       "remindQuoteIntro": "Reminder of the quote « {{title}} » waiting for the client's answer, PDF attached.",
-      "remindQuoteHint": "Each gets it in their language. Automatic reminders also go out 3, 7 and 14 days after the quote was sent."
+      "remindQuoteHint": "Each gets it in their language. Automatic reminders also go out 3, 7 and 14 days after the quote was sent.",
+      "mail": {
+        "template": "E-mail template",
+        "subject": "Subject",
+        "message": "Message",
+        "preview": "Preview",
+        "restore": "Back to the original text",
+        "messageHint": "One line = one paragraph. The document's summary and the PDF are added automatically.",
+        "templates": {
+          "quote_sent": "Quote",
+          "quote_corrected": "Corrected quote (apology)",
+          "quote_reminder": "Quote reminder",
+          "invoice_sent": "Invoice",
+          "invoice_corrected": "Corrected invoice (apology)",
+          "payment_reminder": "Payment reminder"
+        }
+      }
     },
     "contracts": {
       "new": "New contract",
@@ -1139,7 +1155,9 @@
       "staff_quote_accepted": "Quote accepted by the client",
       "staff_quote_declined": "Quote declined by the client",
       "quote_decision": "Answer to a quote (client)",
-      "quote_reminder": "Quote — reminder, no answer"
+      "quote_reminder": "Quote — reminder, no answer",
+      "quote_corrected": "Corrected quote (apology)",
+      "invoice_corrected": "Corrected invoice (apology)"
     },
     "sendTest": "Send a test",
     "sending": "Sending…",

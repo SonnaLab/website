@@ -894,7 +894,23 @@
         "hint": "Die im Angebot angezeigten Tage werden mit diesem Faktor multipliziert; die Preise ändern sich nicht."
       },
       "remindQuoteIntro": "Erinnerung an das Angebot « {{title}} », das auf die Antwort des Kunden wartet, PDF im Anhang.",
-      "remindQuoteHint": "Jeder erhält es in seiner Sprache. Automatische Erinnerungen gehen auch 3, 7 und 14 Tage nach dem Versand raus."
+      "remindQuoteHint": "Jeder erhält es in seiner Sprache. Automatische Erinnerungen gehen auch 3, 7 und 14 Tage nach dem Versand raus.",
+      "mail": {
+        "template": "E-Mail-Vorlage",
+        "subject": "Betreff",
+        "message": "Nachricht",
+        "preview": "Vorschau",
+        "restore": "Zum Originaltext zurück",
+        "messageHint": "Eine Zeile = ein Absatz. Die Zusammenfassung des Dokuments und das PDF werden automatisch hinzugefügt.",
+        "templates": {
+          "quote_sent": "Angebot",
+          "quote_corrected": "Korrigiertes Angebot (Entschuldigung)",
+          "quote_reminder": "Angebotserinnerung",
+          "invoice_sent": "Rechnung",
+          "invoice_corrected": "Korrigierte Rechnung (Entschuldigung)",
+          "payment_reminder": "Zahlungserinnerung"
+        }
+      }
     },
     "contracts": {
       "new": "Neuer Vertrag",
@@ -1139,7 +1155,9 @@
       "staff_quote_accepted": "Angebot vom Kunden angenommen",
       "staff_quote_declined": "Angebot vom Kunden abgelehnt",
       "quote_decision": "Antwort auf ein Angebot (Kunde)",
-      "quote_reminder": "Angebot — Erinnerung ohne Antwort"
+      "quote_reminder": "Angebot — Erinnerung ohne Antwort",
+      "quote_corrected": "Korrigiertes Angebot (Entschuldigung)",
+      "invoice_corrected": "Korrigierte Rechnung (Entschuldigung)"
     },
     "sendTest": "Test senden",
     "sending": "Wird gesendet…",

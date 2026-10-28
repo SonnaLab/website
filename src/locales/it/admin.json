@@ -894,7 +894,23 @@
         "hint": "I giorni mostrati sul preventivo sono moltiplicati per questo fattore; i prezzi non cambiano."
       },
       "remindQuoteIntro": "Promemoria del preventivo « {{title}} » in attesa della risposta del cliente, PDF allegato.",
-      "remindQuoteHint": "Ognuno lo riceve nella sua lingua. Partono anche solleciti automatici 3, 7 e 14 giorni dopo l'invio."
+      "remindQuoteHint": "Ognuno lo riceve nella sua lingua. Partono anche solleciti automatici 3, 7 e 14 giorni dopo l'invio.",
+      "mail": {
+        "template": "Modello dell'e-mail",
+        "subject": "Oggetto",
+        "message": "Messaggio",
+        "preview": "Anteprima",
+        "restore": "Torna al testo originale",
+        "messageHint": "Una riga = un paragrafo. Il riepilogo del documento e il PDF vengono aggiunti automaticamente.",
+        "templates": {
+          "quote_sent": "Preventivo",
+          "quote_corrected": "Preventivo corretto (scuse)",
+          "quote_reminder": "Sollecito del preventivo",
+          "invoice_sent": "Fattura",
+          "invoice_corrected": "Fattura corretta (scuse)",
+          "payment_reminder": "Sollecito di pagamento"
+        }
+      }
     },
     "contracts": {
       "new": "Nuovo contratto",
@@ -1139,7 +1155,9 @@
       "staff_quote_accepted": "Preventivo accettato dal cliente",
       "staff_quote_declined": "Preventivo rifiutato dal cliente",
       "quote_decision": "Risposta a un preventivo (cliente)",
-      "quote_reminder": "Preventivo — sollecito senza risposta"
+      "quote_reminder": "Preventivo — sollecito senza risposta",
+      "quote_corrected": "Preventivo corretto (scuse)",
+      "invoice_corrected": "Fattura corretta (scuse)"
     },
     "sendTest": "Invia un test",
     "sending": "Invio…",

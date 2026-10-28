@@ -894,7 +894,23 @@
         "hint": "Los días mostrados en el presupuesto se multiplican por este factor; los precios no cambian."
       },
       "remindQuoteIntro": "Recordatorio del presupuesto « {{title}} » pendiente de respuesta del cliente, PDF adjunto.",
-      "remindQuoteHint": "Cada uno lo recibe en su idioma. También se envían recordatorios automáticos 3, 7 y 14 días después del envío."
+      "remindQuoteHint": "Cada uno lo recibe en su idioma. También se envían recordatorios automáticos 3, 7 y 14 días después del envío.",
+      "mail": {
+        "template": "Plantilla del correo",
+        "subject": "Asunto",
+        "message": "Mensaje",
+        "preview": "Vista previa",
+        "restore": "Volver al texto original",
+        "messageHint": "Una línea = un párrafo. El resumen del documento y el PDF se añaden automáticamente.",
+        "templates": {
+          "quote_sent": "Presupuesto",
+          "quote_corrected": "Presupuesto corregido (disculpas)",
+          "quote_reminder": "Recordatorio del presupuesto",
+          "invoice_sent": "Factura",
+          "invoice_corrected": "Factura corregida (disculpas)",
+          "payment_reminder": "Recordatorio de pago"
+        }
+      }
     },
     "contracts": {
       "new": "Nuevo contrato",
@@ -1139,7 +1155,9 @@
       "staff_quote_accepted": "Presupuesto aceptado por el cliente",
       "staff_quote_declined": "Presupuesto rechazado por el cliente",
       "quote_decision": "Respuesta a un presupuesto (cliente)",
-      "quote_reminder": "Presupuesto — recordatorio sin respuesta"
+      "quote_reminder": "Presupuesto — recordatorio sin respuesta",
+      "quote_corrected": "Presupuesto corregido (disculpas)",
+      "invoice_corrected": "Factura corregida (disculpas)"
     },
     "sendTest": "Enviar una prueba",
     "sending": "Enviando…",

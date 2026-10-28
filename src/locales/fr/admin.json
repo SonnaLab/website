@@ -895,7 +895,23 @@
         "hint": "Les jours affichés sur le devis sont multipliés par ce facteur ; les prix ne changent pas."
       },
       "remindQuoteIntro": "Rappel du devis « {{title}} » qui attend la réponse du client, PDF joint.",
-      "remindQuoteHint": "Chacun le reçoit dans sa langue. Des relances automatiques partent aussi 3, 7 et 14 jours après l'envoi du devis."
+      "remindQuoteHint": "Chacun le reçoit dans sa langue. Des relances automatiques partent aussi 3, 7 et 14 jours après l'envoi du devis.",
+      "mail": {
+        "template": "Modèle de l'e-mail",
+        "subject": "Objet",
+        "message": "Message",
+        "preview": "Aperçu",
+        "restore": "Revenir au texte d'origine",
+        "messageHint": "Une ligne = un paragraphe. Le récapitulatif du document et le PDF sont ajoutés automatiquement.",
+        "templates": {
+          "quote_sent": "Devis",
+          "quote_corrected": "Devis corrigé (excuses)",
+          "quote_reminder": "Relance du devis",
+          "invoice_sent": "Facture",
+          "invoice_corrected": "Facture corrigée (excuses)",
+          "payment_reminder": "Relance de paiement"
+        }
+      }
     },
     "contracts": {
       "new": "Nouveau contrat",
@@ -1140,7 +1156,9 @@
       "staff_quote_accepted": "Devis accepté par le client",
       "staff_quote_declined": "Devis refusé par le client",
       "quote_decision": "Réponse à un devis (client)",
-      "quote_reminder": "Devis — relance sans réponse"
+      "quote_reminder": "Devis — relance sans réponse",
+      "quote_corrected": "Devis corrigé (excuses)",
+      "invoice_corrected": "Facture corrigée (excuses)"
     },
     "sendTest": "Envoyer un test",
     "sending": "Envoi…",

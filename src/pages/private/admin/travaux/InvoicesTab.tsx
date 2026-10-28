@@ -23,7 +23,8 @@ import {
   filterRows,
   useRowSelection,
 } from '@/components/common/DataTable';
-import { apiAssetUrl, apiService, saveBlob } from '@/services/api';
+import { apiAssetUrl, apiService, saveBlob, type DocumentMailCopy } from '@/services/api';
+import { MailSkeleton } from '@/pages/private/admin/mailing/TemplatesTab';
 import { calculateDevis, dueDateCountdown } from '@/lib/devisCalc';
 import { BellIcon, CheckCircleIcon, DownloadIcon, EyeIcon, PaperclipIcon, PenLineIcon, ReceiptIcon, SendIcon, Trash2Icon, XCircleIcon } from '@icons';
 import type {
@@ -672,11 +673,26 @@ function SendInvoiceModal({
 }) {
   const { t } = useTranslation('admin');
   const invoice = request?.invoice ?? null;
-  const remind = request?.mode === 'remind';
   const [recipients, setRecipients] = useState<BillingRecipient[] | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
   const [extra, setExtra] = useState('');
   const [sending, setSending] = useState(false);
+  // The e-mail: its template, and the subject and message the team may rewrite.
+  const [template, setTemplate] = useState('');
+  const [templates, setTemplates] = useState<string[]>([]);
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
+  const [defaults, setDefaults] = useState<{ subject: string; message: string } | null>(null);
+  const [html, setHtml] = useState<string | null>(null);
+  const [previewing, setPreviewing] = useState(false);
+
+  const remind = template === 'quote_reminder' || template === 'payment_reminder';
+  const edited = !!defaults && (subject !== defaults.subject || message !== defaults.message);
+  const copy = (): DocumentMailCopy => ({
+    template,
+    subject: defaults && subject !== defaults.subject ? subject : undefined,
+    message: defaults && message !== defaults.message ? message : undefined,
+  });
 
   // The main contact is ticked; the rest of the company's team can be added.
   useEffect(() => {
@@ -686,7 +702,40 @@ function SendInvoiceModal({
     apiService.adminTravauxInvoiceRecipients(invoice.id)
       .then(({ recipients: list }) => { setRecipients(list); setSelected(list.slice(0, 1).map((r) => r.email)); })
       .catch(() => { setRecipients([]); setSelected([]); });
-  }, [invoice]);
+    const first = request?.mode === 'remind'
+      ? (invoice.kind === 'quote' ? 'quote_reminder' : 'payment_reminder')
+      : (invoice.kind === 'quote' ? 'quote_sent' : 'invoice_sent');
+    setTemplate(first);
+  }, [invoice, request?.mode]);
+
+  // A new template starts from its own subject and message.
+  useEffect(() => {
+    if (!invoice || !template) return;
+    setHtml(null);
+    setDefaults(null);
+    apiService.adminTravauxMailPreview(invoice.id, { template })
+      .then((res) => {
+        setTemplates(res.templates);
+        setDefaults({ subject: res.default_subject, message: res.default_message });
+        setSubject(res.default_subject);
+        setMessage(res.default_message);
+        setHtml(res.html);
+      })
+      .catch(() => setHtml(''));
+  }, [invoice, template]);
+
+  // The preview follows the rewritten text (debounced).
+  useEffect(() => {
+    if (!invoice || !defaults || !edited) return undefined;
+    const timer = window.setTimeout(() => {
+      setPreviewing(true);
+      apiService.adminTravauxMailPreview(invoice.id, copy())
+        .then((res) => setHtml(res.html))
+        .catch(() => undefined)
+        .finally(() => setPreviewing(false));
+    }, 600);
+    return () => window.clearTimeout(timer);
+  }, [subject, message]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const extraEmails = extra.split(/[\s,;]+/).map((e) => e.trim().toLowerCase()).filter((e) => EMAIL.test(e));
   const to = [...new Set([...selected, ...extraEmails])];
@@ -694,13 +743,20 @@ function SendInvoiceModal({
     current.includes(email) ? current.filter((e) => e !== email) : [...current, email]
   ));
 
+  function restore() {
+    if (!defaults || !invoice) return;
+    setSubject(defaults.subject);
+    setMessage(defaults.message);
+    apiService.adminTravauxMailPreview(invoice.id, { template }).then((res) => setHtml(res.html)).catch(() => undefined);
+  }
+
   async function submit() {
     if (!invoice || to.length === 0) return;
     setSending(true);
     try {
       const res = remind
-        ? await apiService.adminTravauxRemindInvoice(invoice.id, to)
-        : await apiService.adminTravauxDeliverInvoice(invoice.id, to);
+        ? await apiService.adminTravauxRemindInvoice(invoice.id, to, copy())
+        : await apiService.adminTravauxDeliverInvoice(invoice.id, to, copy());
       toast.success(t(remind ? 'travaux.invoices.remindDone' : 'travaux.invoices.sentDone', { count: res.sent_to.length }));
       await onSent();
     } catch (err) {
@@ -718,47 +774,95 @@ function SendInvoiceModal({
       subtitle={invoice ? t(remind ? (invoice.kind === 'quote' ? 'travaux.invoices.remindQuoteIntro' : 'travaux.invoices.remindIntro') : 'travaux.invoices.sendIntro', {
         title: invoice.title, amount: formatCents(dueCents), kind: t(`travaux.invoices.kinds.${invoice.kind}`).toLowerCase(),
       }) : undefined}
-      size="sm"
+      size="xl"
       footer={
         <>
           <button type="button" className="adm-btn adm-btn--ghost" onClick={onClose}>{t('common.cancel')}</button>
-          <button type="button" className="adm-btn adm-btn--primary" onClick={submit} disabled={sending || to.length === 0}>
+          <button type="button" className="adm-btn adm-btn--primary" onClick={submit} disabled={sending || to.length === 0 || !defaults}>
             {remind ? <BellIcon size={13} /> : <SendIcon size={13} />} {t(remind ? 'travaux.invoices.remindAction' : 'travaux.invoices.sendAction', { count: to.length })}
           </button>
         </>
       }
     >
       {invoice && (
-        <div className="adm-form">
-          <div className="adm-form__field">
-            <p className="adm-form__label">{t('travaux.invoices.recipients')}</p>
-            {recipients === null ? (
-              <p className="trv-muted">{t('common.loading')}</p>
-            ) : recipients.length === 0 ? (
-              <p className="trv-info">{t('travaux.invoices.noRecipient')}</p>
-            ) : (
-              <div className="trv-checklist trv-recipients">
-                {recipients.map((r) => (
-                  <label key={r.email}>
-                    <input type="checkbox" checked={selected.includes(r.email)} onChange={() => toggle(r.email)} />
-                    <span className="trv-recipients__who">
-                      <strong>{r.name || r.email}</strong>
-                      {r.name && <small>{r.email}</small>}
-                    </span>
-                    <span className="trv-recipients__meta">{t(`travaux.invoices.recipientRoles.${r.role}`)} · {r.language.toUpperCase()}</span>
-                  </label>
+        <div className="trv-mailer">
+          <div className="adm-form trv-mailer__form">
+            <div className="adm-form__field">
+              <p className="adm-form__label">{t('travaux.invoices.mail.template')}</p>
+              <div className="infra-chips trv-mailer__templates" role="radiogroup" aria-label={t('travaux.invoices.mail.template')}>
+                {templates.map((key) => (
+                  <button key={key} type="button" role="radio" aria-checked={template === key}
+                          className={template === key ? 'is-active' : ''} onClick={() => setTemplate(key)}>
+                    {t(`travaux.invoices.mail.templates.${key}`)}
+                  </button>
                 ))}
               </div>
+            </div>
+
+            <div className="adm-form__field">
+              <p className="adm-form__label">{t('travaux.invoices.recipients')}</p>
+              {recipients === null ? (
+                <p className="trv-muted">{t('common.loading')}</p>
+              ) : recipients.length === 0 ? (
+                <p className="trv-info">{t('travaux.invoices.noRecipient')}</p>
+              ) : (
+                <div className="trv-checklist trv-recipients">
+                  {recipients.map((r) => (
+                    <label key={r.email}>
+                      <input type="checkbox" checked={selected.includes(r.email)} onChange={() => toggle(r.email)} />
+                      <span className="trv-recipients__who">
+                        <strong>{r.name || r.email}</strong>
+                        {r.name && <small>{r.email}</small>}
+                      </span>
+                      <span className="trv-recipients__meta">{t(`travaux.invoices.recipientRoles.${r.role}`)} · {r.language.toUpperCase()}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="adm-form__field">
+              <label className="adm-form__label" htmlFor="trv-send-extra">{t('travaux.invoices.otherRecipients')}</label>
+              <input id="trv-send-extra" className="adm-input" value={extra} placeholder="compta@entreprise.fr" onChange={(e) => setExtra(e.target.value)} />
+            </div>
+
+            <div className="adm-form__field">
+              <label className="adm-form__label" htmlFor="trv-send-subject">{t('travaux.invoices.mail.subject')}</label>
+              <input id="trv-send-subject" className="adm-input" value={subject} maxLength={200} disabled={!defaults}
+                     onChange={(e) => setSubject(e.target.value)} />
+            </div>
+            <div className="adm-form__field">
+              <label className="adm-form__label" htmlFor="trv-send-message">{t('travaux.invoices.mail.message')}</label>
+              <textarea id="trv-send-message" className="adm-textarea" rows={6} maxLength={4000} value={message} disabled={!defaults}
+                        onChange={(e) => setMessage(e.target.value)} />
+              <p className="trv-hint">
+                {t('travaux.invoices.mail.messageHint')}
+                {edited && (
+                  <> · <button type="button" className="trv-link-button" onClick={restore}>{t('travaux.invoices.mail.restore')}</button></>
+                )}
+              </p>
+            </div>
+
+            <p className="trv-muted">{t(remind ? (invoice.kind === 'quote' ? 'travaux.invoices.remindQuoteHint' : 'travaux.invoices.remindHint') : 'travaux.invoices.sendHint')}</p>
+            {remind && invoice.last_reminded_on && (
+              <p className="trv-muted">{t('travaux.invoices.lastReminded', { date: formatDate(invoice.last_reminded_on) })}</p>
             )}
           </div>
-          <div className="adm-form__field">
-            <label className="adm-form__label" htmlFor="trv-send-extra">{t('travaux.invoices.otherRecipients')}</label>
-            <input id="trv-send-extra" className="adm-input" value={extra} placeholder="compta@entreprise.fr" onChange={(e) => setExtra(e.target.value)} />
+
+          <div className="trv-mailer__preview">
+            <p className="adm-form__label">
+              {t('travaux.invoices.mail.preview')}
+              {previewing && <span className="trv-muted"> · {t('common.loading')}</span>}
+            </p>
+            <div className="trv-mailer__frame">
+              {html ? (
+                <iframe title={t('travaux.invoices.mail.preview')} srcDoc={html} className="trv-mailer__iframe" />
+              ) : html === '' ? (
+                <p className="trv-info">{t('common.error')}</p>
+              ) : (
+                <MailSkeleton device="desktop" label={t('common.loading')} />
+              )}
+            </div>
           </div>
-          <p className="trv-muted">{t(remind ? (invoice.kind === 'quote' ? 'travaux.invoices.remindQuoteHint' : 'travaux.invoices.remindHint') : 'travaux.invoices.sendHint')}</p>
-          {remind && invoice.last_reminded_on && (
-            <p className="trv-muted">{t('travaux.invoices.lastReminded', { date: formatDate(invoice.last_reminded_on) })}</p>
-          )}
         </div>
       )}
     </Modal>

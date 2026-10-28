@@ -828,11 +828,16 @@ class ApiService {
   async adminTravauxInvoiceRecipients(id: string): Promise<{ recipients: BillingRecipient[] }> {
     return (await this.client.get(`/api/v1/admin/travaux/invoices/${id}/recipients`)).data;
   }
-  async adminTravauxDeliverInvoice(id: string, recipients: string[]): Promise<{ invoice: TravauxInvoice; sent_to: string[] }> {
-    return (await this.client.post(`/api/v1/admin/travaux/invoices/${id}/deliver`, { recipients }, { timeout: 30000 })).data;
+  /** `template`: one of the document's e-mails; `subject` / `message` replace the template's. */
+  async adminTravauxDeliverInvoice(id: string, recipients: string[], mail: DocumentMailCopy = {}): Promise<{ invoice: TravauxInvoice; sent_to: string[] }> {
+    return (await this.client.post(`/api/v1/admin/travaux/invoices/${id}/deliver`, { recipients, ...mail }, { timeout: 30000 })).data;
   }
-  async adminTravauxRemindInvoice(id: string, recipients: string[]): Promise<{ invoice: TravauxInvoice; sent_to: string[] }> {
-    return (await this.client.post(`/api/v1/admin/travaux/invoices/${id}/remind`, { recipients }, { timeout: 30000 })).data;
+  async adminTravauxRemindInvoice(id: string, recipients: string[], mail: DocumentMailCopy = {}): Promise<{ invoice: TravauxInvoice; sent_to: string[] }> {
+    return (await this.client.post(`/api/v1/admin/travaux/invoices/${id}/remind`, { recipients, ...mail }, { timeout: 30000 })).data;
+  }
+  /** The e-mail as it would leave (for the main contact), with the template's own subject and message. */
+  async adminTravauxMailPreview(id: string, mail: DocumentMailCopy): Promise<DocumentMailPreview> {
+    return (await this.client.post(`/api/v1/admin/travaux/invoices/${id}/mail_preview`, mail, { timeout: 30000 })).data;
   }
   async adminTravauxDownloadInvoicePdf(id: string): Promise<{ blob: Blob; filename: string }> {
     const res = await this.client.get(`/api/v1/admin/travaux/invoices/${id}/pdf`, { responseType: 'blob', timeout: 30000 });
@@ -1200,6 +1205,13 @@ export interface MemberTravauxTask {
 export interface MemberTravaux {
   projects: Array<{ id: string; name: string; status: string; progress: number; due_on: string | null; objectives: MemberTravauxObjective[] }>;
   tasks: MemberTravauxTask[];
+}
+
+/** A document e-mail (« Envoyer » / « Relancer »): which template, and what replaces its subject or message. */
+export interface DocumentMailCopy { template?: string; subject?: string; message?: string }
+export interface DocumentMailPreview {
+  template: string; templates: string[]; locale: string; subject: string; html: string | null;
+  default_subject: string; default_message: string;
 }
 
 /** The company's billing details, as shown on the profile (read-only). */

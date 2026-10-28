@@ -6477,3 +6477,16 @@
 @media (max-width: 640px) {
   .adm-modal:has(.mb-pdf) .adm-modal__footer .adm-btn { flex: 1 1 calc(50% - 4px); justify-content: center; }
 }
+
+/* « Envoyer » / « Relancer » : le mail (modèle, objet, message) à gauche, son aperçu à droite. */
+.trv-mailer { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 20px; align-items: start; }
+.trv-mailer__templates { flex-wrap: wrap; }
+.trv-mailer__preview { display: flex; flex-direction: column; gap: 8px; position: sticky; top: 0; }
+.trv-mailer__frame { height: 62vh; min-height: 420px; overflow: hidden; border: 1px solid #e8eaed; border-radius: 12px; background: #f4f4f5; }
+.trv-mailer__iframe { display: block; width: 100%; height: 100%; border: 0; }
+.trv-link-button { padding: 0; border: 0; background: none; font: inherit; color: #111111; text-decoration: underline; cursor: pointer; }
+@media (max-width: 900px) {
+  .trv-mailer { grid-template-columns: minmax(0, 1fr); }
+  .trv-mailer__preview { position: static; }
+  .trv-mailer__frame { height: 520px; }
+}
