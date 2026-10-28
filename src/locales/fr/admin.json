@@ -128,7 +128,8 @@
         "backup_semiannual": "Sauvegarde semestrielle",
         "backup_annual": "Sauvegarde annuelle",
         "backup_manual": "Sauvegarde manuelle",
-        "quote_reminders": "Relances des devis sans réponse (J+3, J+7, J+14)"
+        "quote_reminders": "Relances des devis sans réponse (J+3, J+7, J+14)",
+        "mail_delivery": "Suivi de livraison des e-mails"
       },
       "days": {
         "0": "dimanche",
@@ -1285,7 +1286,26 @@
       "total_other": "{{count}} e-mails",
       "type": "Type",
       "bcc": "Copie cachée",
-      "sentAt": "Envoyé le"
+      "sentAt": "Envoyé le",
+      "delivery": {
+        "label": "Livraison",
+        "delivered": "Livré",
+        "bounced": "Rejeté",
+        "deferred": "Réessai",
+        "pending": "En cours",
+        "untracked": "Envoyé avant le suivi de livraison."
+      },
+      "resend": {
+        "cta": "Renvoyer",
+        "to": "Renvoyer à",
+        "submit": "Renvoyer",
+        "updateContact": "Remplacer aussi {{old}} dans le compte et la fiche entreprise",
+        "done": "E-mail renvoyé à {{to}}.",
+        "updated_one": "Adresse mise à jour à 1 endroit.",
+        "updated_other": "Adresse mise à jour à {{count}} endroits.",
+        "error": "Le renvoi n'a pas abouti.",
+        "resentTo": "Renvoyé à {{to}} le {{date}}"
+      }
     }
   }
 }

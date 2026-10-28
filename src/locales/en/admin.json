@@ -128,7 +128,8 @@
         "backup_semiannual": "Half-yearly backup",
         "backup_annual": "Yearly backup",
         "backup_manual": "Manual backup",
-        "quote_reminders": "Reminders for unanswered quotes (D+3, D+7, D+14)"
+        "quote_reminders": "Reminders for unanswered quotes (D+3, D+7, D+14)",
+        "mail_delivery": "E-mail delivery tracking"
       },
       "days": {
         "0": "Sunday",
@@ -1284,7 +1285,26 @@
       "total_other": "{{count}} e-mails",
       "type": "Type",
       "bcc": "Bcc",
-      "sentAt": "Sent on"
+      "sentAt": "Sent on",
+      "delivery": {
+        "label": "Delivery",
+        "delivered": "Delivered",
+        "bounced": "Bounced",
+        "deferred": "Retrying",
+        "pending": "In progress",
+        "untracked": "Sent before delivery tracking."
+      },
+      "resend": {
+        "cta": "Resend",
+        "to": "Resend to",
+        "submit": "Resend",
+        "updateContact": "Also replace {{old}} in the account and the company sheet",
+        "done": "E-mail resent to {{to}}.",
+        "updated_one": "Address updated in 1 place.",
+        "updated_other": "Address updated in {{count}} places.",
+        "error": "Resending failed.",
+        "resentTo": "Resent to {{to}} on {{date}}"
+      }
     }
   }
 }

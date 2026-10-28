@@ -128,7 +128,8 @@
         "backup_semiannual": "Backup semestrale",
         "backup_annual": "Backup annuale",
         "backup_manual": "Backup manuale",
-        "quote_reminders": "Solleciti dei preventivi senza risposta (G+3, G+7, G+14)"
+        "quote_reminders": "Solleciti dei preventivi senza risposta (G+3, G+7, G+14)",
+        "mail_delivery": "Monitoraggio consegna e-mail"
       },
       "days": {
         "0": "domenica",
@@ -1284,7 +1285,26 @@
       "total_other": "{{count}} e-mail",
       "type": "Tipo",
       "bcc": "Ccn",
-      "sentAt": "Inviato il"
+      "sentAt": "Inviato il",
+      "delivery": {
+        "label": "Consegna",
+        "delivered": "Consegnato",
+        "bounced": "Rifiutato",
+        "deferred": "Nuovo tentativo",
+        "pending": "In corso",
+        "untracked": "Inviato prima del monitoraggio della consegna."
+      },
+      "resend": {
+        "cta": "Reinvia",
+        "to": "Reinvia a",
+        "submit": "Reinvia",
+        "updateContact": "Sostituisci anche {{old}} nell'account e nella scheda azienda",
+        "done": "E-mail reinviata a {{to}}.",
+        "updated_one": "Indirizzo aggiornato in 1 punto.",
+        "updated_other": "Indirizzo aggiornato in {{count}} punti.",
+        "error": "Reinvio non riuscito.",
+        "resentTo": "Reinviato a {{to}} il {{date}}"
+      }
     }
   }
 }

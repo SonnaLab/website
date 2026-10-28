@@ -6490,3 +6490,21 @@
   .trv-mailer__preview { position: static; }
   .trv-mailer__frame { height: 520px; }
 }
+
+/* Mailing › Activité : ce que le serveur de messagerie a fait de chaque e-mail. */
+.ma-item__tags { display: inline-flex; align-items: center; gap: 4px; }
+.ma-delivery { display: inline-flex; align-items: center; padding: 1px 8px; border-radius: 999px; font-size: 10.5px; font-weight: 700; white-space: nowrap; }
+.ma-delivery--delivered { background: #e9f8ee; color: #15803d; }
+.ma-delivery--bounced { background: #fde8e8; color: #b91c1c; }
+.ma-delivery--deferred { background: #fff4e0; color: #b45309; }
+.ma-delivery--pending { background: #f3f4f6; color: #6b7280; }
+.ma-delivery-detail { display: flex; flex-direction: column; gap: 6px; }
+.ma-delivery-detail__row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.ma-delivery-detail__why { flex-basis: 100%; font-size: 11.5px; line-height: 1.4; color: #b91c1c; }
+.ma-delivery-detail__resend { align-self: flex-start; }
+.ma-resend { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; border: 1px solid #e8eaed; border-radius: 10px; background: #fafbfc; }
+.ma-resend__row { display: flex; flex-wrap: wrap; gap: 8px; }
+.ma-resend__row .adm-input { flex: 1 1 220px; }
+.ma-resend__check { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; color: #374151; }
+.mailp-meta > div:has(.ma-delivery-detail) { align-items: start; }
+.mailp-meta > div:has(.ma-delivery-detail) dt { padding-top: 2px; }

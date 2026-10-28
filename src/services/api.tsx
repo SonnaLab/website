@@ -862,6 +862,10 @@ class ApiService {
   async adminMailingSent(params: { q?: string; page?: number }): Promise<{ emails: SentEmailSummary[]; meta: { total: number; page: number; pages: number } }> {
     return (await this.client.get('/api/v1/admin/mailing/sent', { params })).data;
   }
+  /** « Renvoyer »: the e-mail again, as it left, to `to` — `replace` (the old address) is updated in the account and company if asked. */
+  async adminMailingResend(id: string, body: { to: string; replace?: string; update_contact?: boolean }): Promise<{ sent_to: string; updated: string[] }> {
+    return (await this.client.post(`/api/v1/admin/mailing/sent/${id}/resend`, body, { timeout: 30000 })).data;
+  }
   async adminMailingSentEmail(id: string): Promise<SentEmail> {
     return (await this.client.get(`/api/v1/admin/mailing/sent/${id}`)).data.email;
   }
@@ -1221,8 +1225,17 @@ export interface MyBilling {
 }
 
 /** An e-mail as it left (« Gestion du mailing › Activité »). */
+export type DeliveryStatus = 'unknown' | 'pending' | 'delivered' | 'deferred' | 'bounced';
 export interface SentEmailSummary {
   id: string; mail_key: string; from: string | null; to: string[]; subject: string | null; locale: string | null;
   attachments: Array<{ filename: string; size: number }>; sent_at: string;
+  /** What the mail server did with it (delivered to every recipient, refused for one, still retried…). */
+  delivery_status: DeliveryStatus;
 }
-export interface SentEmail extends SentEmailSummary { bcc: string[]; html: string | null; text: string | null }
+export interface SentEmail extends SentEmailSummary {
+  bcc: string[]; html: string | null; text: string | null;
+  /** Per recipient: the mail server's verdict (Postfix « sent » / « deferred » / « bounced ») and its words. */
+  deliveries: Record<string, { status: 'sent' | 'deferred' | 'bounced'; dsn: string; detail: string; at: string }>;
+  resendable: boolean;
+  resent: Array<{ id: string; to: string[]; delivery_status: DeliveryStatus; sent_at: string }>;
+}

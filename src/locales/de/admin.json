@@ -128,7 +128,8 @@
         "backup_semiannual": "Halbjährliche Sicherung",
         "backup_annual": "Jährliche Sicherung",
         "backup_manual": "Manuelle Sicherung",
-        "quote_reminders": "Erinnerungen an unbeantwortete Angebote (T+3, T+7, T+14)"
+        "quote_reminders": "Erinnerungen an unbeantwortete Angebote (T+3, T+7, T+14)",
+        "mail_delivery": "Zustellverfolgung der E-Mails"
       },
       "days": {
         "0": "Sonntag",
@@ -1284,7 +1285,26 @@
       "total_other": "{{count}} E-Mails",
       "type": "Typ",
       "bcc": "Bcc",
-      "sentAt": "Gesendet am"
+      "sentAt": "Gesendet am",
+      "delivery": {
+        "label": "Zustellung",
+        "delivered": "Zugestellt",
+        "bounced": "Abgelehnt",
+        "deferred": "Neuer Versuch",
+        "pending": "Läuft",
+        "untracked": "Vor der Zustellverfolgung gesendet."
+      },
+      "resend": {
+        "cta": "Erneut senden",
+        "to": "Erneut senden an",
+        "submit": "Erneut senden",
+        "updateContact": "{{old}} auch im Konto und in der Firmenakte ersetzen",
+        "done": "E-Mail erneut an {{to}} gesendet.",
+        "updated_one": "Adresse an 1 Stelle aktualisiert.",
+        "updated_other": "Adresse an {{count}} Stellen aktualisiert.",
+        "error": "Erneutes Senden fehlgeschlagen.",
+        "resentTo": "Erneut an {{to}} gesendet am {{date}}"
+      }
     }
   }
 }

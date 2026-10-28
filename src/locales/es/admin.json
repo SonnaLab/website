@@ -128,7 +128,8 @@
         "backup_semiannual": "Copia semestral",
         "backup_annual": "Copia anual",
         "backup_manual": "Copia manual",
-        "quote_reminders": "Recordatorios de presupuestos sin respuesta (D+3, D+7, D+14)"
+        "quote_reminders": "Recordatorios de presupuestos sin respuesta (D+3, D+7, D+14)",
+        "mail_delivery": "Seguimiento de entrega de correos"
       },
       "days": {
         "0": "domingo",
@@ -1284,7 +1285,26 @@
       "total_other": "{{count}} correos",
       "type": "Tipo",
       "bcc": "Cco",
-      "sentAt": "Enviado el"
+      "sentAt": "Enviado el",
+      "delivery": {
+        "label": "Entrega",
+        "delivered": "Entregado",
+        "bounced": "Rechazado",
+        "deferred": "Reintento",
+        "pending": "En curso",
+        "untracked": "Enviado antes del seguimiento de entrega."
+      },
+      "resend": {
+        "cta": "Reenviar",
+        "to": "Reenviar a",
+        "submit": "Reenviar",
+        "updateContact": "Sustituir también {{old}} en la cuenta y la ficha de empresa",
+        "done": "Correo reenviado a {{to}}.",
+        "updated_one": "Dirección actualizada en 1 lugar.",
+        "updated_other": "Dirección actualizada en {{count}} lugares.",
+        "error": "No se pudo reenviar.",
+        "resentTo": "Reenviado a {{to}} el {{date}}"
+      }
     }
   }
 }
