@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
+import type { LanguageCode } from '@/i18n/languages';
 import { ContactFormInputs } from '@/schemas/contactSchema';
 import type { AnalyticsEvent, ConsentPayload } from '@/types/analytics';
 import type { BlogPost } from '@/types/blog';
@@ -369,7 +370,10 @@ export interface MailingSubscriber {
   preferences: Record<'newsletter' | 'updates' | 'events', boolean>;
 }
 
-export interface MailingCampaign {
+/** A campaign's words, one version per language of the e-mails: subject_de, body_it, cta_label_es… */
+type CampaignWords = { [K in `${'subject' | 'preheader' | 'title' | 'body' | 'cta_label'}_${LanguageCode}`]?: string | null };
+
+export interface MailingCampaign extends CampaignWords {
   id: string;
   name: string;
   category: 'newsletter' | 'updates' | 'events';
@@ -384,10 +388,6 @@ export interface MailingCampaign {
   audience_count?: number;
   created_at: string;
   subject_fr: string | null; subject_en: string | null;
-  preheader_fr?: string | null; preheader_en?: string | null;
-  title_fr?: string | null; title_en?: string | null;
-  body_fr?: string | null; body_en?: string | null;
-  cta_label_fr?: string | null; cta_label_en?: string | null;
 }
 
 export interface EmailPreferences {

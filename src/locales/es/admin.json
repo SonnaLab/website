@@ -1237,7 +1237,10 @@
       },
       "version": {
         "fr": "Versión francesa",
-        "en": "Versión inglesa"
+        "en": "Versión inglesa",
+        "de": "Versión alemana",
+        "it": "Versión italiana",
+        "es": "Versión española"
       },
       "fields": {
         "subject": "Asunto",
@@ -1247,7 +1250,7 @@
         "cta_label": "Texto del botón"
       },
       "bodyHint": "Un párrafo por bloque; deje una línea vacía entre párrafos.",
-      "englishHint": "Sin versión inglesa, los anglófonos reciben la francesa.",
+      "versionHint": "Sin esta versión, estos lectores reciben la inglesa o, si no, la francesa.",
       "bulkDraftsOnly": "Solo se pueden eliminar los borradores.",
       "bulkSkipped_one": "Se conservará {{count}} campaña ya enviada.",
       "bulkSkipped_other": "Se conservarán {{count}} campañas ya enviadas."

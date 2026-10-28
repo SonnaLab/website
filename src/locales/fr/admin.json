@@ -1237,7 +1237,10 @@
       },
       "version": {
         "fr": "Version française",
-        "en": "Version anglaise"
+        "en": "Version anglaise",
+        "de": "Version allemande",
+        "it": "Version italienne",
+        "es": "Version espagnole"
       },
       "fields": {
         "subject": "Objet",
@@ -1247,7 +1250,7 @@
         "cta_label": "Texte du bouton"
       },
       "bodyHint": "Un paragraphe par bloc ; laissez une ligne vide entre deux paragraphes.",
-      "englishHint": "Sans version anglaise, les destinataires anglophones reçoivent la version française.",
+      "versionHint": "Sans cette version, ces lecteurs reçoivent la version anglaise, sinon la française.",
       "bulkDraftsOnly": "Seuls les brouillons peuvent être supprimés.",
       "bulkSkipped_one": "{{count}} campagne déjà envoyée sera conservée.",
       "bulkSkipped_other": "{{count}} campagnes déjà envoyées seront conservées."

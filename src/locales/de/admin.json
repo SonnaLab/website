@@ -1237,7 +1237,10 @@
       },
       "version": {
         "fr": "Französische Version",
-        "en": "Englische Version"
+        "en": "Englische Version",
+        "de": "Deutsche Version",
+        "it": "Italienische Version",
+        "es": "Spanische Version"
       },
       "fields": {
         "subject": "Betreff",
@@ -1247,7 +1250,7 @@
         "cta_label": "Button-Text"
       },
       "bodyHint": "Ein Absatz pro Block; eine Leerzeile zwischen zwei Absätzen.",
-      "englishHint": "Ohne englische Version erhalten Englischsprachige die französische.",
+      "versionHint": "Ohne diese Version erhalten diese Leser die englische, sonst die französische.",
       "bulkDraftsOnly": "Nur Entwürfe können gelöscht werden.",
       "bulkSkipped_one": "{{count}} bereits versendete Kampagne bleibt erhalten.",
       "bulkSkipped_other": "{{count}} bereits versendete Kampagnen bleiben erhalten."

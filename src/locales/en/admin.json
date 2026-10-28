@@ -1237,7 +1237,10 @@
       },
       "version": {
         "fr": "French version",
-        "en": "English version"
+        "en": "English version",
+        "de": "German version",
+        "it": "Italian version",
+        "es": "Spanish version"
       },
       "fields": {
         "subject": "Subject",
@@ -1247,7 +1250,7 @@
         "cta_label": "Button text"
       },
       "bodyHint": "One paragraph per block; leave an empty line between paragraphs.",
-      "englishHint": "Without an English version, English speakers get the French one.",
+      "versionHint": "Without this version, these readers get the English one, else the French one.",
       "bulkDraftsOnly": "Only drafts can be deleted.",
       "bulkSkipped_one": "{{count}} campaign already sent will be kept.",
       "bulkSkipped_other": "{{count}} campaigns already sent will be kept."

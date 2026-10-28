@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { apiService, type MailingCampaign } from '@/services/api';
+import { LANGUAGE_CODES, type LanguageCode } from '@/i18n/languages';
 import { Card } from '@/components/ui/card';
 import { Modal } from '@/components/common/Modal';
 import { StatusBadge } from '@/components/common/StatusBadge';
@@ -182,7 +183,7 @@ export function CampaignsTab({ creating, onCreated, onChange }: { creating: bool
 function CampaignFormModal({ draft, onClose, onSaved }: { draft: Draft | null; onClose: () => void; onSaved: (c: MailingCampaign) => void }) {
   const { t } = useTranslation('admin');
   const [form, setForm] = useState<Draft>({});
-  const [lang, setLang] = useState<'fr' | 'en'>('fr');
+  const [lang, setLang] = useState<LanguageCode>('fr');
   const [saving, setSaving] = useState(false);
 
   useEffect(() => { if (draft) { setForm(draft); setLang('fr'); } }, [draft]);
@@ -195,7 +196,7 @@ function CampaignFormModal({ draft, onClose, onSaved }: { draft: Draft | null; o
     const payload: Record<string, unknown> = {
       name: form.name, category: form.category, audience: form.audience, hero: form.hero || 'newsletter', cta_url: form.cta_url || null,
     };
-    FIELDS.forEach((f) => ['fr', 'en'].forEach((l) => { payload[`${f}_${l}`] = value(`${f}_${l}`) || null; }));
+    FIELDS.forEach((f) => LANGUAGE_CODES.forEach((l) => { payload[`${f}_${l}`] = value(`${f}_${l}`) || null; }));
     try {
       const { campaign } = await apiService.adminMailingSaveCampaign(payload as Partial<MailingCampaign>, form.id as string | undefined);
       toast.success(t('mailing.campaigns.saved'));
@@ -255,7 +256,7 @@ function CampaignFormModal({ draft, onClose, onSaved }: { draft: Draft | null; o
         </div>
 
         <div className="mailp-toggle" role="group">
-          {(['fr', 'en'] as const).map((l) => (
+          {LANGUAGE_CODES.map((l) => (
             <button key={l} type="button" className={lang === l ? 'is-active' : ''} onClick={() => setLang(l)}>{t(`mailing.campaigns.version.${l}`)}</button>
           ))}
         </div>
@@ -273,7 +274,7 @@ function CampaignFormModal({ draft, onClose, onSaved }: { draft: Draft | null; o
             )}
           </div>
         ))}
-        {lang === 'en' && <p className="trv-info">{t('mailing.campaigns.englishHint')}</p>}
+        {lang !== 'fr' && <p className="trv-info">{t('mailing.campaigns.versionHint')}</p>}
       </form>
     </Modal>
   );
@@ -281,7 +282,7 @@ function CampaignFormModal({ draft, onClose, onSaved }: { draft: Draft | null; o
 
 function CampaignPreviewModal({ campaign, onClose }: { campaign: MailingCampaign | null; onClose: () => void }) {
   const { t } = useTranslation('admin');
-  const [locale, setLocale] = useState<'fr' | 'en'>('fr');
+  const [locale, setLocale] = useState<LanguageCode>('fr');
   const [mail, setMail] = useState<{ subject: string; html: string } | null>(null);
   const [to, setTo] = useState('');
   const [sending, setSending] = useState(false);
@@ -317,7 +318,7 @@ function CampaignPreviewModal({ campaign, onClose }: { campaign: MailingCampaign
       <div className="infra-stack">
         <div className="infra-toolbar">
           <div className="mailp-toggle" role="group">
-            {(['fr', 'en'] as const).map((l) => (
+            {LANGUAGE_CODES.map((l) => (
               <button key={l} type="button" className={locale === l ? 'is-active' : ''} onClick={() => setLocale(l)}>{l.toUpperCase()}</button>
             ))}
           </div>
