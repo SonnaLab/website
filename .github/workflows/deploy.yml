@@ -40,4 +40,9 @@ jobs:
               git pull --ff-only origin main
               npm ci
               npm run build
+              # The blog redirects nginx reads: swapped in whole, then
+              # applied (the site config includes this copy, not build/).
+              install -m 644 build/blog-redirects.map /etc/nginx/snippets/sonnalab-blog-redirects.map.new
+              mv /etc/nginx/snippets/sonnalab-blog-redirects.map.new /etc/nginx/snippets/sonnalab-blog-redirects.map
+              nginx -t && systemctl reload nginx
               echo "sonnalab.com deployed $(git log --oneline -1) — $(date -u "+%Y-%m-%d %H:%M UTC")"'
