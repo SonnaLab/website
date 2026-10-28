@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" viewBox="0 0 600 300">
+  <defs>
+    <filter id="sh" x="-40%" y="-40%" width="180%" height="220%"><feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#0f0f0f" flood-opacity="0.13"/></filter>
+    <pattern id="dots" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.4" fill="#c9c9ce"/></pattern>
+  </defs>
+  <rect width="600" height="300" fill="#f4f4f5"/>
+  <circle cx="70" cy="20" r="190" fill="#ececee"/>
+  <circle cx="560" cy="330" r="140" fill="#f6e86f" opacity="0.55"/>
+  <rect x="470" y="34" width="96" height="60" fill="url(#dots)"/>
+  <!-- envelope -->
+  <g filter="url(#sh)">
+    <rect x="190" y="70" width="220" height="150" rx="18" fill="#ffffff"/>
+  </g>
+  <path d="M206 88 L300 160 L394 88" fill="none" stroke="#0f0f0f" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M206 204 L268 150 M394 204 L332 150" fill="none" stroke="#d9dce1" stroke-width="5" stroke-linecap="round"/>
+  <!-- @ badge -->
+  <circle cx="404" cy="76" r="30" fill="#f6e86f"/>
+  <circle cx="404" cy="76" r="9" fill="none" stroke="#0f0f0f" stroke-width="4.5"/>
+  <path d="M413 69 V81 a6 6 0 0 0 12 0 V76 a21 21 0 1 0 -8 16.5" fill="none" stroke="#0f0f0f" stroke-width="4.5" stroke-linecap="round"/>
+  <!-- key chip -->
+  <g filter="url(#sh)">
+    <rect x="96" y="176" width="142" height="62" rx="18" fill="#ffffff"/>
+  </g>
+  <rect x="108" y="188" width="38" height="38" rx="11" fill="#f4f4f5"/>
+  <circle cx="121" cy="207" r="6.5" fill="none" stroke="#0f0f0f" stroke-width="3"/>
+  <path d="M127.5 207 H139 M134 207 V212 M138.5 207 V211" fill="none" stroke="#0f0f0f" stroke-width="3" stroke-linecap="round"/>
+  <rect x="156" y="196" width="66" height="9" rx="4.5" fill="#0f0f0f"/>
+  <rect x="156" y="211" width="46" height="7" rx="3.5" fill="#c9c9ce"/>
+  <!-- check chip -->
+  <g filter="url(#sh)">
+    <rect x="378" y="190" width="128" height="52" rx="16" fill="#ffffff"/>
+  </g>
+  <circle cx="404" cy="216" r="14" fill="#e9f8ee"/>
+  <path d="M397.5 216.5 L402 221 L411 211.5" fill="none" stroke="#15803d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="426" y="207" width="62" height="8" rx="4" fill="#0f0f0f"/>
+  <rect x="426" y="220" width="42" height="6" rx="3" fill="#c9c9ce"/>
+</svg>

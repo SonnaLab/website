@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="472" height="236" viewBox="0 0 472 236">
+  <defs>
+    <filter id="sh" x="-40%" y="-40%" width="180%" height="220%"><feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#0f0f0f" flood-opacity="0.14"/></filter>
+    <filter id="sh2" x="-40%" y="-40%" width="180%" height="220%"><feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#0f0f0f" flood-opacity="0.12"/></filter>
+    <pattern id="dots" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.2" fill="#c9c9ce"/></pattern>
+    <clipPath id="card"><rect width="472" height="236" rx="16"/></clipPath>
+  </defs>
+  <g clip-path="url(#card)">
+    <rect width="472" height="236" fill="#f4f4f5"/>
+    <circle cx="40" cy="0" r="120" fill="#ececee"/>
+    <circle cx="460" cy="240" r="96" fill="#f6e86f" opacity="0.55"/>
+    <rect x="382" y="20" width="72" height="44" fill="url(#dots)"/>
+    <!-- monitor -->
+    <path d="M216 196 h40 l6 22 h-52 z" fill="#d9dce1"/>
+    <rect x="196" y="216" width="80" height="6" rx="3" fill="#c9c9ce"/>
+    <g filter="url(#sh)"><rect x="106" y="26" width="260" height="172" rx="12" fill="#0f0f0f"/></g>
+    <rect x="112" y="32" width="248" height="160" rx="7" fill="#ffffff"/>
+    <!-- window chrome -->
+    <rect x="112" y="32" width="248" height="16" rx="7" fill="#f4f4f5"/>
+    <rect x="112" y="40" width="248" height="8" fill="#f4f4f5"/>
+    <circle cx="122" cy="40" r="2.6" fill="#c9c9ce"/><circle cx="130" cy="40" r="2.6" fill="#c9c9ce"/><circle cx="138" cy="40" r="2.6" fill="#c9c9ce"/>
+    <!-- sidebar -->
+    <rect x="112" y="48" width="62" height="144" fill="#f8f8f9"/>
+    <rect x="120" y="58" width="36" height="5" rx="2.5" fill="#0f0f0f"/>
+    <rect x="120" y="70" width="44" height="4" rx="2" fill="#c9c9ce"/>
+    <rect x="120" y="80" width="30" height="4" rx="2" fill="#c9c9ce"/>
+    <rect x="120" y="90" width="40" height="4" rx="2" fill="#c9c9ce"/>
+    <rect x="120" y="106" width="28" height="4" rx="2" fill="#c9c9ce"/>
+    <!-- message lines -->
+    <rect x="184" y="58" width="80" height="5" rx="2.5" fill="#d9dce1"/>
+    <rect x="184" y="70" width="150" height="4" rx="2" fill="#eceef1"/>
+    <rect x="184" y="80" width="130" height="4" rx="2" fill="#eceef1"/>
+    <!-- add account dialog -->
+    <g filter="url(#sh2)"><rect x="196" y="72" width="140" height="108" rx="10" fill="#ffffff"/></g>
+    <rect x="196.5" y="72.5" width="139" height="107" rx="9.5" fill="none" stroke="#eceef1"/>
+    <rect x="254" y="81" width="24" height="24" rx="7" fill="#f6e86f"/>
+    <path d="M259 88 h14 v11 h-14 z M259 88 l7 6 l7 -6" fill="none" stroke="#0f0f0f" stroke-width="1.8" stroke-linejoin="round"/>
+    <rect x="236" y="111" width="60" height="5" rx="2.5" fill="#0f0f0f"/>
+    <rect x="208" y="122" width="116" height="12" rx="4" fill="#ffffff" stroke="#d9dce1" stroke-width="1.2"/>
+    <rect x="213" y="126" width="54" height="4" rx="2" fill="#9ca3af"/>
+    <rect x="208" y="138" width="116" height="12" rx="4" fill="#ffffff" stroke="#d9dce1" stroke-width="1.2"/>
+    <circle cx="215" cy="144" r="1.6" fill="#6b7280"/><circle cx="220" cy="144" r="1.6" fill="#6b7280"/><circle cx="225" cy="144" r="1.6" fill="#6b7280"/><circle cx="230" cy="144" r="1.6" fill="#6b7280"/><circle cx="235" cy="144" r="1.6" fill="#6b7280"/>
+    <rect x="270" y="158" width="54" height="13" rx="6.5" fill="#0f0f0f"/>
+    <rect x="282" y="162.5" width="30" height="4" rx="2" fill="#ffffff"/>
+    <rect x="232" y="158" width="32" height="13" rx="6.5" fill="#ffffff" stroke="#d9dce1" stroke-width="1.2"/>
+    <!-- chip: server -->
+    <g filter="url(#sh)"><rect x="30" y="118" width="112" height="44" rx="14" fill="#ffffff"/></g>
+    <rect x="39" y="126" width="28" height="28" rx="9" fill="#f4f4f5"/>
+    <rect x="46" y="132" width="14" height="6.5" rx="2" fill="none" stroke="#0f0f0f" stroke-width="1.8"/>
+    <rect x="46" y="141.5" width="14" height="6.5" rx="2" fill="none" stroke="#0f0f0f" stroke-width="1.8"/>
+    <circle cx="49.5" cy="135.25" r="0.9" fill="#0f0f0f"/><circle cx="49.5" cy="144.75" r="0.9" fill="#0f0f0f"/>
+    <rect x="75" y="132" width="50" height="7" rx="3.5" fill="#0f0f0f"/>
+    <rect x="75" y="144" width="34" height="5" rx="2.5" fill="#c9c9ce"/>
+    <!-- chip: done -->
+    <g filter="url(#sh)"><rect x="334" y="96" width="112" height="44" rx="14" fill="#ffffff"/></g>
+    <circle cx="356" cy="118" r="13" fill="#e9f8ee"/>
+    <path d="M350 118.5 L354 122.5 L362 114" fill="none" stroke="#15803d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="377" y="110" width="50" height="7" rx="3.5" fill="#0f0f0f"/>
+    <rect x="377" y="122" width="34" height="5" rx="2.5" fill="#c9c9ce"/>
+  </g>
+</svg>

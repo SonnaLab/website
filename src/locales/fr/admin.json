@@ -1111,7 +1111,8 @@
       "newsletter_mailer": "Newsletter",
       "campaign_mailer": "Campagnes",
       "appointment_mailer": "Rendez-vous",
-      "staff_mailer": "Notifications internes"
+      "staff_mailer": "Notifications internes",
+      "mailbox_mailer": "Boîte mail pro"
     },
     "emails": {
       "confirmation": "Confirmation d'inscription",
@@ -1159,7 +1160,10 @@
       "quote_decision": "Réponse à un devis (client)",
       "quote_reminder": "Devis — relance sans réponse",
       "quote_corrected": "Devis corrigé (excuses)",
-      "invoice_corrected": "Facture corrigée (excuses)"
+      "invoice_corrected": "Facture corrigée (excuses)",
+      "invitation_team": "Invitation — équipe SonnaLab",
+      "company_welcome": "Bienvenue — nouvelle entreprise",
+      "setup": "Boîte mail pro — identifiants et guide"
     },
     "sendTest": "Envoyer un test",
     "sending": "Envoi…",

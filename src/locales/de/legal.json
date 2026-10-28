@@ -38,7 +38,7 @@
     "title": "Impressum",
     "lastUpdate": "Zuletzt aktualisiert: 5. November 2025",
     "sections": {
-      "editor": { "title": "Herausgeber der Website", "company": "SONNALAB", "capital": "Stammkapital: €1.000", "rcs": "RCS Cergy 920978210", "siret": "92097821000010", "address": "Eingetragene Geschäftsadresse", "addressLine1": "Avenue des Grouettes", "addressLine2": "95000 Cergy, Frankreich", "phone": "Tel.: +33 1 XX XX XX XX", "email": "E-Mail: contact@sonnalab.com" },
+      "editor": { "title": "Herausgeber der Website", "company": "SONNALAB", "legalForm": "Vereinfachte Aktiengesellschaft (SAS, französisches Recht)", "capital": "Stammkapital: €1.000", "rcs": "RCS Cergy 920978210", "siret": "92097821000010", "address": "Eingetragene Geschäftsadresse", "addressLine1": "Avenue des Grouettes", "addressLine2": "95000 Cergy, Frankreich", "phone": "Tel.: +33 1 XX XX XX XX", "email": "E-Mail: contact@sonnalab.com" },
       "director": { "title": "Verantwortlicher Herausgeber", "name": "Herr SONNA", "role": "Geschäftsführer von SONNALAB" },
       "hosting": { "title": "Hosting", "provider": "Die Website wird gehostet von:", "name": "Hosting Provider Inc.", "address": "passage de l'Industrie, 75000 Paris, Frankreich" },
       "credits": { "title": "Danksagungen", "design": "Design und Entwicklung: SonnaLab", "icons": "Icons: Lucide React", "images": "Bilder: Unsplash, interne Erstellungen" }

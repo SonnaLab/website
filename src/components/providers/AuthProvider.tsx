@@ -1,5 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { isLanguageCode } from '@/i18n/languages';
 import {
   apiService,
   AUTH_STORAGE_KEYS,
@@ -42,6 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState<boolean>(!!getStoredAccessToken());
   const [impersonatingAdmin, setImpersonatingAdmin] = useState<AuthUser | null>(() => getImpersonationSnapshot()?.user ?? null);
   const navigate                  = useNavigate();
+  const { i18n }                  = useTranslation();
 
   // On 401 from refresh: an impersonation session has no refresh token of
   // its own (see `impersonate` below), so it lands here the moment its
@@ -88,8 +91,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     clearImpersonationSnapshot();
     setImpersonatingAdmin(null);
     setUser(u);
+    // The space opens in the account's language (Profile › Langue, the one
+    // its e-mails use), e.g. German for an account invited in German.
+    if (isLanguageCode(u.language) && !i18n.language?.startsWith(u.language)) i18n.changeLanguage(u.language);
     return u;
-  }, []);
+  }, [i18n]);
 
   const signUp = useCallback(async (payload: Parameters<typeof apiService.signUp>[0]) => {
     const { user: u } = await apiService.signUp(payload);

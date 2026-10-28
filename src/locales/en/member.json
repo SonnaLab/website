@@ -156,7 +156,10 @@
     },
     "languages": {
       "fr": "French",
-      "en": "English"
+      "en": "English",
+      "de": "German",
+      "it": "Italian",
+      "es": "Spanish"
     },
     "save": "Save",
     "saving": "Saving…",

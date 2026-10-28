@@ -38,7 +38,7 @@
     "title": "Note Legali",
     "lastUpdate": "Ultimo aggiornamento: 5 novembre 2025",
     "sections": {
-      "editor": { "title": "Editore del Sito", "company": "SONNALAB", "capital": "Capitale sociale: €1.000", "rcs": "RCS Cergy 920978210", "siret": "92097821000010", "address": "Sede legale", "addressLine1": "Avenue des Grouettes", "addressLine2": "95000 Cergy, Francia", "phone": "Tel.: +33 1 XX XX XX XX", "email": "Email: contact@sonnalab.com" },
+      "editor": { "title": "Editore del Sito", "company": "SONNALAB", "legalForm": "Società per azioni semplificata (SAS, diritto francese)", "capital": "Capitale sociale: €1.000", "rcs": "RCS Cergy 920978210", "siret": "92097821000010", "address": "Sede legale", "addressLine1": "Avenue des Grouettes", "addressLine2": "95000 Cergy, Francia", "phone": "Tel.: +33 1 XX XX XX XX", "email": "Email: contact@sonnalab.com" },
       "director": { "title": "Direttore della Pubblicazione", "name": "Sig. SONNA", "role": "CEO di SONNALAB" },
       "hosting": { "title": "Hosting", "provider": "Il sito è ospitato da:", "name": "Hosting Provider Inc.", "address": "passage de l'Industrie, 75000 Paris, Francia" },
       "credits": { "title": "Crediti", "design": "Design e sviluppo: SonnaLab", "icons": "Icone: Lucide React", "images": "Immagini: Unsplash, creazioni interne" }

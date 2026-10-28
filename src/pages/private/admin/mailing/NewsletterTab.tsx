@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { apiService, type MailingSubscriber } from '@/services/api';
+import { LANGUAGES } from '@/i18n/languages';
 import { Card } from '@/components/ui/card';
 import { Modal } from '@/components/common/Modal';
 import { StatusBadge } from '@/components/common/StatusBadge';
@@ -213,8 +214,7 @@ function AddSubscriberModal({ open, onClose, onAdded }: { open: boolean; onClose
         <div className="adm-form__field">
           <label className="adm-form__label" htmlFor="sub-lang">{t('mails.locale')}</label>
           <select id="sub-lang" className="adm-select" value={form.language} onChange={(e) => setForm({ ...form, language: e.target.value })}>
-            <option value="fr">Français</option>
-            <option value="en">English</option>
+            {LANGUAGES.map((lang) => <option key={lang.code} value={lang.code}>{lang.label}</option>)}
           </select>
         </div>
       </form>

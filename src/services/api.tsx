@@ -114,7 +114,7 @@ export interface NewProjectPayload {
   phone: string;
   company?: string | null;
   role?: string | null;
-  /** fr/en: the language of the confirmation e-mail. */
+  /** The language of the confirmation e-mail (fr, en, de, it, es). */
   language?: string;
   sourcePage?: string;
 }

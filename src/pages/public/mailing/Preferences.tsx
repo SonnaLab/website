@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { SEO } from '@/components/seo';
 import { AuthLayout } from '@/components/private/auth/AuthLayout';
 import { apiService, type EmailPreferences } from '@/services/api';
+import { LANGUAGES } from '@/i18n/languages';
 
 const CATEGORIES = ['newsletter', 'updates', 'events'] as const;
 
@@ -80,8 +81,7 @@ export default function PreferencesPage() {
             <label className="mprefs__item">
               <span><strong>{t('emailPreferences.language')}</strong></span>
               <select className="adm-select mprefs__lang" value={prefs.language} onChange={(e) => save({ ...prefs, language: e.target.value })}>
-                <option value="fr">Français</option>
-                <option value="en">English</option>
+                {LANGUAGES.map((lang) => <option key={lang.code} value={lang.code}>{lang.label}</option>)}
               </select>
             </label>
           </fieldset>

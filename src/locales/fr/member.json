@@ -156,7 +156,10 @@
     },
     "languages": {
       "fr": "Français",
-      "en": "Anglais"
+      "en": "Anglais",
+      "de": "Allemand",
+      "it": "Italien",
+      "es": "Espagnol"
     },
     "save": "Enregistrer",
     "saving": "Enregistrement…",

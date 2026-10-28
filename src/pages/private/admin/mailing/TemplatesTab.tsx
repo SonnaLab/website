@@ -4,19 +4,20 @@ import { toast } from 'sonner';
 
 import { apiService, type MailPreview } from '@/services/api';
 import { PaperclipIcon, SendIcon } from '@icons';
+import { LANGUAGE_CODES, type LanguageCode } from '@/i18n/languages';
 
-type Locale = 'fr' | 'en';
+type Locale = LanguageCode;
 type Device = 'desktop' | 'mobile';
 
 // The order of the client's journey, not the alphabet.
 const ORDER = [
   // The groups, in this order…
   'auth_mailer', 'team_mailer', 'billing_mailer', 'appointment_mailer', 'contact_mailer',
-  'newsletter_mailer', 'campaign_mailer', 'staff_mailer',
+  'newsletter_mailer', 'campaign_mailer', 'staff_mailer', 'mailbox_mailer',
   // …and the e-mails within each, along the journey (`welcome` sits between
   // the account's and the newsletter's neighbours).
   'confirmation', 'confirm_subscription', 'welcome', 'reset_password', 'password_changed', 'account_locked', 'account_deleted', 'goodbye',
-  'invitation', 'invitation_existing',
+  'invitation', 'invitation_existing', 'invitation_team', 'company_welcome',
   'quote_sent', 'quote_corrected', 'quote_reminder', 'quote_accepted', 'quote_declined', 'invoice_sent', 'invoice_corrected', 'invoice_sent_after_deposit', 'payment_reminder_upcoming', 'payment_reminder_overdue',
   'payment_received_deposit', 'payment_received_settled',
   'appointment_requested', 'appointment_confirmed', 'appointment_rescheduled', 'appointment_cancelled',
@@ -25,6 +26,7 @@ const ORDER = [
   'campaign',
   'new_account', 'staff_appointment_requested', 'staff_appointment_rescheduled', 'staff_appointment_cancelled',
   'staff_quote_accepted', 'staff_quote_declined',
+  'setup',
 ];
 const rank = (key: string) => (ORDER.indexOf(key) + 1 || ORDER.length + 1);
 const byJourney = (a: string, b: string) => rank(a) - rank(b);
@@ -32,7 +34,7 @@ const byJourney = (a: string, b: string) => rank(a) - rank(b);
 /**
  * Mailing › Templates: every SonnaLab e-mail rendered by the API on
  * fictional data — nothing is sent unless « Envoyer un test ». Pick one on
- * the left; French or English, desktop or phone width.
+ * the left; in any of the app's languages, desktop or phone width.
  */
 export function TemplatesTab() {
   const { t } = useTranslation('admin');
@@ -100,7 +102,7 @@ export function TemplatesTab() {
     <div className="infra-stack">
       <div className="infra-toolbar mailp-toolbar">
         <div className="mailp-toggle" role="group" aria-label={t('mails.locale')}>
-          {(['fr', 'en'] as Locale[]).map((code) => (
+          {LANGUAGE_CODES.map((code) => (
             <button key={code} type="button" className={locale === code ? 'is-active' : ''} onClick={() => setLocale(code)}>{code.toUpperCase()}</button>
           ))}
         </div>

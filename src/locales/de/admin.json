@@ -271,6 +271,7 @@
     "visitorsToday": "Besucher heute",
     "sessionsToday": "Sitzungen heute",
     "pageviewsToday": "Seitenaufrufe heute",
+    "pageviews7d": "Seiten / 7 T.",
     "bounceRate": "Absprungrate",
     "avgDuration": "Durchschn. Dauer",
     "totalSessions": "Sitzungen",
@@ -1110,7 +1111,8 @@
       "newsletter_mailer": "Newsletter",
       "campaign_mailer": "Kampagnen",
       "appointment_mailer": "Termine",
-      "staff_mailer": "Interne Benachrichtigungen"
+      "staff_mailer": "Interne Benachrichtigungen",
+      "mailbox_mailer": "Geschäftliches Postfach"
     },
     "emails": {
       "confirmation": "Anmeldebestätigung",
@@ -1158,7 +1160,10 @@
       "quote_decision": "Antwort auf ein Angebot (Kunde)",
       "quote_reminder": "Angebot — Erinnerung ohne Antwort",
       "quote_corrected": "Korrigiertes Angebot (Entschuldigung)",
-      "invoice_corrected": "Korrigierte Rechnung (Entschuldigung)"
+      "invoice_corrected": "Korrigierte Rechnung (Entschuldigung)",
+      "invitation_team": "Einladung — SonnaLab-Team",
+      "company_welcome": "Willkommen — neues Unternehmen",
+      "setup": "Geschäftliches Postfach — Zugangsdaten und Anleitung"
     },
     "sendTest": "Test senden",
     "sending": "Wird gesendet…",

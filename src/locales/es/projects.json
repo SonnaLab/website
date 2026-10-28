@@ -52,7 +52,7 @@
     },
     "tech": { "title": "Tecnologías Planificadas", "stack": ["React Native","Node.js","MongoDB","Stripe","AI/ML","WebRTC"] },
     "highlights": ["Modelo de solidaridad innovador","Remuneración equitativa garantizada","Experiencia auténtica sin intermediarios","Enfoque en calidad sobre cantidad"],
-    "cta": { "visit": "Visitar Lecolt", "notify": "Unirse a la Lista de Espera", "learn": "Saber Más" },
+    "cta": { "visit": "Visitar Lecolt", "demo": "Unirse a la Lista de Espera", "notify": "Unirse a la Lista de Espera", "learn": "Saber Más" },
     "launch": "Lanzamiento previsto: Primavera 2026"
   },
   "ecosystem": {

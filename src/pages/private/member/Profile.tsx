@@ -10,8 +10,8 @@ import { Breadcrumbs } from '@/components/private/common/Breadcrumbs';
 import { PageHeader } from '@/components/private/common/PageHeader';
 import { Modal } from '@/components/common/Modal';
 import { getDashboardPath, roleKey } from '@/utils/auth';
+import { LANGUAGE_CODES } from '@/i18n/languages';
 
-const LANGUAGES = ['fr', 'en'] as const;
 
 const toForm = (u: ReturnType<typeof useAuth>['user']): ProfilePayload => ({
   first_name: u?.first_name ?? '',
@@ -152,7 +152,7 @@ function DetailsSection({ open, onToggle }: CardProps) {
             <label className="adm-form__label" htmlFor="profile-language">{t('profile.fields.language')}</label>
             <select id="profile-language" className="adm-select" value={form.language} onChange={(e) => set('language', e.target.value)}>
               <option value="">—</option>
-              {LANGUAGES.map((lang) => <option key={lang} value={lang}>{t(`profile.languages.${lang}`)}</option>)}
+              {LANGUAGE_CODES.map((lang) => <option key={lang} value={lang}>{t(`profile.languages.${lang}`)}</option>)}
             </select>
           </div>
         </div>

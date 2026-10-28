@@ -21,6 +21,7 @@ import {
 import { useAuth } from '@/components/providers/AuthProvider';
 import { ConfirmProvider } from '@/components/common/ConfirmDialog';
 import { getDashboardPath, roleKey } from '@/utils/auth';
+import { LANGUAGE_CODES, type LanguageCode } from '@/i18n/languages';
 import { ADMIN_NAV, MEMBER_NAV } from './navigation';
 import sonnaLabLogo from '@/assets/logo/bSonnaLab.png';
 
@@ -55,7 +56,8 @@ export function MemberLayout() {
   }));
 
   const currentLang = i18n.language?.slice(0, 2) || 'fr';
-  const nextLang    = currentLang === 'fr' ? 'en' : 'fr';
+  // The toggle goes through every language in turn (fr → en → de → it → es).
+  const nextLang    = LANGUAGE_CODES[(LANGUAGE_CODES.indexOf(currentLang as LanguageCode) + 1) % LANGUAGE_CODES.length];
 
   const initials = user?.first_name
     ? (user.first_name[0] + (user.last_name?.[0] || '')).toUpperCase()
