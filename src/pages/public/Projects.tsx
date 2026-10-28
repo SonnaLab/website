@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isLanguageCode } from '@/i18n/languages';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -28,7 +29,9 @@ import { SEO } from '@/components/seo';
 import { useModal } from '@/components/providers/ModalProvider';
 
 export default function Projects() {
-  const { t } = useTranslation('projects');
+  const { t, i18n } = useTranslation('projects');
+  // Each product's screen is drawn in every language (scripts/site-assets/projects.mjs).
+  const screenLang = isLanguageCode(i18n.language?.slice(0, 2)) ? i18n.language.slice(0, 2) : 'fr';
   const navigate = useNavigate();
   const { openConsultationModal } = useModal();
   const [activeProject, setActiveProject] = useState<string>('lescopr');
@@ -324,7 +327,7 @@ export default function Projects() {
                       {/* Screenshot/Content */}
                       <div className="aspect-16/10 rounded-xl overflow-hidden">
                         <img 
-                          src={`/projects/${project.id}.png`}
+                          src={`/projects/${project.id}-${screenLang}.png`}
                           alt={t(`${project.id}.title`)}
                           className="w-full h-full object-cover"
                         />

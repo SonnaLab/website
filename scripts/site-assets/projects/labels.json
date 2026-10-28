@@ -1,0 +1,23 @@
+{
+  "lebocheur": {
+    "fr": { "subtitle": "Entrez vos identifiants pour vous connecter", "phone": "Numéro", "password": "Mot de passe", "forgot": "mot de passe **oublié ?**", "sign_in": "Connexion", "google": "Continuer avec Google", "signup": "Pas de compte ? **S'inscrire**" },
+    "en": { "subtitle": "Enter your credentials to sign in", "phone": "Phone number", "password": "Password", "forgot": "Forgot **password?**", "sign_in": "Sign in", "google": "Sign in with Google", "signup": "No account? **Sign up**" },
+    "de": { "subtitle": "Melden Sie sich mit Ihren Zugangsdaten an", "phone": "Telefonnummer", "password": "Passwort", "forgot": "Passwort **vergessen?**", "sign_in": "Anmelden", "google": "Mit Google anmelden", "signup": "Noch kein Konto? **Registrieren**" },
+    "it": { "subtitle": "Inserisci le tue credenziali per accedere", "phone": "Numero", "password": "Password", "forgot": "Password **dimenticata?**", "sign_in": "Accedi", "google": "Accedi con Google", "signup": "Non hai un account? **Registrati**" },
+    "es": { "subtitle": "Introduce tus datos para iniciar sesión", "phone": "Número", "password": "Contraseña", "forgot": "¿Olvidaste tu **contraseña?**", "sign_in": "Iniciar sesión", "google": "Continuar con Google", "signup": "¿No tienes cuenta? **Regístrate**" }
+  },
+  "lecolt": {
+    "fr": { "subtitle": "Connecte-toi et rejoins la scène !", "email": "E-mail", "password": "Mot de passe", "forgot": "mot de passe **oublié ?**", "sign_in": "Connexion", "or": "ou", "signup": "Pas encore des nôtres ? **Créer ton compte**" },
+    "en": { "subtitle": "Sign in and join the stage!", "email": "Email", "password": "Password", "forgot": "Forgot **password?**", "sign_in": "Sign in", "or": "or", "signup": "Not one of us yet? **Create your account**" },
+    "de": { "subtitle": "Melde dich an und komm auf die Bühne!", "email": "E-Mail", "password": "Passwort", "forgot": "Passwort **vergessen?**", "sign_in": "Anmelden", "or": "oder", "signup": "Noch nicht dabei? **Konto erstellen**" },
+    "it": { "subtitle": "Accedi e sali sul palco!", "email": "E-mail", "password": "Password", "forgot": "Password **dimenticata?**", "sign_in": "Accedi", "or": "o", "signup": "Non sei ancora dei nostri? **Crea il tuo account**" },
+    "es": { "subtitle": "¡Inicia sesión y sube al escenario!", "email": "Correo electrónico", "password": "Contraseña", "forgot": "¿Olvidaste tu **contraseña?**", "sign_in": "Iniciar sesión", "or": "o", "signup": "¿Aún no eres de los nuestros? **Crea tu cuenta**" }
+  },
+  "lescopr": {
+    "fr": { "subtitle": "Entrez votre mot de passe pour vous connecter", "email": "E-mail", "password": "Mot de passe", "sign_in": "Connexion", "google": "Continuer avec Google", "reset": "Mot de passe oublié ? **Réinitialiser**" },
+    "en": { "subtitle": "Enter your password to sign in", "email": "Email", "password": "Password", "sign_in": "Sign in", "google": "Continue with Google", "reset": "Forgot your password? **Reset it**" },
+    "de": { "subtitle": "Geben Sie Ihr Passwort ein, um sich anzumelden", "email": "E-Mail", "password": "Passwort", "sign_in": "Anmelden", "google": "Weiter mit Google", "reset": "Passwort vergessen? **Zurücksetzen**" },
+    "it": { "subtitle": "Inserisca la password per accedere", "email": "E-mail", "password": "Password", "sign_in": "Accedi", "google": "Continua con Google", "reset": "Password dimenticata? **Reimposta**" },
+    "es": { "subtitle": "Introduzca su contraseña para iniciar sesión", "email": "Correo electrónico", "password": "Contraseña", "sign_in": "Iniciar sesión", "google": "Continuar con Google", "reset": "¿Olvidó su contraseña? **Restablecer**" }
+  }
+}

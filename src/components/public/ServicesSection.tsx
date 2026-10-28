@@ -67,7 +67,7 @@ export function ServicesSection() {
                 <CardContent className="space-y-4">
                   <div>
                     <h4 className="text-sm font-medium text-black mb-2">
-                      Technologies :
+                      {t('technologies')}
                     </h4>
                     <div className="flex flex-wrap gap-1">
                       {item.tests.map((test, testIndex) => (

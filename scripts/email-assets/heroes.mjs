@@ -1,7 +1,9 @@
 // E-mail heroes: a SonnaLab mobile screen in a phone, on the brand's grey,
 // with a floating card (as on the site's « +03 Années d'expertise »).
-// 600×360 drawn at 2x → 1200×720 PNG, one per locale.
+// 600×360 drawn at 2x → 1200×720 PNG, one per locale (locales.mjs): the
+// screens (screens.mjs) and the card's words both in that language.
 import { chromium } from 'playwright';
+import { LOCALES } from './locales.mjs';
 import { readFileSync } from 'node:fs';
 const ROOT = new URL('../../', import.meta.url).pathname;
 const SCREENS = process.argv[2];
@@ -9,21 +11,21 @@ const OUT = process.argv[3] || `${ROOT}public/email/heroes`;
 const ICONS = `${ROOT}public/email/icons`;
 const b64 = (path) => `data:image/png;base64,${readFileSync(path).toString('base64')}`;
 const HEROES = {
-  welcome:    { screen: 'home',      icon: 'check-circle-success', side: 'left',  top: 262, fr: ['Compte créé', 'Bienvenue chez SonnaLab'],      en: ['Account created', 'Welcome to SonnaLab'] },
-  password:   { screen: 'signin',    icon: 'lock',                 side: 'right', fr: ['Mot de passe', 'Lien sécurisé'],              en: ['Password', 'Secure link'] },
-  invitation: { screen: 'dashboard', icon: 'users',                side: 'left',  fr: ['Votre équipe', 'Projets, devis et factures'], en: ['Your team', 'Projects, quotes, invoices'] },
-  quote:      { screen: 'quotes',    icon: 'file-text',            side: 'right', fr: ['Nouveau devis', 'PDF en pièce jointe'],       en: ['New quote', 'PDF attached'] },
-  quote_accepted: { screen: 'quotes', icon: 'check-circle-success', side: 'left',  fr: ['Devis accepté', 'Facture envoyée'],          en: ['Quote accepted', 'Invoice sent'] },
-  quote_declined: { screen: 'quotes', icon: 'file-text-warning',    side: 'right', fr: ['Votre retour', 'Réponse sous 48 h'],         en: ['Your feedback', 'Answer within 48 h'] },
-  quote_reminder: { screen: 'quotes', icon: 'clock-warning',      side: 'right', fr: ['Devis à valider', 'Votre réponse en 1 clic'],  en: ['Quote to approve', 'Answer in one click'] },
-  invoice:    { screen: 'invoices',  icon: 'receipt',              side: 'left',  fr: ['Nouvelle facture', 'PDF en pièce jointe'],    en: ['New invoice', 'PDF attached'] },
-  reminder:   { screen: 'invoices',  icon: 'clock-warning',        side: 'right', fr: ['Reste à payer', 'Échéance à surveiller'],     en: ['Balance due', 'Mind the due date'] },
-  payment:    { screen: 'invoices',  icon: 'check-circle-success', side: 'left',  fr: ['Paiement reçu', 'Merci !'],                   en: ['Payment received', 'Thank you!'] },
-  request:    { screen: 'services',  icon: 'zap',                  side: 'right', fr: ['Demande reçue', 'Réponse sous 48 h'],         en: ['Request received', 'Answer within 48 h'] },
-  appointment:{ screen: 'appointments', icon: 'calendar-success',   side: 'left',  fr: ['Rendez-vous', 'Ajouté à votre agenda'],      en: ['Meeting', 'Added to your calendar'] },
-  security:   { screen: 'signin',    icon: 'shield-success',       side: 'left',  fr: ['Sécurité', 'Votre compte est protégé'],      en: ['Security', 'Your account is protected'] },
-  newsletter: { screen: 'blog',      icon: 'sparkles',             side: 'right', fr: ['Newsletter', 'Digital, IA et produit'],      en: ['Newsletter', 'Digital, AI and product'] },
-  lead:       { screen: 'services',  icon: 'user-success',         side: 'left',  fr: ['Nouveau compte', 'À qualifier'],             en: ['New account', 'To qualify'] },
+  welcome:    { screen: 'home',      icon: 'check-circle-success', side: 'left',  top: 262, fr: ['Compte créé', 'Bienvenue chez SonnaLab'],      en: ['Account created', 'Welcome to SonnaLab'], de: ['Konto erstellt', 'Willkommen bei SonnaLab'], it: ['Account creato', 'Benvenuti su SonnaLab'], es: ['Cuenta creada', 'Bienvenido a SonnaLab'] },
+  password:   { screen: 'signin',    icon: 'lock',                 side: 'right', fr: ['Mot de passe', 'Lien sécurisé'],              en: ['Password', 'Secure link'], de: ['Passwort', 'Sicherer Link'], it: ['Password', 'Link sicuro'], es: ['Contraseña', 'Enlace seguro'] },
+  invitation: { screen: 'dashboard', icon: 'users',                side: 'left',  fr: ['Votre équipe', 'Projets, devis et factures'], en: ['Your team', 'Projects, quotes, invoices'], de: ['Ihr Team', 'Projekte, Angebote, Rechnungen'], it: ['Il Suo team', 'Progetti, preventivi, fatture'], es: ['Su equipo', 'Proyectos, presupuestos, facturas'] },
+  quote:      { screen: 'quotes',    icon: 'file-text',            side: 'right', fr: ['Nouveau devis', 'PDF en pièce jointe'],       en: ['New quote', 'PDF attached'], de: ['Neues Angebot', 'PDF im Anhang'], it: ['Nuovo preventivo', 'PDF in allegato'], es: ['Nuevo presupuesto', 'PDF adjunto'] },
+  quote_accepted: { screen: 'quotes', icon: 'check-circle-success', side: 'left',  fr: ['Devis accepté', 'Facture envoyée'],          en: ['Quote accepted', 'Invoice sent'], de: ['Angebot angenommen', 'Rechnung versendet'], it: ['Preventivo accettato', 'Fattura inviata'], es: ['Presupuesto aceptado', 'Factura enviada'] },
+  quote_declined: { screen: 'quotes', icon: 'file-text-warning',    side: 'right', fr: ['Votre retour', 'Réponse sous 48 h'],         en: ['Your feedback', 'Answer within 48 h'], de: ['Ihr Feedback', 'Antwort binnen 48 h'], it: ['Il Suo riscontro', 'Risposta entro 48 h'], es: ['Su opinión', 'Respuesta en 48 h'] },
+  quote_reminder: { screen: 'quotes', icon: 'clock-warning',      side: 'right', fr: ['Devis à valider', 'Votre réponse en 1 clic'],  en: ['Quote to approve', 'Answer in one click'], de: ['Angebot prüfen', 'Antwort mit einem Klick'], it: ['Preventivo da approvare', 'Risposta in un clic'], es: ['Presupuesto pendiente', 'Responda en un clic'] },
+  invoice:    { screen: 'invoices',  icon: 'receipt',              side: 'left',  fr: ['Nouvelle facture', 'PDF en pièce jointe'],    en: ['New invoice', 'PDF attached'], de: ['Neue Rechnung', 'PDF im Anhang'], it: ['Nuova fattura', 'PDF in allegato'], es: ['Nueva factura', 'PDF adjunto'] },
+  reminder:   { screen: 'invoices',  icon: 'clock-warning',        side: 'right', fr: ['Reste à payer', 'Échéance à surveiller'],     en: ['Balance due', 'Mind the due date'], de: ['Offener Betrag', 'Fälligkeit im Blick'], it: ['Importo da saldare', 'Occhio alla scadenza'], es: ['Importe pendiente', 'Atento al vencimiento'] },
+  payment:    { screen: 'invoices',  icon: 'check-circle-success', side: 'left',  fr: ['Paiement reçu', 'Merci !'],                   en: ['Payment received', 'Thank you!'], de: ['Zahlung erhalten', 'Vielen Dank!'], it: ['Pagamento ricevuto', 'Grazie!'], es: ['Pago recibido', '¡Gracias!'] },
+  request:    { screen: 'services',  icon: 'zap',                  side: 'right', fr: ['Demande reçue', 'Réponse sous 48 h'],         en: ['Request received', 'Answer within 48 h'], de: ['Anfrage erhalten', 'Antwort binnen 48 h'], it: ['Richiesta ricevuta', 'Risposta entro 48 h'], es: ['Solicitud recibida', 'Respuesta en 48 h'] },
+  appointment:{ screen: 'appointments', icon: 'calendar-success',   side: 'left',  fr: ['Rendez-vous', 'Ajouté à votre agenda'],      en: ['Meeting', 'Added to your calendar'], de: ['Termin', 'In Ihrem Kalender'], it: ['Appuntamento', 'Aggiunto al calendario'], es: ['Cita', 'Añadida a su calendario'] },
+  security:   { screen: 'signin',    icon: 'shield-success',       side: 'left',  fr: ['Sécurité', 'Votre compte est protégé'],      en: ['Security', 'Your account is protected'], de: ['Sicherheit', 'Ihr Konto ist geschützt'], it: ['Sicurezza', 'Il Suo account è protetto'], es: ['Seguridad', 'Su cuenta está protegida'] },
+  newsletter: { screen: 'blog',      icon: 'sparkles',             side: 'right', fr: ['Newsletter', 'Digital, IA et produit'],      en: ['Newsletter', 'Digital, AI and product'], de: ['Newsletter', 'Digital, KI und Produkt'], it: ['Newsletter', 'Digitale, IA e prodotto'], es: ['Newsletter', 'Digital, IA y producto'] },
+  lead:       { screen: 'services',  icon: 'user-success',         side: 'left',  fr: ['Nouveau compte', 'À qualifier'],             en: ['New account', 'To qualify'], de: ['Neues Konto', 'Zu qualifizieren'], it: ['Nuovo account', 'Da qualificare'], es: ['Nueva cuenta', 'Por calificar'] },
 };
 // Only some heroes: node heroes.mjs <screens> [out] appointment,security
 const ONLY = process.argv[4]?.split(',');
@@ -59,10 +61,10 @@ const page = (h, locale) => {
 };
 const browser = await chromium.launch();
 const tab = await browser.newPage({ viewport: { width: 600, height: 360 }, deviceScaleFactor: 2 });
-for (const [key, h] of Object.entries(HEROES).filter(([k]) => !ONLY || ONLY.includes(k))) for (const locale of ['fr', 'en']) {
+for (const [key, h] of Object.entries(HEROES).filter(([k]) => !ONLY || ONLY.includes(k))) for (const locale of LOCALES) {
   await tab.setContent(page(h, locale), { waitUntil: 'load' });
   await tab.evaluate(() => document.fonts.ready);
   await tab.screenshot({ path: `${OUT}/${key}-${locale}.png` });
 }
 await browser.close();
-console.log('heroes', (ONLY ?? Object.keys(HEROES)).length * 2);
+console.log('heroes', (ONLY ?? Object.keys(HEROES)).length * LOCALES.length);

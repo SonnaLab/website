@@ -1,9 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="472" height="236" viewBox="0 0 472 236">
+<svg xmlns="http://www.w3.org/2000/svg" width="472" height="236" viewBox="0 0 472 236" font-family="Raleway, Helvetica, Arial, sans-serif">
   <defs>
     <filter id="sh" x="-40%" y="-40%" width="180%" height="220%"><feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#0f0f0f" flood-opacity="0.14"/></filter>
     <pattern id="dots" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.2" fill="#c9c9ce"/></pattern>
     <clipPath id="card"><rect width="472" height="236" rx="16"/></clipPath>
-    <clipPath id="screen"><rect x="186" y="27" width="100" height="226" rx="18"/></clipPath>
+    <clipPath id="screen"><rect x="181" y="23" width="110" height="230" rx="18"/></clipPath>
   </defs>
   <g clip-path="url(#card)">
     <rect width="472" height="236" fill="#f4f4f5"/>
@@ -11,52 +11,54 @@
     <circle cx="30" cy="250" r="100" fill="#f6e86f" opacity="0.55"/>
     <rect x="22" y="22" width="72" height="44" fill="url(#dots)"/>
     <!-- phone -->
-    <g filter="url(#sh)"><rect x="181" y="22" width="110" height="236" rx="22" fill="#0f0f0f"/></g>
+    <g filter="url(#sh)"><rect x="176" y="18" width="120" height="240" rx="22" fill="#0f0f0f"/></g>
     <g clip-path="url(#screen)">
-      <rect x="186" y="27" width="100" height="226" fill="#f2f2f5"/>
-      <rect x="194" y="34" width="14" height="4" rx="2" fill="#0f0f0f"/>
-      <rect x="264" y="34" width="14" height="5" rx="2" fill="#0f0f0f"/>
-      <!-- title -->
-      <rect x="194" y="52" width="46" height="8" rx="4" fill="#0f0f0f"/>
-      <!-- grouped list 1 -->
-      <rect x="192" y="68" width="88" height="56" rx="9" fill="#ffffff"/>
-      <rect x="198" y="74" width="12" height="12" rx="3.5" fill="#0f0f0f"/>
-      <path d="M200.5 77.5 h7 v5.5 h-7 z M200.5 77.5 l3.5 3 l3.5 -3" fill="none" stroke="#ffffff" stroke-width="1.1" stroke-linejoin="round"/>
-      <rect x="215" y="77.5" width="36" height="5" rx="2.5" fill="#0f0f0f"/>
-      <path d="M271 77 l3 3 l-3 3" fill="none" stroke="#9ca3af" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-      <rect x="215" y="91.5" width="65" height="1" fill="#eceef1"/>
-      <rect x="198" y="99" width="12" height="12" rx="3.5" fill="#f6e86f"/>
-      <circle cx="204" cy="105" r="3" fill="none" stroke="#0f0f0f" stroke-width="1.2"/>
-      <rect x="215" y="102.5" width="44" height="5" rx="2.5" fill="#0f0f0f"/>
-      <path d="M271 102 l3 3 l-3 3" fill="none" stroke="#9ca3af" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-      <!-- grouped list 2 : account form -->
-      <rect x="192" y="132" width="88" height="80" rx="9" fill="#ffffff"/>
-      <rect x="198" y="140" width="22" height="4" rx="2" fill="#6b7280"/>
-      <rect x="226" y="140" width="46" height="4" rx="2" fill="#c9c9ce"/>
-      <rect x="198" y="150.5" width="82" height="1" fill="#eceef1"/>
-      <rect x="198" y="157" width="22" height="4" rx="2" fill="#6b7280"/>
-      <circle cx="228" cy="159" r="1.6" fill="#0f0f0f"/><circle cx="233" cy="159" r="1.6" fill="#0f0f0f"/><circle cx="238" cy="159" r="1.6" fill="#0f0f0f"/><circle cx="243" cy="159" r="1.6" fill="#0f0f0f"/>
-      <rect x="198" y="167.5" width="82" height="1" fill="#eceef1"/>
-      <rect x="198" y="174" width="30" height="4" rx="2" fill="#6b7280"/>
-      <rect x="252" y="171" width="20" height="11" rx="5.5" fill="#15803d"/>
-      <circle cx="266.5" cy="176.5" r="4.3" fill="#ffffff"/>
-      <rect x="198" y="185.5" width="82" height="1" fill="#eceef1"/>
-      <rect x="198" y="193" width="34" height="4" rx="2" fill="#6b7280"/>
-      <rect x="240" y="193" width="32" height="4" rx="2" fill="#c9c9ce"/>
-      <rect x="218" y="244" width="36" height="3.5" rx="1.75" fill="#0f0f0f"/>
+      <rect x="181" y="23" width="110" height="230" fill="#f2f2f5"/>
+      <rect x="189" y="30" width="14" height="4" rx="2" fill="#0f0f0f"/>
+      <rect x="268" y="30" width="14" height="5" rx="2" fill="#0f0f0f"/>
+      <text x="189" y="55" font-size="9" font-weight="800" fill="#0f0f0f">{{accounts}}</text>
+      <!-- group 1 -->
+      <rect x="186" y="62" width="100" height="44" rx="9" fill="#ffffff"/>
+      <rect x="191" y="67" width="12" height="12" rx="3.5" fill="#0f0f0f"/>
+      <path d="M193.5 70.5 h7 v5.5 h-7 z M193.5 70.5 l3.5 3 l3.5 -3" fill="none" stroke="#ffffff" stroke-width="1.1" stroke-linejoin="round"/>
+      <text x="207" y="75.3" font-size="5.6" font-weight="700" fill="#0f0f0f">{{add_account}}</text>
+      <path d="M279 70 l3 3 l-3 3" fill="none" stroke="#9ca3af" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="207" y="84" width="79" height="1" fill="#eceef1"/>
+      <rect x="191" y="89" width="12" height="12" rx="3.5" fill="#f6e86f"/>
+      <circle cx="197" cy="95" r="3" fill="none" stroke="#0f0f0f" stroke-width="1.2"/>
+      <text x="207" y="97.3" font-size="5.6" font-weight="700" fill="#0f0f0f">{{other}}</text>
+      <path d="M279 92 l3 3 l-3 3" fill="none" stroke="#9ca3af" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- group 2: the account -->
+      <text x="190" y="118" font-size="4.6" font-weight="700" fill="#6b7280" letter-spacing="0.3">IMAP</text>
+      <rect x="186" y="122" width="100" height="84" rx="9" fill="#ffffff"/>
+      <text x="191" y="133" font-size="5" font-weight="700" fill="#0f0f0f">{{email}}</text>
+      <text x="282" y="133" font-size="4.8" font-weight="500" fill="#6b7280" text-anchor="end">{{address}}</text>
+      <rect x="191" y="138" width="95" height="1" fill="#eceef1"/>
+      <text x="191" y="149" font-size="5" font-weight="700" fill="#0f0f0f">{{password}}</text>
+      <circle cx="262" cy="147.3" r="1.5" fill="#0f0f0f"/><circle cx="267" cy="147.3" r="1.5" fill="#0f0f0f"/><circle cx="272" cy="147.3" r="1.5" fill="#0f0f0f"/><circle cx="277" cy="147.3" r="1.5" fill="#0f0f0f"/>
+      <rect x="191" y="154" width="95" height="1" fill="#eceef1"/>
+      <text x="191" y="165" font-size="5" font-weight="700" fill="#0f0f0f">{{server}}</text>
+      <text x="282" y="165" font-size="4.8" font-weight="500" fill="#6b7280" text-anchor="end">mail.sonnalab.com</text>
+      <rect x="191" y="170" width="95" height="1" fill="#eceef1"/>
+      <text x="191" y="181" font-size="5" font-weight="700" fill="#0f0f0f">SSL</text>
+      <rect x="262" y="175" width="20" height="11" rx="5.5" fill="#15803d"/>
+      <circle cx="276.5" cy="180.5" r="4.3" fill="#ffffff"/>
+      <rect x="191" y="189" width="95" height="1" fill="#eceef1"/>
+      <text x="236" y="200" font-size="5.4" font-weight="800" fill="#0f0f0f" text-anchor="middle">{{save}}</text>
+      <rect x="216" y="244" width="40" height="3.5" rx="1.75" fill="#0f0f0f"/>
     </g>
-    <rect x="221" y="31" width="30" height="9" rx="4.5" fill="#0f0f0f"/>
+    <rect x="221" y="27" width="30" height="9" rx="4.5" fill="#0f0f0f"/>
     <!-- chip: mail account -->
-    <g filter="url(#sh)"><rect x="52" y="120" width="118" height="44" rx="14" fill="#ffffff"/></g>
-    <rect x="61" y="128" width="28" height="28" rx="9" fill="#f4f4f5"/>
-    <path d="M68 136 h14 v11 h-14 z M68 136 l7 6 l7 -6" fill="none" stroke="#0f0f0f" stroke-width="1.8" stroke-linejoin="round"/>
-    <rect x="97" y="134" width="56" height="7" rx="3.5" fill="#0f0f0f"/>
-    <rect x="97" y="146" width="38" height="5" rx="2.5" fill="#c9c9ce"/>
+    <g filter="url(#sh)"><rect x="18" y="118" width="140" height="44" rx="14" fill="#ffffff" data-fit="c1"/></g>
+    <rect x="27" y="126" width="28" height="28" rx="9" fill="#f4f4f5"/>
+    <path d="M34 134 h14 v11 h-14 z M34 134 l7 6 l7 -6" fill="none" stroke="#0f0f0f" stroke-width="1.8" stroke-linejoin="round"/>
+    <text class="c1" x="63" y="138" font-size="9" font-weight="800" fill="#0f0f0f">{{other}}</text>
+    <text class="c1" x="63" y="149" font-size="7" font-weight="500" fill="#6b7280">{{add_mail_account}}</text>
     <!-- chip: done -->
-    <g filter="url(#sh)"><rect x="304" y="64" width="116" height="44" rx="14" fill="#ffffff"/></g>
-    <circle cx="327" cy="86" r="13" fill="#e9f8ee"/>
-    <path d="M321 86.5 L325 90.5 L333 82" fill="none" stroke="#15803d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-    <rect x="349" y="78" width="52" height="7" rx="3.5" fill="#0f0f0f"/>
-    <rect x="349" y="90" width="34" height="5" rx="2.5" fill="#c9c9ce"/>
+    <g filter="url(#sh)"><rect x="306" y="62" width="140" height="44" rx="14" fill="#ffffff" data-fit="c2"/></g>
+    <circle cx="328" cy="84" r="13" fill="#e9f8ee"/>
+    <path d="M322 84.5 L326 88.5 L334 80" fill="none" stroke="#15803d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <text class="c2" x="349" y="82" font-size="9" font-weight="800" fill="#0f0f0f">{{account_added}}</text>
+    <text class="c2" x="349" y="93" font-size="7" font-weight="500" fill="#6b7280">IMAP · SSL</text>
   </g>
 </svg>
