@@ -21,7 +21,7 @@ import type {
 } from '@/types/travaux';
 import type { TravauxProject, TravauxResource } from './useTravauxData';
 import type { TravauxTabHandle } from './tabHandle';
-import { addDaysIso, apiErrorMessage, dueTone, formatDate, formatEuros } from './format';
+import { addDaysIso, apiErrorMessage, dueTone, formatDate, formatEuros, todayIso } from './format';
 import { useConfirmDelete } from './useConfirmDelete';
 
 const STATUSES: ObjectiveStatus[] = ['planned', 'in_progress', 'done', 'at_risk'];
@@ -514,7 +514,10 @@ function GenerateDevisModal({
   async function submit() {
     if (!objective) return;
     setSaving(true);
+    // (Re)generating issues the quote today: its amount and its PDF are both
+    // priced from that date.
     const payload = {
+      issued_on: todayIso(),
       due_on: dueOn || null,
       daily_rate_cents: dailyRate ? Math.round(Number(dailyRate) * 100) : null,
       amount_cents: calc.totalPrice * 100,
