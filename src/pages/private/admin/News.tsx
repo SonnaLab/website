@@ -75,9 +75,10 @@ function articleStatusVariant(status: ArticleStatus) {
   }
 }
 
-function fmtDate(iso?: string | null, locale = 'fr') {
+// Articles' dates read dd/mm/yyyy (« 29/10/2026 »), whatever the interface language.
+function fmtDate(iso?: string | null) {
   if (!iso) return '—';
-  return new Intl.DateTimeFormat(locale, { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(iso));
+  return new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(iso));
 }
 
 interface NewsStatsSummary {
@@ -295,7 +296,7 @@ function OverviewTab({ setTab }: { setTab: (tab: string) => void }) {
                     label={t(`news.articles.statuses.${a.status}`)}
                     variant={articleStatusVariant(a.status)}
                   />
-                  <span className="admin-news-overview__recent-date">{fmtDate(a.published_at ?? a.created_at, i18n.language)}</span>
+                  <span className="admin-news-overview__recent-date">{fmtDate(a.published_at ?? a.created_at)}</span>
                 </li>
               ))}
             </ul>
@@ -890,7 +891,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
               </DataTableTd>
               <DataTableTd>{a.locale?.toUpperCase()}</DataTableTd>
               <DataTableTd>{articleMetadataValue(a, 'article_format') || '—'}</DataTableTd>
-              <DataTableTd>{fmtDate(a.published_at ?? a.created_at, i18n.language)}</DataTableTd>
+              <DataTableTd>{fmtDate(a.published_at ?? a.created_at)}</DataTableTd>
               <DataTableTd>
                 <div className="adm-table__actions">
                   <DataTableAction icon={EyeIcon} label={t('news.articles.preview')} onClick={() => openArticle(a, 'preview')} />
@@ -1072,7 +1073,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
 
                   <div className="admin-news-articles__preview-datebar">
                     {editing.reading_time_minutes && <span>{editing.reading_time_minutes} min de lecture</span>}
-                    <span>{fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
+                    <span>{fmtDate(editing.published_at ?? editing.created_at)}</span>
                     {editing.lesankofa_transaction_id && <span className="preview-badge--number">#{editing.lesankofa_transaction_id}</span>}
                   </div>
 
@@ -1119,7 +1120,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                             <img className="spc__favicon" src="/favicon/favicon-32x32.png" alt="SonnaLab" />
                             <div className="spc__author-info">
                               <strong>SonnaLab</strong>
-                              <span>Page entreprise · {fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
+                              <span>Page entreprise · {fmtDate(editing.published_at ?? editing.created_at)}</span>
                             </div>
                           </div>
                           <p className={`spc__text${expandedPosts.linkedin ? '' : ' spc__text--clamped'}`}>{editing.linkedin_post_text || editing.title}</p>
@@ -1157,7 +1158,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                             <img className="spc__favicon" src="/favicon/favicon-32x32.png" alt="SonnaLab" />
                             <div className="spc__author-info">
                               <strong>SonnaLab</strong>
-                              <span>Page entreprise · {fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
+                              <span>Page entreprise · {fmtDate(editing.published_at ?? editing.created_at)}</span>
                             </div>
                           </div>
                           <p className={`spc__text${expandedPosts.linkedin ? '' : ' spc__text--clamped'}`}>{editing.linkedin_post_text || editing.title}</p>
@@ -1248,7 +1249,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                             <img className="spc__favicon spc__favicon--fb" src="/favicon/favicon-32x32.png" alt="SonnaLab" />
                             <div className="spc__author-info">
                               <strong>SonnaLab <span className="spc__verified">v</span></strong>
-                              <span>{fmtDate(editing.published_at ?? editing.created_at, i18n.language)} · Public</span>
+                              <span>{fmtDate(editing.published_at ?? editing.created_at)} · Public</span>
                             </div>
                           </div>
                           <p className={`spc__text${expandedPosts.facebook ? '' : ' spc__text--clamped'}`}>{editing.facebook_post_text || editing.title}</p>
@@ -1282,7 +1283,7 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                             <img className="spc__favicon spc__favicon--fb" src="/favicon/favicon-32x32.png" alt="SonnaLab" />
                             <div className="spc__author-info">
                               <strong>SonnaLab <span className="spc__verified">v</span></strong>
-                              <span>{fmtDate(editing.published_at ?? editing.created_at, i18n.language)}</span>
+                              <span>{fmtDate(editing.published_at ?? editing.created_at)}</span>
                             </div>
                           </div>
                           <p className={`spc__text${expandedPosts.facebook ? '' : ' spc__text--clamped'}`}>{editing.facebook_post_text || editing.title}</p>
@@ -1653,8 +1654,8 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
                 [t('news.prompts.temperature'),      formatOptional(promptModalData.temperature)],
                 [t('news.prompts.tokens'),           formatOptional(promptModalData.total_tokens)],
                 [t('news.prompts.duration'),         formatDuration(promptModalData.generation_time_ms)],
-                [t('news.prompts.createdAt'),        fmtDate(promptModalData.created_at, i18n.language)],
-                [t('news.prompts.completedAt'),      promptModalData.completed_at ? fmtDate(promptModalData.completed_at, i18n.language) : '—'],
+                [t('news.prompts.createdAt'),        fmtDate(promptModalData.created_at)],
+                [t('news.prompts.completedAt'),      promptModalData.completed_at ? fmtDate(promptModalData.completed_at) : '—'],
               ] as [string, string][]).map(([label, value]) => (
                 <div key={label} className="admin-news-prompts__detail">
                   <span>{label}</span>
@@ -1965,9 +1966,9 @@ function PromptsTab({ onStatsChange }: { onStatsChange?: () => void }) {
     [t('news.prompts.temperature'), formatOptional(selectedPrompt.temperature)],
     [t('news.prompts.tokens'), formatOptional(selectedPrompt.total_tokens)],
     [t('news.prompts.duration'), formatDuration(selectedPrompt.generation_time_ms)],
-    [t('news.prompts.createdAt'), fmtDate(selectedPrompt.created_at, i18n.language)],
-    [t('news.prompts.updatedAt'), fmtDate(selectedPrompt.updated_at, i18n.language)],
-    [t('news.prompts.completedAt'), selectedPrompt.completed_at ? fmtDate(selectedPrompt.completed_at, i18n.language) : '—'],
+    [t('news.prompts.createdAt'), fmtDate(selectedPrompt.created_at)],
+    [t('news.prompts.updatedAt'), fmtDate(selectedPrompt.updated_at)],
+    [t('news.prompts.completedAt'), selectedPrompt.completed_at ? fmtDate(selectedPrompt.completed_at) : '—'],
   ] : [];
 
   const failedCount = prompts.filter(p => p.status === 'failed' || p.status === 'rejected').length;
@@ -2081,7 +2082,7 @@ function PromptsTab({ onStatsChange }: { onStatsChange?: () => void }) {
                 <DataTableTd>
                   <span className="admin-news-prompts__reason">{promptReason(prompt, t('news.prompts.noReason'))}</span>
                 </DataTableTd>
-                <DataTableTd>{fmtDate(prompt.created_at, i18n.language)}</DataTableTd>
+                <DataTableTd>{fmtDate(prompt.created_at)}</DataTableTd>
                 <DataTableTd>
                   <div className="adm-table__actions">
                     <DataTableAction icon={RefreshCwIcon} label={t('news.prompts.restart')} disabled={actionId === `restart-${prompt.id}`} onClick={() => restart(prompt.id)} />
@@ -2361,7 +2362,7 @@ function buildCalendarSyncReview(items: AICalendarItem[], objectives: StrategicO
       id: 'spread-week',
       title: overloadedDays.length > 0 ? 'Lisser les journées trop chargées' : 'Répartition hebdomadaire lisible',
       detail: overloadedDays.length > 0
-        ? `Jours à alléger : ${overloadedDays.map(day => fmtDate(day, 'fr')).join(', ')}.`
+        ? `Jours à alléger : ${overloadedDays.map(day => fmtDate(day)).join(', ')}.`
         : 'La répartition hebdomadaire reste lisible.',
       status: overloadedDays.length > 0 ? 'review' : 'ok',
       canApply: overloadedDays.length > 0,
@@ -2792,7 +2793,7 @@ function CalendarTab() {
               </div>
               <div>
                 <span>Date</span>
-                <strong>{fmtDate(selectedAIItem.scheduled_for, isFr ? 'fr' : 'en')}</strong>
+                <strong>{fmtDate(selectedAIItem.scheduled_for)}</strong>
               </div>
               <div>
                 <span>Statut</span>
