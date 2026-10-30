@@ -94,6 +94,7 @@ const RELATED_COUNT = 3;
 const RELATED_POOL = 12; // candidats proches parmi lesquels le 3e lien va au moins lie
 const FEED_ITEMS = 50;
 const LLMS_ARTICLES_PER_LOCALE = 30;
+const LEGACY_SLUG_BUG_FIXED_AT = '2026-07-28'; // voir les redirections legacy dans run()
 
 // Liste publique d'une langue, au format exact que consomme le front
 // (/api/v1/blog/posts : articles live uniquement, sans les stubs de
@@ -781,10 +782,17 @@ async function run() {
       // linked to the real slug. Recompute the exact same buggy transform here
       // and redirect it to the real article -- stops the still-indexed URLs
       // from bouncing, without resurrecting the malformed path as a real page.
-      if (article.title) {
+      //
+      // 2026-10-30 : limite aux articles publies AVANT le fix -- les autres
+      // n'ont jamais eu cette URL (491 entrees sur 990 redirigeaient des URLs
+      // qui n'ont jamais existe ; 1 seule requete sur les 990 en 15 jours de
+      // logs nginx). Et cible la destination FINALE : pour un article devenu
+      // lui-meme une redirection (doublon fusionne), pointer vers son slug
+      // faisait une chaine de 2 sauts.
+      if (article.title && (article.published_at ?? '') < LEGACY_SLUG_BUG_FIXED_AT) {
         const legacySlug = article.title.toLowerCase().replace(/\s+/g, '-');
         if (legacySlug && legacySlug !== article.slug) {
-          legacyEntries.push([legacySlug, article.slug]);
+          legacyEntries.push([legacySlug, article.redirected_to_slug || article.slug]);
         }
       }
     }
