@@ -5,6 +5,11 @@
 
   export default defineConfig(({ isSsrBuild }) => ({
     plugins: [react()],
+    // Annee du build, partagee par le bundle SSR et le bundle client (voir
+    // src/lib/siteFacts.ts) : jamais de new Date() dans un rendu hydrate.
+    define: {
+      __BUILD_YEAR__: JSON.stringify(new Date().getFullYear()),
+    },
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
       alias: {

@@ -217,7 +217,7 @@ export default function Blog() {
                       <Link to={`/blog/${post.slug}`} className="blog-index-card__link">
                         <div className="blog-index-card__media">
                           <img
-                            src={post.coverImage || '/images/fromIdeaToInovation.png'}
+                            src={post.coverImage || '/assets/images/og-image.jpg'}
                             alt={post.title}
                           />
                           <span>#{categoryLabel(post.category)}</span>

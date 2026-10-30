@@ -1,10 +1,11 @@
 import React from 'react';
 import { Star, Trophy, Target, Users, ThumbsUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { YEARS_OF_EXPERIENCE } from '@/lib/siteFacts';
 
 export function SuccessSection() {
   const { t } = useTranslation('success');
-  const experience = new Date().getFullYear() - 2022;
+  const experience = YEARS_OF_EXPERIENCE;
 
   // Extraction des données depuis la traduction
   const title = t('title');

@@ -7,6 +7,7 @@ import { useModal } from '@/components/providers/ModalProvider';
 import { useServiceSearch } from '@/hooks/useServiceSearch';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProjectType } from '@/types/consultation';
+import { YEARS_OF_EXPERIENCE } from '@/lib/siteFacts';
 
 // Photo de davisuko sur Unsplash (https://unsplash.com/photos/5E5N49RWtbA),
 // auto-hebergee dans public/images en 800/1080/1280/1920 px, ratio 3:2.
@@ -233,7 +234,7 @@ export function HeroSection() {
 
               <div className="absolute -top-4 -right-4 bg-white p-4 rounded-xl shadow-lg border">
                 <div className="text-2xl font-bold text-gray-700">
-                  +{new Date().getFullYear() - 2022 < 10 ? '03' : '10'}
+                  +{String(YEARS_OF_EXPERIENCE).padStart(2, '0')}
                 </div>
                 <div className="text-sm text-gray-600">{t('stats.expertise')}</div>
               </div>

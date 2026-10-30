@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import sonnaLabLogo from '@/assets/logo/wSonnaLab.png';
 import { motion, AnimatePresence } from 'framer-motion';
+import { BUILD_YEAR } from '@/lib/siteFacts';
 
 interface FooterLink {
   label: string;
@@ -31,7 +32,7 @@ interface FooterSection {
 
 export function Footer() {
   const { t, i18n } = useTranslation('footer');
-  const currentYear = new Date().getFullYear();
+  const currentYear = BUILD_YEAR;
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
 
