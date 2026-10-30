@@ -2,12 +2,33 @@ import React, { useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, Calendar, Zap, Users, Lightbulb, X } from 'lucide-react';
-import { ImageWithFallback } from '@/components/figma/ImageWithFallback';
 import { useTranslation } from 'react-i18next';
 import { useModal } from '@/components/providers/ModalProvider';
 import { useServiceSearch } from '@/hooks/useServiceSearch';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProjectType } from '@/types/consultation';
+
+// Photo de davisuko sur Unsplash (https://unsplash.com/photos/5E5N49RWtbA),
+// auto-hebergee dans public/images en 800/1080/1280/1920 px, ratio 3:2.
+// 1080 : Chrome choisit dans srcset par moyenne geometrique des densites ;
+// sans lui, un ecran 2x de bureau (504px affiches) recevait la 800.
+const HERO_IMAGE_WIDTHS = [800, 1080, 1280, 1920];
+const HERO_IMAGE_SRCSET_WEBP = HERO_IMAGE_WIDTHS
+  .map((w) => `/images/home-hero-blue-lemon-${w}.webp ${w}w`)
+  .join(', ');
+const HERO_IMAGE_SRCSET_JPG = HERO_IMAGE_WIDTHS
+  .map((w) => `/images/home-hero-blue-lemon-${w}.jpg ${w}w`)
+  .join(', ');
+const HERO_IMAGE_SIZES =
+  '(min-width: 1536px) 581px, (min-width: 1024px) 504px, (min-width: 768px) 588px, 504px';
+// React 18 ne connait pas fetchPriority (ajoute en React 19) : en camelCase
+// il avertit en dev ; en minuscules l'attribut passe tel quel au HTML.
+const HERO_IMAGE_FETCH_PRIORITY = { fetchpriority: 'high' } as Record<string, string>;
+
+const UNSPLASH_UTM = '?utm_source=sonnalab&utm_medium=referral';
+const HERO_PHOTOGRAPHER_NAME = 'davisuko';
+const HERO_PHOTOGRAPHER_URL = `https://unsplash.com/@davisuko${UNSPLASH_UTM}`;
+const UNSPLASH_URL = `https://unsplash.com/${UNSPLASH_UTM}`;
 
 export function HeroSection() {
   const { t } = useTranslation('hero');
@@ -178,12 +199,31 @@ export function HeroSection() {
           {/* Hero Image */}
           <div className="relative">
             <div className="relative rounded-2xl overflow-hidden bg-gradient-to-tr from-gray-100 to-gray-50 p-8">
-              <ImageWithFallback
-                src="/images/fromIdeaToInovation-progressive.jpg"
-                alt="De l'idée à l'innovation - Espace de travail digital moderne"
-                className={`w-full h-96 object-cover rounded-xl opacity-0 transition-opacity duration-700 ease-out`}
-                onLoad={(e) => (e.currentTarget.style.opacity = '1')}
-              />
+              {/* Image LCP de l'accueil : chargee tout de suite (pas de lazy,
+                  pas de fondu sur onLoad, qui ne se declenche pas si l'image
+                  arrive avant l'hydratation). L'image est rendue en
+                  object-cover dans une boite h-96 de 336px de haut (racine a
+                  14px) : en 3:2 elle fait donc au moins 504px de large, plus
+                  quand la boite est plus large (588px de 768 a 1023px,
+                  581px des 1536px). D'ou HERO_IMAGE_SIZES. */}
+              <picture className="block">
+                <source
+                  type="image/webp"
+                  srcSet={HERO_IMAGE_SRCSET_WEBP}
+                  sizes={HERO_IMAGE_SIZES}
+                />
+                <img
+                  src="/images/home-hero-blue-lemon-1280.jpg"
+                  srcSet={HERO_IMAGE_SRCSET_JPG}
+                  sizes={HERO_IMAGE_SIZES}
+                  width={1920}
+                  height={1280}
+                  alt={t('image.alt')}
+                  className="w-full h-96 object-cover rounded-xl"
+                  loading="eager"
+                  {...HERO_IMAGE_FETCH_PRIORITY}
+                />
+              </picture>
 
               {/* Floating Stats Cards */}
               <div className="absolute -bottom-4 -left-4 bg-white p-4 rounded-xl shadow-lg border">
@@ -198,6 +238,20 @@ export function HeroSection() {
                 <div className="text-sm text-gray-600">{t('stats.expertise')}</div>
               </div>
             </div>
+
+            {/* Credit au format demande par Unsplash. Que des chaines i18n
+                et des valeurs fixes : le HTML prerendu doit etre identique
+                au premier rendu client (hydratation). */}
+            <p className="home-hero-photo-credit">
+              {t('image.photoBy')}{' '}
+              <a href={HERO_PHOTOGRAPHER_URL} target="_blank" rel="noopener noreferrer">
+                {HERO_PHOTOGRAPHER_NAME}
+              </a>{' '}
+              {t('image.on')}{' '}
+              <a href={UNSPLASH_URL} target="_blank" rel="noopener noreferrer">
+                Unsplash
+              </a>
+            </p>
           </div>
         </div>
       </div>

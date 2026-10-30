@@ -39,5 +39,10 @@
     "projects": "Abgeschlossene Projekte",
     "clients": "Zufriedene Kunden",
     "expertise": "Jahre Expertise"
+  },
+  "image": {
+    "alt": "Eine Zitrusfrucht mit blau bemalter Schale, halbiert, sodass das orange Fruchtfleisch sichtbar ist, auf blauem Hintergrund",
+    "photoBy": "Foto von",
+    "on": "auf"
   }
 }

@@ -39,5 +39,10 @@
     "projects": "Proyectos completados",
     "clients": "Clientes satisfechos",
     "expertise": "Años de experiencia"
+  },
+  "image": {
+    "alt": "Un cítrico con la piel pintada de azul, cortado por la mitad, que deja ver su pulpa naranja, sobre un fondo azul",
+    "photoBy": "Foto de",
+    "on": "en"
   }
 }

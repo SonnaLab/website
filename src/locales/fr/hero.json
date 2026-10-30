@@ -39,5 +39,10 @@
     "projects": "Projets réalisés",
     "clients": "Clients satisfaits",
     "expertise": "Années d'expertise"
+  },
+  "image": {
+    "alt": "Un agrume à la peau peinte en bleu, coupé en deux, laissant voir sa chair orange, sur un fond bleu",
+    "photoBy": "Photo de",
+    "on": "sur"
   }
 }

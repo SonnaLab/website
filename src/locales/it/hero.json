@@ -39,5 +39,10 @@
     "projects": "Progetti completati",
     "clients": "Clienti soddisfatti",
     "expertise": "Anni di esperienza"
+  },
+  "image": {
+    "alt": "Un agrume dalla buccia dipinta di blu, tagliato a metà, che mostra la polpa arancione, su uno sfondo blu",
+    "photoBy": "Foto di",
+    "on": "su"
   }
 }

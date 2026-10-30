@@ -39,5 +39,10 @@
     "projects": "Completed projects",
     "clients": "Satisfied clients",
     "expertise": "Years of expertise"
+  },
+  "image": {
+    "alt": "A citrus fruit with blue-painted peel, cut in half to show its orange flesh, on a blue background",
+    "photoBy": "Photo by",
+    "on": "on"
   }
 }

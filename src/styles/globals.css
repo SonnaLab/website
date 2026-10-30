@@ -268,6 +268,27 @@ html:has(body:not(:has([data-state='open']))) {
   border-bottom-color: #000000;
 }
 
+/* Credit Unsplash sous l'image du hero de l'accueil (HeroSection.tsx).
+   Classe dediee : le CSS Tailwind est precompile, text-right/underline n'y
+   existent pas. #6b7280 garde un contraste AA sur le fond gris-50 du hero. */
+.home-hero-photo-credit {
+  margin-top: 0.75rem;
+  text-align: right;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: #6b7280;
+}
+
+.home-hero-photo-credit a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.home-hero-photo-credit a:hover {
+  color: #111827;
+}
+
 
 /* Use Raleway with higher font weights for bold text */
 .font-gilroy {
