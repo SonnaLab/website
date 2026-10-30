@@ -68,10 +68,10 @@ function staticHreflangLinks(basePath) {
 const STATIC_PAGE_I18N = {
   home: {
     fr: { title: "Accueil - De l'Idée à l'Innovation | SonnaLab", desc: "SonnaLab est votre partenaire de confiance pour l'innovation technologique. Conseil technologique, développement d'applications, IA et solutions numériques sur mesure.", h1: "Le laboratoire d'idées qui transforme le digital" },
-    en: { title: 'Home - From Idea to Innovation | SonnaLab', desc: 'SonnaLab is your trusted partner for technological innovation. Tech consulting, app development, AI and custom digital solutions.', h1: 'The think tank that transforms digital technology' },
-    es: { title: 'Inicio - De la Idea a la Innovación | SonnaLab', desc: 'SonnaLab es su socio de confianza para la innovación tecnológica.', h1: 'El laboratorio de ideas que transforma lo digital' },
-    it: { title: "Home - Dall'Idea all'Innovazione | SonnaLab", desc: "SonnaLab è il tuo partner di fiducia per l'innovazione tecnologica.", h1: "Il laboratorio di idee che trasforma il digitale" },
-    de: { title: 'Startseite - Von der Idee zur Innovation | SonnaLab', desc: 'SonnaLab ist Ihr vertrauenswürdiger Partner für technologische Innovation.', h1: 'Das Ideenlabor, das das Digitale transformiert' },
+    en: { title: 'Home - From Idea to Innovation | SonnaLab', desc: 'SonnaLab is your trusted partner for technological innovation. Tech consulting, app development, AI and tailored digital solutions for SMEs and startups.', h1: 'The think tank that transforms digital technology' },
+    es: { title: 'Inicio - De la Idea a la Innovación | SonnaLab', desc: 'SonnaLab es su socio de confianza para la innovación tecnológica. Consultoría tech, desarrollo de aplicaciones, IA y soluciones digitales a su medida.', h1: 'El laboratorio de ideas que transforma lo digital' },
+    it: { title: "Home - Dall'Idea all'Innovazione | SonnaLab", desc: "SonnaLab è il tuo partner di fiducia per l'innovazione tecnologica. Consulenza tech, sviluppo di app, intelligenza artificiale e soluzioni digitali su misura.", h1: "Il laboratorio di idee che trasforma il digitale" },
+    de: { title: 'Startseite - Von der Idee zur Innovation | SonnaLab', desc: 'SonnaLab ist Ihr vertrauenswürdiger Partner für technologische Innovation. Tech-Beratung, App-Entwicklung, KI sowie maßgeschneiderte digitale Lösungen.', h1: 'Das Ideenlabor, das das Digitale transformiert' },
   },
   blog: {
     fr: { title: 'Blog - Innovation Digitale & IA | SonnaLab', desc: "Découvrez nos articles sur l'intelligence artificielle, le développement web et la transformation digitale. Guides pratiques et études de cas." },
