@@ -73,5 +73,8 @@
     "copied": "Kopiert!"
   },
   "photoBy": "Foto von",
-  "on": "auf"
+  "on": "auf",
+  "archive": {
+    "title": "Alle Artikel ({{count}})"
+  }
 }

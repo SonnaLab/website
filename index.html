@@ -20,7 +20,6 @@
          chaque page qui a besoin d'un robots different (SEO.tsx, 404.tsx)
          le declare elle-meme via Helmet, sans plus jamais entrer en
          conflit avec un tag statique. -->
-    <meta name="language" content="French" />
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -32,14 +31,15 @@
     <meta property="og:locale" content="fr_FR" />
     
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://sonnalab.com/" />
-    <meta property="twitter:title" content="SonnaLab | Le laboratoire d'idées qui transforme le digital" />
-    <meta property="twitter:description" content="SonnaLab, le laboratoire d'idées qui transforme le digital. Développement web, applications mobiles et solutions technologiques innovantes." />
-    <meta property="twitter:image" content="https://sonnalab.com/assets/images/twitter-image.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://sonnalab.com/" />
+    <meta name="twitter:title" content="SonnaLab | Le laboratoire d'idées qui transforme le digital" />
+    <meta name="twitter:description" content="SonnaLab, le laboratoire d'idées qui transforme le digital. Développement web, applications mobiles et solutions technologiques innovantes." />
+    <meta name="twitter:image" content="https://sonnalab.com/assets/images/twitter-image.jpg" />
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon/android-chrome-192x192.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
@@ -79,22 +79,42 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "SonnaLab",
-      "url": "https://sonnalab.com",
-      "logo": "https://sonnalab.com/assets/logo/sonnalab-logo.png",
-      "description": "SonnaLab, le laboratoire d'idées qui transforme le digital",
-      "slogan": "Le laboratoire d'idées qui transforme le digital",
-      "sameAs": [
-        "https://www.linkedin.com/company/sonnalab",
-        "https://twitter.com/sonnalab",
-        "https://github.com/sonnalab"
-      ],
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "contactType": "customer service",
-        "availableLanguage": ["French", "English"]
-      }
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://sonnalab.com/#organization",
+          "name": "SonnaLab",
+          "url": "https://sonnalab.com/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://sonnalab.com/assets/logo/sonnalab-logo.png",
+            "width": 512,
+            "height": 512
+          },
+          "image": "https://sonnalab.com/assets/images/og-image.jpg",
+          "description": "SonnaLab, le laboratoire d'idées qui transforme le digital : conseil technologique, développement d'applications, IA et solutions numériques sur mesure.",
+          "slogan": "Le laboratoire d'idées qui transforme le digital",
+          "sameAs": [
+            "https://www.linkedin.com/company/sonnalab",
+            "https://twitter.com/sonnalab",
+            "https://github.com/sonnalab"
+          ],
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "customer service",
+            "url": "https://sonnalab.com/contact",
+            "availableLanguage": ["fr", "en", "es", "it", "de"]
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://sonnalab.com/#website",
+          "url": "https://sonnalab.com/",
+          "name": "SonnaLab",
+          "inLanguage": ["fr", "en", "es", "it", "de"],
+          "publisher": { "@id": "https://sonnalab.com/#organization" }
+        }
+      ]
     }
     </script>
   </head>

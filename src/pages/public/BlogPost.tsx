@@ -15,6 +15,13 @@ import { useAutoConsultationTrigger } from '@/hooks/useAutoConsultationTrigger';
 import { apiService } from '@/services/api';
 import { getSSRData } from '@/lib/ssrData';
 
+type RelatedPost = Pick<BlogPostType, 'id' | 'slug' | 'title' | 'excerpt' | 'coverImage' | 'readTime' | 'category'>;
+
+// Article prerendu (scripts/prerender-blog.mjs) : porte aussi ses articles
+// lies, calcules au build, pour que le maillage interne soit dans le HTML
+// statique lu par les moteurs et les crawlers IA (pas seulement apres JS).
+type PrerenderedPost = BlogPostType & { related?: RelatedPost[] };
+
 function getArticleBodyContent(content: string): string {
   return content.replace(/^#\s+.+(?:\r?\n)+/, '').trimStart();
 }
@@ -33,8 +40,8 @@ export default function BlogPost() {
   // elimine. Le fetch normal tourne ensuite en arriere-plan pour completer
   // les champs absents du rendu serveur (id reel, category, credit photo...)
   // sans jamais revider l'ecran.
-  const [post, setPost] = useState<BlogPostType | null>(() => (slug ? getSSRData<BlogPostType>(`blog:${slug}`) : null));
-  const [relatedPosts, setRelatedPosts] = useState<Omit<BlogPostType, 'content'>[]>([]);
+  const [post, setPost] = useState<BlogPostType | null>(() => (slug ? getSSRData<PrerenderedPost>(`blog:${slug}`) : null));
+  const [relatedPosts, setRelatedPosts] = useState<RelatedPost[]>(() => (slug ? getSSRData<PrerenderedPost>(`blog:${slug}`)?.related ?? [] : []));
   const [loading, setLoading] = useState(() => !(slug && getSSRData<BlogPostType>(`blog:${slug}`)));
   const [tableOfContents, setTableOfContents] = useState<Array<{ id: string; text: string; level: number }>>([]);
 
@@ -51,7 +58,7 @@ export default function BlogPost() {
     async function loadPost() {
       if (!slug) return;
 
-      const prerendered = getSSRData<BlogPostType>(`blog:${slug}`);
+      const prerendered = getSSRData<PrerenderedPost>(`blog:${slug}`);
       if (prerendered) {
         if (prerendered.lang !== lang) i18n.changeLanguage(prerendered.lang);
         setPost(prerendered);
@@ -88,6 +95,7 @@ export default function BlogPost() {
             i18n.changeLanguage(articleLang);
           }
           setPost(fetchedPost);
+          if (prerendered?.related?.length) return;
           const relatedResponse = await apiService.getBlogPosts({ category: fetchedPost.category, limit: 4, locale: articleLang });
           let relatedCandidates = (relatedResponse.posts ?? []).filter(p => p.id !== fetchedPost!.id);
 
@@ -173,7 +181,7 @@ export default function BlogPost() {
     );
   }
 
-  const currentUrl = `https://sonnalab.com${lang === 'en' ? '/en' : ''}/blog/${post.slug}`;
+  const currentUrl = `https://sonnalab.com/blog/${post.slug}`;
   const articleContent = getArticleBodyContent(post.content);
 
   return (
@@ -344,37 +352,6 @@ export default function BlogPost() {
         />
       </div>
 
-      {/* Schema.org JSON-LD */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'BlogPosting',
-            headline: post.title,
-            description: post.excerpt,
-            image: post.coverImage,
-            datePublished: post.publishedAt,
-            dateModified: post.updatedAt || post.publishedAt,
-            author: {
-              '@type': 'Person',
-              name: post.author,
-            },
-            publisher: {
-              '@type': 'Organization',
-              name: 'SonnaLab',
-              logo: {
-                '@type': 'ImageObject',
-                url: 'https://sonnalab.com/logo.png',
-              },
-            },
-            mainEntityOfPage: {
-              '@type': 'WebPage',
-              '@id': currentUrl,
-            },
-          }),
-        }}
-      />
     </>
   );
 }

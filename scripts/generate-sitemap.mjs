@@ -24,9 +24,8 @@ function warn(msg) {
 // home/blog/contact ont de vraies URLs préfixées par langue depuis le
 // 2026-08-17 (voir router/index.tsx LOCALIZED_PREFIXES + prerender-blog.mjs) --
 // leurs alternates pointent désormais vers ces vraies URLs sœurs au lieu de
-// s'auto-référencer. /projects n'a PAS de préfixe réel (jamais ajouté à
-// LOCALIZED_PREFIXES) : reste sur l'ancien comportement auto-référencé, seule
-// option honnête pour une page qui n'a qu'une seule URL.
+// s'auto-référencer. /projects a rejoint LOCALIZED_PREFIXES le 2026-10-30
+// (ses shells /xx/projects étaient déjà prérendus et traduits).
 const PREFIXED_LOCALES = ['en', 'es', 'it', 'de'];
 const DEFAULT_LOCALE   = 'fr';
 
@@ -42,27 +41,21 @@ function makeLocalizedAlternates(basePath) {
   ];
 }
 
-function makeStaticAlternates(path) {
-  return [
-    ...LOCALES.map(lang => ({ lang, href: `${BASE_URL}${path}` })),
-    { lang: 'x-default', href: `${BASE_URL}${path}` },
-  ];
-}
-
 const staticPages = [
   { loc: `${BASE_URL}/`,         lastmod: today(), changefreq: 'weekly',  priority: 1.0, alternates: makeLocalizedAlternates('/') },
   { loc: `${BASE_URL}/blog`,     lastmod: today(), changefreq: 'weekly',  priority: 0.9, alternates: makeLocalizedAlternates('/blog') },
-  { loc: `${BASE_URL}/projects`, lastmod: today(), changefreq: 'monthly', priority: 0.8, alternates: makeStaticAlternates('/projects') },
+  { loc: `${BASE_URL}/projects`, lastmod: today(), changefreq: 'monthly', priority: 0.8, alternates: makeLocalizedAlternates('/projects') },
   { loc: `${BASE_URL}/contact`,  lastmod: today(), changefreq: 'monthly', priority: 0.7, alternates: makeLocalizedAlternates('/contact') },
 ];
 
 // Entrées sitemap dédiées pour les URLs préfixées elles-mêmes (/en, /es, /it,
-// /de × home/blog/contact) : sans ça, ces 12 pages réelles n'apparaissaient
+// /de × home/blog/contact/projects) : sans ça, ces 16 pages réelles n'apparaissaient
 // dans AUCUN sitemap, jamais découvertes par les moteurs.
 const prefixedStaticPages = PREFIXED_LOCALES.flatMap(lang => ([
   { loc: localizedUrl(lang, '/'),        lastmod: today(), changefreq: 'weekly',  priority: 0.9, alternates: makeLocalizedAlternates('/') },
   { loc: localizedUrl(lang, '/blog'),    lastmod: today(), changefreq: 'weekly',  priority: 0.8, alternates: makeLocalizedAlternates('/blog') },
   { loc: localizedUrl(lang, '/contact'), lastmod: today(), changefreq: 'monthly', priority: 0.6, alternates: makeLocalizedAlternates('/contact') },
+  { loc: localizedUrl(lang, '/projects'), lastmod: today(), changefreq: 'monthly', priority: 0.7, alternates: makeLocalizedAlternates('/projects') },
 ]));
 
 // ─── API fetch (per locale) ───────────────────────────────────────────────────

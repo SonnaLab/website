@@ -4,15 +4,13 @@ import { HowItWorksSection } from '@/components/public/HowItWorksSection';
 import { AboutSection } from '@/components/public/AboutSection';
 import { SuccessSection } from '@/components/public/SuccessSection';
 import ResearchSection from '@/components/public/ResearchSection';
-import { SEO, OrganizationStructuredData, WebsiteStructuredData } from '@/components/seo';
+import { SEO } from '@/components/seo';
 import { useTranslation } from 'react-i18next';
 
 export default function Home() {
   const { t } = useTranslation('home');
   return (
     <>
-      <OrganizationStructuredData />
-      <WebsiteStructuredData />
       {/* pas de url="/" en dur : SEO.tsx dérive canonical/hreflang de
           location.pathname, cette page vit aussi à /en, /es, /it, /de */}
       <SEO

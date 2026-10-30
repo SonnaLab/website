@@ -19,7 +19,7 @@ interface SEOProps {
 // Pages ayant une variante d'URL préfixée réelle par langue (/en, /es, /it,
 // /de en plus du français non préfixé -- voir router/index.tsx). Les autres
 // pages n'ont qu'une seule URL : leur hreflang s'auto-référence.
-const LOCALIZED_PATHS = ['/', '/blog', '/contact'];
+const LOCALIZED_PATHS = ['/', '/blog', '/contact', '/projects'];
 const SITE_LOCALES = ['fr', 'en', 'es', 'it', 'de'];
 const DEFAULT_LOCALE = 'fr';
 
@@ -34,7 +34,7 @@ export function SEO({
   title,
   description,
   keywords,
-  image = '/og-image.png',
+  image = '/assets/images/og-image.jpg',
   url,
   type = 'website',
   author = 'SonnaLab',
@@ -90,22 +90,14 @@ export function SEO({
       {/* Canonical */}
       <link rel="canonical" href={fullUrl} />
 
-      {/* hreflang : URLs réelles par langue pour home/blog/contact (voir
-          LOCALIZED_PATHS ci-dessus) ; auto-référence pour les autres pages,
-          qui n'ont qu'une seule URL. */}
-      {computedHreflangAlternates
-        ? computedHreflangAlternates.map(alt => (
-            <link key={alt.lang} rel="alternate" hrefLang={alt.lang} href={alt.href} />
-          ))
-        : <>
-            <link rel="alternate" hrefLang="fr"        href={fullUrl} />
-            <link rel="alternate" hrefLang="en"        href={fullUrl} />
-            <link rel="alternate" hrefLang="es"        href={fullUrl} />
-            <link rel="alternate" hrefLang="it"        href={fullUrl} />
-            <link rel="alternate" hrefLang="de"        href={fullUrl} />
-            <link rel="alternate" hrefLang="x-default" href={fullUrl} />
-          </>
-      }
+      {/* hreflang : URLs réelles par langue pour les pages traduites (voir
+          LOCALIZED_PATHS) ou alternates fournis par l'appelant ; rien sinon.
+          Une page à URL unique (article, legal...) ne doit PAS se déclarer
+          version fr/en/es/it/de d'elle-même : ça contredisait le hreflang
+          réel posé par le prerender sur chaque article. */}
+      {computedHreflangAlternates?.map(alt => (
+        <link key={alt.lang} rel="alternate" hrefLang={alt.lang} href={alt.href} />
+      ))}
 
       {/* Open Graph */}
       <meta property="og:type"         content={type}                                        />

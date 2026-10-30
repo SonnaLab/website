@@ -37,7 +37,11 @@
     "tableOfContents": "Table of contents",
     "share": "Share this article",
     "relatedPosts": "Related articles",
-    "readMore": "Read more"
+    "relatedSubtitle": "Selected based on your interests — similar or complementary to what you just read.",
+    "readMore": "READ MORE",
+    "category": "Category",
+    "readLabel": "Reading",
+    "detailsLabel": "Article details"
   },
   "cta": {
     "title": "Need personalized guidance?",
@@ -68,19 +72,9 @@
     "copyLink": "Copy link",
     "copied": "Copied!"
   },
-  "article": {
-    "readTime": "{{time}} min read",
-    "publishedOn": "Published on",
-    "updatedOn": "Updated on",
-    "tableOfContents": "Table of contents",
-    "share": "Share this article",
-    "relatedPosts": "Related articles",
-    "relatedSubtitle": "Selected based on your interests — similar or complementary to what you just read.",
-    "readMore": "READ MORE",
-    "category": "Category",
-    "readLabel": "Reading",
-    "detailsLabel": "Article details"
-  },
   "photoBy": "Photo by",
-  "on": "on"
+  "on": "on",
+  "archive": {
+    "title": "All articles ({{count}})"
+  }
 }

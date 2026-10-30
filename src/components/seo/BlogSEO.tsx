@@ -1,5 +1,4 @@
 import { SEO } from './SEO';
-import { ArticleStructuredData } from './StructuredData';
 import { BlogPost } from '@/types/blog';
 
 const BASE = 'https://sonnalab.com';
@@ -20,15 +19,6 @@ export function BlogSEO({ post }: BlogSEOProps) {
 
   return (
     <>
-      <ArticleStructuredData
-        title={post.title}
-        slug={post.slug}
-        description={post.excerpt}
-        image={post.coverImage}
-        datePublished={post.publishedAt}
-        dateModified={post.updatedAt || post.publishedAt}
-        author={post.author}
-      />
       <SEO
         title={post.seo.title}
         description={post.seo.description}

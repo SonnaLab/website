@@ -461,6 +461,44 @@
   line-height: 1.6;
 }
 
+.blog-index-archive {
+  border-top: 1px solid #e5e7eb;
+  background: #ffffff;
+  padding: 28px 0;
+}
+
+.blog-index-archive summary {
+  cursor: pointer;
+  color: #111111;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.blog-index-archive ul {
+  columns: 2 320px;
+  column-gap: 32px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.blog-index-archive li {
+  break-inside: avoid;
+  padding: 5px 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.blog-index-archive a {
+  color: #374151;
+  text-decoration: none;
+}
+
+.blog-index-archive a:hover {
+  color: #111111;
+  text-decoration: underline;
+}
+
 .blog-index-cta {
   border-top: 1px solid #e5e7eb;
   background: #ffffff;

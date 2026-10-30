@@ -30,7 +30,6 @@
     "categories": "Thématiques",
     "page": "Page"
   },
-
   "cta": {
     "title": "Besoin d'un accompagnement personnalisé ?",
     "description": "Nos experts sont là pour transformer vos défis en opportunités.",
@@ -74,5 +73,8 @@
     "detailsLabel": "Détails de l'article"
   },
   "photoBy": "Photo de",
-  "on": "sur"
+  "on": "sur",
+  "archive": {
+    "title": "Tous les articles ({{count}})"
+  }
 }

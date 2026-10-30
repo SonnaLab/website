@@ -50,6 +50,228 @@ const TIMEOUT = 15_000;
 const PREFIXED_LOCALES = ['en', 'es', 'it', 'de'];
 const DEFAULT_LOCALE = 'fr';
 
+// @id stables des noeuds Organization / WebSite declares une seule fois dans
+// le template (index.html) -- les articles les referencent au lieu de les
+// redeclarer, pour que moteurs et IA relient chaque article a l'editeur.
+const ORG_ID = `${BASE_URL}/#organization`;
+const WEBSITE_ID = `${BASE_URL}/#website`;
+const ROBOTS_INDEX = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
+const HOME_LABEL = { fr: 'Accueil', en: 'Home', es: 'Inicio', it: 'Home', de: 'Startseite' };
+const FEED_TITLE = {
+  fr: 'SonnaLab — Blog (Français)', en: 'SonnaLab — Blog (English)', es: 'SonnaLab — Blog (Español)',
+  it: 'SonnaLab — Blog (Italiano)', de: 'SonnaLab — Blog (Deutsch)',
+};
+
+// Couvertures servies par le CDN Unsplash (imgix) en 1080x720 : en dessous des
+// 1200 px de large que Google demande pour l'apercu large (Discover, mobile)
+// et pas au ratio 1,91:1 attendu pour og:image. imgix recadre a la volee via
+// w/h/fit=crop -- aucune image a stocker. Toute autre URL est rendue telle quelle.
+function imageVariant(url, width, height) {
+  if (!url) return url;
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname !== 'images.unsplash.com') return url;
+    parsed.searchParams.set('w', String(width));
+    parsed.searchParams.set('h', String(height));
+    parsed.searchParams.set('fit', 'crop');
+    parsed.searchParams.set('crop', 'entropy');
+    return parsed.toString();
+  } catch {
+    return url;
+  }
+}
+
+function isResizable(url) {
+  return imageVariant(url, 1, 1) !== url;
+}
+
+function feedUrl(locale) {
+  return `${BASE_URL}/feed/${locale}.xml`;
+}
+
+const BLOG_INDEX_PER_PAGE = 6; // = POSTS_PER_PAGE dans src/pages/public/Blog.tsx
+const RELATED_COUNT = 3;
+const RELATED_POOL = 12; // candidats proches parmi lesquels le 3e lien va au moins lie
+const FEED_ITEMS = 50;
+const LLMS_ARTICLES_PER_LOCALE = 30;
+
+// Liste publique d'une langue, au format exact que consomme le front
+// (/api/v1/blog/posts : articles live uniquement, sans les stubs de
+// redirection). `firstPage` est la reponse brute de la page 1 telle que
+// Blog.tsx la demande, pour que son premier rendu client soit identique au
+// rendu serveur ; `posts` est la liste complete, du plus recent au plus ancien.
+async function fetchListing(locale) {
+  const get = async (page, perPage) => {
+    const url = `${API_URL}/api/v1/blog/posts?locale=${locale}&page=${page}&per_page=${perPage}`;
+    const res = await fetch(url, { signal: AbortSignal.timeout(TIMEOUT) });
+    if (!res.ok) throw new Error(`HTTP ${res.status} on ${url}`);
+    return res.json();
+  };
+  const firstPage = await get(1, BLOG_INDEX_PER_PAGE);
+  const posts = [];
+  for (let page = 1, totalPages = 1; page <= totalPages; page++) {
+    const data = await get(page, 60); // plafond serveur, voir generate-sitemap.mjs
+    posts.push(...(data.posts ?? []));
+    totalPages = data.total_pages ?? 1;
+  }
+  posts.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+  return { firstPage, posts };
+}
+
+function tokens(text) {
+  return new Set(
+    String(text ?? '')
+      .toLowerCase()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .split(/[^a-z0-9]+/)
+      .filter(word => word.length >= 5) // ecarte les mots vides des 5 langues sans liste dediee
+  );
+}
+
+function jaccard(a, b) {
+  if (!a.size || !b.size) return 0;
+  let shared = 0;
+  for (const value of a) if (b.has(value)) shared++;
+  return shared / (a.size + b.size - shared);
+}
+
+// Maillage interne : 3 articles proches par article (tags puis titre), rendus
+// dans le HTML prerendu. Jusque-la les "articles lies" n'existaient qu'apres
+// un fetch client, donc zero lien interne entre articles dans le HTML que
+// lisent Bing et les crawlers IA. Les 2 premiers sont les plus proches ; le
+// 3e est, parmi les plus proches suivants, celui qui a recu le moins de liens
+// jusqu'ici -- sans lui, une centaine d'articles ne recevaient aucun lien
+// pendant que quelques-uns en cumulaient 15.
+function computeRelated(posts) {
+  const features = posts.map(post => ({
+    post,
+    tags: new Set((post.tags ?? []).map(tag => String(tag).toLowerCase())),
+    words: tokens(post.title),
+  }));
+  const inbound = new Map(posts.map(post => [post.slug, 0]));
+  const related = new Map();
+
+  for (const current of features) {
+    const candidates = features
+      .filter(other => other.post.slug !== current.post.slug)
+      .map(other => ({
+        post: other.post,
+        score: 2 * jaccard(current.tags, other.tags) + jaccard(current.words, other.words),
+      }))
+      .sort((a, b) =>
+        (b.score - a.score) ||
+        (inbound.get(a.post.slug) - inbound.get(b.post.slug)) ||
+        (new Date(b.post.publishedAt) - new Date(a.post.publishedAt))
+      );
+    const closest = candidates.slice(0, RELATED_COUNT - 1);
+    const leastLinked = candidates
+      .slice(RELATED_COUNT - 1, RELATED_COUNT - 1 + RELATED_POOL)
+      .reduce((best, candidate) => (
+        !best || inbound.get(candidate.post.slug) < inbound.get(best.post.slug) ? candidate : best
+      ), null);
+    const ranked = [...closest, ...(leastLinked ? [leastLinked] : [])].map(({ post }) => post);
+
+    for (const post of ranked) inbound.set(post.slug, inbound.get(post.slug) + 1);
+    related.set(current.post.slug, ranked.map(post => ({
+      id: post.id,
+      slug: post.slug,
+      title: post.title,
+      excerpt: post.excerpt || '',
+      coverImage: post.coverImage || '',
+      readTime: post.readTime,
+      category: post.category || '',
+    })));
+  }
+  return related;
+}
+
+function xmlEscape(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+function buildFeed(locale, posts) {
+  const items = posts.slice(0, FEED_ITEMS).map(post => {
+    const link = `${BASE_URL}/blog/${post.slug}`;
+    return [
+      '    <item>',
+      `      <title>${xmlEscape(post.title)}</title>`,
+      `      <link>${link}</link>`,
+      `      <guid isPermaLink="true">${link}</guid>`,
+      `      <pubDate>${new Date(post.publishedAt).toUTCString()}</pubDate>`,
+      `      <description>${xmlEscape(post.excerpt)}</description>`,
+      ...(post.category ? [`      <category>${xmlEscape(post.category)}</category>`] : []),
+      `      <dc:creator>${xmlEscape(post.author || 'SonnaLab')}</dc:creator>`,
+      '    </item>',
+    ].join('\n');
+  });
+  const { title, desc } = STATIC_PAGE_I18N.blog[locale];
+  const lastBuild = posts[0] ? new Date(posts[0].publishedAt).toUTCString() : new Date().toUTCString();
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>${xmlEscape(FEED_TITLE[locale] || title)}</title>
+    <link>${localizedUrl(locale, '/blog')}</link>
+    <description>${xmlEscape(desc)}</description>
+    <language>${locale}</language>
+    <lastBuildDate>${lastBuild}</lastBuildDate>
+    <atom:link href="${feedUrl(locale)}" rel="self" type="application/rss+xml" />
+${items.join('\n')}
+  </channel>
+</rss>
+`;
+}
+
+// llms.txt (https://llmstxt.org) : resume Markdown du site pour les agents IA
+// (ChatGPT, Claude, Perplexity...) qui cherchent une vue d'ensemble sans
+// executer le JS -- qui est SonnaLab, pages cles, derniers articles par langue.
+function buildLlmsTxt(listings) {
+  const lines = [
+    '# SonnaLab',
+    '',
+    '> SonnaLab, le laboratoire d\'idées qui transforme le digital : conseil technologique, développement d\'applications web et mobiles, IA et solutions numériques sur mesure pour les PME et startups.',
+    '',
+    'Le blog publie des guides pratiques et études de cas sur l\'intelligence artificielle, le développement web et la transformation digitale, en français, anglais, espagnol, italien et allemand.',
+    '',
+    '## Pages clés',
+    '',
+    `- [Accueil](${BASE_URL}/): présentation de SonnaLab et de ses services`,
+    `- [Projets](${BASE_URL}/projects): réalisations et études de cas`,
+    `- [Blog](${BASE_URL}/blog): tous les articles en français`,
+    `- [Contact](${BASE_URL}/contact): demander un devis ou un échange`,
+    `- [Sitemap](${BASE_URL}/sitemap.xml): index complet des URLs`,
+    '',
+  ];
+  for (const locale of LOCALES) {
+    const posts = listings.get(locale)?.posts ?? [];
+    if (!posts.length) continue;
+    lines.push(`## Blog (${locale}) — derniers articles`, '');
+    lines.push(`Flux RSS complet : ${feedUrl(locale)}`, '');
+    for (const post of posts.slice(0, LLMS_ARTICLES_PER_LOCALE)) {
+      const summary = String(post.excerpt ?? '').replace(/\s+/g, ' ').trim();
+      lines.push(`- [${post.title.replace(/[[\]]/g, '')}](${BASE_URL}/blog/${post.slug})${summary ? `: ${summary}` : ''}`);
+    }
+    lines.push('');
+  }
+  return lines.join('\n');
+}
+
+// Balises communes a toute page indexable generee ici : langue reelle (le
+// template portait "French" en dur, meme sur /en, /de...), robots avec
+// apercu d'image large (Discover, reponses IA) et lien vers le flux RSS de
+// la langue (decouverte rapide des nouveaux articles par Bing et les IA).
+function commonHeadTags(locale) {
+  return [
+    `<meta http-equiv="content-language" content="${locale}" />`,
+    `<meta name="robots" content="${ROBOTS_INDEX}" />`,
+    `<link rel="alternate" type="application/rss+xml" title="${escapeHtml(FEED_TITLE[locale] || FEED_TITLE.fr)}" href="${feedUrl(locale)}" />`,
+  ];
+}
+
 function localizedUrl(locale, basePath) {
   const prefix = locale === DEFAULT_LOCALE ? '' : `/${locale}`;
   return basePath === '/' ? `${BASE_URL}${prefix || ''}` : `${BASE_URL}${prefix}${basePath}`;
@@ -107,7 +329,7 @@ const STATIC_PAGE_I18N = {
  * injecté dans #root pour home (crawler sans JS) -- sans SSR complet des
  * sections (pas d'infra SSR React en place).
  */
-async function buildStaticPageHtml(template, { locale, basePath, page, ssrRoute }) {
+async function buildStaticPageHtml(template, { locale, basePath, page, ssrRoute, ssrData }) {
   const url = localizedUrl(locale, basePath);
   const { title, desc } = STATIC_PAGE_I18N[page][locale];
 
@@ -119,15 +341,17 @@ async function buildStaticPageHtml(template, { locale, basePath, page, ssrRoute 
   html = html.replace(/<meta property="og:description" content="[^"]*"\s*\/>/, `<meta property="og:description" content="${escapeHtml(desc)}" />`);
   html = html.replace(/<meta property="og:url" content="[^"]*"\s*\/>/, `<meta property="og:url" content="${url}" />`);
   html = html.replace(/<meta property="og:locale" content="[^"]*"\s*\/>/, `<meta property="og:locale" content="${OG_LOCALE[locale] || 'fr_FR'}" />`);
+  html = html.replace(/<meta name="twitter:url" content="[^"]*"\s*\/>/, `<meta name="twitter:url" content="${url}" />`);
+  html = html.replace(/<meta name="twitter:title" content="[^"]*"\s*\/>/, `<meta name="twitter:title" content="${escapeHtml(title)}" />`);
+  html = html.replace(/<meta name="twitter:description" content="[^"]*"\s*\/>/, `<meta name="twitter:description" content="${escapeHtml(desc)}" />`);
   html = html.replace(/<link rel="canonical" href="[^"]*"\s*\/>/, `<link rel="canonical" href="${url}" />`);
-  html = html.replace('</head>', `    ${staticHreflangLinks(basePath).join('\n    ')}\n  </head>`);
+  html = html.replace('</head>', `    ${[...commonHeadTags(locale), ...staticHreflangLinks(basePath)].join('\n    ')}\n  </head>`);
 
-  // Home seule est passee au vrai rendu SSR (entry-server.tsx) pour
-  // l'instant -- blog (liste) et contact restent sans contenu injecte dans
-  // #root comme avant (aucune regression, simplement pas encore migres,
-  // voir le plan de migration SSR).
+  // Home et blog (liste + archive, 2026-10-30) passent au vrai rendu SSR
+  // (entry-server.tsx) -- contact/projects restent sans contenu injecte
+  // dans #root (pas encore migres, voir le plan de migration SSR).
   if (ssrRoute) {
-    const { html: rootHtml, ssrDataScript } = await ssrRender(ssrRoute, locale);
+    const { html: rootHtml, ssrDataScript } = await ssrRender(ssrRoute, locale, ssrData);
     html = html.replace('<div id="root"></div>', `<div id="root" data-ssr="1">${rootHtml}</div>`);
     if (ssrDataScript) html = html.replace('</head>', `    ${ssrDataScript}\n  </head>`);
   }
@@ -224,32 +448,67 @@ async function fetchArticles(locale) {
   return Array.isArray(data?.articles) ? data.articles : [];
 }
 
-async function buildArticleHead(article, template) {
+async function buildArticleHead(article, template, related = []) {
   const url = `${BASE_URL}/blog/${article.slug}`;
   const title = article.seo_title || article.title;
   const desc = (article.meta_description || article.excerpt || '').slice(0, 300);
   const image = article.feature_image || `${BASE_URL}/assets/images/og-image.jpg`;
   const imageAlt = article.feature_image_alt || title;
+  const resizable = isResizable(image);
+  const socialImage = resizable ? imageVariant(image, 1200, 630) : image;
+  // Google (donnees structurees d'article) : plusieurs ratios 16:9, 4:3 et
+  // 1:1, au moins 1200 px de large -- il choisit selon la surface d'affichage.
+  const schemaImages = resizable
+    ? [imageVariant(image, 1200, 675), imageVariant(image, 1200, 900), imageVariant(image, 1200, 1200)]
+    : [image];
   const ogLocale = OG_LOCALE[article.locale] || 'fr_FR';
   const tags = Array.isArray(article.tags) ? article.tags : [];
 
+  // Un seul graphe par article (2026-10-30) : il y en avait jusqu'a trois une
+  // fois le JS execute (Article ici, BlogPosting dans le corps, Article via
+  // Helmet) avec des auteurs contradictoires (Organization vs Person
+  // "SonnaLab") et un logo d'editeur en 404.
+  const authorName = article.author || 'SonnaLab';
+  const wordCount = article.content_markdown ? article.content_markdown.trim().split(/\s+/).length : undefined;
+  const blogUrl = localizedUrl(article.locale, '/blog');
   const articleLd = {
     '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: title,
-    description: desc,
-    image: [image],
-    datePublished: article.published_at,
-    dateModified: article.updated_at,
-    author: { '@type': 'Organization', name: article.author || 'SonnaLab', url: BASE_URL },
-    publisher: {
-      '@type': 'Organization',
-      name: 'SonnaLab',
-      logo: { '@type': 'ImageObject', url: `${BASE_URL}/assets/logo/sonnalab-logo.png` }
-    },
-    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
-    inLanguage: article.locale,
-    keywords: tags.join(', ')
+    '@graph': [
+      {
+        '@type': 'BlogPosting',
+        '@id': `${url}#article`,
+        headline: title,
+        description: desc,
+        image: schemaImages,
+        datePublished: article.published_at,
+        dateModified: article.updated_at || article.published_at,
+        author: authorName === 'SonnaLab' ? { '@id': ORG_ID } : { '@type': 'Person', name: authorName },
+        publisher: { '@id': ORG_ID },
+        mainEntityOfPage: { '@id': url },
+        isPartOf: { '@id': WEBSITE_ID },
+        inLanguage: article.locale,
+        ...(tags.length ? { keywords: tags.join(', ') } : {}),
+        ...(wordCount ? { wordCount } : {}),
+      },
+      {
+        '@type': 'WebPage',
+        '@id': url,
+        url,
+        name: title,
+        inLanguage: article.locale,
+        isPartOf: { '@id': WEBSITE_ID },
+        breadcrumb: { '@id': `${url}#breadcrumb` },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': `${url}#breadcrumb`,
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: HOME_LABEL[article.locale] || HOME_LABEL.fr, item: localizedUrl(article.locale, '/') },
+          { '@type': 'ListItem', position: 2, name: 'Blog', item: blogUrl },
+          { '@type': 'ListItem', position: 3, name: title },
+        ],
+      },
+    ],
   };
 
   let html = template;
@@ -276,37 +535,36 @@ async function buildArticleHead(article, template) {
   html = html.replace(/<meta property="og:description" content="[^"]*"\s*\/>/,
     `<meta property="og:description" content="${escapeHtml(desc)}" />`);
   html = html.replace(/<meta property="og:image" content="[^"]*"\s*\/>/,
-    `<meta property="og:image" content="${escapeHtml(image)}" />`);
+    `<meta property="og:image" content="${escapeHtml(socialImage)}" />`);
   html = html.replace(/<meta property="og:locale" content="[^"]*"\s*\/>/,
     `<meta property="og:locale" content="${ogLocale}" />`);
 
-  html = html.replace(/<meta property="twitter:url" content="[^"]*"\s*\/>/,
-    `<meta property="twitter:url" content="${url}" />`);
-  html = html.replace(/<meta property="twitter:title" content="[^"]*"\s*\/>/,
-    `<meta property="twitter:title" content="${escapeHtml(title)}" />`);
-  html = html.replace(/<meta property="twitter:description" content="[^"]*"\s*\/>/,
-    `<meta property="twitter:description" content="${escapeHtml(desc)}" />`);
-  html = html.replace(/<meta property="twitter:image" content="[^"]*"\s*\/>/,
-    `<meta property="twitter:image" content="${escapeHtml(image)}" />`);
+  html = html.replace(/<meta name="twitter:url" content="[^"]*"\s*\/>/,
+    `<meta name="twitter:url" content="${url}" />`);
+  html = html.replace(/<meta name="twitter:title" content="[^"]*"\s*\/>/,
+    `<meta name="twitter:title" content="${escapeHtml(title)}" />`);
+  html = html.replace(/<meta name="twitter:description" content="[^"]*"\s*\/>/,
+    `<meta name="twitter:description" content="${escapeHtml(desc)}" />`);
+  html = html.replace(/<meta name="twitter:image" content="[^"]*"\s*\/>/,
+    `<meta name="twitter:image" content="${escapeHtml(socialImage)}" />`);
 
   html = html.replace(/<link rel="canonical" href="[^"]*"\s*\/>/,
     `<link rel="canonical" href="${url}" />`);
 
+  const headTags = article.noindex
+    ? commonHeadTags(article.locale).map((tag) => (
+        tag.startsWith('<meta name="robots"') ? '<meta name="robots" content="noindex,follow" />' : tag
+      ))
+    : commonHeadTags(article.locale);
   const articleExtras = [
+    ...headTags,
     `<meta property="article:published_time" content="${article.published_at}" />`,
-    `<meta property="article:modified_time" content="${article.updated_at}" />`,
+    `<meta property="article:modified_time" content="${article.updated_at || article.published_at}" />`,
     `<meta property="og:image:alt" content="${escapeHtml(imageAlt)}" />`,
+    ...(resizable ? ['<meta property="og:image:width" content="1200" />', '<meta property="og:image:height" content="630" />'] : []),
     ...buildHreflangLinks(article),
     `<script type="application/ld+json">${jsonSafe(articleLd)}</script>`
   ].join('\n    ');
-
-  if (article.noindex) {
-    html = html.replace(/<meta name="robots" content="[^"]*"\s*\/>/,
-      `<meta name="robots" content="noindex,follow" />`);
-    if (!/name="robots"/.test(html)) {
-      html = html.replace('</head>', `    <meta name="robots" content="noindex,follow" />\n  </head>`);
-    }
-  }
 
   html = html.replace('</head>', `    ${articleExtras}\n  </head>`);
 
@@ -344,6 +602,7 @@ async function buildArticleHead(article, template) {
         description: desc,
         keywords: tags.join(', '),
       },
+      related,
     };
 
     const { html: rootHtml, ssrDataScript } = await ssrRender(
@@ -374,6 +633,26 @@ function buildRedirectHtml(fromSlug, toSlug, locale) {
     <p>Cette page a été déplacée : <a href="${target}">${target}</a></p>
   </body>
 </html>`;
+}
+
+// Donnee d'hydratation de /blog (et /xx/blog) : la page 1 exacte que Blog.tsx
+// demanderait, plus l'archive complete de la langue -- des liens <a> reels
+// vers chaque article live dans le HTML prerendu (la pagination du front est
+// en boutons, donc invisible pour un crawler). Sans liste (echec API), la
+// page reste une coquille rendue cote client comme avant.
+function blogIndexSSR(listings, locale) {
+  const listing = listings.get(locale);
+  if (!listing) return {};
+  return {
+    ssrRoute: localizedUrl(locale, '/blog').slice(BASE_URL.length),
+    ssrData: {
+      route: `blog-index:${locale}`,
+      data: {
+        listing: listing.firstPage,
+        archive: listing.posts.map(post => ({ slug: post.slug, title: post.title, publishedAt: post.publishedAt })),
+      },
+    },
+  };
 }
 
 async function run() {
@@ -451,6 +730,7 @@ async function run() {
   const redirectMap = [];
   const realSlugs = new Set();
   const legacyEntries = []; // computed after the main loop, once realSlugs is complete
+  const listings = new Map(); // locale -> { firstPage, posts } (liste publique, voir fetchListing)
 
   for (const locale of LOCALES) {
     let articles;
@@ -463,6 +743,18 @@ async function run() {
       continue;
     }
 
+    // Un echec ici ne bloque pas les articles : ils sortent simplement sans
+    // liens connexes prerendus, et /blog sans liste prerendue (fetch client).
+    let related = new Map();
+    try {
+      const listing = await fetchListing(locale);
+      listings.set(locale, listing);
+      related = computeRelated(listing.posts);
+      warn(`Listing OK ${locale}: ${listing.posts.length} live posts`);
+    } catch (err) {
+      warn(`Listing FAIL ${locale}: ${err.message}`);
+    }
+
     for (const article of articles) {
       if (!article.slug) continue;
       realSlugs.add(article.slug);
@@ -471,7 +763,7 @@ async function run() {
 
       const html = article.redirected_to_slug
         ? buildRedirectHtml(article.slug, article.redirected_to_slug, article.locale)
-        : await buildArticleHead(article, template);
+        : await buildArticleHead(article, template, related.get(article.slug) ?? []);
 
       await writeFile(join(targetDir, 'index.html'), html, 'utf-8');
       if (article.redirected_to_slug) {
@@ -539,7 +831,7 @@ async function run() {
 
   const blogDir = join(BUILD_DIR, 'blog');
   await mkdir(blogDir, { recursive: true });
-  await writeFile(join(blogDir, 'index.html'), await buildStaticPageHtml(template, { locale: DEFAULT_LOCALE, basePath: '/blog', page: 'blog' }), 'utf-8');
+  await writeFile(join(blogDir, 'index.html'), await buildStaticPageHtml(template, { locale: DEFAULT_LOCALE, basePath: '/blog', page: 'blog', ...blogIndexSSR(listings, DEFAULT_LOCALE) }), 'utf-8');
   warn('Wrote blog/index.html (fr)');
 
   const contactDir = join(BUILD_DIR, 'contact');
@@ -573,7 +865,7 @@ async function run() {
 
     const localeBlogDir = join(localeDir, 'blog');
     await mkdir(localeBlogDir, { recursive: true });
-    await writeFile(join(localeBlogDir, 'index.html'), await buildStaticPageHtml(template, { locale, basePath: '/blog', page: 'blog' }), 'utf-8');
+    await writeFile(join(localeBlogDir, 'index.html'), await buildStaticPageHtml(template, { locale, basePath: '/blog', page: 'blog', ...blogIndexSSR(listings, locale) }), 'utf-8');
 
     const localeContactDir = join(localeDir, 'contact');
     await mkdir(localeContactDir, { recursive: true });
@@ -585,6 +877,19 @@ async function run() {
 
     warn(`Wrote /${locale}/, /${locale}/blog/, /${locale}/contact/, /${locale}/projects/`);
   }
+
+  // Flux RSS par langue + llms.txt, regeneres a chaque publication (le
+  // webhook /sitemap/refresh relance ce script). Une langue dont la liste a
+  // echoue garde son flux precedent plutot qu'un flux vide.
+  const feedDir = join(BUILD_DIR, 'feed');
+  await mkdir(feedDir, { recursive: true });
+  for (const [locale, listing] of listings) {
+    await writeFile(join(feedDir, `${locale}.xml`), buildFeed(locale, listing.posts), 'utf-8');
+  }
+  if (listings.size === LOCALES.length) {
+    await writeFile(join(BUILD_DIR, 'llms.txt'), buildLlmsTxt(listings), 'utf-8');
+  }
+  warn(`Wrote ${listings.size} RSS feeds${listings.size === LOCALES.length ? ' + llms.txt' : ' (llms.txt skipped: incomplete listings)'}`);
 
   const mapPath = join(BUILD_DIR, 'blog-redirects.map');
   await writeFile(

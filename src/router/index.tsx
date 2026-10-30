@@ -136,8 +136,11 @@ export const routeTree: RouteObject[] = [
       },
 
       // ---- Public site, URLs préfixées par langue (crawlables, contenu
-      // réel identique aux routes ci-dessus) : home/blog/contact uniquement
-      // -- les seules pages dont le contenu diffère vraiment par langue.
+      // réel identique aux routes ci-dessus) : home/blog/contact/projects
+      // -- les pages dont le contenu diffère vraiment par langue (projects
+      // ajouté le 2026-10-30 : ses shells /xx/projects étaient déjà prérendus
+      // et traduits, mais sans route ici ils retombaient sur NotFound après
+      // hydratation).
       // Le français n'a PAS de préfixe (déjà à la racine, voir plus bas).
       ...LOCALIZED_PREFIXES.map((lang) => ({
         path: `/${lang}`,
@@ -149,6 +152,7 @@ export const routeTree: RouteObject[] = [
               { index: true,     element: <Home /> },
               { path: 'blog',    element: <Blog /> },
               { path: 'contact', element: <Contact /> },
+              { path: 'projects', element: <Projects /> },
             ],
           },
         ],

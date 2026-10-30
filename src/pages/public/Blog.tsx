@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Search, Clock, Calendar, ArrowRight, NewspaperIcon, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -7,12 +7,21 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { useModal } from '@/components/providers/ModalProvider';
-import { apiService, type BlogCategorySummary } from '@/services/api';
+import { apiService, type BlogCategorySummary, type BlogPostsResponse } from '@/services/api';
 import type { BlogPost as BlogPostType } from '@/types/blog';
+import { getSSRData } from '@/lib/ssrData';
 
 const POSTS_PER_PAGE = 6;
 
 type BlogListPost = Omit<BlogPostType, 'content'>;
+
+// Donnee prerendue par scripts/prerender-blog.mjs (blogIndexSSR) : la page 1
+// exacte que l'effet ci-dessous demanderait, plus l'archive complete de la
+// langue -- de vrais liens vers chaque article dans le HTML statique.
+interface BlogIndexSSRData {
+  listing: BlogPostsResponse;
+  archive: { slug: string; title: string; publishedAt: string }[];
+}
 
 function humanizeCategory(category: string) {
   return category
@@ -26,17 +35,31 @@ function sortByNewestPost(firstPost: BlogListPost, secondPost: BlogListPost) {
   return new Date(secondPost.publishedAt).getTime() - new Date(firstPost.publishedAt).getTime();
 }
 
+function newestPosts(response: BlogPostsResponse) {
+  return [...(response.posts ?? [])].sort(sortByNewestPost).slice(0, POSTS_PER_PAGE);
+}
+
+// Jour de publication tel qu'ecrit par l'API (fuseau de l'editeur), formate en
+// UTC : meme texte au build (VPS en UTC) et dans le navigateur, sinon un
+// article publie peu apres minuit changeait de date et cassait l'hydratation.
+function formatPublishedDate(publishedAt: string, lang: string) {
+  return new Date(`${publishedAt.slice(0, 10)}T00:00:00Z`).toLocaleDateString(lang, { timeZone: 'UTC' });
+}
+
 export default function Blog() {
   const { t, i18n } = useTranslation('blog');
   const lang = i18n.language.substring(0, 2);
+  // Etat initial (lazy useState) et non useEffect : le premier rendu client
+  // doit reproduire le HTML prerendu pour que hydrateRoot le reutilise.
+  const ssrIndex = useMemo(() => getSSRData<BlogIndexSSRData>(`blog-index:${lang}`), [lang]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [blogPosts, setBlogPosts] = useState<BlogListPost[]>([]);
-  const [categories, setCategories] = useState<BlogCategorySummary[]>([]);
+  const [blogPosts, setBlogPosts] = useState<BlogListPost[]>(() => (ssrIndex ? newestPosts(ssrIndex.listing) : []));
+  const [categories, setCategories] = useState<BlogCategorySummary[]>(() => ssrIndex?.listing.categories ?? []);
   const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [total, setTotal] = useState(() => ssrIndex?.listing.total ?? 0);
+  const [totalPages, setTotalPages] = useState(() => ssrIndex?.listing.total_pages ?? 0);
+  const [loading, setLoading] = useState(() => !ssrIndex);
   const [error, setError] = useState<string | null>(null);
   const { openConsultationModal } = useModal();
 
@@ -58,6 +81,18 @@ export default function Blog() {
   useEffect(() => {
     let mounted = true;
 
+    // Vue par defaut deja livree par le HTML prerendu : la reutiliser au lieu
+    // de refetcher (et d'afficher le loader par-dessus un contenu deja la).
+    if (ssrIndex && page === 1 && selectedCategory === 'all' && !searchQuery.trim()) {
+      setBlogPosts(newestPosts(ssrIndex.listing));
+      setCategories(ssrIndex.listing.categories ?? []);
+      setTotal(ssrIndex.listing.total ?? 0);
+      setTotalPages(ssrIndex.listing.total_pages ?? 0);
+      setError(null);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -71,7 +106,7 @@ export default function Blog() {
       .then(response => {
         if (!mounted) return;
 
-        setBlogPosts([...(response.posts ?? [])].sort(sortByNewestPost).slice(0, POSTS_PER_PAGE));
+        setBlogPosts(newestPosts(response));
         setCategories(response.categories ?? []);
         setTotal(response.total ?? 0);
         setTotalPages(response.total_pages ?? 0);
@@ -88,7 +123,7 @@ export default function Blog() {
       });
 
     return () => { mounted = false; };
-  }, [page, searchQuery, selectedCategory, t, lang]);
+  }, [page, searchQuery, selectedCategory, t, lang, ssrIndex]);
 
   return (
     <>
@@ -195,7 +230,7 @@ export default function Blog() {
                             </span>
                             <span>
                               <Calendar size={14} />
-                              {new Date(post.publishedAt).toLocaleDateString(lang)}
+                              {formatPublishedDate(post.publishedAt, lang)}
                             </span>
                           </div>
                           <h2>{post.title}</h2>
@@ -256,6 +291,23 @@ export default function Blog() {
             )}
         </div>
       </section>
+
+      {ssrIndex && ssrIndex.archive.length > 0 && (
+        <section className="blog-index-archive">
+          <div className="blog-index-container">
+            <details>
+              <summary>{t('archive.title', { count: ssrIndex.archive.length })}</summary>
+              <ul>
+                {ssrIndex.archive.map(item => (
+                  <li key={item.slug}>
+                    <Link to={`/blog/${item.slug}`}>{item.title}</Link>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          </div>
+        </section>
+      )}
 
       <section className="blog-index-cta">
         <div className="blog-index-container blog-index-cta__inner">
