@@ -594,7 +594,15 @@ async function buildArticleHead(article, template, related = []) {
       publishedAt: article.published_at,
       updatedAt: article.updated_at,
       coverImage: article.feature_image || '',
-      coverImageCredit: null,
+      // Credit Unsplash rendu des le HTML statique (2026-10-30) : il
+      // n'apparaissait qu'apres le fetch client, donc jamais pour un robot.
+      coverImageCredit: article.feature_image_credit?.provider === 'unsplash' ? {
+        provider: 'unsplash',
+        photographer: article.feature_image_credit.photographer ?? null,
+        photographerUrl: article.feature_image_credit.photographer_url ?? null,
+        photographerAvatar: article.feature_image_credit.photographer_avatar ?? null,
+        sourceUrl: article.feature_image_credit.source_url ?? null,
+      } : null,
       category: '',
       tags: Array.isArray(article.tags) ? article.tags : [],
       readTime: Math.max(1, Math.round(wordCount / 200)),
