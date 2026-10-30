@@ -14,6 +14,11 @@ interface SEOProps {
   modifiedTime?: string;
   hreflangAlternates?: Array<{ lang: string; href: string }>;
   noindex?: boolean;
+  // false pour les articles : leur titre SEO est deja calibre pour la SERP et
+  // le HTML prerendu (scripts/prerender-blog.mjs) n'a pas de suffixe -- l'ajouter
+  // apres hydratation allongeait de 11 caracteres le titre que Google rend.
+  // Le nom du site est de toute facon affiche par Google via WebSite (index.html).
+  appendSiteName?: boolean;
 }
 
 // Pages ayant une variante d'URL préfixée réelle par langue (/en, /es, /it,
@@ -42,6 +47,7 @@ export function SEO({
   modifiedTime,
   hreflangAlternates,
   noindex = false,
+  appendSiteName = true,
 }: SEOProps) {
   const { i18n } = useTranslation();
   const location = useLocation();
@@ -67,7 +73,7 @@ export function SEO({
     ? 'SonnaLab - Le laboratoire d\'idées qui transforme le digital'
     : 'SonnaLab - The Ideas Lab Transforming Digital';
 
-  const finalTitle = title ? `${title} | SonnaLab` : defaultTitle;
+  const finalTitle = title ? (appendSiteName ? `${title} | SonnaLab` : title) : defaultTitle;
 
   const OG_LOCALES: Record<string, string> = {
     fr: 'fr_FR',

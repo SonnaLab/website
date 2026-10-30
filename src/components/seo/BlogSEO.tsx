@@ -21,6 +21,7 @@ export function BlogSEO({ post }: BlogSEOProps) {
     <>
       <SEO
         title={post.seo.title}
+        appendSiteName={false}
         description={post.seo.description}
         keywords={post.seo.keywords}
         url={`/blog/${post.slug}`}
