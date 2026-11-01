@@ -97,7 +97,6 @@ export default function Contact() {
         title={t('seo.title')}
         description={t('seo.description')}
         keywords={t('seo.keywords')}
-        image="/images/contact-og.png"
       />
       <section className="relative py-20 bg-linear-to-br from-gray-50 to-white overflow-hidden">
         <div className="absolute inset-0 bg-grid-gray-100/50 mask-[linear-gradient(0deg,transparent,black)]" />

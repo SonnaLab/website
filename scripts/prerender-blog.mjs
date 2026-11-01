@@ -302,6 +302,12 @@ const STATIC_PAGE_I18N = Object.fromEntries(STATIC_PAGES.map((page) => [page, Ob
   }),
 )]));
 
+// Image de partage des pages statiques : celle du template (index.html) et
+// l'image par defaut de SEO.tsx -- dimensions reelles du fichier
+// public/assets/images/og-image.jpg.
+const STATIC_OG_IMAGE = `${BASE_URL}/assets/images/og-image.jpg`;
+const STATIC_OG_IMAGE_SIZE = { width: 1200, height: 630 };
+
 /**
  * Page statique : meta + hreflang réels, et #root rendu par entry-server.tsx
  * quand ssrRoute est fourni (hydraté ensuite par main.tsx).
@@ -316,6 +322,11 @@ async function buildStaticPageHtml(template, { locale, basePath, page, ssrRoute,
   html = html.replace(/<meta name="description" content="[^"]*"\s*\/>/, `<meta name="description" content="${escapeHtml(desc)}" />`);
   html = html.replace(/<meta property="og:title" content="[^"]*"\s*\/>/, `<meta property="og:title" content="${escapeHtml(title)}" />`);
   html = html.replace(/<meta property="og:description" content="[^"]*"\s*\/>/, `<meta property="og:description" content="${escapeHtml(desc)}" />`);
+  html = html.replace(/<meta property="og:image" content="[^"]*"\s*\/>/, [
+    `<meta property="og:image" content="${STATIC_OG_IMAGE}" />`,
+    `<meta property="og:image:width" content="${STATIC_OG_IMAGE_SIZE.width}" />`,
+    `<meta property="og:image:height" content="${STATIC_OG_IMAGE_SIZE.height}" />`,
+  ].join('\n    '));
   html = html.replace(/<meta property="og:url" content="[^"]*"\s*\/>/, `<meta property="og:url" content="${url}" />`);
   html = html.replace(/<meta property="og:locale" content="[^"]*"\s*\/>/, `<meta property="og:locale" content="${OG_LOCALE[locale] || 'fr_FR'}" />`);
   html = html.replace(/<meta name="twitter:url" content="[^"]*"\s*\/>/, `<meta name="twitter:url" content="${url}" />`);

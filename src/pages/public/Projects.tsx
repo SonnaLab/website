@@ -77,7 +77,6 @@ export default function Projects() {
         description={t('seo.description')}
         keywords={t('seo.keywords')}
         url="/projects"
-        image="/images/projects-og.png"
       />
     <div className="min-h-screen bg-white">
       {/* Hero Section */}

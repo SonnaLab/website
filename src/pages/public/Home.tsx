@@ -17,7 +17,6 @@ export default function Home() {
         title={t('seo.title')}
         description={t('seo.description')}
         keywords={t('seo.keywords')}
-        image="/images/home-og.png"
       />
       <div id="home">
         <HeroSection />

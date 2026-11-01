@@ -35,11 +35,18 @@ function buildLocalizedHref(origin: string, basePath: string, lang: string): str
   return basePath === '/' ? `${origin}/${lang}` : `${origin}/${lang}${basePath}`;
 }
 
+// Image de partage par defaut (public/assets/images/og-image.jpg, 1200x630) :
+// la meme que le HTML prerendu des pages statiques (scripts/prerender-blog.mjs,
+// STATIC_OG_IMAGE), dimensions declarees seulement pour elle -- celles d'une
+// couverture d'article ne sont pas connues ici.
+const DEFAULT_IMAGE = '/assets/images/og-image.jpg';
+const DEFAULT_IMAGE_SIZE = { width: 1200, height: 630 };
+
 export function SEO({
   title,
   description,
   keywords,
-  image = '/assets/images/og-image.jpg',
+  image = DEFAULT_IMAGE,
   url,
   type = 'website',
   author = 'SonnaLab',
@@ -110,6 +117,8 @@ export function SEO({
       <meta property="og:title"        content={finalTitle}                                  />
       {description && <meta property="og:description" content={description} />}
       <meta property="og:image"        content={fullImageUrl}                                />
+      {image === DEFAULT_IMAGE && <meta property="og:image:width"  content={String(DEFAULT_IMAGE_SIZE.width)}  />}
+      {image === DEFAULT_IMAGE && <meta property="og:image:height" content={String(DEFAULT_IMAGE_SIZE.height)} />}
       <meta property="og:url"          content={fullUrl}                                     />
       <meta property="og:site_name"    content="SonnaLab"                                   />
       <meta property="og:locale"       content={ogLocale}                                   />
