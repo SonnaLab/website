@@ -303,9 +303,8 @@ const STATIC_PAGE_I18N = Object.fromEntries(STATIC_PAGES.map((page) => [page, Ob
 )]));
 
 /**
- * Coquille statique minimale : meta + hreflang réels, plus un H1 visible
- * injecté dans #root pour home (crawler sans JS) -- sans SSR complet des
- * sections (pas d'infra SSR React en place).
+ * Page statique : meta + hreflang réels, et #root rendu par entry-server.tsx
+ * quand ssrRoute est fourni (hydraté ensuite par main.tsx).
  */
 async function buildStaticPageHtml(template, { locale, basePath, page, ssrRoute, ssrData }) {
   const url = localizedUrl(locale, basePath);
@@ -325,9 +324,9 @@ async function buildStaticPageHtml(template, { locale, basePath, page, ssrRoute,
   html = html.replace(/<link rel="canonical" href="[^"]*"\s*\/>/, `<link rel="canonical" href="${url}" />`);
   html = html.replace('</head>', `    ${[...commonHeadTags(locale), ...staticHreflangLinks(basePath)].join('\n    ')}\n  </head>`);
 
-  // Home et blog (liste + archive, 2026-10-30) passent au vrai rendu SSR
-  // (entry-server.tsx) -- contact/projects restent sans contenu injecte
-  // dans #root (pas encore migres, voir le plan de migration SSR).
+  // Rendu SSR reel (entry-server.tsx) : home et blog (liste + archive,
+  // 2026-10-30), puis contact et projects (2026-11-01) -- leur #root restait
+  // vide, donc aucun <h1> ni texte dans le HTML servi aux crawlers.
   if (ssrRoute) {
     const { html: rootHtml, ssrDataScript } = await ssrRender(ssrRoute, locale, ssrData);
     html = html.replace('<div id="root"></div>', `<div id="root" data-ssr="1">${rootHtml}</div>`);
@@ -847,7 +846,7 @@ async function run() {
 
   const contactDir = join(BUILD_DIR, 'contact');
   await mkdir(contactDir, { recursive: true });
-  await writeFile(join(contactDir, 'index.html'), await buildStaticPageHtml(template, { locale: DEFAULT_LOCALE, basePath: '/contact', page: 'contact' }), 'utf-8');
+  await writeFile(join(contactDir, 'index.html'), await buildStaticPageHtml(template, { locale: DEFAULT_LOCALE, basePath: '/contact', page: 'contact', ssrRoute: '/contact' }), 'utf-8');
   warn('Wrote contact/index.html (fr)');
 
   // /projects (bare, fr) était déjà servie via le nginx whitelist regex
@@ -857,7 +856,7 @@ async function run() {
   // ci-dessous pour cohérence (2026-09-08).
   const projectsDir = join(BUILD_DIR, 'projects');
   await mkdir(projectsDir, { recursive: true });
-  await writeFile(join(projectsDir, 'index.html'), await buildStaticPageHtml(template, { locale: DEFAULT_LOCALE, basePath: '/projects', page: 'projects' }), 'utf-8');
+  await writeFile(join(projectsDir, 'index.html'), await buildStaticPageHtml(template, { locale: DEFAULT_LOCALE, basePath: '/projects', page: 'projects', ssrRoute: '/projects' }), 'utf-8');
   warn('Wrote projects/index.html (fr)');
 
   for (const locale of PREFIXED_LOCALES) {
@@ -880,11 +879,11 @@ async function run() {
 
     const localeContactDir = join(localeDir, 'contact');
     await mkdir(localeContactDir, { recursive: true });
-    await writeFile(join(localeContactDir, 'index.html'), await buildStaticPageHtml(template, { locale, basePath: '/contact', page: 'contact' }), 'utf-8');
+    await writeFile(join(localeContactDir, 'index.html'), await buildStaticPageHtml(template, { locale, basePath: '/contact', page: 'contact', ssrRoute: '/contact' }), 'utf-8');
 
     const localeProjectsDir = join(localeDir, 'projects');
     await mkdir(localeProjectsDir, { recursive: true });
-    await writeFile(join(localeProjectsDir, 'index.html'), await buildStaticPageHtml(template, { locale, basePath: '/projects', page: 'projects' }), 'utf-8');
+    await writeFile(join(localeProjectsDir, 'index.html'), await buildStaticPageHtml(template, { locale, basePath: '/projects', page: 'projects', ssrRoute: '/projects' }), 'utf-8');
 
     warn(`Wrote /${locale}/, /${locale}/blog/, /${locale}/contact/, /${locale}/projects/`);
   }
