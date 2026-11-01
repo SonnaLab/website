@@ -12,7 +12,7 @@
  */
 
 import { readFile, writeFile, mkdir, copyFile, readdir } from 'fs/promises';
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { createHash } from 'crypto';
@@ -287,44 +287,20 @@ function staticHreflangLinks(basePath) {
   return links;
 }
 
-// title/description repris tels quels des locales src/locales/{locale}/{home,blog,contact}.json
-// -- SEO.tsx ajoute " | SonnaLab" au titre sauf pour la page blog qui l'a déjà.
-const STATIC_PAGE_I18N = {
-  home: {
-    fr: { title: "Accueil - De l'Idée à l'Innovation | SonnaLab", desc: "SonnaLab est votre partenaire de confiance pour l'innovation technologique. Conseil technologique, développement d'applications, IA et solutions numériques sur mesure.", h1: "Le laboratoire d'idées qui transforme le digital" },
-    en: { title: 'Home - From Idea to Innovation | SonnaLab', desc: 'SonnaLab is your trusted partner for technological innovation. Tech consulting, app development, AI and tailored digital solutions for SMEs and startups.', h1: 'The think tank that transforms digital technology' },
-    es: { title: 'Inicio - De la Idea a la Innovación | SonnaLab', desc: 'SonnaLab es su socio de confianza para la innovación tecnológica. Consultoría tech, desarrollo de aplicaciones, IA y soluciones digitales a su medida.', h1: 'El laboratorio de ideas que transforma lo digital' },
-    it: { title: "Home - Dall'Idea all'Innovazione | SonnaLab", desc: "SonnaLab è il tuo partner di fiducia per l'innovazione tecnologica. Consulenza tech, sviluppo di app, intelligenza artificiale e soluzioni digitali su misura.", h1: "Il laboratorio di idee che trasforma il digitale" },
-    de: { title: 'Startseite - Von der Idee zur Innovation | SonnaLab', desc: 'SonnaLab ist Ihr vertrauenswürdiger Partner für technologische Innovation. Tech-Beratung, App-Entwicklung, KI sowie maßgeschneiderte digitale Lösungen.', h1: 'Das Ideenlabor, das das Digitale transformiert' },
-  },
-  blog: {
-    fr: { title: 'Blog - Innovation Digitale & IA | SonnaLab', desc: "Découvrez nos articles sur l'intelligence artificielle, le développement web et la transformation digitale. Guides pratiques et études de cas." },
-    en: { title: 'Blog - Digital Innovation & AI | SonnaLab', desc: 'Discover our articles on artificial intelligence, web development and digital transformation. Practical guides and case studies.' },
-    es: { title: 'Blog - Innovación Digital & IA | SonnaLab', desc: 'Descubra nuestros artículos sobre inteligencia artificial, desarrollo web y transformación digital.' },
-    it: { title: 'Blog - Innovazione Digitale & IA | SonnaLab', desc: "Scoprite i nostri articoli sull'intelligenza artificiale, lo sviluppo web e la trasformazione digitale." },
-    de: { title: 'Blog - Digitale Innovation & KI | SonnaLab', desc: 'Entdecken Sie unsere Artikel über künstliche Intelligenz, Webentwicklung und digitale Transformation.' },
-  },
-  contact: {
-    fr: { title: 'Contact - Parlons de Votre Projet | SonnaLab', desc: "Contactez SonnaLab pour discuter de votre projet digital. Notre équipe d'experts est prête à vous accompagner dans votre transformation numérique." },
-    en: { title: "Contact - Let's Talk About Your Project | SonnaLab", desc: 'Get in touch with SonnaLab to discuss your digital project. Our team of experts is ready to assist you in your digital transformation.' },
-    es: { title: 'Contacto - Hablemos de su Proyecto | SonnaLab', desc: 'Póngase en contacto con SonnaLab para hablar de su proyecto digital.' },
-    it: { title: 'Contatti - Parliamo del Vostro Progetto | SonnaLab', desc: 'Contattateci per discutere il vostro progetto digitale.' },
-    de: { title: 'Kontakt - Sprechen wir über Ihr Projekt | SonnaLab', desc: 'Kontaktieren Sie SonnaLab, um Ihr digitales Projekt zu besprechen.' },
-  },
-  // Ajouté 2026-09-08 : /projects n'avait jamais été ajouté ici ni au nginx
-  // whitelist regex ni au bloc de génération des coquilles locale (voir
-  // writeStaticShells plus bas) -- /{locale}/projects renvoyait donc un
-  // vrai 404 pour les 4 locales préfixées (jamais bare /projects, lui géré
-  // par ailleurs), repéré via Search Console (audit sonnalab.com, 2026-09-08).
-  // Titres/descriptions repris tels quels de src/locales/{locale}/projects.json#seo.
-  projects: {
-    fr: { title: 'Projets - Innovation & Technologie | SonnaLab', desc: 'Chaque application utilise des technologies de pointe pour garantir fiabilité et évolutivité' },
-    en: { title: 'Projects - Innovation & Technology | SonnaLab', desc: 'Each application uses top-performing technologies to ensure reliability and scalability' },
-    es: { title: 'Proyectos - Innovación y Tecnología | SonnaLab', desc: 'Cada aplicación utiliza tecnologías de alto rendimiento para garantizar fiabilidad y escalabilidad' },
-    it: { title: 'Progetti - Innovazione e Tecnologia | SonnaLab', desc: 'Ogni applicazione utilizza tecnologie ad alte prestazioni per garantire affidabilità e scalabilità' },
-    de: { title: 'Projekte - Innovation & Technologie | SonnaLab', desc: 'Jede Anwendung verwendet leistungsstarke Technologien für Zuverlässigkeit und Skalierbarkeit' },
-  },
-};
+// title/description lus dans src/locales/{locale}/{page}.json#seo -- la meme
+// source que SEO.tsx apres hydratation (les pages appellent
+// <SEO title={t('seo.title')} description={t('seo.description')} />). Une
+// copie en dur vivait ici jusqu'au 2026-11-01 et divergeait sans que rien ne
+// le signale : 12 pages statiques hors 120-160 caracteres (audit du site).
+// SEO.tsx ajoute " | SonnaLab" au titre, repris a l'identique ici.
+const LOCALES_DIR = join(__dirname, '..', 'src', 'locales');
+const STATIC_PAGES = ['home', 'blog', 'contact', 'projects'];
+const STATIC_PAGE_I18N = Object.fromEntries(STATIC_PAGES.map((page) => [page, Object.fromEntries(
+  LOCALES.map((locale) => {
+    const { seo } = JSON.parse(readFileSync(join(LOCALES_DIR, locale, `${page}.json`), 'utf-8'));
+    return [locale, { title: `${seo.title} | SonnaLab`, desc: seo.description }];
+  }),
+)]));
 
 /**
  * Coquille statique minimale : meta + hreflang réels, plus un H1 visible
