@@ -11,10 +11,11 @@
  * the bundled index.html.
  */
 
-import { readFile, writeFile, mkdir, copyFile } from 'fs/promises';
+import { readFile, writeFile, mkdir, copyFile, readdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
+import { createHash } from 'crypto';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = dirname(__filename);
@@ -703,8 +704,8 @@ async function run() {
   const rawTemplate = await readFile(templateSnapshotPath, 'utf-8');
   let template = stripRootContent(rawTemplate);
 
-  // Inline le CSS de build (~200 Ko) directement dans <head> au lieu du
-  // <link rel="stylesheet"> externe -- ces pages statiques (surtout les
+  // 2026-08-24 a 2026-10-31 : le CSS de build etait inline dans <head> au
+  // lieu du <link rel="stylesheet"> externe -- ces pages statiques (surtout les
   // articles, dont #root contient deja tout le corps du texte pour le SEO,
   // voir buildArticleHead) affichaient un vrai FOUC : le HTML pre-rendu
   // peint immediatement mais sans aucune regle CSS le temps que le fichier
@@ -720,16 +721,34 @@ async function run() {
   // et tentait de "l'inliner" comme un fichier local inexistant -- echec
   // silencieux qui laissait le vrai CSS du build (~223 Ko, tout Tailwind)
   // jamais inline, reintroduisant le FOUC d'origine sur toutes les pages.
-  const cssLinkMatch = template.match(/<link rel="stylesheet"[^>]*href="(\/[^"]+)"[^>]*\/?>/);
-  if (cssLinkMatch) {
-    const cssPath = join(BUILD_DIR, cssLinkMatch[1].replace(/^\//, ''));
-    if (existsSync(cssPath)) {
-      const cssContent = await readFile(cssPath, 'utf-8');
-      template = template.replace(cssLinkMatch[0], `<style>${cssContent}</style>`);
-      warn(`Inlined CSS (${(cssContent.length / 1024).toFixed(0)} KB) from ${cssLinkMatch[1]}`);
-    } else {
-      warn(`CSS file not found for inlining: ${cssPath} — keeping external <link>`);
-    }
+  //
+  // 2026-11-01 : inliner mettait 276 Ko de CSS dans CHACUNE des 866 pages
+  // (contre ~100 Ko de HTML utile), retelecharges sans cache a chaque page
+  // vue -- meme correctif que lecolt.com (fadd5e2). Meme garantie anti-FOUC
+  // sans le poids : tous les fichiers CSS du build sont concatenes dans UN
+  // fichier versionne (assets/pages-<hash>.css, cache long via nginx comme
+  // tout /assets/) lie en <link rel="stylesheet"> dans <head> -- bloquant
+  // pour le rendu, donc le style est la des le premier paint. Le fichier
+  // combine est exclu de la relecture (regen-sitemap.sh relance ce script
+  // seul, sans vite build) pour ne jamais s'inclure lui-meme : meme contenu,
+  // meme nom, a chaque passage.
+  const COMBINED_CSS_PREFIX = 'pages-';
+  const cssFiles = (await readdir(join(BUILD_DIR, 'assets')).catch(() => []))
+    .filter((f) => f.endsWith('.css') && !f.startsWith(COMBINED_CSS_PREFIX))
+    .sort();
+  const cssLinkMatch = template.match(/<link rel="stylesheet"[^>]*href="\/[^"]+"[^>]*\/?>/);
+  if (cssFiles.length > 0) {
+    const contents = await Promise.all(cssFiles.map((f) => readFile(join(BUILD_DIR, 'assets', f), 'utf-8')));
+    const combinedCss = contents.join('\n');
+    const combinedName = `${COMBINED_CSS_PREFIX}${createHash('sha256').update(combinedCss).digest('hex').slice(0, 10)}.css`;
+    await writeFile(join(BUILD_DIR, 'assets', combinedName), combinedCss, 'utf-8');
+    const combinedLink = `<link rel="stylesheet" href="/assets/${combinedName}">`;
+    template = cssLinkMatch
+      ? template.replace(cssLinkMatch[0], combinedLink)
+      : template.replace('</head>', `    ${combinedLink}\n  </head>`);
+    warn(`Linked ${cssFiles.length} CSS file(s) as /assets/${combinedName}, ${(combinedCss.length / 1024).toFixed(0)} KB`);
+  } else {
+    warn(`No CSS files found in ${join(BUILD_DIR, 'assets')} — keeping the template <link>`);
   }
 
   let written = 0;

@@ -9,7 +9,7 @@
 // reutilise le DOM au lieu de le rejeter et le reconstruire (voir main.tsx).
 //
 // N'importe PAS "./index.css" (le CSS est deja gere separement par
-// scripts/prerender-blog.mjs, qui l'inline dans le <style> du <head>) ni
+// scripts/prerender-blog.mjs, qui le lie en un seul <link> dans le <head>) ni
 // les modales sans valeur SEO (ConsultationModal/CookieConsent/Toaster) --
 // seul le contenu a l'interieur du <RouterProvider> compte ici.
 
