@@ -108,10 +108,13 @@ async function hydrateInPrerenderedLanguage(): Promise<string | null> {
 // Balises du <head> prerendu que SEO.tsx reemet : data-rh les confie a
 // react-helmet-async, qui les remplace au lieu d'ajouter les siennes a cote
 // (2026-11-02 : description, og:* et twitter:* en double sur toutes les pages
-// apres hydratation). Le hreflang n'est pas concerne : tous les appels a SEO
-// ne le reemettent pas et il disparaitrait des articles.
+// apres hydratation). Le hreflang des articles reste au prerendu : SEO ne le
+// reemet pas, il disparaitrait (voir isArticlePage).
+const isArticlePage = /^\/blog\/[^/]+/.test(window.location.pathname);
 const HELMET_OWNED_HEAD_TAGS = [
   'link[rel="canonical"]',
+  ...(isArticlePage ? [] : ['link[rel="alternate"][hreflang]']),
+  ...['article:published_time', 'article:modified_time', 'article:author'].map((property) => `meta[property="${property}"]`),
   ...['description', 'keywords', 'author', 'robots', 'googlebot', 'theme-color', 'msapplication-TileColor',
     'apple-mobile-web-app-capable', 'apple-mobile-web-app-status-bar-style', 'apple-mobile-web-app-title',
     'twitter:card', 'twitter:title', 'twitter:description', 'twitter:image', 'twitter:site', 'twitter:creator',

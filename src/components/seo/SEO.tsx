@@ -83,7 +83,10 @@ export function SEO({
   // RÉELLEMENT affichée (ex: /en, /en/blog) à chaque changement de route,
   // pas seulement au premier chargement.
   const currentPath = location.pathname === '/' ? '' : location.pathname.replace(/\/+$/, '');
-  const fullUrl = url ? `${siteUrl}${url}` : `${siteUrl}${currentPath}` || siteUrl;
+  // `url` est le chemin francais de la page : sur /en/blog ou /de/projects il
+  // declarait la version francaise comme canonique, contre le HTML prerendu.
+  const isLocalePrefixed = /^\/(en|es|it|de)(\/|$)/.test(location.pathname);
+  const fullUrl = url && !isLocalePrefixed ? `${siteUrl}${url}` : `${siteUrl}${currentPath}` || siteUrl;
   const resizedImage = resizedSocialImage(image);
   const fullImageUrl = resizedImage ?? (image.startsWith('http') ? image : `${siteUrl}${image}`);
   const hasKnownImageSize = image === DEFAULT_IMAGE || resizedImage !== null;
