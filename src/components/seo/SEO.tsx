@@ -83,17 +83,19 @@ export function SEO({
   // RÉELLEMENT affichée (ex: /en, /en/blog) à chaque changement de route,
   // pas seulement au premier chargement.
   const currentPath = location.pathname === '/' ? '' : location.pathname.replace(/\/+$/, '');
-  // `url` est le chemin francais de la page : sur /en/blog ou /de/projects il
-  // declarait la version francaise comme canonique, contre le HTML prerendu.
-  const isLocalePrefixed = /^\/(en|es|it|de)(\/|$)/.test(location.pathname);
-  const fullUrl = url && !isLocalePrefixed ? `${siteUrl}${url}` : `${siteUrl}${currentPath}` || siteUrl;
   const resizedImage = resizedSocialImage(image);
   const fullImageUrl = resizedImage ?? (image.startsWith('http') ? image : `${siteUrl}${image}`);
   const hasKnownImageSize = image === DEFAULT_IMAGE || resizedImage !== null;
 
   const prefixMatch = location.pathname.match(/^\/(en|es|it|de)(\/.*)?$/);
-  const basePath = prefixMatch ? (prefixMatch[2] || '/') : (location.pathname || '/');
+  const basePath = (prefixMatch ? (prefixMatch[2] || '/') : (location.pathname || '/')).replace(/(.)\/+$/, '$1');
   const isLocalized = !hreflangAlternates && LOCALIZED_PATHS.includes(basePath);
+  // ForceLocale retire le prefixe de la barre d'adresse (/en/contact -> /contact,
+  // contenu toujours en anglais) : la canonique d'une page traduite suit donc la
+  // langue affichee, comme le HTML prerendu, pas l'URL courante.
+  const fullUrl = isLocalized
+    ? buildLocalizedHref(siteUrl, basePath, currentLang)
+    : url ? `${siteUrl}${url}` : `${siteUrl}${currentPath}` || siteUrl;
   const computedHreflangAlternates = isLocalized
     ? [...SITE_LOCALES, 'x-default'].map((lang) => ({ lang, href: buildLocalizedHref(siteUrl, basePath, lang) }))
     : hreflangAlternates;
