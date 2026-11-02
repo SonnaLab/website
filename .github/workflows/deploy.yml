@@ -32,6 +32,14 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
+          # Coupures reseau de 2-3 min vues le 2026-11-02 (Connection timed out,
+          # aucune trace cote serveur) : on patiente ~8 min avant d'echouer.
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" -o StrictHostKeyChecking=accept-new \
+              -o ConnectTimeout=20 "$SSH_USER@$SSH_HOST" true && break
+            echo "SSH indisponible (tentative $attempt/10), nouvel essai dans 30s"
+            sleep 30
+          done
           ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" \
             -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 \
             -o ServerAliveInterval=15 -o ServerAliveCountMax=8 \
