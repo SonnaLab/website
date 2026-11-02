@@ -42,6 +42,23 @@ function buildLocalizedHref(origin: string, basePath: string, lang: string): str
 const DEFAULT_IMAGE = '/assets/images/og-image.jpg';
 const DEFAULT_IMAGE_SIZE = { width: 1200, height: 630 };
 
+// Meme recadrage que imageVariant() de scripts/prerender-blog.mjs : couvertures
+// Unsplash (imgix) en 1200x630, pour garder l'image du HTML prerendu apres
+// hydratation. null pour toute autre URL, rendue telle quelle.
+function resizedSocialImage(url: string): string | null {
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname !== 'images.unsplash.com') return null;
+    parsed.searchParams.set('w', String(DEFAULT_IMAGE_SIZE.width));
+    parsed.searchParams.set('h', String(DEFAULT_IMAGE_SIZE.height));
+    parsed.searchParams.set('fit', 'crop');
+    parsed.searchParams.set('crop', 'entropy');
+    return parsed.toString();
+  } catch {
+    return null;
+  }
+}
+
 export function SEO({
   title,
   description,
@@ -67,7 +84,9 @@ export function SEO({
   // pas seulement au premier chargement.
   const currentPath = location.pathname === '/' ? '' : location.pathname.replace(/\/+$/, '');
   const fullUrl = url ? `${siteUrl}${url}` : `${siteUrl}${currentPath}` || siteUrl;
-  const fullImageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
+  const resizedImage = resizedSocialImage(image);
+  const fullImageUrl = resizedImage ?? (image.startsWith('http') ? image : `${siteUrl}${image}`);
+  const hasKnownImageSize = image === DEFAULT_IMAGE || resizedImage !== null;
 
   const prefixMatch = location.pathname.match(/^\/(en|es|it|de)(\/.*)?$/);
   const basePath = prefixMatch ? (prefixMatch[2] || '/') : (location.pathname || '/');
@@ -117,8 +136,8 @@ export function SEO({
       <meta property="og:title"        content={finalTitle}                                  />
       {description && <meta property="og:description" content={description} />}
       <meta property="og:image"        content={fullImageUrl}                                />
-      {image === DEFAULT_IMAGE && <meta property="og:image:width"  content={String(DEFAULT_IMAGE_SIZE.width)}  />}
-      {image === DEFAULT_IMAGE && <meta property="og:image:height" content={String(DEFAULT_IMAGE_SIZE.height)} />}
+      {hasKnownImageSize && <meta property="og:image:width"  content={String(DEFAULT_IMAGE_SIZE.width)}  />}
+      {hasKnownImageSize && <meta property="og:image:height" content={String(DEFAULT_IMAGE_SIZE.height)} />}
       <meta property="og:url"          content={fullUrl}                                     />
       <meta property="og:site_name"    content="SonnaLab"                                   />
       <meta property="og:locale"       content={ogLocale}                                   />

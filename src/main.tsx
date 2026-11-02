@@ -105,7 +105,24 @@ async function hydrateInPrerenderedLanguage(): Promise<string | null> {
 // retombe sur createRoot (comportement client-only classique, sûr pour
 // n'importe quelle page pas encore migree vers entry-server, ex. /contact,
 // /projects ou /legal/* pour l'instant).
+// Balises du <head> prerendu que SEO.tsx reemet : data-rh les confie a
+// react-helmet-async, qui les remplace au lieu d'ajouter les siennes a cote
+// (2026-11-02 : description, og:* et twitter:* en double sur toutes les pages
+// apres hydratation). Le hreflang n'est pas concerne : tous les appels a SEO
+// ne le reemettent pas et il disparaitrait des articles.
+const HELMET_OWNED_HEAD_TAGS = [
+  'link[rel="canonical"]',
+  ...['description', 'keywords', 'author', 'robots', 'googlebot', 'theme-color', 'msapplication-TileColor',
+    'apple-mobile-web-app-capable', 'apple-mobile-web-app-status-bar-style', 'apple-mobile-web-app-title',
+    'twitter:card', 'twitter:title', 'twitter:description', 'twitter:image', 'twitter:site', 'twitter:creator',
+  ].map((name) => `meta[name="${name}"]`),
+  ...['og:type', 'og:title', 'og:description', 'og:image', 'og:image:width', 'og:image:height', 'og:url',
+    'og:site_name', 'og:locale',
+  ].map((property) => `meta[property="${property}"]`),
+].join(',');
+
 async function mount() {
+  document.head.querySelectorAll(HELMET_OWNED_HEAD_TAGS).forEach((tag) => tag.setAttribute('data-rh', 'true'));
   if (rootEl.dataset.ssr === '1') {
     const restoreLanguage = await hydrateInPrerenderedLanguage();
     hydrateRoot(rootEl, <App restoreLanguage={restoreLanguage} />);
