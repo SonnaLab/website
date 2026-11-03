@@ -779,6 +779,7 @@
       "generateDevis": "Angebot erstellen",
       "updateDevis": "Angebot aktualisieren",
       "generateDevisNoScore": "Keine bewertete Aufgabe für diesen Liefergegenstand (oder Fälligkeit überschritten): Bewerte die Aufgaben (1-5), um das Angebot zu berechnen.",
+      "devisAmountKept": "Neuberechnung nicht möglich (keine bewertete Aufgabe oder kein Tag zwischen Ausstellung und Fälligkeit): Der aktuelle Betrag von {{amount}} bleibt erhalten. Wähle ein künftiges Fälligkeitsdatum oder bewerte die Aufgaben, um ihn neu zu berechnen.",
       "deleteBlocked": "Dieser Liefergegenstand hat verknüpfte Aufgaben und kann nicht gelöscht werden. Markiere ihn stattdessen als erledigt.",
       "needProject": "Lege zuerst ein Projekt für diesen Kunden an.",
       "pick": "Wählen Sie ein Lieferobjekt, um die Details zu sehen."

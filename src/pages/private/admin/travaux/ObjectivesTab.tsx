@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 
 import { Modal } from '@/components/common/Modal';
 import { apiService } from '@/services/api';
-import { calculateDevis, DAYS_MULTIPLIERS, formatDays, shownDays, shownTotalDays } from '@/lib/devisCalc';
+import { calculateDevis, DAYS_MULTIPLIERS, formatDays, remainingDaysUntil, shownDays, shownTotalDays } from '@/lib/devisCalc';
 import { DataTableAction } from '@/components/common/DataTable';
 import {
   CheckCircleIcon, ChevronDownIcon, FileTextIcon, FolderKanbanIcon, PenLineIcon, PlusIcon, TargetIcon, Trash2Icon,
@@ -21,7 +21,7 @@ import type {
 } from '@/types/travaux';
 import type { TravauxProject, TravauxResource } from './useTravauxData';
 import type { TravauxTabHandle } from './tabHandle';
-import { addDaysIso, apiErrorMessage, dueTone, formatDate, formatEuros, todayIso } from './format';
+import { addDaysIso, apiErrorMessage, dueTone, formatCents, formatDate, formatEuros, todayIso } from './format';
 import { useConfirmDelete } from './useConfirmDelete';
 
 const STATUSES: ObjectiveStatus[] = ['planned', 'in_progress', 'done', 'at_risk'];
@@ -509,18 +509,23 @@ function GenerateDevisModal({
   }, [objective, existingQuote]);
 
   const objectiveTasks = objective ? tasks.filter((task) => task.objective_id === objective.id) : [];
-  const calc = calculateDevis(objectiveTasks, dueOn || null, dailyRate ? Number(dailyRate) : null);
+  // Past its due date, a quote stays priced from the day it was issued:
+  // re-issuing it today would leave no day to share out between its phases.
+  const pricedFrom = (dueOn && remainingDaysUntil(dueOn) === 0 && existingQuote?.issued_on) || todayIso();
+  const calc = calculateDevis(objectiveTasks, dueOn || null, dailyRate ? Number(dailyRate) : null, pricedFrom);
+  // Nothing to price it from (no scored task, no day left): it keeps its amount.
+  const keptCents = calc.allocations.length === 0 ? existingQuote?.amount_cents : undefined;
 
   async function submit() {
     if (!objective) return;
     setSaving(true);
-    // (Re)generating issues the quote today: its amount and its PDF are both
-    // priced from that date.
+    // (Re)generating issues the quote on that date: its amount and its PDF are
+    // both priced from it.
     const payload = {
-      issued_on: todayIso(),
+      issued_on: pricedFrom,
       due_on: dueOn || null,
       daily_rate_cents: dailyRate ? Math.round(Number(dailyRate) * 100) : null,
-      amount_cents: calc.totalPrice * 100,
+      amount_cents: keptCents ?? calc.totalPrice * 100,
       days_multiplier: multiplier,
     };
     try {
@@ -613,6 +618,8 @@ function GenerateDevisModal({
                 </tfoot>
               </table>
             </div>
+          ) : existingQuote ? (
+            <p className="trv-info">{t('travaux.objectives.devisAmountKept', { amount: formatCents(existingQuote.amount_cents) })}</p>
           ) : (
             <p className="trv-info">{t('travaux.objectives.generateDevisNoScore')}</p>
           )}

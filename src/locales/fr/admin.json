@@ -779,6 +779,7 @@
       "generateDevis": "Générer un devis",
       "updateDevis": "Mettre à jour le devis",
       "generateDevisNoScore": "Aucune tâche notée sur ce livrable (ou échéance dépassée) : notez les tâches (score 1-5) pour calculer le devis.",
+      "devisAmountKept": "Recalcul impossible (aucune tâche notée, ou aucun jour entre l'émission et l'échéance) : le montant actuel de {{amount}} est conservé. Choisissez une échéance future ou notez les tâches pour le recalculer.",
       "deleteBlocked": "Ce livrable a des tâches associées et ne peut pas être supprimé. Marquez-le comme terminé plutôt.",
       "needProject": "Créez d'abord un projet pour ce client.",
       "pick": "Sélectionnez un livrable pour voir son détail."

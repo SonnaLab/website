@@ -779,6 +779,7 @@
       "generateDevis": "Genera un preventivo",
       "updateDevis": "Aggiorna il preventivo",
       "generateDevisNoScore": "Nessuna attività valutata su questo deliverable (o scadenza superata): valuta le attività (1-5) per calcolare il preventivo.",
+      "devisAmountKept": "Ricalcolo impossibile (nessuna attività valutata o nessun giorno tra emissione e scadenza): l'importo attuale di {{amount}} viene mantenuto. Scegli una scadenza futura o valuta le attività per ricalcolarlo.",
       "deleteBlocked": "Questo deliverable ha attività collegate e non può essere eliminato. Segnalo invece come completato.",
       "needProject": "Crea prima un progetto per questo cliente.",
       "pick": "Seleziona un deliverable per vederne il dettaglio."

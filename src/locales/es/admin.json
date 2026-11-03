@@ -779,6 +779,7 @@
       "generateDevis": "Generar un presupuesto",
       "updateDevis": "Actualizar el presupuesto",
       "generateDevisNoScore": "Ninguna tarea puntuada en este entregable (o vencimiento superado): puntúa las tareas (1-5) para calcular el presupuesto.",
+      "devisAmountKept": "No se puede recalcular (ninguna tarea puntuada o ningún día entre la emisión y el vencimiento): se conserva el importe actual de {{amount}}. Elige un vencimiento futuro o puntúa las tareas para recalcularlo.",
       "deleteBlocked": "Este entregable tiene tareas vinculadas y no se puede eliminar. Márcalo como terminado.",
       "needProject": "Crea primero un proyecto para este cliente.",
       "pick": "Seleccione un entregable para ver su detalle."

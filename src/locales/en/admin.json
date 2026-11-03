@@ -779,6 +779,7 @@
       "generateDevis": "Generate a quote",
       "updateDevis": "Update the quote",
       "generateDevisNoScore": "No scored task on this deliverable (or the due date has passed): score the tasks (1-5) to compute the quote.",
+      "devisAmountKept": "Can't recalculate (no scored task, or no day between the issue and due dates): the current amount of {{amount}} is kept. Choose a future due date or score the tasks to recalculate it.",
       "deleteBlocked": "This deliverable has linked tasks and cannot be deleted. Mark it as done instead.",
       "needProject": "Create a project for this client first.",
       "pick": "Select a deliverable to see its details."
