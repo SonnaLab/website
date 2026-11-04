@@ -188,6 +188,8 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
     issuedOn: invoice.issued_on,
     dailyRate: invoice.daily_rate_cents != null ? invoice.daily_rate_cents / 100 : null,
     daysMultiplier: invoice.days_multiplier ?? 1,
+    flatFee: !!invoice.flat_fee,
+    paymentTerms: invoice.payment_terms,
     pricing: pricingOf(invoice),
     objective: objectives.find((o) => o.id === invoice.objective_id) ?? null,
     tasks: tasks.filter((task) => task.objective_id === invoice.objective_id),
@@ -530,12 +532,14 @@ function EditInvoiceModal({
   const [dueOn, setDueOn] = useState('');
   const [status, setStatus] = useState<InvoiceStatus>('draft');
   const [amount, setAmount] = useState('');
+  const [paymentTerms, setPaymentTerms] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [removeFile, setRemoveFile] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!invoice) return;
+    setPaymentTerms(invoice.payment_terms ?? '');
     setDailyRate(invoice.daily_rate_cents != null ? String(invoice.daily_rate_cents / 100) : '');
     setIssuedOn(invoice.issued_on || todayIso());
     setDueOn(invoice.due_on ?? '');
@@ -546,7 +550,8 @@ function EditInvoiceModal({
   }, [invoice]);
 
   // Avec un livrable dont les tâches sont notées, le montant est calculé (lecture seule).
-  const calc = baseData?.objective ? calculateDevis(baseData.tasks, dueOn || null, dailyRate ? Number(dailyRate) : null, issuedOn || null) : null;
+  // Un forfait garde son montant, saisi ; le reste se calcule.
+  const calc = baseData?.objective && !invoice?.flat_fee ? calculateDevis(baseData.tasks, dueOn || null, dailyRate ? Number(dailyRate) : null, issuedOn || null) : null;
   const computedAmount = calc && calc.allocations.length > 0 ? calc.totalPrice : null;
 
   const liveData: DocumentPreviewData | null = baseData && invoice ? {
@@ -555,6 +560,7 @@ function EditInvoiceModal({
     issuedOn: issuedOn || null,
     dailyRate: dailyRate ? Number(dailyRate) : null,
     amount: computedAmount ?? (amount ? Number(amount) : invoice.amount_cents / 100),
+    paymentTerms: invoice.flat_fee ? paymentTerms.trim() || null : baseData.paymentTerms,
   } : null;
 
   async function submit() {
@@ -567,6 +573,7 @@ function EditInvoiceModal({
         due_on: dueOn || null,
         status,
         amount_cents: Math.round(Number(computedAmount ?? (amount || 0)) * 100),
+        ...(invoice.flat_fee ? { payment_terms: paymentTerms.trim() || null } : {}),
         file: file ?? undefined,
         remove_file: removeFile && !file ? true : undefined,
       });
@@ -599,10 +606,12 @@ function EditInvoiceModal({
               <p className="trv-fieldset-label">{t('travaux.invoices.terms')}</p>
               <div className="adm-form">
                 <div className="adm-form__row">
-                  <div className="adm-form__field">
-                    <label className="adm-form__label" htmlFor="trv-edit-rate">{t('travaux.invoices.dailyRate')}</label>
-                    <input id="trv-edit-rate" type="number" min={0} step="10" className="adm-input" value={dailyRate} onChange={(e) => setDailyRate(e.target.value)} />
-                  </div>
+                  {!invoice.flat_fee && (
+                    <div className="adm-form__field">
+                      <label className="adm-form__label" htmlFor="trv-edit-rate">{t('travaux.invoices.dailyRate')}</label>
+                      <input id="trv-edit-rate" type="number" min={0} step="10" className="adm-input" value={dailyRate} onChange={(e) => setDailyRate(e.target.value)} />
+                    </div>
+                  )}
                   <div className="adm-form__field">
                     <label className="adm-form__label" htmlFor="trv-edit-due">{t('travaux.invoices.dueDate')}</label>
                     <input id="trv-edit-due" type="date" className="adm-input" value={dueOn} onChange={(e) => setDueOn(e.target.value)} />
@@ -631,6 +640,13 @@ function EditInvoiceModal({
                     </div>
                   )}
                 </div>
+                {invoice.flat_fee && (
+                  <div className="adm-form__field">
+                    <label className="adm-form__label" htmlFor="trv-edit-terms">{t('travaux.invoices.flatFee.paymentTerms')}</label>
+                    <textarea id="trv-edit-terms" className="adm-textarea" rows={2} maxLength={500} value={paymentTerms} onChange={(e) => setPaymentTerms(e.target.value)} />
+                    <p className="trv-hint">{t('travaux.invoices.flatFee.paymentTermsHint')}</p>
+                  </div>
+                )}
               </div>
             </div>
             <div>

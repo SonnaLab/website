@@ -124,9 +124,21 @@ export interface TravauxContract {
   ends_on: string | null;
   status: ContractStatus;
   notes: string | null;
+  /** Le texte du contrat, écrit dans l'app (absent : un simple fichier joint). */
+  body: string | null;
+  template_id: string | null;
+  /** Ce qu'il reste à remplir ou décider dans le texte : « [À compléter : …] ». */
+  to_complete: string[];
   file_path: string | null;
   file_name: string | null;
   created_at: string;
+  updated_at: string;
+}
+
+export interface TravauxContractTemplate {
+  id: string;
+  name: string;
+  body: string;
   updated_at: string;
 }
 
@@ -149,6 +161,10 @@ export interface TravauxInvoice {
   daily_rate_cents: number | null;
   /** « Facteur de multiplication » of the days shown (1 = off; 2, 3 or 4). */
   days_multiplier?: number;
+  /** Forfait : prestations réparties sur le montant, sans jours. */
+  flat_fee?: boolean;
+  /** Conditions de règlement propres à ce document (à la place de l'acompte de 30 %). */
+  payment_terms?: string | null;
   status: InvoiceStatus;
   issued_on: string | null;
   due_on: string | null;

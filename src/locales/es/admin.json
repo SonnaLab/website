@@ -892,6 +892,13 @@
           "other": "Otro motivo"
         }
       },
+      "flatFee": {
+        "enable": "Tarifa plana: importe fijo, sin días",
+        "hint": "El importe se reparte entre las tareas según su puntuación. No aparecen días ni tarifa diaria en el presupuesto.",
+        "amount": "Importe de la tarifa plana",
+        "paymentTerms": "Condiciones de pago",
+        "paymentTermsHint": "Sustituye la mención del anticipo del 30 % en el presupuesto. Opcional."
+      },
       "multiplier": {
         "enable": "Activar el factor de multiplicación",
         "hint": "Los días mostrados en el presupuesto se multiplican por este factor; los precios no cambian."
@@ -916,6 +923,26 @@
       }
     },
     "contracts": {
+      "document": "Documento",
+      "templates": "Modelos de contrato",
+      "newTemplate": "Nuevo modelo",
+      "templateName": "Nombre del modelo",
+      "text": "Texto del contrato",
+      "termsChanged": "El texto del contrato no sigue estos campos: corrija también el importe y las fechas en él.",
+      "textHint": "« ## » para un título, « - » para una viñeta, **negrita**, una línea en blanco entre párrafos.",
+      "variables": "Variables disponibles",
+      "emptyTemplates": "Aún no hay modelos.",
+      "duplicate": "Duplicar",
+      "templateSaved": "Modelo guardado.",
+      "saved": "Contrato guardado.",
+      "pdf": "Descargar el PDF",
+      "toComplete_one": "{{count}} punto por completar o decidir en el texto: busca « [À ».",
+      "toComplete_other": "{{count}} puntos por completar o decidir en el texto: busca « [À ».",
+      "leftToComplete": "Por completar",
+      "fromTemplate": "Generar desde un modelo",
+      "noTemplate": "Sin modelo (archivo adjunto)",
+      "fromTemplateHint": "El cliente, el importe y las fechas rellenan el texto. Después lo revisas.",
+      "generate": "Generar",
       "new": "Nuevo contrato",
       "empty": "Sin contratos.",
       "amount": "Importe",
@@ -958,6 +985,8 @@
       "attentionOf": "A la atención de",
       "total": "Total IVA incl.",
       "deliverable": "Entregable",
+      "number": "N.º",
+      "prestations": "Prestaciones",
       "phases": "Fases",
       "description": "Descripción",
       "days": "Días",

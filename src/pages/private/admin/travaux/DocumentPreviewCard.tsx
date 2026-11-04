@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { apiAssetUrl } from '@/services/api';
-import { calculateDevis, formatDays, shownDays, shownTotalDays } from '@/lib/devisCalc';
+import { calculateDevis, calculateFlatFee, formatDays, shownDays, shownTotalDays } from '@/lib/devisCalc';
 import { bankLine, footerAddress, footerSlogan, footerWebsite, vatNumber } from '@/lib/letterhead';
 import type { TravauxClient, TravauxObjective, TravauxTask } from '@/types/travaux';
 import { formatDate, formatEuros } from './format';
@@ -18,6 +18,10 @@ export interface DocumentPreviewData {
   dailyRate: number | null;
   /** « Facteur de multiplication » of the days shown (1 = off). */
   daysMultiplier?: number;
+  /** Forfait : prestations réparties sur le montant, sans jours. */
+  flatFee?: boolean;
+  /** Conditions de règlement propres au document. */
+  paymentTerms?: string | null;
   /** An invoice is priced like its quote: the quote's dates and rate (as the PDF does). */
   pricing?: { dueDate: string | null; issuedOn: string | null; dailyRate: number | null };
   objective: TravauxObjective | null;
@@ -54,8 +58,13 @@ function PartyBlock({ party, label }: { party: TravauxClient | null; label: stri
 export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
   const { t } = useTranslation('admin');
   const basis = data.pricing ?? { dueDate: data.dueDate, issuedOn: data.issuedOn ?? null, dailyRate: data.dailyRate };
-  const calc = data.objective ? calculateDevis(data.tasks, basis.dueDate, basis.dailyRate, basis.issuedOn) : null;
+  const calc = !data.objective
+    ? null
+    : data.flatFee
+      ? calculateFlatFee(data.tasks, data.amount ?? 0)
+      : calculateDevis(data.tasks, basis.dueDate, basis.dailyRate, basis.issuedOn);
   const hasAllocations = !!calc && calc.allocations.length > 0;
+  const withDays = hasAllocations && !data.flatFee;
   const deliverableTitle = data.objective?.title || data.title || '—';
   const bank = bankLine(data.issuer);
   const address = footerAddress(data.issuer);
@@ -83,9 +92,9 @@ export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
         <table className="trv-doc__table">
           <thead>
             <tr>
-              <th>{t('travaux.document.phases')}</th>
-              <th>{t('travaux.document.description')}</th>
-              {hasAllocations && <th className="trv-right">{t('travaux.document.days')}</th>}
+              <th>{t(data.flatFee ? 'travaux.document.number' : 'travaux.document.phases')}</th>
+              <th>{t(data.flatFee ? 'travaux.document.prestations' : 'travaux.document.description')}</th>
+              {withDays && <th className="trv-right">{t('travaux.document.days')}</th>}
               <th className="trv-right">{t('travaux.document.price')}</th>
             </tr>
           </thead>
@@ -98,7 +107,7 @@ export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
                     <p className="trv-doc__task-title">{task.title}</p>
                     {task.description && <p className="trv-doc__task-desc">{task.description}</p>}
                   </td>
-                  <td className="trv-right trv-doc__muted">{offered ? '—' : formatDays(shownDays(days, data.daysMultiplier))}</td>
+                  {withDays && <td className="trv-right trv-doc__muted">{offered ? '—' : formatDays(shownDays(days, data.daysMultiplier))}</td>}
                   <td className="trv-right trv-num">{offered ? t('travaux.document.offered') : formatEuros(price)}</td>
                 </tr>
               ))
@@ -115,7 +124,7 @@ export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
               <td colSpan={2} className="trv-right" style={{ fontWeight: 600 }}>
                 {t('travaux.document.total')}
               </td>
-              {hasAllocations && (
+              {withDays && (
                 <td className="trv-right trv-num" style={{ fontWeight: 600 }}>{formatDays(shownTotalDays(calc!, data.daysMultiplier))}</td>
               )}
               <td className="trv-right">
@@ -127,11 +136,15 @@ export function DocumentPreviewCard({ data }: { data: DocumentPreviewData }) {
 
         <div className="trv-doc__mentions">
           <p>{bank ? t('travaux.document.paymentMentionBank', { bank }) : t('travaux.document.paymentMention')}</p>
-          <p>
-            {t('travaux.document.depositMentionBefore')}{' '}
-            <mark className="trv-doc__mark">{t('travaux.document.depositMentionRate')}</mark>{' '}
-            {t('travaux.document.depositMentionAfter')}
-          </p>
+          {data.paymentTerms ? (
+            <p>{data.paymentTerms}</p>
+          ) : (
+            <p>
+              {t('travaux.document.depositMentionBefore')}{' '}
+              <mark className="trv-doc__mark">{t('travaux.document.depositMentionRate')}</mark>{' '}
+              {t('travaux.document.depositMentionAfter')}
+            </p>
+          )}
         </div>
       </div>
 

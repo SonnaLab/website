@@ -81,6 +81,27 @@ export function calculateDevis(
   return { allocations, remainingDays, totalPrice: allocations.reduce((sum, a) => sum + a.price, 0) };
 }
 
+/**
+ * Un forfait (contrat annuel) : le montant réparti au score, sans jours. La
+ * dernière phase payante prend l'arrondi : le total est le montant. Même
+ * calcul que Pricing.flat côté API.
+ */
+export function calculateFlatFee(tasks: TravauxTask[], amount: number): DevisCalculation {
+  const scored = tasks.filter((t) => t.score != null && !Number.isNaN(Number(t.score)));
+  const totalScore = scored.reduce((sum, t) => sum + Number(t.score), 0);
+  if (!scored.length || !totalScore) return { allocations: [], remainingDays: 0, totalPrice: 0 };
+
+  const paid = scored.filter((t) => Number(t.score) !== 0);
+  let left = Math.round(amount);
+  const allocations = scored.map((task) => {
+    if (Number(task.score) === 0) return { task, days: 0, price: 0, offered: true };
+    const price = task === paid[paid.length - 1] ? left : Math.round(amount * Number(task.score) / totalScore);
+    left -= price;
+    return { task, days: 0, price, offered: false };
+  });
+  return { allocations, remainingDays: 0, totalPrice: allocations.reduce((sum, a) => sum + a.price, 0) };
+}
+
 /** Compte à rebours « J-17 », ou « J+3 » une fois l'échéance dépassée. */
 export function dueDateCountdown(dueDate: string, from: Date = new Date()): string {
   const today = new Date(from);

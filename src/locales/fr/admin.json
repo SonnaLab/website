@@ -892,6 +892,13 @@
           "other": "Autre raison"
         }
       },
+      "flatFee": {
+        "enable": "Au forfait : montant fixe, sans jours",
+        "hint": "Le montant est réparti entre les tâches selon leur score. Aucun jour ni TJM n'apparaît sur le devis.",
+        "amount": "Montant du forfait",
+        "paymentTerms": "Conditions de règlement",
+        "paymentTermsHint": "Remplace la mention d'acompte de 30 % sur le devis. Facultatif."
+      },
       "multiplier": {
         "enable": "Activer le facteur de multiplication",
         "hint": "Les jours affichés sur le devis sont multipliés par ce facteur ; les prix ne changent pas."
@@ -916,6 +923,26 @@
       }
     },
     "contracts": {
+      "document": "Document",
+      "templates": "Modèles de contrat",
+      "newTemplate": "Nouveau modèle",
+      "templateName": "Nom du modèle",
+      "text": "Texte du contrat",
+      "termsChanged": "Le texte du contrat ne suit pas ces champs : corrigez aussi le montant et les dates dedans.",
+      "textHint": "« ## » pour un titre, « - » pour une puce, **gras**, une ligne vide entre les paragraphes.",
+      "variables": "Variables disponibles",
+      "emptyTemplates": "Aucun modèle pour l'instant.",
+      "duplicate": "Dupliquer",
+      "templateSaved": "Modèle enregistré.",
+      "saved": "Contrat enregistré.",
+      "pdf": "Télécharger le PDF",
+      "toComplete_one": "{{count}} point à compléter ou à décider dans le texte : recherchez « [À ».",
+      "toComplete_other": "{{count}} points à compléter ou à décider dans le texte : recherchez « [À ».",
+      "leftToComplete": "À compléter",
+      "fromTemplate": "Générer depuis un modèle",
+      "noTemplate": "Sans modèle (fichier joint)",
+      "fromTemplateHint": "Le client, le montant et les dates remplissent le texte. Vous le relirez ensuite.",
+      "generate": "Générer",
       "new": "Nouveau contrat",
       "empty": "Aucun contrat.",
       "amount": "Montant",
@@ -958,6 +985,8 @@
       "attentionOf": "À l'attention de",
       "total": "Total TTC",
       "deliverable": "Livrable",
+      "number": "N°",
+      "prestations": "Prestations",
       "phases": "Phases",
       "description": "Description",
       "days": "Jours",

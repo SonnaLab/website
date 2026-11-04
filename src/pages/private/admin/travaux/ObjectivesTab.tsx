@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 
 import { Modal } from '@/components/common/Modal';
 import { apiService } from '@/services/api';
-import { calculateDevis, DAYS_MULTIPLIERS, formatDays, remainingDaysUntil, shownDays, shownTotalDays } from '@/lib/devisCalc';
+import { calculateDevis, calculateFlatFee, DAYS_MULTIPLIERS, formatDays, remainingDaysUntil, shownDays, shownTotalDays } from '@/lib/devisCalc';
 import { DataTableAction } from '@/components/common/DataTable';
 import {
   CheckCircleIcon, ChevronDownIcon, FileTextIcon, FolderKanbanIcon, PenLineIcon, PlusIcon, TargetIcon, Trash2Icon,
@@ -491,12 +491,19 @@ function GenerateDevisModal({
   const [dailyRate, setDailyRate] = useState(String(DEFAULT_DAILY_RATE));
   // « Facteur de multiplication » des jours affichés (1 = désactivé).
   const [multiplier, setMultiplier] = useState(1);
+  // Forfait : le montant est saisi, pas calculé sur des jours.
+  const [flatFee, setFlatFee] = useState(false);
+  const [flatAmount, setFlatAmount] = useState('');
+  const [paymentTerms, setPaymentTerms] = useState('');
   const [saving, setSaving] = useState(false);
 
   // Un livrable n'a qu'un devis en cours : le régénérer le met à jour (nouvelle
   // version) au lieu d'empiler des doublons.
   useEffect(() => {
     if (!objective) return;
+    setFlatFee(!!existingQuote?.flat_fee);
+    setFlatAmount(existingQuote?.flat_fee ? String(existingQuote.amount_cents / 100) : '');
+    setPaymentTerms(existingQuote?.payment_terms ?? '');
     if (existingQuote) {
       setDueOn(existingQuote.due_on ?? '');
       setDailyRate(existingQuote.daily_rate_cents != null ? String(existingQuote.daily_rate_cents / 100) : String(DEFAULT_DAILY_RATE));
@@ -515,18 +522,30 @@ function GenerateDevisModal({
   const calc = calculateDevis(objectiveTasks, dueOn || null, dailyRate ? Number(dailyRate) : null, pricedFrom);
   // Nothing to price it from (no scored task, no day left): it keeps its amount.
   const keptCents = calc.allocations.length === 0 ? existingQuote?.amount_cents : undefined;
+  const flatCalc = calculateFlatFee(objectiveTasks, Number(flatAmount) || 0);
+  const flatAmountValid = Number(flatAmount) > 0;
 
   async function submit() {
     if (!objective) return;
     setSaving(true);
     // (Re)generating issues the quote on that date: its amount and its PDF are
     // both priced from it.
-    const payload = {
+    const payload = flatFee ? {
+      issued_on: pricedFrom,
+      due_on: dueOn || null,
+      daily_rate_cents: null,
+      amount_cents: Math.round(Number(flatAmount) * 100),
+      days_multiplier: 1,
+      flat_fee: true,
+      payment_terms: paymentTerms.trim() || null,
+    } : {
       issued_on: pricedFrom,
       due_on: dueOn || null,
       daily_rate_cents: dailyRate ? Math.round(Number(dailyRate) * 100) : null,
       amount_cents: keptCents ?? calc.totalPrice * 100,
       days_multiplier: multiplier,
+      flat_fee: false,
+      payment_terms: null,
     };
     try {
       const invoice = existingQuote
@@ -554,24 +573,48 @@ function GenerateDevisModal({
       footer={
         <>
           <button type="button" className="adm-btn adm-btn--ghost" onClick={onClose}>{t('common.cancel')}</button>
-          <button type="button" className="adm-btn adm-btn--primary" onClick={submit} disabled={saving}>{label}</button>
+          <button type="button" className="adm-btn adm-btn--primary" onClick={submit} disabled={saving || (flatFee && !flatAmountValid)}>{label}</button>
         </>
       }
     >
       {objective && (
         <div className="adm-form">
           {!issuer && <p className="trv-error">{t('travaux.invoices.noIssuer')}</p>}
+          <div className="trv-multiplier">
+            <label className="trv-multiplier__toggle">
+              <input type="checkbox" checked={flatFee} onChange={(e) => setFlatFee(e.target.checked)} />
+              <span>{t('travaux.invoices.flatFee.enable')}</span>
+            </label>
+            <p className="trv-hint">{t('travaux.invoices.flatFee.hint')}</p>
+          </div>
           <div className="adm-form__row">
             <div className="adm-form__field">
               <label className="adm-form__label" htmlFor="trv-devis-due">{t('travaux.invoices.dueDate')}</label>
               <input id="trv-devis-due" type="date" className="adm-input" value={dueOn} onChange={(e) => setDueOn(e.target.value)} />
             </div>
-            <div className="adm-form__field">
-              <label className="adm-form__label" htmlFor="trv-devis-rate">{t('travaux.invoices.dailyRate')}</label>
-              <input id="trv-devis-rate" type="number" min={0} step="10" className="adm-input" value={dailyRate} onChange={(e) => setDailyRate(e.target.value)} />
-            </div>
+            {flatFee ? (
+              <div className="adm-form__field">
+                <label className="adm-form__label" htmlFor="trv-devis-flat">{t('travaux.invoices.flatFee.amount')} *</label>
+                <div className="trv-input-suffix">
+                  <input id="trv-devis-flat" type="number" min={0} step="100" className="adm-input" value={flatAmount} onChange={(e) => setFlatAmount(e.target.value)} />
+                  <span>€</span>
+                </div>
+              </div>
+            ) : (
+              <div className="adm-form__field">
+                <label className="adm-form__label" htmlFor="trv-devis-rate">{t('travaux.invoices.dailyRate')}</label>
+                <input id="trv-devis-rate" type="number" min={0} step="10" className="adm-input" value={dailyRate} onChange={(e) => setDailyRate(e.target.value)} />
+              </div>
+            )}
           </div>
 
+          {flatFee ? (
+            <div className="adm-form__field">
+              <label className="adm-form__label" htmlFor="trv-devis-terms">{t('travaux.invoices.flatFee.paymentTerms')}</label>
+              <textarea id="trv-devis-terms" className="adm-textarea" rows={2} maxLength={500} value={paymentTerms} onChange={(e) => setPaymentTerms(e.target.value)} />
+              <p className="trv-hint">{t('travaux.invoices.flatFee.paymentTermsHint')}</p>
+            </div>
+          ) : (
           <div className="trv-multiplier">
             <label className="trv-multiplier__toggle">
               <input type="checkbox" checked={multiplier > 1} onChange={(e) => setMultiplier(e.target.checked ? 2 : 1)} />
@@ -589,8 +632,36 @@ function GenerateDevisModal({
             )}
             <p className="trv-hint">{t('travaux.invoices.multiplier.hint')}</p>
           </div>
+          )}
 
-          {calc.allocations.length > 0 ? (
+          {flatFee ? (
+            flatCalc.allocations.length > 0 && (
+              <div className={['trv-alloc', flatCalc.allocations.length > 5 ? 'trv-alloc--scroll' : ''].filter(Boolean).join(' ')}>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>{t('travaux.document.prestations')}</th>
+                      <th className="trv-right">{t('travaux.common.amount')}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {flatCalc.allocations.map(({ task, price, offered }) => (
+                      <tr key={task.id}>
+                        <td>{task.title}</td>
+                        <td className="trv-right trv-num">{offered ? t('travaux.document.offered') : formatEuros(price)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td>{t('travaux.invoices.total')}</td>
+                      <td className="trv-right trv-num">{formatEuros(flatCalc.totalPrice)}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            )
+          ) : calc.allocations.length > 0 ? (
             <div className={['trv-alloc', calc.allocations.length > 5 ? 'trv-alloc--scroll' : ''].filter(Boolean).join(' ')}>
               <table>
                 <thead>

@@ -15,6 +15,7 @@ export {
   CalendarIcon,
   FolderKanbanIcon,
   ReceiptIcon,
+  CopyIcon,
   FileTextIcon,
   LogOutIcon,
   ArrowLeftIcon,

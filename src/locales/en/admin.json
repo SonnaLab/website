@@ -892,6 +892,13 @@
           "other": "Other reason"
         }
       },
+      "flatFee": {
+        "enable": "Flat fee: fixed amount, no days",
+        "hint": "The amount is split between tasks according to their score. No days or daily rate appear on the quote.",
+        "amount": "Flat fee amount",
+        "paymentTerms": "Payment terms",
+        "paymentTermsHint": "Replaces the 30% deposit mention on the quote. Optional."
+      },
       "multiplier": {
         "enable": "Enable the multiplying factor",
         "hint": "The days shown on the quote are multiplied by this factor; prices do not change."
@@ -916,6 +923,26 @@
       }
     },
     "contracts": {
+      "document": "Document",
+      "templates": "Contract templates",
+      "newTemplate": "New template",
+      "templateName": "Template name",
+      "text": "Contract text",
+      "termsChanged": "The contract text does not follow these fields: also correct the amount and dates in it.",
+      "textHint": "« ## » for a title, « - » for a bullet, **bold**, a blank line between paragraphs.",
+      "variables": "Available variables",
+      "emptyTemplates": "No template yet.",
+      "duplicate": "Duplicate",
+      "templateSaved": "Template saved.",
+      "saved": "Contract saved.",
+      "pdf": "Download the PDF",
+      "toComplete_one": "{{count}} point to complete or decide in the text: search for « [À ».",
+      "toComplete_other": "{{count}} points to complete or decide in the text: search for « [À ».",
+      "leftToComplete": "To complete",
+      "fromTemplate": "Generate from a template",
+      "noTemplate": "No template (attached file)",
+      "fromTemplateHint": "The client, amount and dates fill in the text. You then review it.",
+      "generate": "Generate",
       "new": "New contract",
       "empty": "No contracts.",
       "amount": "Amount",
@@ -958,6 +985,8 @@
       "attentionOf": "For the attention of",
       "total": "Total incl. tax",
       "deliverable": "Deliverable",
+      "number": "No.",
+      "prestations": "Services",
       "phases": "Phases",
       "description": "Description",
       "days": "Days",

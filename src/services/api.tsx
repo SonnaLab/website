@@ -10,6 +10,7 @@ import type {
   TravauxClient,
   TravauxClientsListResponse,
   TravauxContract,
+  TravauxContractTemplate,
   TravauxInvoice,
   TravauxObjective,
   TravauxPayload,
@@ -804,6 +805,25 @@ class ApiService {
   }
   async adminTravauxCreateContract(payload: TravauxPayload): Promise<{ contract: TravauxContract }> {
     return (await this.client.post('/api/v1/admin/travaux/contracts', toFormData('contract', payload), MULTIPART)).data;
+  }
+  async adminTravauxUpdateContract(id: string, payload: TravauxPayload): Promise<{ contract: TravauxContract }> {
+    return (await this.client.patch(`/api/v1/admin/travaux/contracts/${id}`, toFormData('contract', payload), MULTIPART)).data;
+  }
+  async adminTravauxDownloadContractPdf(id: string): Promise<{ blob: Blob; filename: string }> {
+    const res = await this.client.get(`/api/v1/admin/travaux/contracts/${id}/pdf`, { responseType: 'blob' });
+    return { blob: res.data, filename: filenameFrom(res.headers['content-disposition'], 'contrat.pdf') };
+  }
+  async adminTravauxContractTemplates(): Promise<{ templates: TravauxContractTemplate[] }> {
+    return (await this.client.get('/api/v1/admin/travaux/contract_templates')).data;
+  }
+  async adminTravauxCreateContractTemplate(payload: { name: string; body: string }): Promise<{ template: TravauxContractTemplate }> {
+    return (await this.client.post('/api/v1/admin/travaux/contract_templates', { template: payload })).data;
+  }
+  async adminTravauxUpdateContractTemplate(id: string, payload: { name: string; body: string }): Promise<{ template: TravauxContractTemplate }> {
+    return (await this.client.patch(`/api/v1/admin/travaux/contract_templates/${id}`, { template: payload })).data;
+  }
+  async adminTravauxDeleteContractTemplate(id: string) {
+    return (await this.client.delete(`/api/v1/admin/travaux/contract_templates/${id}`)).data;
   }
   async adminTravauxDeleteContract(id: string) {
     return (await this.client.delete(`/api/v1/admin/travaux/contracts/${id}`)).data;

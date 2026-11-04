@@ -892,6 +892,13 @@
           "other": "Anderer Grund"
         }
       },
+      "flatFee": {
+        "enable": "Pauschale: fester Betrag, ohne Tage",
+        "hint": "Der Betrag wird nach Punktzahl auf die Aufgaben verteilt. Weder Tage noch Tagessatz erscheinen im Angebot.",
+        "amount": "Pauschalbetrag",
+        "paymentTerms": "Zahlungsbedingungen",
+        "paymentTermsHint": "Ersetzt den Hinweis auf die Anzahlung von 30 % im Angebot. Optional."
+      },
       "multiplier": {
         "enable": "Multiplikationsfaktor aktivieren",
         "hint": "Die im Angebot angezeigten Tage werden mit diesem Faktor multipliziert; die Preise ändern sich nicht."
@@ -916,6 +923,26 @@
       }
     },
     "contracts": {
+      "document": "Dokument",
+      "templates": "Vertragsvorlagen",
+      "newTemplate": "Neue Vorlage",
+      "templateName": "Name der Vorlage",
+      "text": "Vertragstext",
+      "termsChanged": "Der Vertragstext folgt diesen Feldern nicht: Korrigieren Sie auch Betrag und Daten darin.",
+      "textHint": "« ## » für einen Titel, « - » für einen Aufzählungspunkt, **fett**, eine Leerzeile zwischen Absätzen.",
+      "variables": "Verfügbare Variablen",
+      "emptyTemplates": "Noch keine Vorlage.",
+      "duplicate": "Duplizieren",
+      "templateSaved": "Vorlage gespeichert.",
+      "saved": "Vertrag gespeichert.",
+      "pdf": "PDF herunterladen",
+      "toComplete_one": "{{count}} Punkt im Text zu ergänzen oder zu entscheiden: Suche nach « [À ».",
+      "toComplete_other": "{{count}} Punkte im Text zu ergänzen oder zu entscheiden: Suche nach « [À ».",
+      "leftToComplete": "Zu ergänzen",
+      "fromTemplate": "Aus einer Vorlage erstellen",
+      "noTemplate": "Ohne Vorlage (angehängte Datei)",
+      "fromTemplateHint": "Kunde, Betrag und Daten füllen den Text aus. Danach prüfst du ihn.",
+      "generate": "Erstellen",
       "new": "Neuer Vertrag",
       "empty": "Keine Verträge.",
       "amount": "Betrag",
@@ -958,6 +985,8 @@
       "attentionOf": "Zu Händen von",
       "total": "Gesamt inkl. MwSt.",
       "deliverable": "Liefergegenstand",
+      "number": "Nr.",
+      "prestations": "Leistungen",
       "phases": "Phasen",
       "description": "Beschreibung",
       "days": "Tage",
