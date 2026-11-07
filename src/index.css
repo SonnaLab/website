@@ -4,6 +4,7 @@
 @import url("./styles/contact.css");
 @import url("./styles/auth.css");
 @import url("./styles/dashboard.css");
+@import url("./styles/dsv.css");
 
 /* 2026-09-01 : ces regles @font-face etaient placees AVANT les @import
    ci-dessus lors du premier passage a l'auto-hebergement de Raleway -- une

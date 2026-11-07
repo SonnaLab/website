@@ -1206,6 +1206,24 @@ class ApiService {
   async adminLesankofaGenerationPause(reason?: string) { return (await this.client.post('/api/v1/admin/lesankofa/generation-control/pause', null, { params: reason ? { reason } : {} })).data; }
   async adminLesankofaGenerationResume()           { return (await this.client.post('/api/v1/admin/lesankofa/generation-control/resume')).data; }
 
+  // Moteur d'articles DSV — proxy a liste fermee via api.sonnalab.com
+  // (LesankofaDsvController). Les parametres repetes partent sans crochets
+  // (status=in_review&status=approved), comme FastAPI les attend.
+  async adminLesankofaDsv<T = unknown>(
+    method: 'get' | 'post' | 'put' | 'patch',
+    path: string,
+    options: { params?: Record<string, unknown>; body?: unknown; timeout?: number } = {},
+  ): Promise<T> {
+    return (await this.client.request<T>({
+      method,
+      url: `/api/v1/admin/lesankofa/dsv/${path}`,
+      params: options.params,
+      data: method === 'get' ? undefined : (options.body ?? {}),
+      timeout: options.timeout,
+      paramsSerializer: { indexes: null },
+    })).data;
+  }
+
   getBaseUrl(): string {
     return API_BASE_URL;
   }
