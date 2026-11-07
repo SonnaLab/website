@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -39,6 +40,7 @@ import {
   ChevronRightIcon,
   MegaphoneIcon,
   MegaphoneOffIcon,
+  ClipboardListIcon,
 } from '@icons';
 
 // ─────────────────────────────────────────────
@@ -1975,7 +1977,14 @@ export default function AdminLesankofa() {
       <PageHeader
         title={t('lesankofa.heading')}
         description={t('lesankofa.subtitle')}
-        actions={<GenerationControlToggle />}
+        actions={(
+          <div className="flex flex-wrap items-center gap-2">
+            <Link to="/admin/lesankofa/dsv" className="adm-btn adm-btn--ghost adm-btn--sm">
+              <ClipboardListIcon size={14} /> Moteur DSV : validation et décisions
+            </Link>
+            <GenerationControlToggle />
+          </div>
+        )}
       />
 
       <StatRow>
