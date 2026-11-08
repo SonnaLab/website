@@ -1716,7 +1716,6 @@ export default function AdminLesankofa() {
           <TabsTrigger value="models"         icon={<BrainIcon        size={14} />}>Modèles</TabsTrigger>
           <TabsTrigger value="clients"        icon={<UsersIcon        size={14} />}>Clients</TabsTrigger>
           <TabsTrigger value="model"          icon={<LayersIcon       size={14} />}>Schéma</TabsTrigger>
-          <span className="lsk-tabs__sep" aria-hidden="true">Moteur DSV</span>
           <TabsTrigger value="validation"     icon={<ClipboardListIcon size={14} />} count={dsvState.figures.inReview ?? undefined}>Validation</TabsTrigger>
           <TabsTrigger value="decisions"      icon={<TargetIcon       size={14} />}>Décisions</TabsTrigger>
           <TabsTrigger value="questions"      icon={<SearchIcon       size={14} />}>Questions</TabsTrigger>
