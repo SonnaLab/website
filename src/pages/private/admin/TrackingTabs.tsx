@@ -7,11 +7,11 @@ import { useTranslation } from 'react-i18next';
 import { apiService } from '@/services/api';
 import { Card } from '@/components/ui/card';
 import { Modal } from '@/components/common/Modal';
-import {
+import { PaginationBar,
   DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
   DataTableSelectTd, DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, filterRows, useRowSelection,
 } from '@/components/common/DataTable';
-import { ChevronLeftIcon, ChevronRightIcon, EyeIcon } from '@icons';
+import { EyeIcon } from '@icons';
 
 const SITE = 'sonnalab.com';
 const PER_PAGE = 10;
@@ -19,18 +19,19 @@ const PER_PAGE = 10;
 // ─── Shared helpers ────────────────────────────────────────────────────────────
 
 function Pagination({
-  page, hasMore, onPrev, onNext,
-}: { page: number; hasMore: boolean; onPrev(): void; onNext(): void }) {
+  page, hasMore, onPrev, onNext, onGo, total, perPage,
+}: { page: number; hasMore: boolean; onPrev(): void; onNext(): void; onGo?(page: number): void; total?: number; perPage?: number }) {
+  const known = total !== undefined && perPage !== undefined;
   return (
-    <div className="trk-pagination">
-      <button className="trk-pagination__btn" disabled={page <= 1} onClick={onPrev}>
-        <ChevronLeftIcon size={14} />
-      </button>
-      <span className="trk-pagination__page">{page}</span>
-      <button className="trk-pagination__btn" disabled={!hasMore} onClick={onNext}>
-        <ChevronRightIcon size={14} />
-      </button>
-    </div>
+    <PaginationBar
+      page={page}
+      hasMore={hasMore}
+      pageCount={known ? Math.max(1, Math.ceil(total / perPage)) : undefined}
+      from={known && total ? (page - 1) * perPage + 1 : undefined}
+      to={known ? Math.min(page * perPage, total) : undefined}
+      total={total}
+      onChange={(next) => (onGo ? onGo(next) : next < page ? onPrev() : onNext())}
+    />
   );
 }
 
@@ -189,6 +190,9 @@ export function GeoTab() {
           <Pagination
             page={page}
             hasMore={page * PER_PAGE < filtered.length}
+            total={filtered.length}
+            perPage={PER_PAGE}
+            onGo={setPage}
             onPrev={() => setPage(p => p - 1)}
             onNext={() => setPage(p => p + 1)}
           />
@@ -831,6 +835,9 @@ export function PagesTab() {
           <Pagination
             page={page}
             hasMore={page * PER_PAGE < filtered.length}
+            total={filtered.length}
+            perPage={PER_PAGE}
+            onGo={setPage}
             onPrev={() => setPage(p => p - 1)}
             onNext={() => setPage(p => p + 1)}
           />
@@ -923,6 +930,9 @@ export function AcquisitionTab() {
           <Pagination
             page={page}
             hasMore={page * PER_PAGE < filtered.length}
+            total={filtered.length}
+            perPage={PER_PAGE}
+            onGo={setPage}
             onPrev={() => setPage(p => p - 1)}
             onNext={() => setPage(p => p + 1)}
           />

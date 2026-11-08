@@ -8,11 +8,11 @@ import { Card } from '@/components/ui/card';
 import { Modal } from '@/components/common/Modal';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { useConfirm } from '@/components/common/ConfirmDialog';
-import {
+import { PaginationBar,
   DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
   DataTableSelectTd, DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, useRowSelection,
 } from '@/components/common/DataTable';
-import { ChevronLeftIcon, ChevronRightIcon, MegaphoneOffIcon, RefreshCwIcon, Trash2Icon, UsersIcon } from '@icons';
+import { MegaphoneOffIcon, RefreshCwIcon, Trash2Icon, UsersIcon } from '@icons';
 
 const STATUSES = ['all', 'confirmed', 'pending', 'unsubscribed'] as const;
 const STATUS_VARIANT = { confirmed: 'success', pending: 'warning', unsubscribed: 'default' } as const;
@@ -150,11 +150,7 @@ export function NewsletterTab({ creating, onCreated, onChange }: { creating: boo
             ))}
           </DataTableBody>
         </DataTable>
-        <div className="trk-pagination">
-          <button type="button" className="trk-pagination__btn" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}><ChevronLeftIcon size={14} /></button>
-          <span className="trk-pagination__page">{page} / {pages}</span>
-          <button type="button" className="trk-pagination__btn" disabled={page >= pages} onClick={() => setPage((p) => p + 1)}><ChevronRightIcon size={14} /></button>
-        </div>
+        <PaginationBar page={page} pageCount={pages} onChange={setPage} />
       </Card>
 
       <AddSubscriberModal open={adding} onClose={() => setAdding(false)} onAdded={() => { setAdding(false); load(); onChange(); }} />

@@ -74,9 +74,10 @@
     "bulkFailed": "Some items could not be processed.",
     "noResults": "No results for “{{query}}”.",
     "actions": "Actions",
-    "range": "{{from}}–{{to}} of {{total}}",
-    "page": "Page {{page}} / {{pages}}",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "of": "of",
+    "pagination": "Pagination",
+    "goToPage": "Page {{page}}"
   }
 }

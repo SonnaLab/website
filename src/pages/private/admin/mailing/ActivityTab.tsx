@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { apiService, type DeliveryStatus, type SentEmail, type SentEmailSummary } from '@/services/api';
-import { DataTableSearch } from '@/components/common/DataTable';
-import { ChevronLeftIcon, ChevronRightIcon, PaperclipIcon, SendIcon } from '@icons';
+import { PaginationBar, DataTableSearch } from '@/components/common/DataTable';
+import { PaperclipIcon, SendIcon } from '@icons';
 import { formatDateTime } from '../infrastructure/format';
 import { MailSkeleton } from './TemplatesTab';
 
@@ -133,11 +133,7 @@ export function ActivityTab() {
             </button>
           ))}
           {rows && rows.length > 0 && (
-            <div className="ma-pager">
-              <button type="button" className="trk-pagination__btn" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}><ChevronLeftIcon size={14} /></button>
-              <span className="trv-muted">{page} / {pages} · {t('mailing.activity.total', { count: total })}</span>
-              <button type="button" className="trk-pagination__btn" disabled={page >= pages} onClick={() => setPage((p) => p + 1)}><ChevronRightIcon size={14} /></button>
-            </div>
+            <PaginationBar compact page={page} pageCount={pages} summary={t('mailing.activity.total', { count: total })} onChange={setPage} />
           )}
         </nav>
 

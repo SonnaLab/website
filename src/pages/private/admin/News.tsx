@@ -23,7 +23,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveCo
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
 import { PageHeader } from '@/components/private/common/PageHeader';
 import { StatCard, StatRow } from '@/components/private/common/StatRow';
-import {
+import { PaginationBar,
   DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
   DataTableSelectTd, DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, filterRows, useRowSelection,
 } from '@/components/common/DataTable';
@@ -32,35 +32,7 @@ import { Modal } from '@/components/common/Modal';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { MarkdownRenderer } from '@/components/public/blog/MarkdownRenderer';
 
-import {
-  NewsIcon,
-  EyeIcon,
-  PenLineIcon,
-  ClipboardListIcon,
-  CalendarDaysIcon,
-  TargetIcon,
-  PlusIcon,
-  Trash2Icon,
-  SearchIcon,
-  CheckIcon,
-  CheckCircle2Icon,
-  RefreshCwIcon,
-  XCircleIcon,
-  AlertTriangleIcon,
-  ChevronDownIcon,
-  TrendingUpIcon,
-  GlobeIcon,
-  LayersIcon,
-  ZapIcon,
-  ArrowUpRightIcon,
-  CameraIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  MegaphoneIcon,
-  MegaphoneOffIcon,
-  TerminalIcon,
-  LinkedinIcon,
-} from '@icons';
+import { NewsIcon, EyeIcon, PenLineIcon, ClipboardListIcon, CalendarDaysIcon, TargetIcon, PlusIcon, Trash2Icon, SearchIcon, CheckIcon, CheckCircle2Icon, RefreshCwIcon, XCircleIcon, AlertTriangleIcon, ChevronDownIcon, TrendingUpIcon, GlobeIcon, LayersIcon, ZapIcon, ArrowUpRightIcon, CameraIcon, MegaphoneIcon, MegaphoneOffIcon, TerminalIcon, LinkedinIcon } from '@icons';
 
 // ─────────────────────────────────────────────
 // Helpers
@@ -917,31 +889,14 @@ function ArticlesTab({ onStatsChange }: { onStatsChange?: () => void }) {
         </DataTableBody>
       </DataTable>
 
-      {totalPages > 1 && (
-        <div className="adm-pagination">
-          <span className="adm-pagination__info">
-            {total} &middot; {page} / {totalPages}
-          </span>
-          <div className="adm-pagination__nav">
-            <button
-              type="button"
-              className="adm-btn adm-btn--ghost adm-btn--xs"
-              disabled={page <= 1}
-              onClick={() => { const p = page - 1; setPage(p); setSelectedIds(new Set()); reload(search, statusFilter, p); }}
-            >
-              <ChevronLeftIcon size={13} />
-            </button>
-            <button
-              type="button"
-              className="adm-btn adm-btn--ghost adm-btn--xs"
-              disabled={page >= totalPages}
-              onClick={() => { const p = page + 1; setPage(p); setSelectedIds(new Set()); reload(search, statusFilter, p); }}
-            >
-              <ChevronRightIcon size={13} />
-            </button>
-          </div>
-        </div>
-      )}
+      <PaginationBar
+        page={page}
+        pageCount={totalPages}
+        from={total ? (page - 1) * PER_PAGE + 1 : undefined}
+        to={Math.min(page * PER_PAGE, total)}
+        total={total}
+        onChange={(p) => { setPage(p); setSelectedIds(new Set()); reload(search, statusFilter, p); }}
+      />
 
       <Modal
         open={modalOpen}
@@ -2096,33 +2051,15 @@ function PromptsTab({ onStatsChange }: { onStatsChange?: () => void }) {
         </DataTableBody>
       </DataTable>
 
-      {!loading && filteredPrompts.length > 0 && (
-        <div className="admin-news-prompts__pagination" aria-label={t('news.prompts.pagination')}>
-          <span>{t('news.prompts.paginationSummary', { from: pageStart + 1, to: pageEnd, total: filteredPrompts.length })}</span>
-          <div className="admin-news-prompts__pagination-actions">
-            <button
-              type="button"
-              className="adm-btn adm-btn--ghost adm-btn--xs"
-              onClick={() => setPage(prev => Math.max(1, prev - 1))}
-              disabled={currentPage <= 1}
-              aria-label={t('news.prompts.previousPage')}
-              title={t('news.prompts.previousPage')}
-            >
-              &lt;
-            </button>
-            <strong>{t('news.prompts.pageIndicator', { page: currentPage, total: totalPages })}</strong>
-            <button
-              type="button"
-              className="adm-btn adm-btn--ghost adm-btn--xs"
-              onClick={() => setPage(prev => Math.min(totalPages, prev + 1))}
-              disabled={currentPage >= totalPages}
-              aria-label={t('news.prompts.nextPage')}
-              title={t('news.prompts.nextPage')}
-            >
-              &gt;
-            </button>
-          </div>
-        </div>
+      {!loading && (
+        <PaginationBar
+          page={currentPage}
+          pageCount={totalPages}
+          from={pageStart + 1}
+          to={pageEnd}
+          total={filteredPrompts.length}
+          onChange={setPage}
+        />
       )}
 
       <Modal

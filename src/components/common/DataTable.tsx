@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ComponentType, type MouseEvent, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DownloadIcon, SearchIcon, XIcon, type IconProps } from '@icons';
+import { ChevronLeftIcon, ChevronRightIcon, DownloadIcon, SearchIcon, XIcon, type IconProps } from '@icons';
 
 /* ── Table container ── */
 interface DataTableProps {
@@ -290,24 +290,88 @@ export function usePagination<T>(rows: T[], resetKey?: unknown, pageSize = DEFAU
   return { page: current, setPage, pageCount, total, from: total ? start + 1 : 0, to: Math.min(start + pageSize, total), pageRows };
 }
 
-/** « 21–40 sur 57 » with Previous / Next, under a table. Hidden when the table is empty. */
+/** Pages to show: always the first, the last and the neighbours of the current one, « … » between. */
+export function pageItems(page: number, pageCount: number): Array<number | 'gap'> {
+  const keep = new Set([1, pageCount, page - 1, page, page + 1].filter((p) => p >= 1 && p <= pageCount));
+  // Fill a lone hole (1 … 3) with the page itself rather than an ellipsis.
+  if (keep.has(3) && !keep.has(2) && pageCount >= 3) keep.add(2);
+  if (keep.has(pageCount - 2) && !keep.has(pageCount - 1) && pageCount >= 3) keep.add(pageCount - 1);
+  const sorted = [...keep].sort((a, b) => a - b);
+  const items: Array<number | 'gap'> = [];
+  sorted.forEach((p, i) => {
+    if (i > 0 && p - sorted[i - 1] > 1) items.push('gap');
+    items.push(p);
+  });
+  return items;
+}
+
+interface PaginationBarProps {
+  page: number;
+  onChange: (page: number) => void;
+  /** Known page count: numbered pages. Unknown (cursor-like APIs): pass `hasMore` instead. */
+  pageCount?: number;
+  hasMore?: boolean;
+  /** « 21–40 sur 57 » on the left, when known. */
+  from?: number;
+  to?: number;
+  total?: number;
+  /** Extra text on the left (e.g. « 57 emails »), shown when no range is given. */
+  summary?: ReactNode;
+  /** Narrow places (side lists): no numbered pages, « 2 / 5 » only. */
+  compact?: boolean;
+  className?: string;
+}
+
+/** The one pagination bar of the app: range on the left, ‹ 1 … 4 5 6 … 12 › on the right. */
+export function PaginationBar({ page, onChange, pageCount, hasMore, from, to, total, summary, compact, className }: PaginationBarProps) {
+  const { t, i18n } = useTranslation('common');
+  const known = pageCount !== undefined;
+  const canPrev = page > 1;
+  const canNext = known ? page < pageCount : !!hasMore;
+  if (!canPrev && !canNext && !total && !summary) return null;
+  const n = (value: number) => value.toLocaleString(i18n.language);
+
+  return (
+    <nav className={`adm-pager${compact ? ' adm-pager--compact' : ''}${className ? ` ${className}` : ''}`} aria-label={t('table.pagination')}>
+      <span className="adm-pager__info">
+        {from !== undefined && to !== undefined && total !== undefined && total > 0
+          ? <><strong>{n(from)}–{n(to)}</strong> {t('table.of')} <strong>{n(total)}</strong></>
+          : summary}
+      </span>
+      {(canPrev || canNext) && (
+        <div className="adm-pager__nav">
+          <button type="button" className="adm-pager__btn adm-pager__btn--arrow" disabled={!canPrev} onClick={() => onChange(page - 1)} aria-label={t('table.previous')} title={t('table.previous')}>
+            <ChevronLeftIcon size={15} />
+          </button>
+          {known && !compact
+            ? pageItems(page, pageCount).map((item, i) => (item === 'gap'
+              ? <span key={`gap-${i}`} className="adm-pager__gap" aria-hidden>…</span>
+              : (
+                <button
+                  key={item}
+                  type="button"
+                  className={`adm-pager__btn${item === page ? ' adm-pager__btn--active' : ''}`}
+                  aria-current={item === page ? 'page' : undefined}
+                  aria-label={t('table.goToPage', { page: item })}
+                  onClick={() => item !== page && onChange(item)}
+                >
+                  {item}
+                </button>
+              )))
+            : <span className="adm-pager__current">{known ? `${page} / ${pageCount}` : page}</span>}
+          <button type="button" className="adm-pager__btn adm-pager__btn--arrow" disabled={!canNext} onClick={() => onChange(page + 1)} aria-label={t('table.next')} title={t('table.next')}>
+            <ChevronRightIcon size={15} />
+          </button>
+        </div>
+      )}
+    </nav>
+  );
+}
+
+/** Pagination bar wired to `usePagination`. Hidden when the table is empty. */
 export function DataTablePagination({ page, pageCount, total, from, to, setPage }: {
   page: number; pageCount: number; total: number; from: number; to: number; setPage: (page: number) => void;
 }) {
-  const { t } = useTranslation('common');
   if (total === 0) return null;
-  return (
-    <div className="adm-pagination">
-      <span className="adm-pagination__info">{t('table.range', { from, to, total })}</span>
-      <div className="adm-pagination__nav">
-        <span>{t('table.page', { page, pages: pageCount })}</span>
-        <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>
-          {t('table.previous')}
-        </button>
-        <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" disabled={page >= pageCount} onClick={() => setPage(page + 1)}>
-          {t('table.next')}
-        </button>
-      </div>
-    </div>
-  );
+  return <PaginationBar page={page} pageCount={pageCount} from={from} to={to} total={total} onChange={setPage} />;
 }

@@ -1761,6 +1761,71 @@
 .adm-pagination__info { }
 .adm-pagination__nav  { display: flex; align-items: center; gap: 6px; }
 
+/* ── Pager : la barre de pagination unique (PaginationBar) ── */
+.adm-pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  padding: 12px 16px;
+  border-top: 1px solid #eef0f2;
+  font-size: 12.5px;
+  color: #6b7280;
+  font-variant-numeric: tabular-nums;
+}
+.adm-pager__info:empty { display: none; }
+.adm-pager__info strong { color: #111111; font-weight: 600; }
+.adm-pager__nav { display: inline-flex; align-items: center; gap: 4px; margin-left: auto; }
+.adm-pager__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 9px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: #374151;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+.adm-pager__btn:hover:not(:disabled):not(.adm-pager__btn--active) { background: #f3f4f6; color: #111111; }
+.adm-pager__btn:focus-visible { outline: 2px solid var(--brand, #0e7490); outline-offset: 2px; }
+.adm-pager__btn--arrow {
+  padding: 0;
+  width: 32px;
+  border-color: #e5e7eb;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(17, 17, 17, 0.04);
+}
+.adm-pager__btn--arrow:hover:not(:disabled) { border-color: #c4c8ce; }
+.adm-pager__btn--active {
+  background: #111111;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: default;
+  box-shadow: 0 1px 3px rgba(17, 17, 17, 0.18);
+}
+.adm-pager__btn:disabled { opacity: 0.35; cursor: not-allowed; box-shadow: none; }
+.adm-pager__gap { min-width: 22px; text-align: center; color: #9ca3af; letter-spacing: 1px; user-select: none; }
+.adm-pager__current { padding: 0 10px; color: #111111; font-weight: 600; }
+.adm-pager--compact { padding: 10px 12px; }
+.adm-pager--compact .adm-pager__nav { margin: 0 auto; }
+@media (max-width: 640px) {
+  .adm-pager { justify-content: center; padding: 12px; }
+  .adm-pager__info { width: 100%; text-align: center; }
+  .adm-pager__nav { margin: 0 auto; }
+  /* Sur téléphone : ‹ page courante › uniquement. */
+  .adm-pager__btn:not(.adm-pager__btn--arrow):not(.adm-pager__btn--active),
+  .adm-pager__gap { display: none; }
+}
+
 .adm-form {
   display: flex;
   flex-direction: column;
