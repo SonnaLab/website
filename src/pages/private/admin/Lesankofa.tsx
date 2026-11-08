@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { apiService } from '@/services/api';
-import { BaseTab } from '@/components/common/BaseTab';
 import { Modal } from '@/components/common/Modal';
 import { StepperModal } from '@/components/common/StepperModal';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
@@ -65,15 +64,6 @@ interface LesankofaEvent {
 // ─────────────────────────────────────────────
 // Types
 // ─────────────────────────────────────────────
-
-interface TaskRow {
-  name: string;
-  task: string;
-  schedule: string | null;
-  kwargs: Record<string, unknown>;
-  last_run_at: string | null;
-  status: string;
-}
 
 interface AIModelRow {
   id: number;
@@ -140,15 +130,6 @@ interface AIClientDetail extends AIClientRow {
   created_at?: string;
 }
 
-interface ContainerRow {
-  id: string;
-  name: string;
-  image: string;
-  status: string;
-  state: string;
-  created: number | null;
-}
-
 // ─────────────────────────────────────────────
 // Helpers
 // ─────────────────────────────────────────────
@@ -161,32 +142,6 @@ function fmtDate(iso?: string | null) {
 function fmtDateShort(iso?: string | null) {
   if (!iso) return '—';
   return new Intl.DateTimeFormat('fr', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(iso));
-}
-
-// Returns a plain icon + label for use inside adm-modal__badge (already black bg, white text)
-function ModalStatusTag({ status }: { status: string }) {
-  const map: Record<string, { icon: React.ReactNode; label: string }> = {
-    running:  { icon: <ZapIcon          size={9} />, label: 'En cours'       },
-    idle:     { icon: <ServerIcon       size={9} />, label: 'Idle'            },
-    error:    { icon: <AlertTriangleIcon size={9} />, label: 'Erreur'         },
-    active:   { icon: <CheckCircle2Icon  size={9} />, label: 'Actif'          },
-    paused:   { icon: <XCircleIcon       size={9} />, label: 'Inactif'        },
-  };
-  const m = map[status] ?? { icon: <ServerIcon size={9} />, label: status };
-  return <span className="flex items-center gap-1">{m.icon}{m.label}</span>;
-}
-
-// Simple cron expression → plain French description
-function describeCron(expr: string): string {
-  const [min, hour, dom, , dow] = expr.trim().split(/\s+/);
-  const h = (s: string) => s.padStart(2, '0');
-  const DAYS = ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'];
-  if (min === '0' && hour === '*')           return 'Toutes les heures';
-  if (min === '0' && hour.startsWith('*/'))  return `Toutes les ${hour.slice(2)}h`;
-  if (min.startsWith('*/'))                  return `Toutes les ${min.slice(2)} min`;
-  if (dow !== '*' && !isNaN(+dow))           return `Tous les ${DAYS[+dow] ?? dow} à ${h(hour)}h${h(min)}`;
-  if (dom !== '*' && !isNaN(+dom))           return `Le ${dom} de chaque mois à ${h(hour)}h${h(min)}`;
-  return `Tous les jours à ${h(hour)}h${h(min)}`;
 }
 
 function StatusBadgeLocal({ status }: { status: string }) {
@@ -690,251 +645,6 @@ function ModelsTab() {
         )}
       </Modal>
     </div>
-  );
-}
-
-// ─────────────────────────────────────────────
-// Tasks Tab
-// ─────────────────────────────────────────────
-
-function TasksTab() {
-  const { t: tc } = useTranslation('common');
-  const [q,        setQ]        = useState('');
-  const [tasks,    setTasks]    = useState<TaskRow[]>([]);
-  const [loading,  setLoading]  = useState(true);
-  const [error,    setError]    = useState<string | null>(null);
-  const [selected, setSelected] = useState<TaskRow | null>(null);
-
-  const load = () => {
-    setLoading(true);
-    setError(null);
-    apiService.adminLesankofaTasks()
-      .then((data: { tasks: TaskRow[] }) => { setTasks(data.tasks ?? []); })
-      .catch(() => { setError('Impossible de charger les tâches Celery.'); })
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => { load(); }, []);
-
-  const visibleTasks = useMemo(() => filterRows(tasks, q, (t) => [t.name, t.task, t.schedule, t.status]), [tasks, q]);
-  // No bulk endpoint for tasks: selection is for the CSV export.
-  const selection = useRowSelection(visibleTasks, (t) => t.name);
-
-  function exportSelection() {
-    exportRowsCsv('lesankofa-taches', [
-      ['Tâche', (t) => t.name],
-      ['Fonction', (t) => t.task],
-      ['Planification (cron)', (t) => t.schedule ?? ''],
-      ['Dernier déclenchement', (t) => t.last_run_at ?? ''],
-      ['Statut', (t) => t.status],
-    ], selection.selectedRows);
-  }
-
-  return (
-    <div className="space-y-4">
-      <DataTableToolbar>
-        <DataTableSearch value={q} onChange={setQ} />
-      </DataTableToolbar>
-
-      <DataTableSelectionBar count={selection.count} onClear={selection.clear} onExport={exportSelection} />
-
-      <BaseTab loading={loading} error={error} onRetry={load}>
-        <DataTable>
-          <DataTableHead>
-            <DataTableRow>
-              <DataTableSelectTh checked={selection.allChecked} indeterminate={selection.someChecked} onChange={selection.toggleAll} ariaLabel={tc('table.selectAll')} />
-              <DataTableTh>Tâche</DataTableTh>
-              <DataTableTh>Planification (cron)</DataTableTh>
-              <DataTableTh>Dernier déclenchement</DataTableTh>
-              <DataTableTh>Statut</DataTableTh>
-              <DataTableTh>Action</DataTableTh>
-            </DataTableRow>
-          </DataTableHead>
-          <DataTableBody>
-            {visibleTasks.length === 0 && (
-              <DataTableEmpty icon={<ZapIcon size={28} />} label={q ? tc('table.noResults', { query: q }) : 'Aucune tâche trouvée.'} />
-            )}
-            {visibleTasks.map(t => (
-              <DataTableRow key={t.name}>
-                <DataTableSelectTd checked={selection.isSelected(t.name)} onChange={(checked) => selection.toggle(t.name, checked)} ariaLabel={tc('table.selectRow')} />
-                <DataTableTd>
-                  <code className="text-xs bg-muted px-1.5 py-0.5 rounded">{t.name}</code>
-                </DataTableTd>
-                <DataTableTd>
-                  <code className="text-xs text-muted-foreground">{t.schedule ?? '—'}</code>
-                </DataTableTd>
-                <DataTableTd>{fmtDate(t.last_run_at)}</DataTableTd>
-                <DataTableTd><StatusBadgeLocal status={t.status} /></DataTableTd>
-                <DataTableTd>
-                  <div className="adm-table__actions">
-                    <DataTableAction icon={EyeIcon} label="Détails" onClick={() => setSelected(t)} />
-                    <DataTableAction icon={PenLineIcon} label="Modifier (à venir)" disabled />
-                  </div>
-                </DataTableTd>
-              </DataTableRow>
-            ))}
-          </DataTableBody>
-        </DataTable>
-      </BaseTab>
-
-      {/* Task detail modal */}
-      <Modal
-        open={!!selected}
-        onClose={() => setSelected(null)}
-        title={selected?.name ?? ''}
-        subtitle={selected
-          ? <span><code className="font-mono">{selected.schedule ?? '—'}</code>{selected.schedule ? ` — ${describeCron(selected.schedule)}` : ''} · Dernier run : {fmtDate(selected.last_run_at)}</span>
-          : undefined}
-        badge={selected ? <ModalStatusTag status={selected.status} /> : undefined}
-        size="md"
-      >
-        {selected && (
-          <div className="rounded-lg bg-zinc-950 text-zinc-200 font-mono text-xs p-4 space-y-0.5 overflow-y-auto max-h-60 overflow-x-hidden">
-            <div>[INFO] Task: {selected.task}</div>
-            <div>[INFO] Entry: {selected.name}</div>
-            <div>[INFO] Last run: {fmtDate(selected.last_run_at)}</div>
-            <div>[INFO] Status: {selected.status}</div>
-            {Object.keys(selected.kwargs).length > 0 && (
-              <div>[INFO] kwargs: {JSON.stringify(selected.kwargs)}</div>
-            )}
-            {selected.status === 'error' && (
-              <div className="text-red-400">[ERROR] La dernière exécution a échoué.</div>
-            )}
-            {selected.status === 'running' && (
-              <div className="text-green-400">[INFO] En cours d'exécution…</div>
-            )}
-          </div>
-        )}
-      </Modal>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────
-// Infrastructure Tab
-// ─────────────────────────────────────────────
-
-function InfraTab() {
-  const [containers, setContainers] = useState<ContainerRow[] | null>(null);
-  const [loading,    setLoading]    = useState(true);
-  const [error,      setError]      = useState<string | null>(null);
-  const [logTarget,  setLogTarget]  = useState<ContainerRow | null>(null);
-
-  const load = () => {
-    setLoading(true);
-    setError(null);
-    apiService.adminLesankofaContainers()
-      .then(d => setContainers(d.containers ?? []))
-      .catch(e => setError(e.message))
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => { load(); }, []);
-
-  return (
-    <BaseTab loading={loading} error={error} onRetry={load}>
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="text-xs text-muted-foreground">
-            Conteneurs Docker actifs sur <strong className="text-foreground">ai.sonnalab.com</strong>
-          </p>
-          <button
-            onClick={load}
-            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <RefreshCwIcon size={12} /> Rafraîchir
-          </button>
-        </div>
-
-        {containers && containers.length === 0 && (
-          <p className="text-sm text-muted-foreground text-center py-8">Aucun conteneur trouvé.</p>
-        )}
-
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {(containers ?? []).map(c => (
-            <Card key={c.id} className="p-4 space-y-3">
-              <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <p className="font-medium text-sm text-foreground truncate">{c.name}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5 truncate">{c.image}</p>
-                </div>
-                <StatusBadgeLocal status={c.state} />
-              </div>
-              <div className="text-xs text-muted-foreground">
-                <span className="font-mono">{c.status}</span>
-              </div>
-              <button
-                className="w-full flex items-center justify-center gap-1.5 text-xs text-muted-foreground hover:text-foreground border border-border rounded-lg py-1.5 transition-colors"
-                onClick={() => setLogTarget(c)}
-              >
-                <EyeIcon size={13} /> Voir les logs
-              </button>
-            </Card>
-          ))}
-        </div>
-
-        {logTarget && (
-          <ContainerLogPanel container={logTarget} onClose={() => setLogTarget(null)} />
-        )}
-      </div>
-    </BaseTab>
-  );
-}
-
-function ContainerLogPanel({ container, onClose }: { container: ContainerRow; onClose: () => void }) {
-  const [lines,   setLines]   = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error,   setError]   = useState<string | null>(null);
-  const endRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
-    apiService.adminLesankofaContainerLogs(container.name, 150)
-      .then(d => {
-        setLines(d.lines ?? []);
-        if (d.error) setError(d.error);
-      })
-      .catch(e => setError(e.message))
-      .finally(() => setLoading(false));
-  }, [container.name]);
-
-  useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [lines]);
-
-  return (
-    <Modal
-      open
-      onClose={onClose}
-      title={container.name}
-      subtitle={container.image}
-      badge={<ModalStatusTag status={container.state} />}
-      size="lg"
-    >
-      <div className="flex flex-wrap gap-5 text-sm text-muted-foreground mb-4">
-        <span>ID <code className="font-mono text-foreground">{container.id}</code></span>
-        <span>{container.status}</span>
-      </div>
-
-      <div className="rounded-lg bg-zinc-950 text-zinc-200 font-mono text-xs p-4 h-72 overflow-y-auto overflow-x-hidden">
-        {loading && (
-          <p className="text-zinc-400 animate-pulse">Chargement des logs…</p>
-        )}
-        {error && (
-          <p className="text-red-400">[ERROR] {error}</p>
-        )}
-        {!loading && lines.length === 0 && !error && (
-          <p className="text-zinc-500">Aucun log disponible.</p>
-        )}
-        <div className="space-y-0.5">
-          {lines.map((l, i) => (
-            <div key={i} className="break-all whitespace-pre-wrap">{l}</div>
-          ))}
-          <div ref={endRef} />
-        </div>
-      </div>
-    </Modal>
   );
 }
 
@@ -1952,7 +1662,7 @@ function GenerationControlToggle() {
 // Page root
 // ─────────────────────────────────────────────
 
-const VALID_TABS = ['overview', 'tasks', 'models', 'infrastructure', 'clients', 'model', ...DSV_TABS] as const;
+const VALID_TABS = ['overview', 'models', 'clients', 'model', ...DSV_TABS] as const;
 type TabValue = typeof VALID_TABS[number];
 
 function readHashTab(): TabValue {
@@ -2003,9 +1713,7 @@ export default function AdminLesankofa() {
       <Tabs value={tab} onValueChange={handleTabChange}>
         <TabsList className="lsk-tabs">
           <TabsTrigger value="overview"       icon={<TrendingUpIcon   size={14} />}>Overview</TabsTrigger>
-          <TabsTrigger value="tasks"          icon={<ZapIcon          size={14} />}>Tasks</TabsTrigger>
           <TabsTrigger value="models"         icon={<BrainIcon        size={14} />}>Modèles</TabsTrigger>
-          <TabsTrigger value="infrastructure" icon={<ServerIcon       size={14} />}>Infrastructure</TabsTrigger>
           <TabsTrigger value="clients"        icon={<UsersIcon        size={14} />}>Clients</TabsTrigger>
           <TabsTrigger value="model"          icon={<LayersIcon       size={14} />}>Schéma</TabsTrigger>
           <span className="lsk-tabs__sep" aria-hidden="true">Moteur DSV</span>
@@ -2019,14 +1727,8 @@ export default function AdminLesankofa() {
         <TabsContent value="overview">
           <OverviewTab error={error} />
         </TabsContent>
-        <TabsContent value="tasks">
-          <TasksTab />
-        </TabsContent>
         <TabsContent value="models">
           <ModelsTab />
-        </TabsContent>
-        <TabsContent value="infrastructure">
-          <InfraTab />
         </TabsContent>
         <TabsContent value="clients">
           <ClientsTab />

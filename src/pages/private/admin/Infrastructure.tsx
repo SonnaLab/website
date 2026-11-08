@@ -12,11 +12,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/common/Ta
 import { OverviewTab } from './infrastructure/OverviewTab';
 import { DatabaseTab } from './infrastructure/DatabaseTab';
 import { CronjobsTab } from './infrastructure/CronjobsTab';
+import { ContainersTab } from './infrastructure/ContainersTab';
 import { BackupsTab } from './infrastructure/BackupsTab';
 import { ActivitiesTab } from './infrastructure/ActivitiesTab';
 import type { InfraResponse } from './infrastructure/types';
 
-const TABS = ['overview', 'database', 'cronjobs', 'backups', 'activities'] as const;
+const TABS = ['overview', 'database', 'containers', 'cronjobs', 'backups', 'activities'] as const;
 type TabKey = typeof TABS[number];
 
 export default function AdminInfrastructure() {
@@ -32,6 +33,7 @@ export default function AdminInfrastructure() {
     return params;
   }, { replace: true });
 
+  const [containersKey, setContainersKey] = useState(0);
   const reload = () => {
     setLoading(true);
     apiService.adminInfrastructure().then(setData).finally(() => setLoading(false));
@@ -68,7 +70,7 @@ export default function AdminInfrastructure() {
             <PlusIcon size={14} /> {t('infrastructure.backups.now')}
           </button>
         ) : (
-          <Button variant="outline" size="sm" onClick={reload} disabled={loading}>
+          <Button variant="outline" size="sm" onClick={() => { reload(); setContainersKey((k) => k + 1); }} disabled={loading}>
             <RefreshCwIcon className={`size-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             {t('infrastructure.refresh')}
           </Button>
@@ -105,12 +107,14 @@ export default function AdminInfrastructure() {
         <TabsList>
           <TabsTrigger value="overview" icon={<ServerIcon size={14} />}>{t('infrastructure.tabs.overview')}</TabsTrigger>
           <TabsTrigger value="database" icon={<LayersIcon size={14} />}>{t('infrastructure.tabs.database')}</TabsTrigger>
+          <TabsTrigger value="containers" icon={<ServerIcon size={14} />}>{t('infrastructure.tabs.containers')}</TabsTrigger>
           <TabsTrigger value="cronjobs" icon={<ClockIcon size={14} />}>{t('infrastructure.tabs.cronjobs')}</TabsTrigger>
           <TabsTrigger value="backups" icon={<RefreshCwIcon size={14} />}>{t('infrastructure.tabs.backups')}</TabsTrigger>
           <TabsTrigger value="activities" icon={<ActivityIcon size={14} />}>{t('infrastructure.tabs.activities')}</TabsTrigger>
         </TabsList>
         <TabsContent value="overview"><OverviewTab data={data} /></TabsContent>
         <TabsContent value="database"><DatabaseTab /></TabsContent>
+        <TabsContent value="containers"><ContainersTab reloadKey={containersKey} /></TabsContent>
         <TabsContent value="cronjobs"><CronjobsTab /></TabsContent>
         <TabsContent value="backups"><BackupsTab reloadKey={backupsKey} /></TabsContent>
         <TabsContent value="activities"><ActivitiesTab /></TabsContent>
