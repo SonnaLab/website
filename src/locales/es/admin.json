@@ -86,6 +86,7 @@
     "tabs": {
       "overview": "Resumen",
       "database": "Base de datos",
+      "containers": "Contenedores",
       "cronjobs": "Tareas programadas",
       "backups": "Copias de seguridad",
       "activities": "Actividad"
@@ -157,7 +158,11 @@
         "10": "octubre",
         "11": "noviembre",
         "12": "diciembre"
-      }
+      },
+      "platform": "Plataforma",
+      "running": "En curso",
+      "details": "Detalles",
+      "function": "Función"
     },
     "backups": {
       "policy": "Cada noche se verifica un volcado completo (archivo releído por pg_restore, SHA-256). Los niveles semanal, mensual, trimestral, semestral y anual guardan una instantánea, cada uno con su propia retención.",
@@ -252,6 +257,14 @@
         "me": "perfil"
       },
       "mailTo": "Para {{to}}"
+    },
+    "containers": {
+      "name": "Contenedor",
+      "project": "Proyecto",
+      "state": "Estado",
+      "logs": "Ver los logs",
+      "empty": "No se encontró ningún contenedor.",
+      "noLogs": "No hay logs disponibles."
     }
   },
   "tracking": {

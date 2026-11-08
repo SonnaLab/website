@@ -86,6 +86,7 @@
     "tabs": {
       "overview": "Overview",
       "database": "Database",
+      "containers": "Containers",
       "cronjobs": "Cron jobs",
       "backups": "Backups",
       "activities": "Activity"
@@ -157,7 +158,11 @@
         "10": "October",
         "11": "November",
         "12": "December"
-      }
+      },
+      "platform": "Platform",
+      "running": "Running",
+      "details": "Details",
+      "function": "Function"
     },
     "backups": {
       "policy": "Every night a full dump is verified (archive read back by pg_restore, SHA-256). The weekly, monthly, quarterly, half-yearly and yearly tiers keep a snapshot of it, each with its own retention.",
@@ -252,6 +257,14 @@
         "me": "profile"
       },
       "mailTo": "To {{to}}"
+    },
+    "containers": {
+      "name": "Container",
+      "project": "Project",
+      "state": "State",
+      "logs": "View logs",
+      "empty": "No container found.",
+      "noLogs": "No logs available."
     }
   },
   "tracking": {

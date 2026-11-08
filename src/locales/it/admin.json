@@ -86,6 +86,7 @@
     "tabs": {
       "overview": "Panoramica",
       "database": "Database",
+      "containers": "Container",
       "cronjobs": "Cron job",
       "backups": "Backup",
       "activities": "Attività"
@@ -157,7 +158,11 @@
         "10": "ottobre",
         "11": "novembre",
         "12": "dicembre"
-      }
+      },
+      "platform": "Piattaforma",
+      "running": "In corso",
+      "details": "Dettagli",
+      "function": "Funzione"
     },
     "backups": {
       "policy": "Ogni notte un dump completo viene verificato (archivio riletto da pg_restore, SHA-256). I livelli settimanale, mensile, trimestrale, semestrale e annuale ne conservano un'istantanea, ognuno con la propria conservazione.",
@@ -252,6 +257,14 @@
         "me": "profilo"
       },
       "mailTo": "A {{to}}"
+    },
+    "containers": {
+      "name": "Container",
+      "project": "Progetto",
+      "state": "Stato",
+      "logs": "Vedi i log",
+      "empty": "Nessun container trovato.",
+      "noLogs": "Nessun log disponibile."
     }
   },
   "tracking": {
