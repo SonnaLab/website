@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Modal } from '@/components/common/Modal';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import {
+  DataTablePagination, usePagination,
   DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch,
   DataTableTd, DataTableTh, DataTableToolbar, filterRows,
 } from '@/components/common/DataTable';
@@ -45,6 +46,7 @@ export function ContainersTab({ reloadKey = 0 }: { reloadKey?: number }) {
   }, [reloadKey]);
 
   const rows = filterRows(containers ?? [], query, (c) => [c.name, projectOf(c.name), c.image, c.state, c.status]);
+  const pager = usePagination(rows, query);
 
   return (
     <div className="infra-stack">
@@ -68,7 +70,7 @@ export function ContainersTab({ reloadKey = 0 }: { reloadKey?: number }) {
             {containers !== null && rows.length === 0 && (
               <DataTableEmpty icon={<ServerIcon size={28} />} label={query ? tc('table.noResults', { query }) : t('infrastructure.containers.empty')} />
             )}
-            {rows.map((c) => (
+            {pager.pageRows.map((c) => (
               <DataTableRow key={c.id}>
                 <DataTableTd>
                   <span className="trv-client-cell__name">{c.name}</span>
@@ -89,6 +91,7 @@ export function ContainersTab({ reloadKey = 0 }: { reloadKey?: number }) {
           </DataTableBody>
         </DataTable>
       </Card>
+      <DataTablePagination {...pager} />
 
       {logTarget && <ContainerLogs container={logTarget} onClose={() => setLogTarget(null)} />}
     </div>

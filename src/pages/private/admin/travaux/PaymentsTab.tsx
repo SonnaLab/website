@@ -7,6 +7,7 @@ import { Modal } from '@/components/common/Modal';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { useConfirm } from '@/components/common/ConfirmDialog';
 import {
+  DataTablePagination, usePagination,
   DataTable,
   DataTableAction,
   DataTableBody,
@@ -61,6 +62,7 @@ export const PaymentsTab = forwardRef<TravauxTabHandle, PaymentsTabProps>(functi
     formatCents(p.amount_cents), p.invoice_number, p.invoice_title, formatDate(p.paid_on),
     t(`travaux.payments.methods.${p.payment_method}`), t(`travaux.payments.statuses.${p.status}`),
   ]), [payments, q, t]);
+  const pager = usePagination(rows, q);
   const selection = useRowSelection(rows, (p) => p.id);
 
   // Bulk: one request per payment, then a single reload.
@@ -128,7 +130,7 @@ export const PaymentsTab = forwardRef<TravauxTabHandle, PaymentsTabProps>(functi
             {rows.length === 0 && (
               <DataTableEmpty icon={<WalletIcon size={28} />} label={q ? tc('table.noResults', { query: q }) : t('travaux.payments.empty')} />
             )}
-            {rows.map((p) => (
+            {pager.pageRows.map((p) => (
               <DataTableRow key={p.id}>
                 <DataTableSelectTd checked={selection.isSelected(p.id)} onChange={(checked) => selection.toggle(p.id, checked)} ariaLabel={tc('table.selectRow')} />
                 <DataTableTd className="trv-num"><span className="trv-client-cell__name">{formatCents(p.amount_cents)}</span></DataTableTd>
@@ -148,6 +150,7 @@ export const PaymentsTab = forwardRef<TravauxTabHandle, PaymentsTabProps>(functi
           </DataTableBody>
         </DataTable>
       </Card>
+      <DataTablePagination {...pager} />
 
       <NewPaymentModal
         open={newOpen}

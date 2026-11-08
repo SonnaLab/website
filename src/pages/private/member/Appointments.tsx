@@ -9,6 +9,7 @@ import { StatusBadge } from '@/components/common/StatusBadge';
 import { useConfirm } from '@/components/common/ConfirmDialog';
 import { useModal } from '@/components/providers/ModalProvider';
 import {
+  DataTablePagination, usePagination,
   DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
   DataTableSelectTd, DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, filterRows, useRowSelection,
 } from '@/components/common/DataTable';
@@ -50,6 +51,7 @@ export default function MemberAppointments() {
   const statusLabel = (a: Appointment) => t(`appointments.statuses.${a.status}`, { defaultValue: a.status });
 
   const rows = filterRows(items, query, (a) => [fmtDate(a.scheduled_at), kindLabel(a), statusLabel(a), a.location]);
+  const pager = usePagination(rows, query);
   const selection = useRowSelection(rows, (a) => a.id);
 
   const cancel = async (a: Appointment) => {
@@ -134,7 +136,7 @@ export default function MemberAppointments() {
                 label={query ? tc('table.noResults', { query }) : t('appointments.empty')}
               />
             )}
-            {!loading && rows.map((a) => (
+            {!loading && pager.pageRows.map((a) => (
               <DataTableRow key={a.id}>
                 <DataTableSelectTd checked={selection.isSelected(a.id)} onChange={(checked) => selection.toggle(a.id, checked)} ariaLabel={tc('table.selectRow')} />
                 <DataTableTd>{fmtDate(a.scheduled_at)}</DataTableTd>
@@ -154,6 +156,7 @@ export default function MemberAppointments() {
           </DataTableBody>
         </DataTable>
       </div>
+      <DataTablePagination {...pager} />
     </div>
   );
 }

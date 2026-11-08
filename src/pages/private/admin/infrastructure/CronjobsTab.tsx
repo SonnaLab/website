@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Modal } from '@/components/common/Modal';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import {
+  DataTablePagination, usePagination,
   DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
   DataTableSelectTd, DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, filterRows, useRowSelection,
 } from '@/components/common/DataTable';
@@ -76,6 +77,7 @@ export function CronjobsTab() {
   const rows = filterRows(allRows, query, (r) => [
     labelOf(r), r.platform, r.key, subOf(r), cronOf(r), scheduleOf(r),
   ]);
+  const pager = usePagination(rows, query);
   const selection = useRowSelection(rows, (r) => r.key);
   const runnable = selection.selectedRows.flatMap((r) => (r.platform === 'SonnaLab' ? [r.job] : []));
 
@@ -149,7 +151,7 @@ export function CronjobsTab() {
             {!loading && rows.length === 0 && (
               <DataTableEmpty icon={<ClockIcon size={28} />} label={query ? tc('table.noResults', { query }) : t('infrastructure.cron.empty')} />
             )}
-            {rows.map((row) => {
+            {pager.pageRows.map((row) => {
               const outcome = outcomeOf(row);
               const lastRun = lastRunOf(row);
               return (
@@ -202,6 +204,7 @@ export function CronjobsTab() {
           </DataTableBody>
         </DataTable>
       </Card>
+      <DataTablePagination {...pager} />
 
       <Modal
         open={!!selected}

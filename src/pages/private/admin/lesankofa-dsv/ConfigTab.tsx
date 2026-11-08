@@ -5,6 +5,7 @@ import { BaseTab } from '@/components/common/BaseTab';
 import { Modal } from '@/components/common/Modal';
 import { useConfirm } from '@/components/common/ConfirmDialog';
 import {
+  DataTablePagination, usePagination,
   DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableTd,
   DataTableTh, DataTableToolbar, filterRows,
 } from '@/components/common/DataTable';
@@ -431,6 +432,7 @@ function FactsPanel({ clientId }: { clientId: string }) {
   useEffect(() => { load(); }, [load]);
 
   const visible = useMemo(() => filterRows(rows, q, (f) => [f.key, f.statement, f.source]), [rows, q]);
+  const pager = usePagination(visible, q);
 
   return (
     <div className="space-y-4">
@@ -453,7 +455,7 @@ function FactsPanel({ clientId }: { clientId: string }) {
           </DataTableHead>
           <DataTableBody>
             {visible.length === 0 && <DataTableEmpty icon={<FileTextIcon size={28} />} label="Aucun fait enregistré." />}
-            {visible.map((f) => (
+            {pager.pageRows.map((f) => (
               <DataTableRow key={f.id} className={f.is_active ? undefined : 'dsv-dim'}>
                 <DataTableTd><code className="text-xs bg-muted px-1.5 py-0.5 rounded">{f.key}</code></DataTableTd>
                 <DataTableTd><span className="text-sm">{f.statement}</span></DataTableTd>
@@ -469,6 +471,7 @@ function FactsPanel({ clientId }: { clientId: string }) {
             ))}
           </DataTableBody>
         </DataTable>
+        <DataTablePagination {...pager} />
       </BaseTab>
       {editing !== undefined && (
         <FactEditor clientId={clientId} fact={editing} onClose={() => setEditing(undefined)} onSaved={() => { setEditing(undefined); load(); }} />
@@ -496,7 +499,6 @@ function ResourcesPanel({ clientId }: { clientId: string }) {
   const [rows, setRows] = useState<Resource[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [shown, setShown] = useState(200);
 
   useEffect(() => {
     if (language === null && scope.loaded) setLanguage(scope.languages[0] ?? '');
@@ -513,7 +515,6 @@ function ResourcesPanel({ clientId }: { clientId: string }) {
   }, [clientId, language]);
 
   useEffect(() => { load(); }, [load]);
-  useEffect(() => { setShown(200); }, [clientId, language, kind, live, q]);
 
   const kinds = useMemo(() => Array.from(new Set(rows.map((r) => r.kind))).sort(), [rows]);
   const visible = useMemo(() => filterRows(
@@ -521,6 +522,7 @@ function ResourcesPanel({ clientId }: { clientId: string }) {
     q,
     (r) => [r.title, r.url, r.summary, r.topics.join(' ')],
   ), [rows, kind, live, q]);
+  const pager = usePagination(visible, `${clientId}|${language}|${kind}|${live}|${q}`);
 
   return (
     <div className="space-y-4">
@@ -553,7 +555,7 @@ function ResourcesPanel({ clientId }: { clientId: string }) {
           </DataTableHead>
           <DataTableBody>
             {visible.length === 0 && <DataTableEmpty icon={<GlobeIcon size={28} />} label="Aucune ressource pour ces filtres." hint="Le registre est importé chaque nuit depuis les sources configurées du client." />}
-            {visible.slice(0, shown).map((r) => (
+            {pager.pageRows.map((r) => (
               <DataTableRow key={r.id}>
                 <DataTableTd>
                   <div className="font-medium text-foreground"><ExternalLink href={r.url}>{r.title}</ExternalLink></div>
@@ -567,13 +569,7 @@ function ResourcesPanel({ clientId }: { clientId: string }) {
             ))}
           </DataTableBody>
         </DataTable>
-        {visible.length > shown && (
-          <div className="flex justify-center pt-2">
-            <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => setShown((s) => s + 200)}>
-              Afficher plus ({visible.length - shown} restantes)
-            </button>
-          </div>
-        )}
+        <DataTablePagination {...pager} />
       </BaseTab>
     </div>
   );

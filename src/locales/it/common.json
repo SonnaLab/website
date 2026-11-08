@@ -73,6 +73,10 @@
     "bulkDone_other": "{{count}} elementi elaborati.",
     "bulkFailed": "Alcuni elementi non sono stati elaborati.",
     "noResults": "Nessun risultato per «{{query}}».",
-    "actions": "Azioni"
+    "actions": "Azioni",
+    "range": "{{from}}–{{to}} di {{total}}",
+    "page": "Pagina {{page}} / {{pages}}",
+    "previous": "Precedente",
+    "next": "Successiva"
   }
 }

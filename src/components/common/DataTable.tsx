@@ -270,3 +270,44 @@ export function DataTableSelectionBar({ count, onExport, onClear, children }: { 
     </div>
   );
 }
+
+/* ── Pagination ── */
+
+export const DEFAULT_PAGE_SIZE = 20;
+
+/**
+ * Client-side pagination of the rows shown. The page goes back to 1 whenever
+ * `resetKey` changes (the search, a filter) and is clamped when rows shrink.
+ */
+export function usePagination<T>(rows: T[], resetKey?: unknown, pageSize = DEFAULT_PAGE_SIZE) {
+  const [page, setPage] = useState(1);
+  useEffect(() => { setPage(1); }, [resetKey]);
+  const total = rows.length;
+  const pageCount = Math.max(1, Math.ceil(total / pageSize));
+  const current = Math.min(page, pageCount);
+  const start = (current - 1) * pageSize;
+  const pageRows = useMemo(() => rows.slice(start, start + pageSize), [rows, start, pageSize]);
+  return { page: current, setPage, pageCount, total, from: total ? start + 1 : 0, to: Math.min(start + pageSize, total), pageRows };
+}
+
+/** « 21–40 sur 57 » with Previous / Next, under a table. Hidden when the table is empty. */
+export function DataTablePagination({ page, pageCount, total, from, to, setPage }: {
+  page: number; pageCount: number; total: number; from: number; to: number; setPage: (page: number) => void;
+}) {
+  const { t } = useTranslation('common');
+  if (total === 0) return null;
+  return (
+    <div className="adm-pagination">
+      <span className="adm-pagination__info">{t('table.range', { from, to, total })}</span>
+      <div className="adm-pagination__nav">
+        <span>{t('table.page', { page, pages: pageCount })}</span>
+        <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>
+          {t('table.previous')}
+        </button>
+        <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" disabled={page >= pageCount} onClick={() => setPage(page + 1)}>
+          {t('table.next')}
+        </button>
+      </div>
+    </div>
+  );
+}
