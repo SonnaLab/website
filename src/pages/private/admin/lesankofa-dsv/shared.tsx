@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { AlertTriangleIcon, ChevronDownIcon, ChevronRightIcon } from '@icons';
+import { PaginationBar } from '@/components/common/DataTable';
 
 type Variant = 'default' | 'success' | 'warning' | 'danger' | 'info' | 'muted';
 
@@ -240,22 +241,22 @@ export function SubTabs<T extends string>({ value, onChange, items }: {
   );
 }
 
-/** Pagination simple par decalage (les listes DSV n'ont pas toutes de total). */
+/** Pagination par decalage (les listes DSV n'ont pas toutes de total), avec la barre commune. */
 export function Pager({ offset, limit, count, total, onChange }: {
   offset: number; limit: number; count: number; total?: number; onChange: (offset: number) => void;
 }) {
-  const hasNext = total !== undefined ? offset + count < total : count >= limit;
-  if (offset === 0 && !hasNext) return null;
+  const page = Math.floor(offset / limit) + 1;
   return (
-    <div className="adm-pagination">
-      <span className="adm-pagination__info">
-        {count === 0 ? 'Aucun résultat' : `${offset + 1}–${offset + count}`}{total !== undefined ? ` sur ${fmtNumber(total)}` : ''}
-      </span>
-      <div className="adm-pagination__nav flex gap-2">
-        <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" disabled={offset === 0} onClick={() => onChange(Math.max(0, offset - limit))}>Précédent</button>
-        <button type="button" className="adm-btn adm-btn--ghost adm-btn--sm" disabled={!hasNext} onClick={() => onChange(offset + limit)}>Suivant</button>
-      </div>
-    </div>
+    <PaginationBar
+      page={page}
+      pageCount={total !== undefined ? Math.max(1, Math.ceil(total / limit)) : undefined}
+      hasMore={count >= limit}
+      from={count ? offset + 1 : undefined}
+      to={count ? offset + count : undefined}
+      total={total}
+      summary={count ? `${offset + 1}–${offset + count}` : undefined}
+      onChange={(next) => onChange((next - 1) * limit)}
+    />
   );
 }
 

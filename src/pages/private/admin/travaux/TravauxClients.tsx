@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { apiService } from '@/services/api';
 import { Card } from '@/components/ui/card';
 import { useConfirm } from '@/components/common/ConfirmDialog';
-import {
+import { PaginationBar,
   DataTable,
   DataTableAction,
   DataTableBody,
@@ -24,20 +24,7 @@ import {
 } from '@/components/common/DataTable';
 import { PageHeader } from '@/components/private/common/PageHeader';
 import { StatCard, StatRow } from '@/components/private/common/StatRow';
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  EyeIcon,
-  FolderKanbanIcon,
-  PenLineIcon,
-  PlusIcon,
-  ReceiptIcon,
-  TargetIcon,
-  TrafficConeIcon,
-  Trash2Icon,
-  UsersIcon,
-  WalletIcon,
-} from '@icons';
+import { EyeIcon, FolderKanbanIcon, PenLineIcon, PlusIcon, ReceiptIcon, TargetIcon, TrafficConeIcon, Trash2Icon, UsersIcon, WalletIcon } from '@icons';
 import type { TravauxClient } from '@/types/travaux';
 import { ClientAvatar } from './ClientAvatar';
 import { ClientDetailModal } from './ClientDetailModal';
@@ -208,17 +195,14 @@ export default function AdminTravauxClients() {
             ))}
           </DataTableBody>
         </DataTable>
-        {total > PER_PAGE && (
-          <div className="trk-pagination">
-            <button type="button" className="trk-pagination__btn" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
-              <ChevronLeftIcon size={14} />
-            </button>
-            <span className="trk-pagination__page">{page}</span>
-            <button type="button" className="trk-pagination__btn" disabled={page * PER_PAGE >= total} onClick={() => setPage((p) => p + 1)}>
-              <ChevronRightIcon size={14} />
-            </button>
-          </div>
-        )}
+        <PaginationBar
+          page={page}
+          pageCount={Math.max(1, Math.ceil(total / PER_PAGE))}
+          from={total ? (page - 1) * PER_PAGE + 1 : undefined}
+          to={Math.min(page * PER_PAGE, total)}
+          total={total}
+          onChange={setPage}
+        />
       </Card>
 
       <ClientDetailModal clientId={viewId} onClose={() => setViewId(null)} />

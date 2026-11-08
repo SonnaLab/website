@@ -13,15 +13,11 @@ import { StatCard, StatRow } from '@/components/private/common/StatRow';
 import { Modal } from '@/components/common/Modal';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { useConfirm } from '@/components/common/ConfirmDialog';
-import {
+import { PaginationBar,
   DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
   DataTableSelectTd, DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, useRowSelection,
 } from '@/components/common/DataTable';
-import {
-  UsersIcon, LayoutDashboardIcon, ShieldIcon, UserIcon, CheckCircleIcon, LockIcon,
-  EyeIcon, ArrowUpRightIcon, ChevronLeftIcon, ChevronRightIcon, TrendingUpIcon,
-  HotelIcon, PenLineIcon, PlusIcon, TrafficConeIcon, Trash2Icon,
-} from '@icons';
+import { UsersIcon, LayoutDashboardIcon, ShieldIcon, UserIcon, CheckCircleIcon, LockIcon, EyeIcon, ArrowUpRightIcon, TrendingUpIcon, HotelIcon, PenLineIcon, PlusIcon, TrafficConeIcon, Trash2Icon } from '@icons';
 import type { TravauxClient } from '@/types/travaux';
 import { ClientAvatar } from './travaux/ClientAvatar';
 import { ClientDetailModal } from './travaux/ClientDetailModal';
@@ -36,18 +32,19 @@ function fmt(date: string | null | undefined) {
 }
 
 function Pagination({
-  page, hasMore, onPrev, onNext,
-}: { page: number; hasMore: boolean; onPrev(): void; onNext(): void }) {
+  page, hasMore, onPrev, onNext, onGo, total, perPage,
+}: { page: number; hasMore: boolean; onPrev(): void; onNext(): void; onGo?(page: number): void; total?: number; perPage?: number }) {
+  const known = total !== undefined && perPage !== undefined;
   return (
-    <div className="trk-pagination">
-      <button className="trk-pagination__btn" disabled={page <= 1} onClick={onPrev}>
-        <ChevronLeftIcon size={14} />
-      </button>
-      <span className="trk-pagination__page">{page}</span>
-      <button className="trk-pagination__btn" disabled={!hasMore} onClick={onNext}>
-        <ChevronRightIcon size={14} />
-      </button>
-    </div>
+    <PaginationBar
+      page={page}
+      hasMore={hasMore}
+      pageCount={known ? Math.max(1, Math.ceil(total / perPage)) : undefined}
+      from={known && total ? (page - 1) * perPage + 1 : undefined}
+      to={known ? Math.min(page * perPage, total) : undefined}
+      total={total}
+      onChange={(next) => (onGo ? onGo(next) : next < page ? onPrev() : onNext())}
+    />
   );
 }
 
@@ -314,6 +311,9 @@ function UsersListTab({ role = '', withClient = false, segment, onChanged }: { r
           <Pagination
             page={page}
             hasMore={page * PER_PAGE < total}
+            total={total}
+            perPage={PER_PAGE}
+            onGo={setPage}
             onPrev={() => setPage((p) => p - 1)}
             onNext={() => setPage((p) => p + 1)}
           />
@@ -443,6 +443,9 @@ function CompaniesTab({ reloadKey, onEdit, onChanged }: { reloadKey: number; onE
         <Pagination
           page={page}
           hasMore={page * PER_PAGE < total}
+          total={total}
+          perPage={PER_PAGE}
+          onGo={setPage}
           onPrev={() => setPage((p) => p - 1)}
           onNext={() => setPage((p) => p + 1)}
         />

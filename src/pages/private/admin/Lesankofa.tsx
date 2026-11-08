@@ -9,7 +9,7 @@ import { StepperModal } from '@/components/common/StepperModal';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
 import { PageHeader } from '@/components/private/common/PageHeader';
 import { StatCard, StatRow } from '@/components/private/common/StatRow';
-import {
+import { PaginationBar,
   DataTablePagination, usePagination,
   DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
   DataTableSelectTd, DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, filterRows, useRowSelection,
@@ -568,15 +568,14 @@ function ModelsTab() {
         </DataTableBody>
       </DataTable>
 
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between px-2 py-3 border-t border-border">
-          <span className="text-xs text-muted-foreground">Page {modelPage} / {totalPages}</span>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" disabled={modelPage === 1} onClick={() => setModelPage(p => p - 1)}>←</Button>
-            <Button variant="outline" size="sm" disabled={modelPage === totalPages} onClick={() => setModelPage(p => p + 1)}>→</Button>
-          </div>
-        </div>
-      )}
+      <PaginationBar
+        page={modelPage}
+        pageCount={totalPages}
+        from={filteredModels?.length ? (modelPage - 1) * MODEL_PER_PAGE + 1 : undefined}
+        to={filteredModels ? Math.min(modelPage * MODEL_PER_PAGE, filteredModels.length) : undefined}
+        total={filteredModels?.length}
+        onChange={setModelPage}
+      />
 
       {/* Recent activity */}
       {models && models.length > 0 && (() => {

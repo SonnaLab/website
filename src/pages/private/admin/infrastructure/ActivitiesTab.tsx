@@ -6,11 +6,11 @@ import { apiService, type ActivityEntry } from '@/services/api';
 import { Card } from '@/components/ui/card';
 import { Modal } from '@/components/common/Modal';
 import { StatusBadge } from '@/components/common/StatusBadge';
-import {
+import { PaginationBar,
   DataTable, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
   DataTableSelectTd, DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, useRowSelection,
 } from '@/components/common/DataTable';
-import { ActivityIcon, ChevronLeftIcon, ChevronRightIcon } from '@icons';
+import { ActivityIcon } from '@icons';
 import { formatDateTime } from './format';
 
 const KINDS = ['all', 'auth', 'admin', 'site', 'jobs', 'mails', 'errors'] as const;
@@ -154,12 +154,7 @@ export function ActivitiesTab() {
             })}
           </DataTableBody>
         </DataTable>
-        <div className="trk-pagination">
-          <span className="trv-muted">{t('infrastructure.activity.total', { count: total })}</span>
-          <button type="button" className="trk-pagination__btn" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}><ChevronLeftIcon size={14} /></button>
-          <span className="trk-pagination__page">{page} / {pages}</span>
-          <button type="button" className="trk-pagination__btn" disabled={page >= pages} onClick={() => setPage((p) => p + 1)}><ChevronRightIcon size={14} /></button>
-        </div>
+        <PaginationBar page={page} pageCount={pages} summary={t('infrastructure.activity.total', { count: total })} onChange={setPage} />
       </Card>
 
       <Modal open={!!open} onClose={() => setOpen(null)} title={open ? activityLabel(open.action_key, t) : ''} size="md">

@@ -74,9 +74,10 @@
     "bulkFailed": "Certains éléments n’ont pas pu être traités.",
     "noResults": "Aucun résultat pour « {{query}} ».",
     "actions": "Actions",
-    "range": "{{from}}–{{to}} sur {{total}}",
-    "page": "Page {{page}} / {{pages}}",
     "previous": "Précédent",
-    "next": "Suivant"
+    "next": "Suivant",
+    "of": "sur",
+    "pagination": "Pagination",
+    "goToPage": "Page {{page}}"
   }
 }
