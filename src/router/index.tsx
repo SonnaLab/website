@@ -43,7 +43,7 @@ import AdminSeo from '@/pages/private/admin/Seo';
 import AdminNews from '@/pages/private/admin/News';
 import AdminUsers from '@/pages/private/admin/Users';
 import AdminLesankofa from '@/pages/private/admin/Lesankofa';
-import AdminLesankofaDsv from '@/pages/private/admin/lesankofa-dsv/LesankofaDsv';
+import { LegacyDsvRedirect } from '@/pages/private/admin/lesankofa-dsv/LesankofaDsv';
 import AdminTravauxClients from '@/pages/private/admin/travaux/TravauxClients';
 import AdminClientTravaux from '@/pages/private/admin/travaux/ClientTravaux';
 import AdminCompany from '@/pages/private/admin/company/Company';
@@ -215,7 +215,7 @@ export const routeTree: RouteObject[] = [
           { path: 'news',           element: <AdminNews /> },
           { path: 'users',          element: <AdminUsers /> },
           { path: 'lesankofa',      element: <AdminLesankofa /> },
-          { path: 'lesankofa/dsv',  element: <AdminLesankofaDsv /> },
+          { path: 'lesankofa/dsv',  element: <LegacyDsvRedirect /> },
           { path: 'travaux',        element: <AdminTravauxClients /> },
           { path: 'travaux/:clientId', element: <AdminClientTravaux /> },
           { path: 'entreprise',     element: <AdminCompany /> },
