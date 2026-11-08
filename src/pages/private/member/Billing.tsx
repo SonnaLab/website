@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { apiService, saveBlob } from '@/services/api';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Tabs';
 import {
+  DataTablePagination, usePagination,
   DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
   DataTableSelectTd, DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, filterRows, useRowSelection,
 } from '@/components/common/DataTable';
@@ -120,6 +121,7 @@ function BillingTable({ rows, loading, kind, empty, emptyIcon, paidOf, fmtMoney,
     () => filterRows(rows, q, (d) => [d.printed_number, d.title, t(`billing.statuses.${statusKey(d)}`), d.due_on]),
     [rows, q, t],
   );
+  const pager = usePagination(visible, q);
   const selection = useRowSelection(visible, (d) => d.id);
 
   async function download(doc: TravauxInvoice) {
@@ -192,7 +194,7 @@ function BillingTable({ rows, loading, kind, empty, emptyIcon, paidOf, fmtMoney,
           {!loading && visible.length === 0 && (
             <DataTableEmpty icon={emptyIcon} label={q ? tc('table.noResults', { query: q }) : empty} />
           )}
-          {visible.map((doc) => (
+          {pager.pageRows.map((doc) => (
             <DataTableRow key={doc.id}>
               <DataTableSelectTd checked={selection.isSelected(doc.id)} onChange={(checked) => selection.toggle(doc.id, checked)} ariaLabel={tc('table.selectRow')} />
               <DataTableTd className="font-mono text-sm">{doc.printed_number}</DataTableTd>
@@ -213,6 +215,7 @@ function BillingTable({ rows, loading, kind, empty, emptyIcon, paidOf, fmtMoney,
           ))}
         </DataTableBody>
       </DataTable>
+      <DataTablePagination {...pager} />
 
       <DocumentModal
         doc={preview}

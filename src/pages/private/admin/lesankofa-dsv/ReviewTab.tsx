@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BaseTab } from '@/components/common/BaseTab';
 import {
+  DataTablePagination, usePagination,
   DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableTd,
   DataTableTh, DataTableToolbar, filterRows,
 } from '@/components/common/DataTable';
@@ -55,6 +56,7 @@ export function ReviewTab({ clientId, clientName, onChanged }: {
       .sort((a, b) => (STATUS_ORDER[a.status] ?? 9) - (STATUS_ORDER[b.status] ?? 9) || a.id - b.id),
     [rows, q],
   );
+  const pager = usePagination(visible, q);
 
   return (
     <div className="space-y-4">
@@ -94,7 +96,7 @@ export function ReviewTab({ clientId, clientName, onChanged }: {
                 hint="Le moteur ne rédige que pour les clients dont la rédaction DSV est activée, dans la limite de la capacité de validation."
               />
             )}
-            {visible.map((d) => (
+            {pager.pageRows.map((d) => (
               <DataTableRow key={d.id} onClick={() => setOpenId(d.id)}>
                 <DataTableTd><span className="adm-table__id-cell">#{d.id}</span></DataTableTd>
                 <DataTableTd>
@@ -114,6 +116,7 @@ export function ReviewTab({ clientId, clientName, onChanged }: {
             ))}
           </DataTableBody>
         </DataTable>
+        <DataTablePagination {...pager} />
       </BaseTab>
 
       {openId !== null && (

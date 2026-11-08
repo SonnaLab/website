@@ -9,6 +9,7 @@ import { Modal } from '@/components/common/Modal';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { useConfirm } from '@/components/common/ConfirmDialog';
 import {
+  DataTablePagination, usePagination,
   DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
   DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, filterRows, useRowSelection,
 } from '@/components/common/DataTable';
@@ -73,6 +74,7 @@ export function CampaignsTab({ creating, onCreated, onChange }: { creating: bool
     () => (campaigns ? filterRows(campaigns, q, (c) => [c.name, c.subject_fr, t(`mailing.categories.${c.category}`), t(`mailing.audiences.${c.audience}`), t(`mailing.campaigns.statuses.${c.status}`)]) : null),
     [campaigns, q, t],
   );
+  const pager = usePagination(visible ?? [], q);
   const selection = useRowSelection(visible ?? [], (c) => c.id);
 
   // Bulk delete: drafts only, sent campaigns are kept (their figures matter).
@@ -132,7 +134,7 @@ export function CampaignsTab({ creating, onCreated, onChange }: { creating: bool
             {visible?.length === 0 && (
               <DataTableEmpty icon={<MegaphoneIcon size={28} />} label={q ? tc('table.noResults', { query: q }) : t('mailing.campaigns.empty')} />
             )}
-            {visible?.map((c) => (
+            {pager.pageRows.map((c) => (
               <DataTableRow key={c.id} onClick={() => setPreviewing(c)}>
                 {/* Select cell: keep the click from opening the preview. */}
                 <DataTableTd className="adm-table__td--select" onClick={(e) => e.stopPropagation()}>
@@ -173,6 +175,7 @@ export function CampaignsTab({ creating, onCreated, onChange }: { creating: bool
           </DataTableBody>
         </DataTable>
       </Card>
+      <DataTablePagination {...pager} />
 
       <CampaignFormModal draft={editing} onClose={() => setEditing(null)} onSaved={(c) => { setEditing(null); load(); onChange(); setPreviewing(c); }} />
       <CampaignPreviewModal campaign={previewing} onClose={() => setPreviewing(null)} />

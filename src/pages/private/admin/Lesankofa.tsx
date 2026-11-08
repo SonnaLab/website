@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/common/Ta
 import { PageHeader } from '@/components/private/common/PageHeader';
 import { StatCard, StatRow } from '@/components/private/common/StatRow';
 import {
+  DataTablePagination, usePagination,
   DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
   DataTableSelectTd, DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, filterRows, useRowSelection,
 } from '@/components/common/DataTable';
@@ -674,6 +675,7 @@ function ClientsTab() {
     () => (clients ? filterRows(clients, q, (c) => [c.name, c.slug]) : null),
     [clients, q],
   );
+  const pager = usePagination(visibleClients ?? [], q);
   const selection = useRowSelection(visibleClients ?? [], (c) => c.id);
 
   // Bulk: same daily capacity for every selected client.
@@ -755,7 +757,7 @@ function ClientsTab() {
           {visibleClients && visibleClients.length === 0 && (
             <DataTableEmpty icon={<UsersIcon size={28} />} label={q ? tc('table.noResults', { query: q }) : 'Aucun client'} />
           )}
-          {visibleClients?.map(c => (
+          {pager.pageRows.map(c => (
             <DataTableRow key={c.id}>
               <DataTableSelectTd checked={selection.isSelected(c.id)} onChange={(checked) => selection.toggle(c.id, checked)} ariaLabel={tc('table.selectRow')} />
               <DataTableTd>
@@ -781,6 +783,7 @@ function ClientsTab() {
           ))}
         </DataTableBody>
       </DataTable>
+      <DataTablePagination {...pager} />
 
       {/* Client detail modal (preview, multi-étapes) */}
       {selectedClient && (

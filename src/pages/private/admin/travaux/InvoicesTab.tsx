@@ -7,6 +7,7 @@ import { Modal } from '@/components/common/Modal';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { useConfirm } from '@/components/common/ConfirmDialog';
 import {
+  DataTablePagination, usePagination,
   DataTable,
   DataTableAction,
   DataTableBody,
@@ -95,6 +96,7 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
     i.printed_number, i.title, formatCents(i.amount_cents), formatDate(i.due_on), t(`travaux.invoices.statuses.${i.status}`),
     i.objective_title, i.source_quote_number, i.file_name,
   ]), [ofKind, q, t]);
+  const pager = usePagination(rows, `${kind}|${q}`);
   const selection = useRowSelection(rows, (i) => i.id);
   const paidCents = (invoice: TravauxInvoice) => payments
     .filter((p) => p.invoice_id === invoice.id && p.status === 'completed')
@@ -238,7 +240,7 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
                 hint={kind === 'invoice' ? t('travaux.invoices.fromQuote') : undefined}
               />
             ))}
-            {rows.map((i) => {
+            {pager.pageRows.map((i) => {
               // Devis → sa facture ; facture → son devis d'origine.
               const linked = byId.get((kind === 'quote' ? i.generated_invoice_id : i.source_quote_id) ?? '');
               return (
@@ -292,6 +294,7 @@ export const InvoicesTab = forwardRef<TravauxTabHandle, InvoicesTabProps>(functi
           </DataTableBody>
         </DataTable>
       </Card>
+      <DataTablePagination {...pager} />
 
       <NewInvoiceModal
         open={newOpen}

@@ -73,6 +73,10 @@
     "bulkDone_other": "{{count}} Elemente erledigt.",
     "bulkFailed": "Einige Elemente konnten nicht verarbeitet werden.",
     "noResults": "Keine Ergebnisse für „{{query}}“.",
-    "actions": "Aktionen"
+    "actions": "Aktionen",
+    "range": "{{from}}–{{to}} von {{total}}",
+    "page": "Seite {{page}} / {{pages}}",
+    "previous": "Zurück",
+    "next": "Weiter"
   }
 }

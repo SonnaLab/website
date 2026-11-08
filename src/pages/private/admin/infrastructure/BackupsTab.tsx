@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { apiService, saveBlob, type BackupTier, type InfraBackup, type InfraBackupTier } from '@/services/api';
 import { Card } from '@/components/ui/card';
 import {
+  DataTablePagination, usePagination,
   DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
   DataTableSelectTd, DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, filterRows, useRowSelection,
 } from '@/components/common/DataTable';
@@ -49,6 +50,7 @@ export function BackupsTab({ reloadKey = 0 }: { reloadKey?: number }) {
     (b) => [b.name, tierLabel(b.tier), formatDateTime(b.created_at, locale)],
   ), [data, query, tier, locale]); // eslint-disable-line react-hooks/exhaustive-deps
   const selection = useRowSelection(rows, idOf);
+  const pager = usePagination(rows, `${query}|${tier}`);
 
   async function download(backup: InfraBackup) {
     setBusy(backup.name);
@@ -137,7 +139,7 @@ export function BackupsTab({ reloadKey = 0 }: { reloadKey?: number }) {
             {data !== null && rows.length === 0 && (
               <DataTableEmpty icon={<LayersIcon size={28} />} label={query ? tc('table.noResults', { query }) : t('infrastructure.backups.empty')} />
             )}
-            {rows.map((backup) => (
+            {pager.pageRows.map((backup) => (
               <DataTableRow key={backup.name}>
                 <DataTableSelectTd checked={selection.isSelected(backup.name)} onChange={(checked) => selection.toggle(backup.name, checked)} ariaLabel={tc('table.selectRow')} />
                 <DataTableTd>
@@ -166,6 +168,7 @@ export function BackupsTab({ reloadKey = 0 }: { reloadKey?: number }) {
           </DataTableBody>
         </DataTable>
       </Card>
+      <DataTablePagination {...pager} />
     </div>
   );
 }

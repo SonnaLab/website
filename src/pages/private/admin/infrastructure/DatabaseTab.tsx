@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { apiService, type InfraDatabase } from '@/services/api';
 import { Card } from '@/components/ui/card';
 import {
+  DataTablePagination, usePagination,
   DataTable, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
   DataTableSelectTd, DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, filterRows, useRowSelection,
 } from '@/components/common/DataTable';
@@ -26,6 +27,7 @@ export function DatabaseTab() {
   useEffect(() => { apiService.adminInfraDatabase().then(setDb).catch(() => setError(true)); }, []);
 
   const rows = useMemo(() => filterRows(db?.tables ?? [], query, (table) => [table.name]), [db, query]);
+  const pager = usePagination(rows, query);
   const selection = useRowSelection(rows, idOf);
 
   // Read-only: the CSV export is the bulk action.
@@ -79,7 +81,7 @@ export function DatabaseTab() {
             </DataTableHead>
             <DataTableBody>
               {rows.length === 0 && <DataTableEmpty icon={<LayersIcon size={28} />} label={tc('table.noResults', { query })} />}
-              {rows.map((table) => (
+              {pager.pageRows.map((table) => (
                 <DataTableRow key={table.name}>
                   <DataTableSelectTd checked={selection.isSelected(table.name)} onChange={(checked) => selection.toggle(table.name, checked)} ariaLabel={tc('table.selectRow')} />
                   <DataTableTd><span className="infra-mono">{table.name}</span></DataTableTd>
@@ -93,6 +95,7 @@ export function DatabaseTab() {
             </DataTableBody>
           </DataTable>
         </Card>
+        <DataTablePagination {...pager} />
       </div>
     </div>
   );

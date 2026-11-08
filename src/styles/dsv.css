@@ -163,8 +163,13 @@
 .dsv-serp__desc { font-size: 13px; color: #4d5156; }
 
 /* Page unique Gestion Lesankofa : onglets du moteur + onglets DSV sur une barre. */
-.lsk-tabs { overflow-x: auto; flex-wrap: nowrap; scrollbar-width: thin; }
-.lsk-tabs .adm-tabs__trigger { white-space: nowrap; flex-shrink: 0; }
+/* Défilement horizontal sans barre visible : la barre (et le débordement vertical
+   du soulignement à -2px) masquait l'onglet actif. Le trait gris passe en ombre
+   interne pour que le soulignement actif reste dans la boîte. */
+.lsk-tabs { overflow-x: auto; overflow-y: hidden; flex-wrap: nowrap; scrollbar-width: none;
+  border-bottom: none; box-shadow: inset 0 -2px 0 #e8eaed; }
+.lsk-tabs::-webkit-scrollbar { display: none; }
+.lsk-tabs .adm-tabs__trigger { white-space: nowrap; flex-shrink: 0; margin-bottom: 0; }
 
 /* Onglet Schéma : boucle animée du moteur DSV. */
 .lsk-flow { --flow-accent: #0891b2; --flow-owner: #d97706; --flow-ext: #6b7280; --flow-retry: #dc2626;

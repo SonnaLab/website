@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BaseTab } from '@/components/common/BaseTab';
 import {
+  DataTablePagination, usePagination,
   DataTable, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableTd, DataTableTh, DataTableToolbar,
 } from '@/components/common/DataTable';
 import { dsv, dsvErrorMessage, type LinkPlan, type OrphanReport, type Outcome, type PublishEvent } from '@/services/dsv';
@@ -110,6 +111,7 @@ function EventsPanel({ clientId }: { clientId: string }) {
   }, [clientId, kind]);
 
   useEffect(() => { load(); }, [load]);
+  const pager = usePagination(rows, kind);
 
   return (
     <div className="space-y-4">
@@ -134,7 +136,7 @@ function EventsPanel({ clientId }: { clientId: string }) {
           </DataTableHead>
           <DataTableBody>
             {rows.length === 0 && <DataTableEmpty icon={<SendIcon size={28} />} label="Aucun envoi pour ce client." />}
-            {rows.map((ev) => (
+            {pager.pageRows.map((ev) => (
               <DataTableRow key={ev.id} onClick={() => setOpen(open?.id === ev.id ? null : ev)}>
                 <DataTableTd>{fmtDate(ev.created_at)}</DataTableTd>
                 <DataTableTd>{EVENT_KIND[ev.kind] ?? ev.kind}</DataTableTd>
@@ -149,6 +151,7 @@ function EventsPanel({ clientId }: { clientId: string }) {
             ))}
           </DataTableBody>
         </DataTable>
+        <DataTablePagination {...pager} />
       </BaseTab>
       {open && <PublishEventResult event={open} />}
     </div>
@@ -211,6 +214,7 @@ function OrphansPanel({ clientId }: { clientId: string }) {
     const list = filter === 'all' ? all : all.filter((a) => a.inbound === 0 || a.outbound === 0 || a.outbound === null || a.dead_links.length > 0);
     return [...list].sort((a, b) => a.inbound - b.inbound || (a.outbound ?? -1) - (b.outbound ?? -1));
   }, [report, filter]);
+  const pager = usePagination(rows, filter);
 
   return (
     <div className="space-y-4">
@@ -254,7 +258,7 @@ function OrphansPanel({ clientId }: { clientId: string }) {
             </DataTableHead>
             <DataTableBody>
               {rows.length === 0 && <DataTableEmpty icon={<LayersIcon size={28} />} label="Aucun article à traiter." />}
-              {rows.slice(0, 500).map((a) => (
+              {pager.pageRows.map((a) => (
                 <DataTableRow key={`${a.slug}-${a.language}`}>
                   <DataTableTd><div className="font-medium text-foreground">{a.slug}</div><div className="text-xs text-muted-foreground">{a.path}</div></DataTableTd>
                   <DataTableTd>{langLabel(a.language)}</DataTableTd>
@@ -265,7 +269,7 @@ function OrphansPanel({ clientId }: { clientId: string }) {
               ))}
             </DataTableBody>
           </DataTable>
-          {rows.length > 500 && <p className="text-xs text-muted-foreground">500 premiers articles affichés sur {rows.length}.</p>}
+          <DataTablePagination {...pager} />
           {report.errors.length > 0 && (
             <Collapsible title={`Erreurs de lecture (${report.errors.length})`}><JsonView value={report.errors} maxHeight={260} /></Collapsible>
           )}

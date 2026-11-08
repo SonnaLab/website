@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { BaseTab } from '@/components/common/BaseTab';
 import { Modal } from '@/components/common/Modal';
 import {
+  DataTablePagination, usePagination,
   DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableTd,
   DataTableTh, DataTableToolbar,
 } from '@/components/common/DataTable';
@@ -322,6 +323,7 @@ function ClustersList({ clientId, scope, onOpen }: { clientId: string; scope: Cl
   }, [clientId, language, node, minQuestions]);
 
   useEffect(() => { load(); }, [load]);
+  const pager = usePagination(rows, `${clientId}|${language}|${node}|${minQuestions}`);
 
   const nodeLabel = (key: string | null) => (key ? scope.nodes.find((n) => n.key === key)?.label ?? key : '—');
 
@@ -360,7 +362,7 @@ function ClustersList({ clientId, scope, onOpen }: { clientId: string; scope: Cl
           </DataTableHead>
           <DataTableBody>
             {rows.length === 0 && <DataTableEmpty icon={<LayersIcon size={28} />} label="Aucune grappe pour ces filtres." />}
-            {rows.map((c) => (
+            {pager.pageRows.map((c) => (
               <DataTableRow key={c.id} onClick={() => onOpen(c)}>
                 <DataTableTd>
                   <div className="font-medium text-foreground">{c.label}</div>
@@ -379,6 +381,7 @@ function ClustersList({ clientId, scope, onOpen }: { clientId: string; scope: Cl
             ))}
           </DataTableBody>
         </DataTable>
+        <DataTablePagination {...pager} />
       </BaseTab>
     </div>
   );

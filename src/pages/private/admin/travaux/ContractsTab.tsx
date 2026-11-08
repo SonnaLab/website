@@ -7,6 +7,7 @@ import { Modal } from '@/components/common/Modal';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { useConfirm } from '@/components/common/ConfirmDialog';
 import {
+  DataTablePagination, usePagination,
   DataTable,
   DataTableAction,
   DataTableBody,
@@ -64,6 +65,7 @@ export const ContractsTab = forwardRef<TravauxTabHandle, ContractsTabProps>(func
   const rows = useMemo(() => filterRows(contracts, q, (c) => [
     c.title, c.notes, c.file_name, formatDate(c.starts_on), formatDate(c.ends_on), t(`travaux.contracts.statuses.${c.status}`),
   ]), [contracts, q, t]);
+  const pager = usePagination(rows, q);
   const selection = useRowSelection(rows, (c) => c.id);
 
   const loadTemplates = () => apiService.adminTravauxContractTemplates()
@@ -153,7 +155,7 @@ export const ContractsTab = forwardRef<TravauxTabHandle, ContractsTabProps>(func
             {rows.length === 0 && (
               <DataTableEmpty icon={<FileSignatureIcon size={28} />} label={q ? tc('table.noResults', { query: q }) : t('travaux.contracts.empty')} />
             )}
-            {rows.map((c) => (
+            {pager.pageRows.map((c) => (
               <DataTableRow key={c.id} onClick={() => setPreview(c)}>
                 {/* Select cell: keep the click from opening the preview. */}
                 <DataTableTd className="adm-table__td--select" onClick={(e) => e.stopPropagation()}>
@@ -187,6 +189,7 @@ export const ContractsTab = forwardRef<TravauxTabHandle, ContractsTabProps>(func
           </DataTableBody>
         </DataTable>
       </Card>
+      <DataTablePagination {...pager} />
 
       <NewContractModal
         open={newOpen}

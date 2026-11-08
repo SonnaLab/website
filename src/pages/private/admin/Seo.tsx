@@ -14,6 +14,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useConfirm } from '@/components/common/ConfirmDialog';
 import {
+  DataTablePagination, usePagination,
   DataTable, DataTableAction, DataTableBody, DataTableEmpty, DataTableHead, DataTableRow, DataTableSearch, DataTableSelectionBar,
   DataTableSelectTd, DataTableSelectTh, DataTableTd, DataTableTh, DataTableToolbar, exportRowsCsv, filterRows, useRowSelection,
 } from '@/components/common/DataTable';
@@ -60,6 +61,7 @@ function PagesTab() {
   useEffect(() => { reload(); }, []);
 
   const visible = useMemo(() => filterRows(pages, q, (p) => [p.path, p.locale, p.title, p.meta_description]), [pages, q]);
+  const pager = usePagination(visible, q);
   const selection = useRowSelection(visible, (p) => p.id);
 
   const audit = async (id: string) => {
@@ -128,7 +130,7 @@ function PagesTab() {
             {!loading && visible.length === 0 && (
               <DataTableEmpty icon={<GlobeIcon size={28} />} label={q ? tc('table.noResults', { query: q }) : '—'} />
             )}
-            {visible.map((p) => (
+            {pager.pageRows.map((p) => (
               <DataTableRow key={p.id}>
                 <DataTableSelectTd checked={selection.isSelected(p.id)} onChange={(checked) => selection.toggle(p.id, checked)} ariaLabel={tc('table.selectRow')} />
                 <DataTableTd className="font-mono text-xs">{p.path}</DataTableTd>
@@ -152,6 +154,7 @@ function PagesTab() {
           </DataTableBody>
         </DataTable>
       </Card>
+      <DataTablePagination {...pager} />
     </div>
   );
 }
@@ -211,6 +214,7 @@ function KeywordsTab() {
   useEffect(() => { reload(); }, []);
 
   const visible = useMemo(() => filterRows(items, q, (k) => [k.keyword, k.locale, k.intent]), [items, q]);
+  const pager = usePagination(visible, q);
   // No bulk endpoint for keywords: selection is for the CSV export.
   const selection = useRowSelection(visible, (k) => k.id);
 
@@ -249,7 +253,7 @@ function KeywordsTab() {
             {!loading && visible.length === 0 && (
               <DataTableEmpty icon={<TargetIcon size={28} />} label={q ? tc('table.noResults', { query: q }) : '—'} />
             )}
-            {visible.map((k) => (
+            {pager.pageRows.map((k) => (
               <DataTableRow key={k.id}>
                 <DataTableSelectTd checked={selection.isSelected(k.id)} onChange={(checked) => selection.toggle(k.id, checked)} ariaLabel={tc('table.selectRow')} />
                 <DataTableTd>{k.keyword}</DataTableTd>
@@ -262,6 +266,7 @@ function KeywordsTab() {
           </DataTableBody>
         </DataTable>
       </Card>
+      <DataTablePagination {...pager} />
     </div>
   );
 }
