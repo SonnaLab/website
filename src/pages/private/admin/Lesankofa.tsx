@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -18,6 +17,10 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+
+import {
+  DSV_TABS, DsvClientSelect, DsvStatRow, DsvTabPanel, isDsvTab, useDsvState,
+} from './lesankofa-dsv/LesankofaDsv';
 
 import {
   BrainIcon,
@@ -41,6 +44,7 @@ import {
   MegaphoneIcon,
   MegaphoneOffIcon,
   ClipboardListIcon,
+  SearchIcon,
 } from '@icons';
 
 // ─────────────────────────────────────────────
@@ -1948,7 +1952,7 @@ function GenerationControlToggle() {
 // Page root
 // ─────────────────────────────────────────────
 
-const VALID_TABS = ['overview', 'tasks', 'models', 'infrastructure', 'clients', 'model'] as const;
+const VALID_TABS = ['overview', 'tasks', 'models', 'infrastructure', 'clients', 'model', ...DSV_TABS] as const;
 type TabValue = typeof VALID_TABS[number];
 
 function readHashTab(): TabValue {
@@ -1960,6 +1964,8 @@ export default function AdminLesankofa() {
   const { t } = useTranslation('admin');
   const [tab, setTab] = useState<TabValue>(readHashTab);
   const { stats, clientCount, error } = useLesankofaOverview();
+  const dsvState = useDsvState();
+  const onDsvTab = isDsvTab(tab);
 
   useEffect(() => {
     const onPop = () => setTab(readHashTab());
@@ -1979,29 +1985,35 @@ export default function AdminLesankofa() {
         description={t('lesankofa.subtitle')}
         actions={(
           <div className="flex flex-wrap items-center gap-2">
-            <Link to="/admin/lesankofa/dsv" className="adm-btn adm-btn--ghost adm-btn--sm">
-              <ClipboardListIcon size={14} /> Moteur DSV : validation et décisions
-            </Link>
+            {onDsvTab && <DsvClientSelect state={dsvState} />}
             <GenerationControlToggle />
           </div>
         )}
       />
 
+      {onDsvTab ? <DsvStatRow state={dsvState} /> : (
       <StatRow>
         <StatCard icon={<BrainIcon size={18} />} label={t('lesankofa.stats.models')} value={stats ? stats.active_models : '—'} />
         <StatCard icon={<ZapIcon size={18} />} label={t('lesankofa.stats.requests')} value={stats ? stats.total_requests_today : '—'} />
         <StatCard icon={<LayersIcon size={18} />} label={t('lesankofa.stats.tokens')} value={stats ? fmtNum(stats.total_tokens_today) : '—'} />
         <StatCard icon={<UsersIcon size={18} />} label={t('lesankofa.stats.clients')} value={clientCount ?? '—'} />
       </StatRow>
+      )}
 
       <Tabs value={tab} onValueChange={handleTabChange}>
-        <TabsList>
+        <TabsList className="lsk-tabs">
           <TabsTrigger value="overview"       icon={<TrendingUpIcon   size={14} />}>Overview</TabsTrigger>
           <TabsTrigger value="tasks"          icon={<ZapIcon          size={14} />}>Tasks</TabsTrigger>
           <TabsTrigger value="models"         icon={<BrainIcon        size={14} />}>Modèles</TabsTrigger>
           <TabsTrigger value="infrastructure" icon={<ServerIcon       size={14} />}>Infrastructure</TabsTrigger>
           <TabsTrigger value="clients"        icon={<UsersIcon        size={14} />}>Clients</TabsTrigger>
           <TabsTrigger value="model"          icon={<LayersIcon       size={14} />}>Schéma</TabsTrigger>
+          <span className="lsk-tabs__sep" aria-hidden="true">Moteur DSV</span>
+          <TabsTrigger value="validation"     icon={<ClipboardListIcon size={14} />} count={dsvState.figures.inReview ?? undefined}>Validation</TabsTrigger>
+          <TabsTrigger value="decisions"      icon={<TargetIcon       size={14} />}>Décisions</TabsTrigger>
+          <TabsTrigger value="questions"      icon={<SearchIcon       size={14} />}>Questions</TabsTrigger>
+          <TabsTrigger value="configuration"  icon={<LayersIcon       size={14} />}>Configuration</TabsTrigger>
+          <TabsTrigger value="resultats"      icon={<TrendingUpIcon   size={14} />}>Résultats et liens</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview">
@@ -2022,6 +2034,11 @@ export default function AdminLesankofa() {
         <TabsContent value="model">
           <ModelTab />
         </TabsContent>
+        {DSV_TABS.map((v) => (
+          <TabsContent key={v} value={v}>
+            <DsvTabPanel tab={v} state={dsvState} />
+          </TabsContent>
+        ))}
       </Tabs>
     </div>
   );
