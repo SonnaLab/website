@@ -1199,6 +1199,7 @@ class ApiService {
   async adminLesankofaClientDetail(id: string) { return (await this.client.get(`/api/v1/admin/lesankofa/clients/${id}`)).data; }
   async adminLesankofaClientUpdate(id: string, payload: Record<string, unknown>) { return (await this.client.patch(`/api/v1/admin/lesankofa/clients/${id}`, payload)).data; }
   async adminLesankofaTasks()             { return (await this.client.get('/api/v1/admin/lesankofa/tasks')).data; }
+  async adminLesankofaSchema()            { return (await this.client.get('/api/v1/admin/lesankofa/schema')).data; }
   async adminLesankofaContainers()        { return (await this.client.get('/api/v1/admin/lesankofa/containers')).data; }
   async adminLesankofaContainerLogs(id: string, lines = 100) { return (await this.client.get(`/api/v1/admin/lesankofa/containers/${id}/logs`, { params: { lines } })).data; }
   async adminLesankofaHistory(limit = 20) { return (await this.client.get('/api/v1/admin/lesankofa/history', { params: { limit } })).data; }
